@@ -234,12 +234,28 @@ Layer* LayerRenderer::createRenderLayer(RenderState& renderState, uint32_t width
 
     // Initialize the texture if needed
     if (layer->isEmpty()) {
+        int an_error;
+        int num_errors;
+        /*
+         * Make sure there is no stale error leftover from some previous code
+         * sequence before we embark on this series of gl operations.
+         */
+        while ((an_error = glGetError()) != GL_NO_ERROR) {
+            ALOGD("createLayer clearing stale error code 0x%04x", an_error);
+        }
+
         layer->setEmpty(false);
         layer->allocateTexture();
 
-        // This should only happen if we run out of memory
-        if (glGetError() != GL_NO_ERROR) {
-            ALOGE("Could not allocate texture for layer (fbo=%d %dx%d)", fbo, width, height);
+        /* Detect and clear errors from setEmpty(), allocateTexture() */
+        num_errors = 0;
+        while ((an_error = glGetError()) != GL_NO_ERROR) {
+            num_errors++;
+            ALOGD("Could not allocate texture for layer (fbo=%d %dx%d)"
+                  " (error=0x%04x)",
+                    fbo, width, height, an_error);
+        }
+        if (num_errors != 0) {
             renderState.bindFramebuffer(previousFbo);
             layer->decStrong(0);
             return NULL;
