@@ -830,7 +830,7 @@ static jboolean android_view_GLES20Canvas_isAvailable(JNIEnv* env, jobject clazz
     char prop[PROPERTY_VALUE_MAX];
     if (property_get("ro.kernel.qemu", prop, NULL) == 0) {
         // not in the emulator
-        return JNI_TRUE;
+        return GraphicsJNI::useOpenglRenderer() ? JNI_TRUE : JNI_FALSE;
     }
     // In the emulator this property will be set to 1 when hardware GLES is
     // enabled, 0 otherwise. On old emulator versions it will be undefined.
@@ -848,6 +848,7 @@ static jboolean android_view_GLES20Canvas_isAvailable(JNIEnv* env, jobject clazz
 static void
 android_app_ActivityThread_dumpGraphics(JNIEnv* env, jobject clazz, jobject javaFileDescriptor) {
 #ifdef USE_OPENGL_RENDERER
+    if (!GraphicsJNI::useOpenglRenderer()) return;
     int fd = jniGetFDFromFileDescriptor(env, javaFileDescriptor);
     android::uirenderer::renderthread::RenderProxy::outputLogBuffer(fd);
 #endif // USE_OPENGL_RENDERER
@@ -975,8 +976,10 @@ static JNINativeMethod gActivityThreadMethods[] = {
 
 int register_android_view_GLES20Canvas(JNIEnv* env) {
     jclass clazz;
-    FIND_CLASS(clazz, "android/graphics/Rect");
-    GET_METHOD_ID(gRectClassInfo.set, clazz, "set", "(IIII)V");
+    if (GraphicsJNI::useOpenglRenderer()) {
+        FIND_CLASS(clazz, "android/graphics/Rect");
+        GET_METHOD_ID(gRectClassInfo.set, clazz, "set", "(IIII)V");
+    }
 
     return AndroidRuntime::registerNativeMethods(env, kClassPathName, gMethods, NELEM(gMethods));
 }

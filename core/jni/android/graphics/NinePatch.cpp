@@ -80,7 +80,7 @@ public:
     static void finalize(JNIEnv* env, jobject, jlong patchHandle) {
         int8_t* patch = reinterpret_cast<int8_t*>(patchHandle);
 #ifdef USE_OPENGL_RENDERER
-        if (android::uirenderer::ResourceCache::hasInstance()) {
+        if (GraphicsJNI::useOpenglRenderer() && android::uirenderer::ResourceCache::hasInstance()) {
             Res_png_9patch* p = (Res_png_9patch*) patch;
             android::uirenderer::ResourceCache::getInstance().destructor(p);
             return;

@@ -10,6 +10,7 @@
 #include "SkMath.h"
 #include "SkPicture.h"
 #include "SkRegion.h"
+#include <cutils/properties.h>
 #include <android_runtime/AndroidRuntime.h>
 
 void doThrowNPE(JNIEnv* env) {
@@ -38,6 +39,17 @@ void doThrowOOME(JNIEnv* env, const char* msg) {
 
 void doThrowIOE(JNIEnv* env, const char* msg) {
     jniThrowException(env, "java/io/IOException", msg);
+}
+
+static bool checkOpenglRenderer() {
+    char prop[PROPERTY_VALUE_MAX];
+    property_get("debug.egl.hw", prop, "1");
+    return atoi(prop) == 1;
+}
+
+bool GraphicsJNI::useOpenglRenderer() {
+    static bool use_opengl_renderer = checkOpenglRenderer();
+    return use_opengl_renderer;
 }
 
 bool GraphicsJNI::hasException(JNIEnv *env) {

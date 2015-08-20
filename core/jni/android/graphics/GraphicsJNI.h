@@ -26,6 +26,8 @@ public:
         kBitmapCreateFlag_Premultiplied = 0x2,
     };
 
+    static bool useOpenglRenderer();
+
     // returns true if an exception is set (and dumps it out to the Log)
     static bool hasException(JNIEnv*);
 

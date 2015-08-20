@@ -365,7 +365,7 @@ static jobject Bitmap_copy(JNIEnv* env, jobject, jlong srcHandle,
 static void Bitmap_destructor(JNIEnv* env, jobject, jlong bitmapHandle) {
     SkBitmap* bitmap = reinterpret_cast<SkBitmap*>(bitmapHandle);
 #ifdef USE_OPENGL_RENDERER
-    if (android::uirenderer::ResourceCache::hasInstance()) {
+    if (GraphicsJNI::useOpenglRenderer() && android::uirenderer::ResourceCache::hasInstance()) {
         android::uirenderer::ResourceCache::getInstance().destructor(bitmap);
         return;
     }
@@ -376,7 +376,7 @@ static void Bitmap_destructor(JNIEnv* env, jobject, jlong bitmapHandle) {
 static jboolean Bitmap_recycle(JNIEnv* env, jobject, jlong bitmapHandle) {
     SkBitmap* bitmap = reinterpret_cast<SkBitmap*>(bitmapHandle);
 #ifdef USE_OPENGL_RENDERER
-    if (android::uirenderer::ResourceCache::hasInstance()) {
+    if (GraphicsJNI::useOpenglRenderer() && android::uirenderer::ResourceCache::hasInstance()) {
         bool result;
         result = android::uirenderer::ResourceCache::getInstance().recycle(bitmap);
         return result ? JNI_TRUE : JNI_FALSE;

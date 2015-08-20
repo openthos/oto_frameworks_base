@@ -144,14 +144,11 @@ public class RenderNodeAnimator extends Animator {
         mNativePtr = new VirtualRefBasePtr(ptr);
     }
 
-    private void checkMutable() {
+    private boolean checkMutable() {
         if (mState != STATE_PREPARE) {
             throw new IllegalStateException("Animator has already started, cannot change it now!");
         }
-        if (mNativePtr == null) {
-            throw new IllegalStateException("Animator's target has been destroyed "
-                    + "(trying to modify an animation after activity destroy?)");
-        }
+        return (mNativePtr != null);
     }
 
     static boolean isNativeInterpolator(TimeInterpolator interpolator) {
@@ -165,6 +162,7 @@ public class RenderNodeAnimator extends Animator {
         if (isNativeInterpolator(mInterpolator)) {
             ni = ((NativeInterpolatorFactory)mInterpolator).createNativeInterpolator();
         } else {
+            if (mNativePtr == null) return;
             long duration = nGetDuration(mNativePtr.get());
             ni = FallbackLUTInterpolator.createNativeInterpolator(mInterpolator, duration);
         }
@@ -291,7 +289,7 @@ public class RenderNodeAnimator extends Animator {
     }
 
     private void setTarget(RenderNode node) {
-        checkMutable();
+        if (!checkMutable()) return;
         if (mTarget != null) {
             throw new IllegalStateException("Target already set!");
         }
@@ -301,13 +299,13 @@ public class RenderNodeAnimator extends Animator {
     }
 
     public void setStartValue(float startValue) {
-        checkMutable();
+        if (!checkMutable()) return;
         nSetStartValue(mNativePtr.get(), startValue);
     }
 
     @Override
     public void setStartDelay(long startDelay) {
-        checkMutable();
+        if (!checkMutable()) return;
         if (startDelay < 0) {
             throw new IllegalArgumentException("startDelay must be positive; " + startDelay);
         }
@@ -322,7 +320,7 @@ public class RenderNodeAnimator extends Animator {
 
     @Override
     public RenderNodeAnimator setDuration(long duration) {
-        checkMutable();
+        if (!checkMutable()) return this;
         if (duration < 0) {
             throw new IllegalArgumentException("duration must be positive; " + duration);
         }
@@ -348,7 +346,7 @@ public class RenderNodeAnimator extends Animator {
 
     @Override
     public void setInterpolator(TimeInterpolator interpolator) {
-        checkMutable();
+        if (!checkMutable()) return;
         mInterpolator = interpolator;
     }
 
@@ -490,7 +488,7 @@ public class RenderNodeAnimator extends Animator {
 
     @Override
     public void setAllowRunningAsynchronously(boolean mayRunAsync) {
-        checkMutable();
+        if (!checkMutable()) return;
         nSetAllowRunningAsync(mNativePtr.get(), mayRunAsync);
     }
 

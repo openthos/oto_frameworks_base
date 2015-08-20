@@ -39,7 +39,7 @@ public:
     static void finalizer(JNIEnv* env, jobject clazz, jlong objHandle) {
         SkPath* obj = reinterpret_cast<SkPath*>(objHandle);
 #ifdef USE_OPENGL_RENDERER
-        if (android::uirenderer::ResourceCache::hasInstance()) {
+        if (GraphicsJNI::useOpenglRenderer() && android::uirenderer::ResourceCache::hasInstance()) {
             android::uirenderer::ResourceCache::getInstance().destructor(obj);
             return;
         }
