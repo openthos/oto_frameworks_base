@@ -44,6 +44,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE:= libandroidfw
 LOCAL_MODULE_TAGS := optional
 LOCAL_CFLAGS += -DSTATIC_ANDROIDFW_FOR_TOOLS
+ifeq ($(ZIP_OPTIMIZATION_NO_INTEGRITY),true)
+    LOCAL_CFLAGS += -DZIP_NO_INTEGRITY
+endif
 LOCAL_SRC_FILES:= $(hostSources)
 LOCAL_C_INCLUDES := external/zlib
 
@@ -69,6 +72,9 @@ LOCAL_SHARED_LIBRARIES := \
 	libutils \
 	libz
 
+ifeq ($(ZIP_OPTIMIZATION_NO_INTEGRITY),true)
+    LOCAL_CFLAGS += -DZIP_NO_INTEGRITY
+endif
 include $(BUILD_SHARED_LIBRARY)
 
 

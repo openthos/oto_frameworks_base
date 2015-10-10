@@ -68,7 +68,11 @@ enum install_status_t {
     NO_NATIVE_LIBRARIES = -114
 };
 
-typedef install_status_t (*iterFunc)(JNIEnv*, void*, ZipFileRO*, ZipEntryRO, const char*);
+typedef install_status_t (*iterFunc)(JNIEnv*, void*, ZipFileRO*, ZipEntryRO, const char*
+#ifdef ZIP_NO_INTEGRITY
+, const char*
+#endif
+);
 
 // Equivalent to android.os.FileUtils.isFilenameSafe
 static bool
@@ -136,6 +140,9 @@ isFileDifferent(const char* filePath, size_t fileSize, time_t modifiedTime,
     long crc = crc32(0L, Z_NULL, 0);
     unsigned char crcBuffer[16384];
     ssize_t numBytes;
+#ifdef ZIP_NO_INTEGRITY
+    posix_fadvise64(fd, 0, fileSize, POSIX_FADV_WILLNEED);
+#endif
     while ((numBytes = TEMP_FAILURE_RETRY(read(fd, crcBuffer, sizeof(crcBuffer)))) > 0) {
         crc = crc32(crc, crcBuffer, numBytes);
     }
@@ -151,7 +158,11 @@ isFileDifferent(const char* filePath, size_t fileSize, time_t modifiedTime,
 }
 
 static install_status_t
-sumFiles(JNIEnv*, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntry, const char*)
+sumFiles(JNIEnv*, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntry, const char*
+#ifdef ZIP_NO_INTEGRITY
+, const char*
+#endif
+)
 {
     size_t* total = (size_t*) arg;
     size_t uncompLen;
@@ -171,7 +182,11 @@ sumFiles(JNIEnv*, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntry, const char
  * This function assumes the library and path names passed in are considered safe.
  */
 static install_status_t
-copyFileIfChanged(JNIEnv *env, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntry, const char* fileName)
+copyFileIfChanged(JNIEnv *env, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntry, const char* fileName
+#ifdef ZIP_NO_INTEGRITY
+, const char* entryName
+#endif
+)
 {
     jstring* javaNativeLibPath = (jstring*) arg;
     ScopedUtfChars nativeLibPath(env, *javaNativeLibPath);
@@ -213,6 +228,13 @@ copyFileIfChanged(JNIEnv *env, void* arg, ZipFileRO* zipFile, ZipEntryRO zipEntr
         return INSTALL_SUCCEEDED;
     }
 
+#ifdef ZIP_NO_INTEGRITY
+    // do integrity check for the current entry
+    if ((zipEntry = zipFile->findEntryByName(entryName)) == NULL) {
+        ALOGD("Couldn't pass integrity check for library");
+        return INSTALL_FAILED_INTERNAL_ERROR;
+    }
+#endif
     char localTmpFileName[nativeLibPath.size() + TMP_FILE_PATTERN_LEN + 2];
     if (strlcpy(localTmpFileName, nativeLibPath.c_str(), sizeof(localTmpFileName))
             != nativeLibPath.size()) {
@@ -302,6 +324,55 @@ public:
         return new NativeLibrariesIterator(zipFile, cookie);
     }
 
+#ifdef ZIP_NO_INTEGRITY
+    ZipEntryRO nextNoIntegrity() {
+        ZipEntryRO next = NULL;
+        while ((next = mZipFile->nextEntryNoIntegrity(mCookie)) != NULL) {
+            // Make sure this entry has a filename.
+            if (mZipFile->getEntryFileName(next, fileName, sizeof(fileName))) {
+                continue;
+            }
+
+            // Make sure we're in the lib directory of the ZIP.
+            if (strncmp(fileName, APK_LIB, APK_LIB_LEN)) {
+                continue;
+            }
+
+            // Make sure the filename is at least to the minimum library name size.
+            const size_t fileNameLen = strlen(fileName);
+            static const size_t minLength = APK_LIB_LEN + 2 + LIB_PREFIX_LEN + 1 + LIB_SUFFIX_LEN;
+            if (fileNameLen < minLength) {
+                continue;
+            }
+
+            const char* lastSlash = strrchr(fileName, '/');
+            ALOG_ASSERT(lastSlash != NULL, "last slash was null somehow for %s\n", fileName);
+
+            // Exception: If we find the gdbserver binary, return it.
+            if (!strncmp(lastSlash + 1, GDBSERVER, GDBSERVER_LEN)) {
+                mLastSlash = lastSlash;
+                break;
+            }
+
+            // Make sure the filename starts with lib and ends with ".so".
+            if (strncmp(fileName + fileNameLen - LIB_SUFFIX_LEN, LIB_SUFFIX, LIB_SUFFIX_LEN)
+                || strncmp(lastSlash, LIB_PREFIX, LIB_PREFIX_LEN)) {
+                continue;
+            }
+
+            // Make sure the filename is safe.
+            if (!isFilenameSafe(lastSlash + 1)) {
+                continue;
+            }
+
+            mLastSlash = lastSlash;
+            break;
+        }
+
+        return next;
+    }
+#endif
+
     ZipEntryRO next() {
         ZipEntryRO next = NULL;
         while ((next = mZipFile->nextEntry(mCookie)) != NULL) {
@@ -388,7 +459,11 @@ iterateOverNativeFiles(JNIEnv *env, jlong apkHandle, jstring javaCpuAbi,
         return INSTALL_FAILED_INVALID_APK;
     }
     ZipEntryRO entry = NULL;
+#ifdef ZIP_NO_INTEGRITY
+    while ((entry = it->nextNoIntegrity()) != NULL) {
+#else
     while ((entry = it->next()) != NULL) {
+#endif
         const char* fileName = it->currentEntry();
         const char* lastSlash = it->lastSlash();
 
@@ -397,8 +472,11 @@ iterateOverNativeFiles(JNIEnv *env, jlong apkHandle, jstring javaCpuAbi,
         const size_t cpuAbiRegionSize = lastSlash - cpuAbiOffset;
 
         if (cpuAbi.size() == cpuAbiRegionSize && !strncmp(cpuAbiOffset, cpuAbi.c_str(), cpuAbiRegionSize)) {
-            install_status_t ret = callFunc(env, callArg, zipFile, entry, lastSlash + 1);
-
+            install_status_t ret = callFunc(env, callArg, zipFile, entry, lastSlash + 1
+#ifdef ZIP_NO_INTEGRITY
+               , fileName
+#endif
+               );
             if (ret != INSTALL_SUCCEEDED) {
                 ALOGV("Failure for entry %s", lastSlash + 1);
                 return ret;
@@ -432,7 +510,11 @@ static int findSupportedAbi(JNIEnv *env, jlong apkHandle, jobjectArray supported
     ZipEntryRO entry = NULL;
     char fileName[PATH_MAX];
     int status = NO_NATIVE_LIBRARIES;
+#ifdef ZIP_NO_INTEGRITY
+    while ((entry = it->nextNoIntegrity()) != NULL) {
+#else
     while ((entry = it->next()) != NULL) {
+#endif
         // We're currently in the lib/ directory of the APK, so it does have some native
         // code. We should return INSTALL_FAILED_NO_MATCHING_ABIS if none of the
         // libraries match.
@@ -507,7 +589,11 @@ com_android_internal_content_NativeLibraryHelper_hasRenderscriptBitcode(JNIEnv *
 
     char fileName[PATH_MAX];
     ZipEntryRO next = NULL;
+#ifdef ZIP_NO_INTEGRITY
+    while ((next = zipFile->nextEntryNoIntegrity(cookie)) != NULL) {
+#else
     while ((next = zipFile->nextEntry(cookie)) != NULL) {
+#endif
         if (zipFile->getEntryFileName(next, fileName, sizeof(fileName))) {
             continue;
         }
