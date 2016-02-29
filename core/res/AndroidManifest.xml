@@ -3,6 +3,7 @@
 /* //device/apps/common/AndroidManifest.xml
 **
 ** Copyright 2006, The Android Open Source Project
+** Copyright 2014, Tieto Poland Sp. z o.o
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -2931,6 +2932,14 @@
     <!-- The system process is explicitly the only one allowed to launch the
          confirmation UI for full backup/restore -->
     <uses-permission android:name="android.permission.CONFIRM_FULL_BACKUP"/>
+
+    <!-- Date: Sep 09, 2014
+         Copyright (C) Tieto Poland Sp. z o.o
+         Title of an application permission, listed so the user can choose whether
+         they want to allow the application to do this. @hide -->
+    <permission android:name="android.permission.MULTIWINDOW"
+        android:label="@string/permlab_multiwindow"
+        android:description="@string/permdesc_multiwindow"/>
 
     <application android:process="system"
                  android:persistent="true"

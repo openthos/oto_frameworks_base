@@ -16,6 +16,7 @@
 */
 -->
 <resources>
+
   <!-- We don't want to publish private symbols in android.R as part of the
        SDK.  Instead, put them here. -->
   <private-symbols package="com.android.internal" />
@@ -2157,4 +2158,32 @@
   <java-symbol type="bool" name="config_use_sim_language_file" />
   <java-symbol type="bool" name="config_LTE_eri_for_network_name" />
   <java-symbol type="bool" name="config_defaultInTouchMode" />
+
+  <!-- Multiwindow -->
+  <java-symbol type="id" name="mwCloseBtn" />
+  <java-symbol type="id" name="mwMaximizeBtn" />
+  <java-symbol type="id" name="mw_decor_header" />
+  <java-symbol type="id" name="mwInnerBorder" />
+  <java-symbol type="id" name="mwOuterBorder" />
+  <java-symbol type="id" name="mwBackground" />
+  <java-symbol type="id" name="mwResizeLeft" />
+  <java-symbol type="id" name="mwResizeRight" />
+  <java-symbol type="id" name="mwIcon" />
+  <java-symbol type="id" name="mwTitle" />
+  <java-symbol type="color" name="mw_blue_decor" />
+  <java-symbol type="color" name="mw_transparent_white" />
+  <java-symbol type="color" name="mw_white_border" />
+  <java-symbol type="dimen" name="mw_inner_border" />
+  <java-symbol type="dimen" name="mw_outer_border" />
+  <java-symbol type="drawable" name="mw_outer_border" />
+  <java-symbol type="drawable" name="mw_outer_border_wide" />
+  <java-symbol type="drawable" name="mw_app_header_focused" />
+  <java-symbol type="drawable" name="mw_app_header_unfocused" />
+  <java-symbol type="drawable" name="mw_btn_add_content" />
+  <java-symbol type="drawable" name="mw_btn_close" />
+  <java-symbol type="drawable" name="mw_btn_maximize" />
+  <java-symbol type="drawable" name="mw_btn_minimize" />
+  <java-symbol type="drawable" name="mw_btn_resize_left" />
+  <java-symbol type="drawable" name="mw_btn_resize_right" />
+  <java-symbol type="layout" name="mw_decor" />
 </resources>

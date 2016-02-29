@@ -3,6 +3,7 @@
 /* //device/apps/common/assets/res/any/strings.xml
 **
 ** Copyright 2006, The Android Open Source Project
+** Copyright 2014, Tieto Poland Sp. z o.o
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -2376,6 +2377,15 @@
     <string name="permlab_bindCarrierMessagingService">bind to a carrier messaging service</string>
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_bindCarrierMessagingService">Allows the holder to bind to the top-level interface of a carrier messaging service. Should never be needed for normal apps.</string>
+
+    <!-- Date: Sep 09, 2014
+         Copyright (C) Tieto Poland Sp. z o.o
+         Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_multiwindow">allow to use multiwindow manager</string>
+    <!-- Date: Sep 09, 2014
+         Copyright (C) Tieto Poland Sp. z o.o
+         Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_multiwindow">Allows an applicaton to use multiwindow manager and start applications in windows.</string>
 
     <!-- Policy administration -->
 
