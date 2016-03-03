@@ -19,7 +19,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.app.ActivityManagerNative;
 import android.app.IActivityManager;
-import android.app.ActivityManager.StackBoxInfo;
+//import android.app.ActivityManager.StackBoxInfo;
 import android.content.pm.PackageManager;
 import android.content.Context;
 import android.content.Intent;
@@ -83,24 +83,24 @@ public class MultiwindowManager {
 
     public Vector<Window> getAllWindows() {
         Vector<Window> ret = new Vector<Window>();
-        List<StackBoxInfo> list;
-        String pkg;
-        try {
-            list = mService.getStackBoxes();
-        } catch (RemoteException e) {
-            Log.e(TAG, "getAllWindows failes", e);
-            return ret;
-        }
-        for (StackBoxInfo sb : list) {
-            if (sb.floating) {
+        //List<StackBoxInfo> list;
+        //String pkg;
+        //try {
+        //    list = mService.getStackBoxes();
+        //} catch (RemoteException e) {
+        //    Log.e(TAG, "getAllWindows failes", e);
+        //    return ret;
+        //}
+        //for (StackBoxInfo sb : list) {
+        //    if (sb.floating) {
                 /*
                  * Split in pkg is nessesary, we need only name of the app without activity name.
                  * First we need to split StackInfo message
                  */
-                pkg = sb.stack.toString().split(" ")[5].split("/")[0];
-                ret.add(new Window(sb.bounds,pkg, sb.stackId));
-            }
-        }
+        //        pkg = sb.stack.toString().split(" ")[5].split("/")[0];
+        //        ret.add(new Window(sb.bounds,pkg, sb.stackId));
+        //    }
+        //}
         return ret;
     }
 
