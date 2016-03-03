@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2515,6 +2516,15 @@ public final class Settings {
         public static final String LOCKSCREEN_DISABLED = "lockscreen.disabled";
 
         /**
+         * Date: 4 Apr 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Whether the Tieto Multiwindow is enabled.
+         * @hide
+         */
+        public static final String TIETO_MULTIWINDOW_ENABLED = "tieto_multiwindow";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
          * instead
          * @hide
@@ -2691,6 +2701,13 @@ public final class Settings {
             POWER_SOUNDS_ENABLED,       // moved to global
             DOCK_SOUNDS_ENABLED,        // moved to global
             LOCKSCREEN_SOUNDS_ENABLED,
+            /**
+             * Date: 4 Apr 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * Whether the Tieto Multiwindow is enabled.
+             */
+            TIETO_MULTIWINDOW_ENABLED,
             SHOW_WEB_SUGGESTIONS,
             NOTIFICATION_LIGHT_PULSE,
             SIP_CALL_OPTIONS,
