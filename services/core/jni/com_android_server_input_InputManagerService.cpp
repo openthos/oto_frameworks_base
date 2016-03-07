@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,14 +333,19 @@ void NativeInputManager::setDisplayViewport(bool external, const DisplayViewport
             changed = true;
             v = viewport;
 
-            if (!external) {
-                sp<PointerController> controller = mLocked.pointerController.promote();
-                if (controller != NULL) {
-                    controller->setDisplayViewport(
-                            viewport.logicalRight - viewport.logicalLeft,
-                            viewport.logicalBottom - viewport.logicalTop,
-                            viewport.orientation);
-                }
+            /**
+             * Date: Mar 21, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * Allow setting viewport for internal and external display.
+             * This cause to display pointer on external display.
+             */
+            sp<PointerController> controller = mLocked.pointerController.promote();
+            if (controller != NULL) {
+                controller->setDisplayViewport(
+                        viewport.logicalRight - viewport.logicalLeft,
+                        viewport.logicalBottom - viewport.logicalTop,
+                        viewport.orientation, viewport.displayId);
             }
         }
     }

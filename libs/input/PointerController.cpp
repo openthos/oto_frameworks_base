@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -307,9 +308,29 @@ void PointerController::setInactivityTimeout(InactivityTimeout inactivityTimeout
     }
 }
 
-void PointerController::setDisplayViewport(int32_t width, int32_t height, int32_t orientation) {
+/**
+ * Date: Mar 21, 2014
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+ *
+ * See interface description.
+ */
+int32_t PointerController::getDisplayId() {
     AutoMutex _l(mLock);
 
+    return mLocked.displayId;
+}
+
+/**
+ * Date: Mar 21, 2014
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+ *
+ * Allow setting point controller to external and internal display
+ */
+void PointerController::setDisplayViewport(int32_t width, int32_t height,
+        int32_t orientation, int32_t displayId) {
+    AutoMutex _l(mLock);
+
+    mLocked.displayId = displayId;
     // Adjust to use the display's unrotated coordinate frame.
     if (orientation == DISPLAY_ORIENTATION_90
             || orientation == DISPLAY_ORIENTATION_270) {
@@ -483,6 +504,13 @@ void PointerController::removeInactivityTimeoutLocked() {
 void PointerController::updatePointerLocked() {
     mSpriteController->openTransaction();
 
+    /**
+     * Date: Mar 21, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Set surface to desired display.
+     */
+    mLocked.pointerSprite->setLayerStack(mLocked.displayId);
     mLocked.pointerSprite->setLayer(Sprite::BASE_LAYER_POINTER);
     mLocked.pointerSprite->setPosition(mLocked.pointerX, mLocked.pointerY);
 

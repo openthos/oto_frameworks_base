@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,6 +123,15 @@ public:
 
     /* Sets the sprite transformation matrix. */
     virtual void setTransformationMatrix(const SpriteTransformationMatrix& matrix) = 0;
+
+    /**
+     * Date: Mar 21, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Sets layerStack for sprite. Needed to display sprite only on external
+     * display.
+     */
+    virtual void setLayerStack(int32_t layerStack) = 0;
 };
 
 /*
@@ -167,6 +177,13 @@ private:
         DIRTY_LAYER = 1 << 4,
         DIRTY_VISIBILITY = 1 << 5,
         DIRTY_HOTSPOT = 1 << 6,
+        /**
+         * Date: Mar 21, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Flag which refresh only layer stack
+         */
+        DIRTY_LAYER_STACK = 1 << 7,
     };
 
     /* Describes the state of a sprite.
@@ -190,6 +207,13 @@ private:
         int32_t layer;
         float alpha;
         SpriteTransformationMatrix transformationMatrix;
+        /**
+         * Date: Mar 21, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Holds on which layerStack (display) sprite is shown
+         */
+        int32_t layerStack;
 
         sp<SurfaceControl> surfaceControl;
         int32_t surfaceWidth;
@@ -222,6 +246,11 @@ private:
         virtual void setLayer(int32_t layer);
         virtual void setAlpha(float alpha);
         virtual void setTransformationMatrix(const SpriteTransformationMatrix& matrix);
+        /**
+         * Date: Mar 21, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         */
+        virtual void setLayerStack(int32_t layerStack);
 
         inline const SpriteState& getStateLocked() const {
             return mLocked.state;

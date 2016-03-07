@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -249,7 +250,7 @@ void SpriteController::doUpdateSprites() {
         if (update.state.surfaceControl != NULL && (becomingVisible || becomingHidden
                 || (wantSurfaceVisibleAndDrawn && (update.state.dirty & (DIRTY_ALPHA
                         | DIRTY_POSITION | DIRTY_TRANSFORMATION_MATRIX | DIRTY_LAYER
-                        | DIRTY_VISIBILITY | DIRTY_HOTSPOT))))) {
+                        | DIRTY_VISIBILITY | DIRTY_HOTSPOT | DIRTY_LAYER_STACK))))) {
             status_t status;
             if (!haveTransaction) {
                 SurfaceComposerClient::openGlobalTransaction();
@@ -294,6 +295,20 @@ void SpriteController::doUpdateSprites() {
                 status = update.state.surfaceControl->setLayer(surfaceLayer);
                 if (status) {
                     ALOGE("Error %d setting sprite surface layer.", status);
+                }
+            }
+
+            /**
+             * Date: Mar 21, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * Sets layerStack in surface.
+             */
+            if (wantSurfaceVisibleAndDrawn &&
+                    (becomingVisible || (update.state.dirty & DIRTY_LAYER_STACK))) {
+                status = update.state.surfaceControl->setLayerStack(update.state.layerStack);
+                if (status) {
+                    ALOGE("Error %d setting sprite surface layer stack.", status);
                 }
             }
 
@@ -467,6 +482,19 @@ void SpriteController::SpriteImpl::setTransformationMatrix(
     if (mLocked.state.transformationMatrix != matrix) {
         mLocked.state.transformationMatrix = matrix;
         invalidateLocked(DIRTY_TRANSFORMATION_MATRIX);
+    }
+}
+
+/**
+ * Date: Mar 21, 2014
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+ */
+void SpriteController::SpriteImpl::setLayerStack(int32_t layerStack) {
+    AutoMutex _l(mController->mLock);
+
+    if (mLocked.state.layerStack != layerStack) {
+        mLocked.state.layerStack = layerStack;
+        invalidateLocked(DIRTY_LAYER_STACK);
     }
 }
 

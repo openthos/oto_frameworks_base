@@ -93,7 +93,20 @@ public:
             const uint32_t* spotIdToIndex, BitSet32 spotIdBits);
     virtual void clearSpots();
 
-    void setDisplayViewport(int32_t width, int32_t height, int32_t orientation);
+    /**
+     * Date: Mar 21, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     */
+    virtual int32_t getDisplayId();
+
+    /**
+     * Date: Mar 21, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Pass displayId on which pointer should be displayed.
+     */
+    void setDisplayViewport(int32_t width, int32_t height, int32_t orientation,
+            int32_t displayId = ADISPLAY_ID_DEFAULT);
     void setPointerIcon(const SpriteIcon& icon);
     void setInactivityTimeout(InactivityTimeout inactivityTimeout);
 
@@ -141,6 +154,14 @@ private:
         int32_t displayWidth;
         int32_t displayHeight;
         int32_t displayOrientation;
+        /**
+         * Date: Mar 21, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Indicates if sprite should be displayed on internal or external
+         * display.
+         */
+        int32_t displayId;
 
         InactivityTimeout inactivityTimeout;
 
