@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -546,7 +547,7 @@ final class TaskRecord {
 
     void addActivityAtIndex(int index, ActivityRecord r) {
         // Remove r first, and if it wasn't already in the list and it's fullscreen, count it.
-        if (!mActivities.remove(r) && r.fullscreen) {
+        if (!mActivities.remove(r) && r.isFullscreen()) {
             // Was not previously in list.
             numFullscreen++;
         }
@@ -572,7 +573,7 @@ final class TaskRecord {
 
     /** @return true if this was the last activity in the task */
     boolean removeActivity(ActivityRecord r) {
-        if (mActivities.remove(r) && r.fullscreen) {
+        if (mActivities.remove(r) && r.isFullscreen()) {
             // Was previously in list.
             numFullscreen--;
         }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,10 +73,19 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 if (mPointerId == motionEvent.getPointerId(index)) {
                     final int x = (int)motionEvent.getX(index);
                     final int y = (int)motionEvent.getY(index);
+                    /**
+                     * Date: Apr 3, 2014
+                     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+                     *
+                     * TietoTODO: Dirty hack to check if previous tap was done
+                     * on different screen.
+                     */
                     if ((motionEvent.getEventTime() - motionEvent.getDownTime())
                             < TAP_TIMEOUT_MSEC
                             && (x - mDownX) < mMotionSlop && (y - mDownY) < mMotionSlop
-                            && !mTouchExcludeRegion.contains(x, y)) {
+                            && (!mTouchExcludeRegion.contains(x, y)
+                               || DisplayContent.sCurrentTouchedDisplay != mDisplayContent.getDisplayId())) {
+                        DisplayContent.sCurrentTouchedDisplay = mDisplayContent.getDisplayId();
                         mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, x, y,
                                 mDisplayContent).sendToTarget();
                     }

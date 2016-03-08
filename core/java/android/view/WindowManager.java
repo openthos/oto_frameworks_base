@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -258,6 +259,15 @@ public interface WindowManager extends ViewManager {
          * End of types of application windows.
          */
         public static final int LAST_APPLICATION_WINDOW = 99;
+
+        /**
+         * Date: Apr 11, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Special type of window which indicates floating window
+         * {@hide}
+         */
+        public static final int TYPE_MULTIWINDOW_APPLICATION = 100;
     
         /**
          * Start of types of sub-windows.  The {@link #token} of these windows

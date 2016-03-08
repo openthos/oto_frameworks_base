@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -756,6 +757,37 @@ public interface IActivityManager extends IInterface {
     int GET_ACTIVITY_DISPLAY_ID_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+184;
     int DELETE_ACTIVITY_CONTAINER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+185;
 
+    /**
+     * Date: Feb 25, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Transaction for changing window position
+     */
+    int RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+186;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Transaction for closing application in window
+     */
+    int CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+187;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Transaction for setting custom maximized window size.
+     */
+    int SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Transaction for getting maximized window size.
+     */
+    int GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

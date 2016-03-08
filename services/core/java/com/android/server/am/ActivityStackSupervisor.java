@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +63,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.DisplayManager.DisplayListener;
@@ -126,6 +128,21 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final boolean DEBUG_VISIBLE_BEHIND = DEBUG || false;
 
     public static final int HOME_STACK_ID = 0;
+    /**
+     * Date: Mar 21, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Id of home stack on external display
+     */
+    public static final int EXTERNAL_HOME_STACK_ID = 1;
+
+    /**
+     * Date: 4 Apr 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Whether the Tieto Multiwindow is enabled.
+     */
+    public static final String TIETO_MULTIWINDOW_ENABLED = "tieto_multiwindow";
 
     /** How long we wait until giving up on the last activity telling us it is idle. */
     static final int IDLE_TIMEOUT = 10*1000;
@@ -2663,7 +2680,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         for (int activityNdx = activities.size() - 1; activityNdx >= 0; --activityNdx) {
             final ActivityRecord r = activities.get(activityNdx);
             mWindowManager.addAppToken(0, r.appToken, task.taskId, stack.mStackId,
-                    r.info.screenOrientation, r.fullscreen,
+                    r.info.screenOrientation, r.isFullscreen(),
                     (r.info.flags & ActivityInfo.FLAG_SHOW_ON_LOCK_SCREEN) != 0,
                     r.userId, r.info.configChanges, task.voiceSession != null,
                     r.mLaunchTaskBehind);
@@ -2895,10 +2912,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         // A non-top activity is reporting a visibility change.
-        if (visible && top.fullscreen) {
+        if (visible && top.isFullscreen()) {
             // Let the caller know that it can't be seen.
             if (DEBUG_VISIBLE_BEHIND) Slog.d(TAG, "requestVisibleBehind: returning top.fullscreen="
-                    + top.fullscreen + " top.state=" + top.state + " top.app=" + top.app +
+                    + top.isFullscreen() + " top.state=" + top.state + " top.app=" + top.app +
                     " top.app.thread=" + top.app.thread);
             return false;
         } else if (!visible && stack.getVisibleBehindActivity() != r) {

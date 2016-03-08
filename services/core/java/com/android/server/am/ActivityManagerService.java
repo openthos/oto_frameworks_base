@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006-2008 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,6 +156,7 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.net.Proxy;
 import android.net.ProxyInfo;
 import android.net.Uri;
@@ -394,6 +396,15 @@ public final class ActivityManagerService extends ActivityManagerNative
     // default actuion automatically.  Important for devices without direct input
     // devices.
     private boolean mShowDialogs = true;
+
+     /**
+     * Date: Aug 29, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Variable for keeping size of maximized window of application window if not set,
+     * and kept as new Rect(), maximized window is taken from metrics height and width.
+     */
+    private Rect mMaximizedWindowSize = new Rect();
 
     BroadcastQueue mFgBroadcastQueue;
     BroadcastQueue mBgBroadcastQueue;
@@ -8727,8 +8738,14 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public StackInfo getStackInfo(int stackId) {
-        enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
-                "getStackInfo()");
+        /**
+         * Date: Feb 25, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * TietoTODO: turn on permissions somehow
+         */
+//        enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
+//                "getStackInfo()");
         long ident = Binder.clearCallingIdentity();
         try {
             synchronized (this) {

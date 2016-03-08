@@ -253,7 +253,13 @@ public final class ViewRootImpl implements ViewParent,
     final DisplayAdjustments mDisplayAdjustments;
 
     // These are accessed by multiple threads.
-    final Rect mWinFrame; // frame given by window manager.
+    /**
+     * Date: Feb 25, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * TietoTODO: find a better way for getting current window position
+     */
+    public final Rect mWinFrame; // frame given by window manager.
 
     final Rect mPendingOverscanInsets = new Rect();
     final Rect mPendingVisibleInsets = new Rect();

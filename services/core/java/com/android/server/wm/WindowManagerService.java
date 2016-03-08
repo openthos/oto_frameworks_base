@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -614,6 +615,14 @@ public class WindowManagerService extends IWindowManager.Stub
     boolean mAnimateWallpaperWithTarget;
 
     AppWindowToken mFocusedApp = null;
+    /**
+     * Date: Apr 2, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Holds information about currently focused display. Needed for multidisplay.
+     * Useful for finding focused window.
+     */
+    DisplayContent mFocusedDisplayContent = null;
 
     PowerManager mPowerManager;
     PowerManagerInternal mPowerManagerInternal;
@@ -10431,6 +10440,12 @@ public class WindowManagerService extends IWindowManager.Stub
             mH.removeMessages(H.REPORT_FOCUS_CHANGE);
             mH.sendEmptyMessage(H.REPORT_FOCUS_CHANGE);
             // TODO(multidisplay): Focused windows on default display only.
+            /**
+             * Date: Apr 15, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * TietoTODO: Focused window on default display only!
+             */
             final DisplayContent displayContent = getDefaultDisplayContentLocked();
             final boolean imWindowChanged = moveInputMethodWindowsIfNeededLocked(
                     mode != UPDATE_FOCUS_WILL_ASSIGN_LAYERS
@@ -11602,6 +11617,13 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private void handleDisplayRemovedLocked(int displayId) {
         final DisplayContent displayContent = getDisplayContentLocked(displayId);
+        /**
+         * Date: Apr 2, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Release display content when display is removed
+         */
+        mFocusedDisplayContent = null;
         if (displayContent != null) {
             if (displayContent.isAnimating()) {
                 displayContent.mDeferredRemoval = true;

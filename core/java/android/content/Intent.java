@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3593,6 +3594,24 @@ public class Intent implements Parcelable, Cloneable {
      * @see ContentResolver#getOutgoingPersistedUriPermissions()
      */
     public static final int FLAG_GRANT_PERSISTABLE_URI_PERMISSION = 0x00000040;
+
+    /**
+     * Date: Mar 18, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * This flag is used for launching app on external display
+     * {@hide}
+     */
+    public static final int FLAG_ACTIVITY_RUN_ON_EXTERNAL_DISPLAY = 0x00000080;
+
+    /**
+     * Date: Apr 1, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * This flag is used to launch app in multiwindow
+     * {@hide}
+     */
+    public static final int FLAG_ACTIVITY_RUN_IN_WINDOW = 0x00000100;
 
     /**
      * When combined with {@link #FLAG_GRANT_READ_URI_PERMISSION} and/or

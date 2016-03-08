@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,6 +234,14 @@ final class ActivityStack {
 
     /** Run all ActivityStacks through this */
     final ActivityStackSupervisor mStackSupervisor;
+
+    /**
+     * Date: Apr 23, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Does stack run any Activities in window?
+     */
+    private boolean mIsMultiwindowStack;
 
     static final int PAUSE_TIMEOUT_MSG = ActivityManagerService.FIRST_ACTIVITY_STACK_MSG + 1;
     static final int DESTROY_TIMEOUT_MSG = ActivityManagerService.FIRST_ACTIVITY_STACK_MSG + 2;
@@ -1124,7 +1133,7 @@ final class ActivityStack {
                 while (activityNdx < numActivities) {
                     final ActivityRecord activity = activities.get(activityNdx);
                     if (!activity.finishing) {
-                        return activity.fullscreen ? null : activity;
+                        return activity.isFullscreen() ? null : activity;
                     }
                     ++activityNdx;
                 }
@@ -1168,7 +1177,7 @@ final class ActivityStack {
                     // 2. Either:
                     // - Full Screen Activity OR
                     // - On top of Home and our stack is NOT home
-                    if (!r.finishing && r.visible && (r.fullscreen ||
+                    if (!r.finishing && r.visible && (r.isFullscreen() ||
                             (!isHomeStack() && r.frontOfTask && task.isOverHomeStack()))) {
                         return false;
                     }
@@ -1292,7 +1301,7 @@ final class ActivityStack {
                     // Aggregate current change flags.
                     configChanges |= r.configChangeFlags;
 
-                    if (r.fullscreen) {
+                    if (r.isFullscreen()) {
                         // At this point, nothing else needs to be shown
                         if (DEBUG_VISBILITY) Slog.v(TAG, "Fullscreen: at " + r);
                         behindFullscreen = true;
@@ -1960,7 +1969,7 @@ final class ActivityStack {
                         task.addActivityToTop(r);
                         r.putInHistory();
                         mWindowManager.addAppToken(task.mActivities.indexOf(r), r.appToken,
-                                r.task.taskId, mStackId, r.info.screenOrientation, r.fullscreen,
+                                r.task.taskId, mStackId, r.info.screenOrientation, r.isFullscreen(),
                                 (r.info.flags & ActivityInfo.FLAG_SHOW_ON_LOCK_SCREEN) != 0,
                                 r.userId, r.info.configChanges, task.voiceSession != null,
                                 r.mLaunchTaskBehind);
@@ -2024,7 +2033,7 @@ final class ActivityStack {
                 mNoAnimActivities.remove(r);
             }
             mWindowManager.addAppToken(task.mActivities.indexOf(r),
-                    r.appToken, r.task.taskId, mStackId, r.info.screenOrientation, r.fullscreen,
+                    r.appToken, r.task.taskId, mStackId, r.info.screenOrientation, r.isFullscreen(),
                     (r.info.flags & ActivityInfo.FLAG_SHOW_ON_LOCK_SCREEN) != 0, r.userId,
                     r.info.configChanges, task.voiceSession != null, r.mLaunchTaskBehind);
             boolean doShow = true;
@@ -2076,7 +2085,7 @@ final class ActivityStack {
             // If this is the first activity, don't do any fancy animations,
             // because there is nothing for it to animate on top of.
             mWindowManager.addAppToken(task.mActivities.indexOf(r), r.appToken,
-                    r.task.taskId, mStackId, r.info.screenOrientation, r.fullscreen,
+                    r.task.taskId, mStackId, r.info.screenOrientation, r.isFullscreen(),
                     (r.info.flags & ActivityInfo.FLAG_SHOW_ON_LOCK_SCREEN) != 0, r.userId,
                     r.info.configChanges, task.voiceSession != null, r.mLaunchTaskBehind);
             ActivityOptions.abort(options);
@@ -3072,7 +3081,7 @@ final class ActivityStack {
                 if (r.finishing) {
                     continue;
                 }
-                if (r.fullscreen) {
+                if (r.isFullscreen()) {
                     lastIsOpaque = true;
                 }
                 if (owner != null && r.app != owner) {
@@ -3785,7 +3794,7 @@ final class ActivityStack {
                 if (r.appToken == token) {
                     return true;
                 }
-                if (r.fullscreen && !r.finishing) {
+                if (r.isFullscreen() && !r.finishing) {
                     return false;
                 }
             }
@@ -4117,5 +4126,19 @@ final class ActivityStack {
     public String toString() {
         return "ActivityStack{" + Integer.toHexString(System.identityHashCode(this))
                 + " stackId=" + mStackId + ", " + mTaskHistory.size() + " tasks}";
+    }
+
+    /**
+     * Date: Apr 23, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Check check if stack is contains activities which run in window.
+     */
+    public boolean isMultiwindowStack() {
+        return mIsMultiwindowStack;
+    }
+
+    public void setMultiwindowStack(boolean isMultiwindow) {
+        mIsMultiwindowStack = isMultiwindow;
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +18,7 @@
 package com.android.server.wm;
 
 import static com.android.server.am.ActivityStackSupervisor.HOME_STACK_ID;
+import static com.android.server.am.ActivityStackSupervisor.EXTERNAL_HOME_STACK_ID;
 import static com.android.server.wm.WindowManagerService.DEBUG_VISIBILITY;
 import static com.android.server.wm.WindowManagerService.TAG;
 
@@ -94,6 +96,16 @@ class DisplayContent {
     /** Detect user tapping outside of current focused stack bounds .*/
     Region mTouchExcludeRegion = new Region();
 
+    /**
+     * Date: Apr 3, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * TietoTODO: This is dirty hack. It is used together with mTouchExcludeRegion
+     * in StackTapPointerEventListener to check which Display is currently focused.
+     * I think it need to be done in different way to allow focus window on
+     * every screen at the same time.
+     */
+    static int sCurrentTouchedDisplay = Display.DEFAULT_DISPLAY;
     /** Save allocating when calculating rects */
     Rect mTmpRect = new Rect();
 

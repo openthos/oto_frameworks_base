@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -412,11 +413,7 @@ class DragState {
             }
 
             child.getTouchableRegion(mTmpRegion);
-
-            final int touchFlags = flags &
-                    (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                            | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-            if (mTmpRegion.contains(x, y) || touchFlags == 0) {
+            if (mTmpRegion.contains(x, y)) {
                 // Found it
                 touchedWin = child;
                 break;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +73,7 @@ import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.Xml;
+import android.view.Display;
 import android.view.IInputFilter;
 import android.view.IInputFilterHost;
 import android.view.InputChannel;
@@ -460,12 +462,23 @@ public class InputManagerService extends IInputManager.Stub
      * @return The input channel.
      */
     public InputChannel monitorInput(String inputChannelName) {
+        return monitorInput(inputChannelName, Display.DEFAULT_DISPLAY);
+    }
+
+    /**
+     * Date: Apr 3, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Variation of monitorInput to allow monitor specific display.
+     */
+    public InputChannel monitorInput(String inputChannelName, int displayId) {
         if (inputChannelName == null) {
             throw new IllegalArgumentException("inputChannelName must not be null.");
         }
 
         InputChannel[] inputChannels = InputChannel.openInputChannelPair(inputChannelName);
         nativeRegisterInputChannel(mPtr, inputChannels[0], null, true);
+        inputChannels[0].setDisplayId(displayId);
         inputChannels[0].dispose(); // don't need to retain the Java object reference
         return inputChannels[1];
     }

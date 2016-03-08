@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +102,7 @@ final class ActivityRecord {
     final String processName; // process where this component wants to run
     final String taskAffinity; // as per ActivityInfo.taskAffinity
     final boolean stateNotNeeded; // As per ActivityInfo.flags
-    boolean fullscreen; // covers the full screen?
+    private boolean fullscreen; // covers the full screen?
     final boolean noDisplay;  // activity is not displayed?
     final boolean componentSpecified;  // did caller specifiy an explicit component?
 
@@ -276,7 +277,7 @@ final class ActivityRecord {
                 pw.print(" visible="); pw.print(visible);
                 pw.print(" sleeping="); pw.print(sleeping);
                 pw.print(" idle="); pw.println(idle);
-        pw.print(prefix); pw.print("fullscreen="); pw.print(fullscreen);
+        pw.print(prefix); pw.print("fullscreen="); pw.print(isFullscreen());
                 pw.print(" noDisplay="); pw.print(noDisplay);
                 pw.print(" immersive="); pw.print(immersive);
                 pw.print(" launchMode="); pw.println(launchMode);
@@ -474,10 +475,10 @@ final class ActivityRecord {
 
             AttributeCache.Entry ent = AttributeCache.instance().get(packageName,
                     realTheme, com.android.internal.R.styleable.Window, userId);
-            fullscreen = ent != null && !ent.array.getBoolean(
+            setFullscreen(ent != null && !ent.array.getBoolean(
                     com.android.internal.R.styleable.Window_windowIsFloating, false)
                     && !ent.array.getBoolean(
-                    com.android.internal.R.styleable.Window_windowIsTranslucent, false);
+                    com.android.internal.R.styleable.Window_windowIsTranslucent, false));
             noDisplay = ent != null && ent.array.getBoolean(
                     com.android.internal.R.styleable.Window_windowNoDisplay, false);
 
@@ -506,7 +507,7 @@ final class ActivityRecord {
             appInfo = null;
             processName = null;
             packageName = null;
-            fullscreen = true;
+            setFullscreen(true);
             noDisplay = false;
             mActivityType = APPLICATION_ACTIVITY_TYPE;
             immersive = false;
@@ -535,14 +536,14 @@ final class ActivityRecord {
     }
 
     boolean changeWindowTranslucency(boolean toOpaque) {
-        if (fullscreen == toOpaque) {
+        if (isFullscreen() == toOpaque) {
             return false;
         }
 
         // Keep track of the number of fullscreen activities in this task.
         task.numFullscreen += toOpaque ? +1 : -1;
 
-        fullscreen = toOpaque;
+        setFullscreen(toOpaque);
         return true;
     }
 
@@ -1248,5 +1249,24 @@ final class ActivityRecord {
         sb.append(intent.getComponent().flattenToShortString());
         stringName = sb.toString();
         return toString();
+    }
+
+    /**
+     * Date: Apr 23, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Add setter and getter for fullscreen. App can be fullscreen only if it is
+     * not started in multiwindow.
+     */
+    boolean isFullscreen() {
+        if (task != null && task.stack != null &&
+                task.stack.isMultiwindowStack()) {
+            return false;
+        }
+        return fullscreen;
+    }
+
+    void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
     }
 }
