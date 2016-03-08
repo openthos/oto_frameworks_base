@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2014 Tieto Poland Sp. z o.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,6 +256,14 @@ static void android_view_InputChannel_nativeDup(JNIEnv* env, jobject obj, jobjec
     }
 }
 
+static void android_view_InputChannel_nativeSetDisplayId(JNIEnv* env, jobject obj, jint displayId) {
+    NativeInputChannel* nativeInputChannel =
+            android_view_InputChannel_getNativeInputChannel(env, obj);
+    if (nativeInputChannel) {
+        nativeInputChannel->getInputChannel()->setDisplayId(displayId);
+    }
+}
+
 // ----------------------------------------------------------------------------
 
 static JNINativeMethod gInputChannelMethods[] = {
@@ -273,6 +282,11 @@ static JNINativeMethod gInputChannelMethods[] = {
             (void*)android_view_InputChannel_nativeGetName },
     { "nativeDup", "(Landroid/view/InputChannel;)V",
             (void*)android_view_InputChannel_nativeDup },
+    /**
+     * Date: Apr 3, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     */
+    { "nativeSetDisplayId", "(I)V", (void*)android_view_InputChannel_nativeSetDisplayId },
 };
 
 #define FIND_CLASS(var, className) \
