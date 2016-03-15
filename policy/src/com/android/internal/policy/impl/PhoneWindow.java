@@ -3466,7 +3466,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         private LinearLayout mHeader;
         private ImageButton mCloseBtn;
-        private ImageButton mLaunchBtn;
         private ImageButton mMaximizeBtn;
         private View mInnerBorder;
         private View mOuterBorder;
@@ -3498,7 +3497,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mStatusBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
             mBorderPadding = mDecorView.getPaddingLeft() + mTopBarHeight;
             mCloseBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwCloseBtn);
-            mLaunchBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwLaunchBtn);
             mMaximizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMaximizeBtn);
             mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
             mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
@@ -3554,15 +3552,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 //                    catch (RemoteException e) {
 //                        e.printStackTrace();
 //                    }
-                }
-            });
-
-            mLaunchBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-//                    Intent intent = new Intent();
-//                    intent.setComponent(mDefaultApp);
-//                    startMultiwindowApp(intent, getStackId());
                 }
             });
 
