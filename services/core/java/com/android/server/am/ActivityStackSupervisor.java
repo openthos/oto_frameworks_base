@@ -444,12 +444,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStackTaskToTop(int homeStackTaskType, String reason) {
-        if (homeStackTaskType == RECENTS_ACTIVITY_TYPE) {
-            mWindowManager.showRecentApps();
-            return;
-        }
-        moveHomeStack(true, reason);
-        mHomeStack.moveHomeStackTaskToTop(homeStackTaskType);
+        //if (homeStackTaskType == RECENTS_ACTIVITY_TYPE) {
+        //    mWindowManager.showRecentApps();
+        //    return;
+        //}
+        //moveHomeStack(true, reason);
+        //mHomeStack.moveHomeStackTaskToTop(homeStackTaskType);
     }
 
     boolean resumeHomeStackTask(int homeStackTaskType, ActivityRecord prev, String reason) {
@@ -1563,33 +1563,34 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 return taskStack;
             }
 
-            final ActivityContainer container = r.mInitialActivityContainer;
-            if (container != null) {
-                // The first time put it on the desired stack, after this put on task stack.
-                r.mInitialActivityContainer = null;
-                return container.mStack;
-            }
+            //final ActivityContainer container = r.mInitialActivityContainer;
+            //if (container != null) {
+            //    // The first time put it on the desired stack, after this put on task stack.
+            //    r.mInitialActivityContainer = null;
+            //    return container.mStack;
+            //}
 
-            if (mFocusedStack != mHomeStack && (!newTask ||
-                    mFocusedStack.mActivityContainer.isEligibleForNewTasks())) {
-                if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
-                        "adjustStackFocus: Have a focused stack=" + mFocusedStack);
-                return mFocusedStack;
-            }
+            //if (mFocusedStack != mHomeStack && (!newTask ||
+            //        mFocusedStack.mActivityContainer.isEligibleForNewTasks())) {
+            //    if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
+            //            "adjustStackFocus: Have a focused stack=" + mFocusedStack);
+            //    return mFocusedStack;
+            //}
 
-            final ArrayList<ActivityStack> homeDisplayStacks = mHomeStack.mStacks;
-            for (int stackNdx = homeDisplayStacks.size() - 1; stackNdx >= 0; --stackNdx) {
-                final ActivityStack stack = homeDisplayStacks.get(stackNdx);
-                if (!stack.isHomeStack()) {
-                    if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
-                            "adjustStackFocus: Setting focused stack=" + stack);
-                    mFocusedStack = stack;
-                    return mFocusedStack;
-                }
-            }
+            //final ArrayList<ActivityStack> homeDisplayStacks = mHomeStack.mStacks;
+            //for (int stackNdx = homeDisplayStacks.size() - 1; stackNdx >= 0; --stackNdx) {
+            //    final ActivityStack stack = homeDisplayStacks.get(stackNdx);
+            //    if (!stack.isHomeStack()) {
+            //        if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
+            //                "adjustStackFocus: Setting focused stack=" + stack);
+            //        mFocusedStack = stack;
+            //        return mFocusedStack;
+            //    }
+            //}
 
             // Need to create an app stack for this user.
             int stackId = createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY);
+            mService.relayoutWindow(stackId, new Rect(200, 400, 700, 1000));
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
             mFocusedStack = getStack(stackId);
@@ -2699,6 +2700,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             return;
         }
         task.stack.removeTask(task, "moveTaskToStack");
+        mFocusedStack = stack;
         stack.addTask(task, toTop, true);
         mWindowManager.addTask(taskId, stackId, toTop);
         resumeTopActivitiesLocked();

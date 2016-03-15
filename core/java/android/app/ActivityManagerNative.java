@@ -2364,6 +2364,18 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             reply.writeNoException();
             return true;
         }
+
+        case RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            Rect r = new Rect();
+            r.readFromParcel(data);
+            boolean[] ret = new boolean[1];
+            ret[0] = relayoutWindow(stackId, r);
+            reply.writeNoException();
+            reply.writeBooleanArray(ret);
+            return true;
+        }
         }
 
         return super.onTransact(code, data, reply, flags);
@@ -5463,6 +5475,22 @@ class ActivityManagerProxy implements IActivityManager
         reply.readException();
         data.recycle();
         reply.recycle();
+    }
+
+    public boolean relayoutWindow(int stackId, Rect r) throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        int flags = 0;
+        r.writeToParcel(data, flags);
+        mRemote.transact(RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION, data, reply, 0);
+        reply.readException();
+        boolean[] ret = new boolean[1];
+        reply.readBooleanArray(ret);
+        data.recycle();
+        reply.recycle();
+        return ret[0];
     }
 
     private IBinder mRemote;

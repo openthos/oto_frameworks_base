@@ -2161,6 +2161,7 @@
 
   <!-- Multiwindow -->
   <java-symbol type="id" name="mwCloseBtn" />
+  <java-symbol type="id" name="mwLaunchBtn" />
   <java-symbol type="id" name="mwMaximizeBtn" />
   <java-symbol type="id" name="mw_decor_header" />
   <java-symbol type="id" name="mwInnerBorder" />

@@ -116,6 +116,7 @@ class DisplayContent {
 
     /** Remove this display when animation on it has completed. */
     boolean mDeferredRemoval;
+    private boolean mHomeHasFocus = false;
 
     /**
      * @param display May not be null.
@@ -208,6 +209,8 @@ class DisplayContent {
                 throw new IllegalArgumentException("attachStack: HOME_STACK_ID (0) not first.");
             }
             mHomeStack = stack;
+        } else {
+            mHomeHasFocus = false;
         }
         mStacks.add(stack);
         layoutNeeded = true;
@@ -230,15 +233,47 @@ class DisplayContent {
         mContentRect.set(contentRect);
     }
 
+    boolean relayoutStack(int stackId, Rect pos) {
+        for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
+            final TaskStack stack = mStacks.get(stackNdx);
+            if (stack.mStackId == stackId) {
+                stack.setCrappyRelayouted(true);
+                layoutNeeded = true;
+                stack.setBounds(pos);
+                return true;
+            }
+        }
+        return false;
+    }
+
     int stackIdFromPoint(int x, int y) {
         for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
             final TaskStack stack = mStacks.get(stackNdx);
             stack.getBounds(mTmpRect);
             if (mTmpRect.contains(x, y)) {
+                /**
+                 * get clicked task in stack to top, except home stack. Should
+                 * be always on bottom
+                 */
+                if (stack.mStackId != HOME_STACK_ID) {
+                    mHomeHasFocus = false;
+                    /**
+                     * multidisplay!!! see inside this method
+                     */
+                    mService.rebuildAppWindowListLocked();
+                    mService.prepareAppTransition(AppTransition.TRANSIT_TASK_TO_FRONT, true);
+                    mService.executeAppTransition();
+                } else {
+                    mHomeHasFocus = true;
+                }
                 return stack.mStackId;
             }
         }
         return -1;
+    }
+
+    public boolean isHomeFocused() {
+        return mHomeHasFocus;
     }
 
     void setTouchExcludeRegion(TaskStack focusedStack) {

@@ -573,6 +573,8 @@ public interface IActivityManager extends IInterface {
         }
     }
 
+    public boolean relayoutWindow(int stackId, Rect r) throws RemoteException;
+
     String descriptor = "android.app.IActivityManager";
 
     // Please keep these transaction codes the same -- they are also

@@ -509,9 +509,9 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         mHaveFrame = true;
 
         TaskStack stack = mAppToken != null ? getStack() : null;
-        if (stack != null && !stack.isFullscreen()) {
+        if ((stack != null) && (!stack.isFullscreen() || stack.isCrappyRelayouted())) {
             getStackBounds(stack, mContainingFrame);
-            if (mUnderStatusBar) {
+            if (mUnderStatusBar && !stack.isCrappyRelayouted()) {
                 mContainingFrame.top = pf.top;
             }
         } else {
@@ -595,8 +595,10 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 
         //System.out.println("Out: " + mFrame);
 
-        // Now make sure the window fits in the overall display.
-        Gravity.applyDisplay(mAttrs.gravity, df, mFrame);
+        if ((stack == null) || (!stack.isCrappyRelayouted())) {
+            // Now make sure the window fits in the overall display.
+            Gravity.applyDisplay(mAttrs.gravity, df, mFrame);
+        }
 
         // Make sure the content and visible frames are inside of the
         // final window frame.

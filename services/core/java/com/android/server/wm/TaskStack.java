@@ -37,6 +37,9 @@ public class TaskStack {
     /** Unique identifier */
     final int mStackId;
 
+    /** Indicates whether task stack was relayouted using relayoutWindow. */
+    private boolean mCrappyRelayouted = false;
+
     /** The service */
     private final WindowManagerService mService;
 
@@ -410,5 +413,13 @@ public class TaskStack {
     @Override
     public String toString() {
         return "{stackId=" + mStackId + " tasks=" + mTasks + "}";
+    }
+
+    public void setCrappyRelayouted(boolean val) {
+        mCrappyRelayouted = val;
+    }
+
+    public boolean isCrappyRelayouted() {
+        return mCrappyRelayouted;
     }
 }

@@ -147,7 +147,7 @@ public class DimLayer {
     void adjustSurface(int layer, boolean inTransaction) {
         final int dw, dh;
         final float xPos, yPos;
-        if (!mStack.isFullscreen()) {
+        if (!mStack.isFullscreen() || mStack.isCrappyRelayouted()) {
             dw = mBounds.width();
             dh = mBounds.height();
             xPos = mBounds.left;

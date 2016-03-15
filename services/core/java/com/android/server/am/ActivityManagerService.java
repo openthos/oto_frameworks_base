@@ -8724,8 +8724,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public List<StackInfo> getAllStackInfos() {
-        enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
-                "getAllStackInfos()");
+        //enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
+        //        "getAllStackInfos()");
         long ident = Binder.clearCallingIdentity();
         try {
             synchronized (this) {
@@ -19744,5 +19744,17 @@ public final class ActivityManagerService extends ActivityManagerNative
                 }
             }
         }
+    }
+
+    @Override
+    public boolean relayoutWindow(int stackId, Rect r) {
+        // Add posibility to relayout only own window
+        long ident = Binder.clearCallingIdentity();
+        try {
+            mWindowManager.relayoutWindow(stackId, r);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+        return true;
     }
 }

@@ -17,6 +17,7 @@
 
 package android.app;
 
+import android.app.ActivityManager.StackInfo;
 import android.annotation.NonNull;
 import android.os.PersistableBundle;
 import android.transition.Scene;
@@ -102,6 +103,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * An activity is a single, focused thing that the user can do.  Almost all
@@ -5920,6 +5922,25 @@ public class Activity extends ContextThemeWrapper
         mParent = parent;
     }
 
+    private int getStackId() {
+        try {
+            int taskId = getTaskId();
+            List<StackInfo> stacks = ActivityManagerNative.getDefault().getAllStackInfos();
+            for (StackInfo info : stacks) {
+                if ((info.stackId != 0) && (info.taskIds != null)) {
+                    for (int i = 0; i < info.taskIds.length; i++) {
+                        if (taskId == info.taskIds[i]) {
+                            return info.stackId;
+                        }
+                    }
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     final void attach(Context context, ActivityThread aThread,
             Instrumentation instr, IBinder token, int ident,
             Application application, Intent intent, ActivityInfo info,
@@ -5988,13 +6009,14 @@ public class Activity extends ContextThemeWrapper
     }
 
     final void performCreate(Bundle icicle) {
-        mWindow.setStackId(-1);
+        mWindow.setStackId(getStackId());
         onCreate(icicle);
         mActivityTransitionState.readState(icicle);
         performCreateCommon();
     }
 
     final void performCreate(Bundle icicle, PersistableBundle persistentState) {
+        mWindow.setStackId(getStackId());
         onCreate(icicle, persistentState);
         mActivityTransitionState.readState(icicle);
         performCreateCommon();

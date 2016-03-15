@@ -10513,6 +10513,20 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     private WindowState findFocusedWindowLocked(DisplayContent displayContent) {
+        /**
+         * Dirty hack for home stack to receive key input
+         * propose other solution
+         */
+        if (displayContent.isHomeFocused()) {
+            TaskStack ts = displayContent.getHomeStack();
+            Task t = ts.getTasks().get(0);
+            if (t != null) {
+                AppWindowToken apw = t.mAppTokens.get(0);
+                if (apw != null) {
+                    return apw.findMainWindow();
+                }
+            }
+        }
         final WindowList windows = displayContent.getWindowList();
         for (int i = windows.size() - 1; i >= 0; i--) {
             final WindowState win = windows.get(i);
@@ -11806,5 +11820,18 @@ public class WindowManagerService extends IWindowManager.Stub
                 WindowManagerService.this.removeWindowToken(token);
             }
         }
+    }
+
+    public boolean relayoutWindow(int stackId, Rect pos) {
+        synchronized (mWindowMap) {
+            final int numDisplays = mDisplayContents.size();
+            for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+                if (mDisplayContents.valueAt(displayNdx).relayoutStack(stackId, pos)) {
+                    performLayoutAndPlaceSurfacesLocked();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
