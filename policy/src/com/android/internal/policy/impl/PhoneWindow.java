@@ -3504,7 +3504,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mLeftResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeLeft);
             mRightResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeRight);
 
-            DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+            final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
             mFullScreen = new Rect(0, mStatusBarHeight + mMultiwindowHeight, metrics.widthPixels, metrics.heightPixels);
 
             mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
@@ -3543,50 +3543,42 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    try{
-//                        Rect drawingRect = new Rect();
-//                        mDecor.getDrawingRect(drawingRect);
-//                        //ActivityManagerNative.getDefault().relayoutWindow(getStackId(), new Rect( drawingRect.left + 10000, drawingRect.top, drawingRect.right + 10000, drawingRect.bottom));
-//                        //ActivityManagerNative.getDefault().removeWindow(getStackId());
-//                    }
-//                    catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        ActivityManagerNative.getDefault().closeActivity(getStackId());
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Close button failes", e);
+                    }
                 }
             });
 
             mMaximizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    try{
-//                        Rect newSize = new Rect(mFullScreen);
-//                        Rect actualSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
-//                        boolean maximized = actualSize.equals(newSize);
-//                        if (maximized) {
-//                            //we are maximized, return to previous size
-//                            newSize = mOldSize;
-//                        }
-//                        boolean relayoutSuccessful = ActivityManagerNative.getDefault().relayoutWindow(getStackId(), newSize);
-//                        if (relayoutSuccessful) {
-//                            mOldSize = actualSize;
-//                            mMaximizeBtn.setImageResource(maximized ? com.android.internal.R.drawable.mw_btn_maximize :
-//                                com.android.internal.R.drawable.mw_btn_minimize);
-//                        }
-//                    }
-//                    catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    try {
+                        Rect customMaximizedWindowSize = ActivityManagerNative.getDefault().getMaximizedWindowSize();
+                        if (!customMaximizedWindowSize.equals(new Rect())) {
+                            mFullScreen = customMaximizedWindowSize;
+                        } else {
+                            mFullScreen = new Rect(0, mStatusBarHeight, metrics.widthPixels, metrics.heightPixels);
+                        }
+                        if (!actualWindowSize.equals(mFullScreen)){
+                            mOldSize = actualWindowSize;
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mFullScreen);
+                            actualWindowSize = mFullScreen;
+                        } else {
+                            if (mOldSize == null) {
+                                mOldSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                            }
+                            actualWindowSize = mOldSize;
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mOldSize);
+                        }
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Maximize failed", e);
+                    }
                 }
             });
 
-//            try {
-//                if (!ActivityManagerNative.getDefault().isTopBarShown()) {
-//                    mRemoteConnected = true;
-//                    mInnerBorder.setAlpha(0f);
-//                }
-//            } catch (RemoteException e) {
-//                e.printStackTrace();
-//            }
             setFocus();
         }
 

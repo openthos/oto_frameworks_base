@@ -239,8 +239,7 @@ class DisplayContent {
             if (stack.mStackId == stackId) {
                 stack.setCrappyRelayouted(true);
                 layoutNeeded = true;
-                stack.setBounds(pos);
-                return true;
+                return stack.setBounds(pos);
             }
         }
         return false;

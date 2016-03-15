@@ -573,7 +573,49 @@ public interface IActivityManager extends IInterface {
         }
     }
 
+    /**
+     * Date: Feb 25, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Change window position
+     * @param stackId identifies stack (stackbox id
+     * @param r new window position
+     * @return true on success
+     * @throws RemoteException
+     */
     public boolean relayoutWindow(int stackId, Rect r) throws RemoteException;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Close application in window.
+     *
+     * @param stackId identifies stack (stackbox id)
+     * @return true on success
+     * @throws RemoteException
+     */
+    public boolean closeActivity(int stackId) throws RemoteException;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Setter for custow maximized window size size of application.
+     *
+     * @param rect Takes a parameters of window (in Rect) of application
+     */
+    public void setMaximizedWindowSize(Rect rect) throws RemoteException;
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Getter for custom maximized window size of application.
+     *
+     * @return Rect of window
+     */
+    public Rect getMaximizedWindowSize() throws RemoteException;
 
     String descriptor = "android.app.IActivityManager";
 

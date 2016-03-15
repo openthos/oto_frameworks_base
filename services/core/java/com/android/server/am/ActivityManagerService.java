@@ -19748,13 +19748,66 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean relayoutWindow(int stackId, Rect r) {
-        // Add posibility to relayout only own window
+        /**
+         * Date: Feb 25, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * TietoTODO: add posibility to relayout only own window
+         */
+//        enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
+//                "resizeStackInfo()");
         long ident = Binder.clearCallingIdentity();
         try {
+            Slog.v(TAG, "RelayoutWindow: " + stackId + " pos:" + r);
             mWindowManager.relayoutWindow(stackId, r);
         } finally {
             Binder.restoreCallingIdentity(ident);
         }
         return true;
+    }
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Method for closing application by stackbox id and closing their tasks.
+     */
+    @Override
+    public boolean closeActivity(int stackId) {
+        boolean succeed;
+        long ident = Binder.clearCallingIdentity();
+        StackInfo stack = getStackInfo(stackId);
+        if (stack != null) {
+            for (int next = stack.taskIds.length - 1; next >= 0; --next) {
+                removeTask(stack.taskIds[next]);
+            }
+            succeed = true;
+        } else {
+            succeed = false;
+        }
+        Binder.restoreCallingIdentity(ident);
+        return succeed;
+    }
+
+    /**
+     * Date: Aug 29, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Setter for custom maximized window size of maximize button on window
+     */
+    @Override
+    public void setMaximizedWindowSize(Rect screen) {
+        mMaximizedWindowSize = screen;
+    }
+
+    /**
+     * Date: Aug 29, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Getter for custom maximized window size of maximize button on window
+     */
+    @Override
+    public Rect getMaximizedWindowSize() {
+        return mMaximizedWindowSize;
     }
 }
