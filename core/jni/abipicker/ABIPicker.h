@@ -7,7 +7,7 @@
 #include <sys/types.h>
 
 #include <ScopedUtfChars.h>
-#include <assert.h>
+
 namespace android {
 //  assumption: the length of name of any abi type in abi list,
 //  like armeabi-v7a, armeabi, x86, is not longer than 64
