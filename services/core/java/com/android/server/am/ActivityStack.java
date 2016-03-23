@@ -1214,7 +1214,25 @@ final class ActivityStack {
         // If the top activity is not fullscreen, then we need to
         // make sure any activities under it are now visible.
         boolean aboveTop = true;
-        boolean behindFullscreen = false;
+        boolean behindFullscreen = !isMultiwindowStack() && !isStackVisible();
+        /**
+         * Date: Aug 7, 2014
+         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+         *
+         * Stack is behindFullscreen, but maybe it isn't. When mw app is launched
+         * from app, than Home is shown in background instead of this particualar
+         * app. Below lines check if non-Home stack is above Home stack.
+         */
+        if (behindFullscreen) {
+            for (ActivityStack as : mStackSupervisor.getStacks()) {
+                if (as == this) {
+                    break;
+                } else if (as.isHomeStack()) {
+                    behindFullscreen = false;
+                    break;
+                }
+            }
+        }
 
         for (int taskNdx = mTaskHistory.size() - 1; taskNdx >= 0; --taskNdx) {
             final TaskRecord task = mTaskHistory.get(taskNdx);

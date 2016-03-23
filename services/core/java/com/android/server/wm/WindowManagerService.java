@@ -5151,7 +5151,7 @@ public class WindowManagerService extends IWindowManager.Stub
      * @param stackId The unique identifier of the new stack.
      * @param displayId The unique identifier of the DisplayContent.
      */
-    public void attachStack(int stackId, int displayId) {
+    public void attachStack(int stackId, int displayId, boolean floating) {
         final long origId = Binder.clearCallingIdentity();
         try {
             synchronized (mWindowMap) {
@@ -5160,7 +5160,7 @@ public class WindowManagerService extends IWindowManager.Stub
                     TaskStack stack = mStackIdToStack.get(stackId);
                     if (stack == null) {
                         if (DEBUG_STACK) Slog.d(TAG, "attachStack: stackId=" + stackId);
-                        stack = new TaskStack(this, stackId);
+                        stack = new TaskStack(this, stackId, floating);
                         mStackIdToStack.put(stackId, stack);
                     }
                     stack.attachDisplayContent(displayContent);

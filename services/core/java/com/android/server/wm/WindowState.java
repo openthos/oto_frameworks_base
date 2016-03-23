@@ -439,9 +439,23 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             mIsWallpaper = attachedWindow.mAttrs.type == TYPE_WALLPAPER;
             mIsFloatingLayer = mIsImWindow || mIsWallpaper;
         } else {
+            /**
+             * Date: Apr 23, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * If window is started in multiwindow, than it is going to be
+             * launched in layer TYPE_MULTIWINDOW_APPLICATION (above normal apps).
+             */
+            int type = a.type;
+            if (mToken != null && mToken.appWindowToken != null) {
+                Task task = mService.mTaskIdToTask.get(mToken.appWindowToken.groupId);
+                if (task.mStack.isFloating()) {
+                    type = WindowManager.LayoutParams.TYPE_MULTIWINDOW_APPLICATION;
+                }
+            }
             // The multiplier here is to reserve space for multiple
             // windows in the same type layer.
-            mBaseLayer = mPolicy.windowTypeToLayerLw(a.type)
+            mBaseLayer = mPolicy.windowTypeToLayerLw(type)
                     * WindowManagerService.TYPE_LAYER_MULTIPLIER
                     + WindowManagerService.TYPE_LAYER_OFFSET;
             mSubLayer = 0;
@@ -509,9 +523,9 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         mHaveFrame = true;
 
         TaskStack stack = mAppToken != null ? getStack() : null;
-        if ((stack != null) && (!stack.isFullscreen() || stack.isCrappyRelayouted())) {
+        if ((stack != null) && (!stack.isFullscreen() || stack.isFloating())) {
             getStackBounds(stack, mContainingFrame);
-            if (mUnderStatusBar && !stack.isCrappyRelayouted()) {
+            if (mUnderStatusBar && !stack.isFloating()) {
                 mContainingFrame.top = pf.top;
             }
         } else {
@@ -595,47 +609,47 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 
         //System.out.println("Out: " + mFrame);
 
-        if ((stack == null) || (!stack.isCrappyRelayouted())) {
+        if ((stack == null) || (!stack.isFloating())) {
             // Now make sure the window fits in the overall display.
             Gravity.applyDisplay(mAttrs.gravity, df, mFrame);
+
+            // Make sure the content and visible frames are inside of the
+            // final window frame.
+            mContentFrame.set(Math.max(mContentFrame.left, mFrame.left),
+                    Math.max(mContentFrame.top, mFrame.top),
+                    Math.min(mContentFrame.right, mFrame.right),
+                    Math.min(mContentFrame.bottom, mFrame.bottom));
+
+            mVisibleFrame.set(Math.max(mVisibleFrame.left, mFrame.left),
+                    Math.max(mVisibleFrame.top, mFrame.top),
+                    Math.min(mVisibleFrame.right, mFrame.right),
+                    Math.min(mVisibleFrame.bottom, mFrame.bottom));
+
+            mStableFrame.set(Math.max(mStableFrame.left, mFrame.left),
+                    Math.max(mStableFrame.top, mFrame.top),
+                    Math.min(mStableFrame.right, mFrame.right),
+                    Math.min(mStableFrame.bottom, mFrame.bottom));
+
+            mOverscanInsets.set(Math.max(mOverscanFrame.left - mFrame.left, 0),
+                    Math.max(mOverscanFrame.top - mFrame.top, 0),
+                    Math.max(mFrame.right - mOverscanFrame.right, 0),
+                    Math.max(mFrame.bottom - mOverscanFrame.bottom, 0));
+
+            mContentInsets.set(mContentFrame.left - mFrame.left,
+                    mContentFrame.top - mFrame.top,
+                    mFrame.right - mContentFrame.right,
+                    mFrame.bottom - mContentFrame.bottom);
+
+            mVisibleInsets.set(mVisibleFrame.left - mFrame.left,
+                    mVisibleFrame.top - mFrame.top,
+                    mFrame.right - mVisibleFrame.right,
+                    mFrame.bottom - mVisibleFrame.bottom);
+
+            mStableInsets.set(Math.max(mStableFrame.left - mFrame.left, 0),
+                    Math.max(mStableFrame.top - mFrame.top, 0),
+                    Math.max(mFrame.right - mStableFrame.right, 0),
+                    Math.max(mFrame.bottom - mStableFrame.bottom, 0));
         }
-
-        // Make sure the content and visible frames are inside of the
-        // final window frame.
-        mContentFrame.set(Math.max(mContentFrame.left, mFrame.left),
-                Math.max(mContentFrame.top, mFrame.top),
-                Math.min(mContentFrame.right, mFrame.right),
-                Math.min(mContentFrame.bottom, mFrame.bottom));
-
-        mVisibleFrame.set(Math.max(mVisibleFrame.left, mFrame.left),
-                Math.max(mVisibleFrame.top, mFrame.top),
-                Math.min(mVisibleFrame.right, mFrame.right),
-                Math.min(mVisibleFrame.bottom, mFrame.bottom));
-
-        mStableFrame.set(Math.max(mStableFrame.left, mFrame.left),
-                Math.max(mStableFrame.top, mFrame.top),
-                Math.min(mStableFrame.right, mFrame.right),
-                Math.min(mStableFrame.bottom, mFrame.bottom));
-
-        mOverscanInsets.set(Math.max(mOverscanFrame.left - mFrame.left, 0),
-                Math.max(mOverscanFrame.top - mFrame.top, 0),
-                Math.max(mFrame.right - mOverscanFrame.right, 0),
-                Math.max(mFrame.bottom - mOverscanFrame.bottom, 0));
-
-        mContentInsets.set(mContentFrame.left - mFrame.left,
-                mContentFrame.top - mFrame.top,
-                mFrame.right - mContentFrame.right,
-                mFrame.bottom - mContentFrame.bottom);
-
-        mVisibleInsets.set(mVisibleFrame.left - mFrame.left,
-                mVisibleFrame.top - mFrame.top,
-                mFrame.right - mVisibleFrame.right,
-                mFrame.bottom - mVisibleFrame.bottom);
-
-        mStableInsets.set(Math.max(mStableFrame.left - mFrame.left, 0),
-                Math.max(mStableFrame.top - mFrame.top, 0),
-                Math.max(mFrame.right - mStableFrame.right, 0),
-                Math.max(mFrame.bottom - mStableFrame.bottom, 0));
 
         mCompatFrame.set(mFrame);
         if (mEnforceSizeCompat) {

@@ -40,6 +40,9 @@ public class TaskStack {
     /** Indicates whether task stack was relayouted using relayoutWindow. */
     private boolean mCrappyRelayouted = false;
 
+    /** Is multiwindow ? */
+    private boolean mIsFloating = false;
+
     /** The service */
     private final WindowManagerService mService;
 
@@ -81,9 +84,10 @@ public class TaskStack {
     /** Detach this stack from its display when animation completes. */
     boolean mDeferDetach;
 
-    TaskStack(WindowManagerService service, int stackId) {
+    TaskStack(WindowManagerService service, int stackId, boolean floating) {
         mService = service;
         mStackId = stackId;
+        mIsFloating = floating;
         // TODO: remove bounds from log, they are always 0.
         EventLog.writeEvent(EventLogTags.WM_STACK_CREATED, stackId, mBounds.left, mBounds.top,
                 mBounds.right, mBounds.bottom);
@@ -413,6 +417,10 @@ public class TaskStack {
     @Override
     public String toString() {
         return "{stackId=" + mStackId + " tasks=" + mTasks + "}";
+    }
+
+    public boolean isFloating() {
+        return mIsFloating;
     }
 
     public void setCrappyRelayouted(boolean val) {

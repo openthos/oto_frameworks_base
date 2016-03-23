@@ -378,7 +378,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 mActivityDisplays.put(displayId, activityDisplay);
             }
 
-            createStackOnDisplay(HOME_STACK_ID, Display.DEFAULT_DISPLAY);
+            createStackOnDisplay(HOME_STACK_ID, Display.DEFAULT_DISPLAY, false);
             mHomeStack = mFocusedStack = mLastFocusedStack = getStack(HOME_STACK_ID);
 
             mInputManagerInternal = LocalServices.getService(InputManagerInternal.class);
@@ -1195,6 +1195,16 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     ? new ProfilerInfo(profileFile, profileFd, mService.mSamplingInterval,
                     mService.mAutoStopProfiler) : null;
             app.forceProcessStateUpTo(ActivityManager.PROCESS_STATE_TOP);
+            /**
+             * Date: Mar 25, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * If first activity in task was launch on external display, than
+             * all activities in task should be run on external display. The
+             * same rule is use for activities launched in window.
+             */
+            r.intent.addFlags(r.task.intent.getFlags() & Intent.FLAG_ACTIVITY_RUN_ON_EXTERNAL_DISPLAY);
+            r.intent.addFlags(r.task.intent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             app.thread.scheduleLaunchActivity(new Intent(r.intent), r.appToken,
                     System.identityHashCode(r), r.info, new Configuration(mService.mConfiguration),
                     r.compat, r.launchedFromPackage, r.task.voiceInteractor, app.repProcState,
@@ -1563,37 +1573,96 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 return taskStack;
             }
 
-            //final ActivityContainer container = r.mInitialActivityContainer;
-            //if (container != null) {
-            //    // The first time put it on the desired stack, after this put on task stack.
-            //    r.mInitialActivityContainer = null;
-            //    return container.mStack;
-            //}
+            /**
+             * Date: Feb 27, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * TietoTODO: adjustStackFocus is used in two cases: when activity is created
+             * with flag Intent.FLAG_ACTIVITY_NEW_TASK and in case, which is marked as it
+             * never should happens. see the end of startActivityUncheckedLocked. Maybe it's
+             * worth to remove this method?
+             */
+//            if (mFocusedStack != null) {
+//                if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
+//                        "adjustStackFocus: Have a focused stack=" + mFocusedStack);
+//                return mFocusedStack;
+//            }
 
-            //if (mFocusedStack != mHomeStack && (!newTask ||
-            //        mFocusedStack.mActivityContainer.isEligibleForNewTasks())) {
-            //    if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
-            //            "adjustStackFocus: Have a focused stack=" + mFocusedStack);
-            //    return mFocusedStack;
-            //}
+            // Time to create the first app stack for this user.
+            /**
+             * Date: Mar 21, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * Create new stack for application. If app need to be run on external
+             * display, than EXTERNAL_HOME_STACK_ID is used.
+             * Added enable/disable multiwindow functionality.
+             * TietoTODO: There is quiet assumption that task stack id is the same
+             * as stack box id. Can it be different?
+             */
+            int parentStackId = HOME_STACK_ID;
+            int intentFlags = 0;
 
-            //final ArrayList<ActivityStack> homeDisplayStacks = mHomeStack.mStacks;
-            //for (int stackNdx = homeDisplayStacks.size() - 1; stackNdx >= 0; --stackNdx) {
-            //    final ActivityStack stack = homeDisplayStacks.get(stackNdx);
-            //    if (!stack.isHomeStack()) {
-            //        if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
-            //                "adjustStackFocus: Setting focused stack=" + stack);
-            //        mFocusedStack = stack;
-            //        return mFocusedStack;
-            //    }
-            //}
+            // FIXME: mContext is not merged into 5.1 originally.
+            boolean multiwindowEnabled = Settings.System.getInt(mService.mContext.getContentResolver(),
+                    Settings.System.TIETO_MULTIWINDOW_ENABLED, 0) != 0;
+            if (multiwindowEnabled && (r.intent != null)) {
+                r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
+            }
+
+            intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
+            boolean isMultiwindow = (intentFlags & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) != 0;
+
+            /**
+             * Date: Feb 27, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * TietoTODO: this loop returns first stack which is not a homestack
+             * Use the same stack for regular apps (non multiwindow).
+             */
+            if (!isMultiwindow) {
+                final ActivityContainer container = r.mInitialActivityContainer;
+                if (container != null) {
+                    // The first time put it on the desired stack, after this put on task stack.
+                    r.mInitialActivityContainer = null;
+                    return container.mStack;
+                }
+
+                if (mFocusedStack != mHomeStack && (!newTask ||
+                        mFocusedStack.mActivityContainer.isEligibleForNewTasks())) {
+                    if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
+                            "adjustStackFocus: Have a focused stack=" + mFocusedStack);
+                    return mFocusedStack;
+                }
+
+                final ArrayList<ActivityStack> homeDisplayStacks = mHomeStack.mStacks;
+                for (int stackNdx = homeDisplayStacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                    final ActivityStack stack = homeDisplayStacks.get(stackNdx);
+                    if (!stack.isHomeStack()) {
+                        if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
+                                "adjustStackFocus: Setting focused stack=" + stack);
+                        mFocusedStack = stack;
+                        return mFocusedStack;
+                    }
+                }
+            }
 
             // Need to create an app stack for this user.
-            int stackId = createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY);
-            mService.relayoutWindow(stackId, new Rect(200, 400, 700, 1000));
+            int stackId = createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY, isMultiwindow);
+            /**
+             * Date: Mar 3, 2014
+             * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+             *
+             * TietoTODO: how to set position of starting window?
+             * Activities which run on external are run fullscreen. At least
+             * for now
+             */
+            if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
+                mService.relayoutWindow(stackId, new Rect(200, 400, 700, 1000));
+            }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
             mFocusedStack = getStack(stackId);
+            mFocusedStack.setMultiwindowStack(isMultiwindow);
             return mFocusedStack;
         }
         return mHomeStack;
@@ -2614,7 +2683,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
     }
 
-    private int createStackOnDisplay(int stackId, int displayId) {
+    private int createStackOnDisplay(int stackId, int displayId, boolean floating) {
         ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
         if (activityDisplay == null) {
             return -1;
@@ -2622,7 +2691,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         ActivityContainer activityContainer = new ActivityContainer(stackId);
         mActivityContainers.put(stackId, activityContainer);
-        activityContainer.attachToDisplayLocked(activityDisplay);
+        activityContainer.attachToDisplayLocked(activityDisplay, floating);
         return stackId;
     }
 
@@ -2660,7 +2729,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             // We couldn't find a stack to restore the task to. Possible if are restoring recents
             // before an application stack is created...Go ahead and create one on the default
             // display.
-            stack = getStack(createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY));
+            stack = getStack(createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY, false));
             // Restore home stack to top.
             moveHomeStack(true, "restoreRecentTask");
             if (DEBUG_RECENTS)
@@ -3721,7 +3790,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             }
         }
 
-        void attachToDisplayLocked(ActivityDisplay activityDisplay) {
+        void attachToDisplayLocked(ActivityDisplay activityDisplay, boolean floating) {
             if (DEBUG_STACK) Slog.d(TAG, "attachToDisplayLocked: " + this
                     + " to display=" + activityDisplay);
             mActivityDisplay = activityDisplay;
@@ -3729,7 +3798,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mStack.mStacks = activityDisplay.mStacks;
 
             activityDisplay.attachActivities(mStack);
-            mWindowManager.attachStack(mStackId, activityDisplay.mDisplayId);
+            mWindowManager.attachStack(mStackId, activityDisplay.mDisplayId, floating);
         }
 
         @Override
@@ -3739,7 +3808,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 if (activityDisplay == null) {
                     return;
                 }
-                attachToDisplayLocked(activityDisplay);
+                attachToDisplayLocked(activityDisplay, false);
             }
         }
 
@@ -3961,7 +4030,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         new VirtualActivityDisplay(width, height, density);
                 mActivityDisplay = virtualActivityDisplay;
                 mActivityDisplays.put(virtualActivityDisplay.mDisplayId, virtualActivityDisplay);
-                attachToDisplayLocked(virtualActivityDisplay);
+                attachToDisplayLocked(virtualActivityDisplay, false);
             }
 
             if (mSurface != null) {
