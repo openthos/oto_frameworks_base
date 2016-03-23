@@ -1657,7 +1657,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * for now
              */
             if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
-                mService.relayoutWindow(stackId, new Rect(200, 400, 700, 1000));
+                mService.relayoutWindow(stackId, new Rect(200, 100, 600, 400));
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
