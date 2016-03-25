@@ -1679,7 +1679,33 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 final ActivityRecord parent = task.stack.mActivityContainer.mParentActivity;
                 isHomeActivity = parent != null && parent.isHomeActivity();
             }
-            moveHomeStack(isHomeActivity, reason);
+
+            if (isHomeActivity) {
+                moveHomeStack(isHomeActivity, reason);
+            } else {
+                setFocusedStack(r.task.stack.mStackId);
+            }
+        }
+    }
+
+    void setFocusedStack(int stackId) {
+        //Slog.i(TAG, String.format("Call setFocusedStack(stackId) for %d in ActivityStackSupervisor", stackId));
+        int numDisplays = mActivityDisplays.size();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
+            if ((stacks != null) && (stacks.size() > 0)) {
+                for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                    ActivityStack stack = stacks.get(stackNdx);
+                    if (stack.mStackId == stackId) {
+                        //Slog.i(TAG, String.format("set stackId: %d, origin: %d in displayId: %d", stackId, mFocusedStack.mStackId, displayNdx));
+                        stacks.remove(stack);
+                        stacks.add(stack);
+                        mLastFocusedStack = mFocusedStack;
+                        mFocusedStack = stack;
+                        return;
+                    }
+                }
+            }
         }
     }
 

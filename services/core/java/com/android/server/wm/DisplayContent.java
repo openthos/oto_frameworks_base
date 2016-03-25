@@ -246,6 +246,7 @@ class DisplayContent {
     }
 
     int stackIdFromPoint(int x, int y) {
+        int homeId = -1;
         for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
             final TaskStack stack = mStacks.get(stackNdx);
             stack.getBounds(mTmpRect);
@@ -262,13 +263,16 @@ class DisplayContent {
                     mService.rebuildAppWindowListLocked();
                     mService.prepareAppTransition(AppTransition.TRANSIT_TASK_TO_FRONT, true);
                     mService.executeAppTransition();
+                    return stack.mStackId;
                 } else {
-                    mHomeHasFocus = true;
+                    homeId = HOME_STACK_ID;
                 }
-                return stack.mStackId;
             }
         }
-        return -1;
+        if (homeId != -1) {
+            mHomeHasFocus = true;
+        }
+        return homeId;
     }
 
     public boolean isHomeFocused() {
