@@ -404,10 +404,16 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     ActivityStack getFocusedStack() {
+        if (mFocusedStack == null) {
+            return mHomeStack;
+        }
         return mFocusedStack;
     }
 
     ActivityStack getLastStack() {
+        if (mLastFocusedStack == null) {
+            return mHomeStack;
+        }
         return mLastFocusedStack;
     }
 
@@ -422,7 +428,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (stacks != null && !stacks.isEmpty()) {
             return stack == stacks.get(stacks.size() - 1);
         }
-        return false;
+        return stack == getFocusedStack();
     }
 
     void moveHomeStack(boolean toFront, String reason) {
@@ -454,12 +460,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStackTaskToTop(int homeStackTaskType, String reason) {
-        //if (homeStackTaskType == RECENTS_ACTIVITY_TYPE) {
-        //    mWindowManager.showRecentApps();
-        //    return;
-        //}
-        //moveHomeStack(true, reason);
-        //mHomeStack.moveHomeStackTaskToTop(homeStackTaskType);
+        if (homeStackTaskType == RECENTS_ACTIVITY_TYPE) {
+            mWindowManager.showRecentApps();
+            return;
+        }
+        moveHomeStack(true, reason);
+        mHomeStack.moveHomeStackTaskToTop(homeStackTaskType);
     }
 
     boolean resumeHomeStackTask(int homeStackTaskType, ActivityRecord prev, String reason) {
@@ -1574,7 +1580,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     if (mFocusedStack != taskStack) {
                         if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: Setting " +
                                 "focused stack to r=" + r + " task=" + task);
-                        mFocusedStack = taskStack;
+                        setFocusedStack(taskStack.mStackId);
                     } else {
                         if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
                             "adjustStackFocus: Focused stack already=" + mFocusedStack);
@@ -1650,7 +1656,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     if (!stack.isHomeStack()) {
                         if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG,
                                 "adjustStackFocus: Setting focused stack=" + stack);
-                        mFocusedStack = stack;
+                        setFocusedStack(stack.mStackId);
                         return mFocusedStack;
                     }
                 }
@@ -1671,7 +1677,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
-            mFocusedStack = getStack(stackId);
+            setFocusedStack(stackId);
             mFocusedStack.setMultiwindowStack(isMultiwindow);
             return mFocusedStack;
         }
@@ -1976,6 +1982,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     if (DEBUG_TASKS) Slog.d(TAG, "Bring to front target: " + targetStack
                             + " from " + intentActivity);
                     targetStack.moveToFront("intentActivityFound");
+                    final ActivityStack lastStack = mFocusedStack;
+                    setFocusedStack(targetStack.mStackId);
                     if (intentActivity.task.intent == null) {
                         // This task was started because of movement of
                         // the activity based on affinity...  now that we
@@ -1989,7 +1997,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     // to have the same behavior as if a new instance was
                     // being started, which means not bringing it to the front
                     // if the caller is not itself in the front.
-                    final ActivityStack lastStack = getLastStack();
                     ActivityRecord curTop = lastStack == null?
                             null : lastStack.topRunningNonDelayedActivityLocked(notTop);
                     boolean movedToFront = false;
@@ -2205,6 +2212,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (!launchTaskBehind) {
                 targetStack.moveToFront("startingNewTask");
             }
+            setFocusedStack(targetStack.mStackId);
             if (reuseTask == null) {
                 r.setTask(targetStack.createTaskRecord(getNextTaskId(),
                         newTaskInfo != null ? newTaskInfo : r.info,
@@ -2233,6 +2241,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             }
             targetStack = sourceTask.stack;
             targetStack.moveToFront("sourceStackToFront");
+            setFocusedStack(targetStack.mStackId);
             final TaskRecord topTask = targetStack.topTask();
             if (topTask != sourceTask) {
                 targetStack.moveTaskToFrontLocked(sourceTask, r, options, "sourceTaskToFront");
@@ -2326,6 +2335,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             // this case should never happen.
             targetStack = adjustStackFocus(r, newTask);
             targetStack.moveToFront("addingToTopTask");
+            setFocusedStack(targetStack.mStackId);
             ActivityRecord prev = targetStack.topActivity();
             r.setTask(prev != null ? prev.task : targetStack.createTaskRecord(getNextTaskId(),
                             r.info, intent, null, null, true), null);
@@ -2817,7 +2827,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             return;
         }
         task.stack.removeTask(task, "moveTaskToStack");
-        mFocusedStack = stack;
+        setFocusedStack(stack.mStackId);
         stack.addTask(task, toTop, true);
         mWindowManager.addTask(taskId, stackId, toTop);
         resumeTopActivitiesLocked();
@@ -3186,6 +3196,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             moveHomeStack(homeInFront, "switchUserOnHomeDisplay");
             TaskRecord task = stack.topTask();
             if (task != null) {
+                setFocusedStack(stack.mStackId);
                 mWindowManager.moveTaskToTop(task.taskId);
             }
         } else {
