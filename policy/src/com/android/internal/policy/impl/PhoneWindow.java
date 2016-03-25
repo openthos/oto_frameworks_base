@@ -3410,6 +3410,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             int rawY = (int) event.getRawY();
 
             if(MotionEvent.ACTION_DOWN == event.getAction()){
+                try{
+                    if (ActivityManagerNative.getDefault().getFocusedStackId() != getStackId()) {
+                        ActivityManagerNative.getDefault().setFocusedStack(getStackId());
+                        //return false;
+                    }
+                }
+                catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 mLastX = (int) event.getRawX();
                 mLastY = (int) event.getRawY();
                 mRelayoutSuccess = false;

@@ -8523,8 +8523,8 @@ public final class ActivityManagerService extends ActivityManagerNative
      */
     @Override
     public void moveTaskToFront(int taskId, int flags, Bundle options) {
-        enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
-                "moveTaskToFront()");
+        //enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
+        //        "moveTaskToFront()");
 
         if (DEBUG_STACK) Slog.d(TAG, "moveTaskToFront: moving taskId=" + taskId);
         synchronized(this) {
@@ -8563,8 +8563,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public void moveTaskToBack(int taskId) {
-        enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
-                "moveTaskToBack()");
+        //enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
+        //        "moveTaskToBack()");
 
         synchronized(this) {
             TaskRecord tr = mStackSupervisor.anyTaskForIdLocked(taskId);
@@ -8624,8 +8624,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public void moveTaskBackwards(int task) {
-        enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
-                "moveTaskBackwards()");
+        //enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
+        //        "moveTaskBackwards()");
 
         synchronized(this) {
             if (!checkAppSwitchAllowedLocked(Binder.getCallingPid(),
@@ -16636,6 +16636,13 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     ActivityStack getFocusedStack() {
         return mStackSupervisor.getFocusedStack();
+    }
+
+    @Override
+    public int getFocusedStackId() {
+        int stackId = getFocusedStack().mStackId;
+        //Slog.i(TAG, String.format("call getFocusedStackId(), result: %d ", stackId));
+        return stackId;
     }
 
     public Configuration getConfiguration() {

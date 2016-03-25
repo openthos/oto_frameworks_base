@@ -4023,10 +4023,10 @@ public class WindowManagerService extends IWindowManager.Stub
 
     @Override
     public void setFocusedApp(IBinder token, boolean moveFocusNow) {
-        if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
-                "setFocusedApp()")) {
-            throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
-        }
+        //if (!checkCallingPermission(android.Manifest.permission.MANAGE_APP_TOKENS,
+        //        "setFocusedApp()")) {
+        //    throw new SecurityException("Requires MANAGE_APP_TOKENS permission");
+        //}
 
         synchronized(mWindowMap) {
             final AppWindowToken newFocus;
