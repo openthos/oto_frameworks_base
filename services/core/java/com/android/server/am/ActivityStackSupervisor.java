@@ -168,6 +168,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int CONTAINER_TASK_LIST_EMPTY_TIMEOUT = FIRST_SUPERVISOR_STACK_MSG + 12;
     static final int LAUNCH_TASK_BEHIND_COMPLETE = FIRST_SUPERVISOR_STACK_MSG + 13;
 
+    /* For initializing window position ofsset step */
+    static final int WINDOW_OFFSET_STEP = 35;
+    static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
+    static final int WINDOW_INIT_WIDTH = 400;
+    static final int WINDOW_INIT_HEIGHT = 300;
+
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
     private static final String LOCK_TASK_TAG = "Lock-to-App";
@@ -184,6 +190,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
     final ActivityManagerService mService;
 
     final ActivityStackSupervisorHandler mHandler;
+
+    /* Initializing window position */
+    private int mInitPosX = WINDOW_OFFSET_STEP;
+    private int mInitPosY = WINDOW_OFFSET_STEP;
 
     /** Short cut */
     WindowManagerService mWindowManager;
@@ -1657,7 +1667,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * for now
              */
             if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
-                mService.relayoutWindow(stackId, new Rect(200, 100, 600, 400));
+                mService.relayoutWindow(stackId, getInitializingRect());
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
@@ -1666,6 +1676,18 @@ public final class ActivityStackSupervisor implements DisplayListener {
             return mFocusedStack;
         }
         return mHomeStack;
+    }
+
+    Rect getInitializingRect() {
+        mInitPosX += WINDOW_OFFSET_STEP;
+        if (mInitPosX > WINDOW_OFFSET_MAX) {
+            mInitPosX = WINDOW_OFFSET_STEP;
+        }
+        mInitPosY += WINDOW_OFFSET_STEP;
+        if (mInitPosY > WINDOW_OFFSET_MAX) {
+            mInitPosY = WINDOW_OFFSET_STEP;
+        }
+        return new Rect(mInitPosX, mInitPosY, mInitPosX + WINDOW_INIT_WIDTH, mInitPosY + WINDOW_INIT_HEIGHT);
     }
 
     void setFocusedStack(ActivityRecord r, String reason) {
