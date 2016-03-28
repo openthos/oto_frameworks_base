@@ -135,6 +135,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
 
+    public final static int MW_WINDOW_MIN_WIDTH = 250;
+    public final static int MW_WINDOW_MIN_HEIGHT = 180;
+
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
             (1 << FEATURE_CONTENT_TRANSITIONS) |
@@ -3409,48 +3412,50 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             int rawX = (int) event.getRawX();
             int rawY = (int) event.getRawY();
 
-            if(MotionEvent.ACTION_DOWN == event.getAction()){
-                try{
+            if(MotionEvent.ACTION_DOWN == event.getAction()) {
+                try {
                     if (ActivityManagerNative.getDefault().getFocusedStackId() != getStackId()) {
                         ActivityManagerNative.getDefault().setFocusedStack(getStackId());
                     }
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                     e.printStackTrace();
                 }
                 mLastX = (int) event.getRawX();
                 mLastY = (int) event.getRawY();
+                mResizeWindow.mLastDx = 0;
+                mResizeWindow.mLastDy = 0;
                 mRelayoutSuccess = false;
                 mFrame = new Rect(mDecor.getViewRootImpl().mWinFrame);
-                Log.i(TAG, String.format("For ACTION_DOWN: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
-                                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
+                mNewFrame = mFrame;
+                //Log.i(TAG, String.format("For ACTION_DOWN: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
+                //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
                 if (mParentBtn != null) {
                     mParentBtn.setPressed(true);
                 }
             }
-            if(MotionEvent.ACTION_MOVE == event.getAction()){
-                try{
+            if(MotionEvent.ACTION_MOVE == event.getAction()) {
+                try {
                     int dx = rawX - mLastX;
                     int dy = rawY - mLastY;
                     Rect r = mResizeWindow.resize(mFrame, dx, dy);
+                    //Log.i(TAG, String.format("For ACTION_MOVE: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d, dx: %d, dy: %d, r(%d, %d, %d, %d)",
+                    //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY, dx, dy, r.top, r.left, r.bottom, r.right));
                     if (fitWindowInScreen(r)) {
                         mNewFrame = r;
                         mRelayoutSuccess = ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
                     }
-                }
-                catch (RemoteException e) {
+                } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             }
-            if(MotionEvent.ACTION_UP == event.getAction()){
-                if (mRelayoutSuccess) {
-                    mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
+            if(MotionEvent.ACTION_UP == event.getAction()) {
+                mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
+                mFrame = mNewFrame;
+                //Log.i(TAG, String.format("For ACTION_UP: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
+                //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
+                if (mParentBtn != null) {
+                    mParentBtn.setPressed(false);
                 }
-                Log.i(TAG, String.format("For ACTION_UP: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
-                                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
-//                if (mParentBtn != null) {
-//                    mParentBtn.setPressed(false);
-//                }
 //                try{
 //                    if (mRelayoutSuccess) {
 ////                        ActivityManagerNative.getDefault().relayoutWindowCallback(getStackId(), mNewFrame);
@@ -3471,6 +3476,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     }
 
     public abstract class ResizeWindow {
+        public int mLastDx = 0;
+        public int mLastDy = 0;
         protected Rect mTmpFrame = new Rect();
         public abstract Rect resize(Rect frame, int diffX, int diffY);
     }
@@ -3546,10 +3553,20 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
                 public Rect resize(Rect frame, int diffX, int diffY) {
-                    mTmpFrame.left = frame.left + diffX;
+                    if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
+                        mTmpFrame.left = frame.left + diffX;
+                        mLastDx = diffX;
+                    } else {
+                        mTmpFrame.left = frame.left + mLastDx;
+                    }
                     mTmpFrame.top = frame.top;
                     mTmpFrame.right = frame.right;
-                    mTmpFrame.bottom = frame.bottom + diffY;
+                    if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                        mTmpFrame.bottom = frame.bottom + diffY;
+                        mLastDy = diffY;
+                    } else {
+                        mTmpFrame.bottom = frame.bottom + mLastDy;
+                    }
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mLeftResize, mFullScreen));
@@ -3559,8 +3576,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 public Rect resize(Rect frame, int diffX, int diffY) {
                     mTmpFrame.left = frame.left;
                     mTmpFrame.top = frame.top;
-                    mTmpFrame.right = frame.right + diffX;
-                    mTmpFrame.bottom = frame.bottom + diffY;
+                    if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
+                        mTmpFrame.right = frame.right + diffX;
+                        mLastDx = diffX;
+                    } else {
+                        mTmpFrame.right = frame.right + mLastDx;
+                    }
+                    if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                        mTmpFrame.bottom = frame.bottom + diffY;
+                        mLastDy = diffY;
+                    } else {
+                        mTmpFrame.bottom = frame.bottom + mLastDy;
+                    }
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mRightResize, mFullScreen));
