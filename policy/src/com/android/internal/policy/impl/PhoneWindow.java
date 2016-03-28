@@ -3413,7 +3413,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 try{
                     if (ActivityManagerNative.getDefault().getFocusedStackId() != getStackId()) {
                         ActivityManagerNative.getDefault().setFocusedStack(getStackId());
-                        //return false;
                     }
                 }
                 catch (RemoteException e) {
@@ -3423,6 +3422,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mLastY = (int) event.getRawY();
                 mRelayoutSuccess = false;
                 mFrame = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                Log.i(TAG, String.format("For ACTION_DOWN: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
+                                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
                 if (mParentBtn != null) {
                     mParentBtn.setPressed(true);
                 }
@@ -3441,7 +3442,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     e.printStackTrace();
                 }
             }
-//            if(MotionEvent.ACTION_UP == event.getAction()){
+            if(MotionEvent.ACTION_UP == event.getAction()){
+                if (mRelayoutSuccess) {
+                    mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
+                }
+                Log.i(TAG, String.format("For ACTION_UP: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
+                                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
 //                if (mParentBtn != null) {
 //                    mParentBtn.setPressed(false);
 //                }
@@ -3454,7 +3460,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 //                catch (RemoteException e) {
 //                    e.printStackTrace();
 //                }
-//            }
+            }
             if(MotionEvent.ACTION_CANCEL == event.getAction()) {
                 if (mParentBtn != null) {
                     mParentBtn.setPressed(false);
