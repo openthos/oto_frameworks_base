@@ -138,7 +138,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     public final static int MW_WINDOW_MIN_WIDTH = 250;
     public final static int MW_WINDOW_MIN_HEIGHT = 180;
 
-    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 5;
+    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 10;
 
     public final static int MW_WINDOW_RESIZE_NONE = 0;
     public final static int MW_WINDOW_RESIZE_TOP = 1;
@@ -3572,28 +3572,48 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     switch(ways) {
                         case MW_WINDOW_RESIZE_TOP:
-                                mTmpFrame.top = frame.top + diffY;
+                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.top = frame.top + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.top = frame.top + mLastDy;
+                                }
                                 mTmpFrame.bottom = frame.bottom;
                                 mTmpFrame.left = frame.left;
                                 mTmpFrame.right = frame.right;
-                                 break;
+                                break;
                         case MW_WINDOW_RESIZE_BOTTOM:
                                 mTmpFrame.top = frame.top;
-                                mTmpFrame.bottom = frame.bottom + diffY;
+                                if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.bottom = frame.bottom + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.bottom = frame.bottom + mLastDy;
+                                }
                                 mTmpFrame.left = frame.left;
                                 mTmpFrame.right = frame.right;
                                 break;
                         case MW_WINDOW_RESIZE_LEFT:
                                 mTmpFrame.top = frame.top;
                                 mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left + diffX;
+                                if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.left = frame.left + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.left = frame.left + mLastDx;
+                                }
                                 mTmpFrame.right = frame.right;
                                 break;
                         case MW_WINDOW_RESIZE_RIGHT:
                                 mTmpFrame.top = frame.top;
                                 mTmpFrame.bottom = frame.bottom;
                                 mTmpFrame.left = frame.left;
-                                mTmpFrame.right = frame.right + diffX;
+                                if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.right = frame.right + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.right = frame.right + mLastDx;
+                                }
                                 break;
                         default:
                                 mTmpFrame.top = frame.top;
