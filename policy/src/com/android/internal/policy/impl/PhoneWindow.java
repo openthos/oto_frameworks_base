@@ -3376,7 +3376,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private class TouchListener implements OnTouchListener {
 
         private boolean mRelayoutSuccess = false;
-        private Rect mFrame;
+        private Rect mFrame = new Rect();
         private Rect mNewFrame;
         private int mLastX = 0;
         private int mLastY = 0;
@@ -3451,7 +3451,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mResizeWindow.mLastDx = 0;
                 mResizeWindow.mLastDy = 0;
                 mRelayoutSuccess = false;
-                mFrame = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                mFrame.set(mDecor.getViewRootImpl().mWinFrame);
                 mNewFrame = mFrame;
                 getResizeWays(rawX, rawY);
                 //Log.i(TAG, String.format("For ACTION_DOWN: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
@@ -3477,7 +3477,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
             if(MotionEvent.ACTION_UP == event.getAction()) {
                 mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
-                mFrame = mNewFrame;
+                mFrame.set(mNewFrame);
                 mResizeWays = MW_WINDOW_RESIZE_NONE;
                 //Log.i(TAG, String.format("For ACTION_UP: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
                 //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
