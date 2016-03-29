@@ -133,10 +133,13 @@ public class TaskStack {
             return false;
         }
 
+        return setBoundsByForce(bounds);
+    }
+
+    boolean setBoundsByForce(Rect bounds) {
         mDimLayer.setBounds(bounds);
         mAnimationBackgroundSurface.setBounds(bounds);
         mBounds.set(bounds);
-
         return true;
     }
 
