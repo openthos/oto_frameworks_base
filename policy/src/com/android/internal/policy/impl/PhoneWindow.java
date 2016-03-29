@@ -138,6 +138,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     public final static int MW_WINDOW_MIN_WIDTH = 250;
     public final static int MW_WINDOW_MIN_HEIGHT = 180;
 
+    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 5;
+
+    public final static int MW_WINDOW_RESIZE_NONE = 0;
+    public final static int MW_WINDOW_RESIZE_TOP = 1;
+    public final static int MW_WINDOW_RESIZE_BOTTOM = 2;
+    public final static int MW_WINDOW_RESIZE_LEFT = 3;
+    public final static int MW_WINDOW_RESIZE_RIGHT = 4;
+
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
             (1 << FEATURE_CONTENT_TRANSITIONS) |
@@ -2853,9 +2861,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 int of = mDecorMW.getBorderPadding();
                 Rect tmp = insets.getSystemWindowInsets();
                 tmp.top += of;
-                tmp.left += of;
-                tmp.bottom += of;
-                tmp.right += of;
+                //tmp.left += of;
+                //tmp.bottom += of;
+                //tmp.right += of;
+                tmp.left += MW_WINDOW_CHECK_RESIZE_DIFF;
+                tmp.bottom += MW_WINDOW_CHECK_RESIZE_DIFF;
+                tmp.right += MW_WINDOW_CHECK_RESIZE_DIFF;
                 insets = insets.replaceSystemWindowInsets(tmp);
             }
             mFrameOffsets.set(insets.getSystemWindowInsets());
@@ -3359,7 +3370,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
     }
 
-
     /**
      * Move to FocusedStackFrame
      */
@@ -3374,6 +3384,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private ImageButton mMaximizeBtn;
         private View mParentBtn = null;
         private Rect mFullScreen;
+        private int mResizeWays = MW_WINDOW_RESIZE_NONE;
+
 
         public TouchListener(ResizeWindow rw, ImageButton maximizeButton, Rect fullScreen) {
             mResizeWindow = rw;
@@ -3407,6 +3419,20 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             return true;
         }
 
+        private void getResizeWays(int x, int y) {
+           if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+               mResizeWays = MW_WINDOW_RESIZE_TOP;
+           } else if (mFrame.bottom - y <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+               mResizeWays = MW_WINDOW_RESIZE_BOTTOM;
+           } else if (x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+               mResizeWays = MW_WINDOW_RESIZE_LEFT;
+           } else if (mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+               mResizeWays = MW_WINDOW_RESIZE_RIGHT;
+           } else {
+               mResizeWays = MW_WINDOW_RESIZE_NONE;
+           }
+       }
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             int rawX = (int) event.getRawX();
@@ -3427,6 +3453,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mRelayoutSuccess = false;
                 mFrame = new Rect(mDecor.getViewRootImpl().mWinFrame);
                 mNewFrame = mFrame;
+                getResizeWays(rawX, rawY);
                 //Log.i(TAG, String.format("For ACTION_DOWN: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
                 //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
                 if (mParentBtn != null) {
@@ -3437,7 +3464,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 try {
                     int dx = rawX - mLastX;
                     int dy = rawY - mLastY;
-                    Rect r = mResizeWindow.resize(mFrame, dx, dy);
+                    Rect r = mResizeWindow.resize(mFrame, dx, dy, mResizeWays);
                     //Log.i(TAG, String.format("For ACTION_MOVE: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d, dx: %d, dy: %d, r(%d, %d, %d, %d)",
                     //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY, dx, dy, r.top, r.left, r.bottom, r.right));
                     if (fitWindowInScreen(r)) {
@@ -3451,6 +3478,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if(MotionEvent.ACTION_UP == event.getAction()) {
                 mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
                 mFrame = mNewFrame;
+                mResizeWays = MW_WINDOW_RESIZE_NONE;
                 //Log.i(TAG, String.format("For ACTION_UP: mFrame(%d, %d, %d, %d), mLastX: %d, mLastY: %d",
                 //                         mFrame.top, mFrame.left, mFrame.bottom, mFrame.right, mLastX, mLastY));
                 if (mParentBtn != null) {
@@ -3479,7 +3507,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         public int mLastDx = 0;
         public int mLastDy = 0;
         protected Rect mTmpFrame = new Rect();
-        public abstract Rect resize(Rect frame, int diffX, int diffY);
+        public abstract Rect resize(Rect frame, int diffX, int diffY, int ways);
     }
 
     /**
@@ -3539,9 +3567,48 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mAppName.setText(pm.getApplicationLabel(ai));
             mAppIcon.setImageDrawable(icon);
 
+            mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
+                @Override
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+                    switch(ways) {
+                        case MW_WINDOW_RESIZE_TOP:
+                                mTmpFrame.top = frame.top + diffY;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                 break;
+                        case MW_WINDOW_RESIZE_BOTTOM:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom + diffY;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_LEFT:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left + diffX;
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_RIGHT:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right + diffX;
+                                break;
+                        default:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break;
+                    }
+                    return mTmpFrame;
+                }
+            }, mMaximizeBtn, mFullScreen));
+
             mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
-                public Rect resize(Rect frame, int diffX, int diffY) {
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     mTmpFrame.left = frame.left + diffX;
                     mTmpFrame.top = frame.top + diffY;
                     mTmpFrame.right = frame.right + diffX;
@@ -3552,7 +3619,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
             mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
-                public Rect resize(Rect frame, int diffX, int diffY) {
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
                         mTmpFrame.left = frame.left + diffX;
                         mLastDx = diffX;
@@ -3573,7 +3640,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
             mRightResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
-                public Rect resize(Rect frame, int diffX, int diffY) {
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     mTmpFrame.left = frame.left;
                     mTmpFrame.top = frame.top;
                     if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {

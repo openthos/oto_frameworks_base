@@ -177,6 +177,6 @@
 
     <!-- MW colors -->
     <color name="mw_blue_decor">#76ceea</color>
-    <color name="mw_white_border">#FFFFFFFF</color>
+    <color name="mw_white_border">#00000000</color>
     <color name="mw_transparent_white">#B3FFFFFF</color>
 </resources>

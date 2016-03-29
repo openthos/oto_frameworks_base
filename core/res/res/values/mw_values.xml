@@ -4,7 +4,7 @@ Copyright (C) 2013 Tieto Corporation.
 Dariusz Kluska
 -->
 <resources>
-    <dimen name="mw_outer_border">2dip</dimen>
+    <dimen name="mw_outer_border">5dip</dimen>
     <dimen name="mw_inner_border">28dip</dimen>
     <dimen name="mw_outer_border_wide">30dip</dimen>
 </resources>
