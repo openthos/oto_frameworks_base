@@ -1178,10 +1178,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void prepareNavigationBarView() {
         mNavigationBarView.reorient();
 
-        mNavigationBarView.getRecentsButton().setOnClickListener(mRecentsClickListener);
-        mNavigationBarView.getRecentsButton().setOnTouchListener(mRecentsPreloadOnTouchListener);
-        mNavigationBarView.getRecentsButton().setLongClickable(true);
-        mNavigationBarView.getRecentsButton().setOnLongClickListener(mLongPressBackRecentsListener);
         mNavigationBarView.getBackButton().setLongClickable(true);
         mNavigationBarView.getBackButton().setOnLongClickListener(mLongPressBackRecentsListener);
         mNavigationBarView.getHomeButton().setOnTouchListener(mHomeActionListener);
@@ -4117,8 +4113,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     activityManager.stopLockTaskModeOnCurrent();
                     // When exiting refresh disabled flags.
                     mNavigationBarView.setDisabledFlags(mDisabled, true);
-                } else if ((v.getId() == R.id.back)
-                        && !mNavigationBarView.getRecentsButton().isPressed()) {
+                } else if (v.getId() == R.id.back) {
                     // If we aren't pressing recents right now then they presses
                     // won't be together, so send the standard long-press action.
                     sendBackLongPress = true;

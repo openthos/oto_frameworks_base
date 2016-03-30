@@ -81,7 +81,6 @@ public final class NavigationBarTransitions extends BarTransitions {
         // apply to key buttons
         final float alpha = alphaForMode(mode);
         setKeyButtonViewQuiescentAlpha(mView.getHomeButton(), alpha, animate);
-        setKeyButtonViewQuiescentAlpha(mView.getRecentsButton(), alpha, animate);
         setKeyButtonViewQuiescentAlpha(mView.getMenuButton(), alpha, animate);
         setKeyButtonViewQuiescentAlpha(mView.getImeSwitchButton(), alpha, animate);
 
@@ -99,7 +98,6 @@ public final class NavigationBarTransitions extends BarTransitions {
     public void applyBackButtonQuiescentAlpha(int mode, boolean animate) {
         float backAlpha = 0;
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getHomeButton());
-        backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getRecentsButton());
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getMenuButton());
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getImeSwitchButton());
         if (backAlpha > 0) {

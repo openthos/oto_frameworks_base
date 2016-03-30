@@ -251,10 +251,6 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView;
     }
 
-    public View getRecentsButton() {
-        return mCurrentView.findViewById(R.id.recent_apps);
-    }
-
     public View getMenuButton() {
         return mCurrentView.findViewById(R.id.menu);
     }
@@ -314,8 +310,6 @@ public class NavigationBarView extends LinearLayout {
                 ? (mVertical ? mBackAltLandIcon : mBackAltIcon)
                 : (mVertical ? mBackLandIcon : mBackIcon));
 
-        ((ImageView)getRecentsButton()).setImageDrawable(mVertical ? mRecentLandIcon : mRecentIcon);
-
         final boolean showImeButton = ((hints & StatusBarManager.NAVIGATION_HINT_IME_SHOWN) != 0);
         getImeSwitchButton().setVisibility(showImeButton ? View.VISIBLE : View.INVISIBLE);
         // Update menu button in case the IME state has changed.
@@ -368,7 +362,6 @@ public class NavigationBarView extends LinearLayout {
 
         getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
         getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
-        getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
 
         mBarTransitions.applyBackButtonQuiescentAlpha(mBarTransitions.getMode(), true /*animate*/);
     }
@@ -476,7 +469,7 @@ public class NavigationBarView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        mDelegateHelper.setInitialTouchRegion(getHomeButton(), getBackButton(), getRecentsButton());
+        mDelegateHelper.setInitialTouchRegion(getHomeButton(), getBackButton());
     }
 
     @Override
@@ -647,7 +640,6 @@ public class NavigationBarView extends LinearLayout {
 
         dumpButton(pw, "back", getBackButton());
         dumpButton(pw, "home", getHomeButton());
-        dumpButton(pw, "rcnt", getRecentsButton());
         dumpButton(pw, "menu", getMenuButton());
 
         pw.println("    }");

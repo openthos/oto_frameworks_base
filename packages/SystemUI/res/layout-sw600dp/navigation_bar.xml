@@ -60,14 +60,6 @@
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_home"
                 />
-            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/recent_apps"
-                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_sysbar_recent"
-                android:scaleType="centerInside"
-                android:layout_weight="0"
-                android:contentDescription="@string/accessibility_recent"
-                />
             <Space 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
