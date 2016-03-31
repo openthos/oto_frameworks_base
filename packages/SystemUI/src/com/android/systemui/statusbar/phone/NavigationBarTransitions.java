@@ -100,9 +100,6 @@ public final class NavigationBarTransitions extends BarTransitions {
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getHomeButton());
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getMenuButton());
         backAlpha = maxVisibleQuiescentAlpha(backAlpha, mView.getImeSwitchButton());
-        if (backAlpha > 0) {
-            setKeyButtonViewQuiescentAlpha(mView.getBackButton(), backAlpha, animate);
-        }
     }
 
     private static float maxVisibleQuiescentAlpha(float max, View v) {
