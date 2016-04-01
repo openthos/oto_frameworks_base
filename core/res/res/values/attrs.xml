@@ -7268,7 +7268,7 @@
         <attr name="pointerIconArrowUpDown" format="reference" />
         <attr name="pointerIconArrowLeftRight" format="reference" />
         <attr name="pointerIconArrowOneFour" format="reference" />
-        <attr name="pointerIconArrowTowThree" format="reference" />
+        <attr name="pointerIconArrowTwoThree" format="reference" />
         <!-- Reference to a pointer icon drawable with STYLE_SPOT_HOVER -->
         <attr name="pointerIconSpotHover" format="reference" />
         <!-- Reference to a pointer icon drawable with STYLE_SPOT_TOUCH -->

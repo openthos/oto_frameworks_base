@@ -60,6 +60,9 @@ interface IInputManager {
     // Registers an input devices changed listener.
     void registerInputDevicesChangedListener(IInputDevicesChangedListener listener);
 
+    // Change PointerIcon
+    void setPointerIcon(int type);
+
     // Input device vibrator control.
     void vibrate(int deviceId, in long[] pattern, int repeat, IBinder token);
     void cancelVibrate(int deviceId, IBinder token);

@@ -1007,6 +1007,16 @@ void NativeInputManager::loadPointerResources(PointerResources* outResources) {
             &outResources->spotTouch);
     loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_SPOT_ANCHOR,
             &outResources->spotAnchor);
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_ARROW,
+            &outResources->arrowNormal);
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_ARROW_UPDOWN,
+            &outResources->arrowUpdown);
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_ARROW_LEFTRIGHT,
+            &outResources->arrowLeftright);
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_ARROW_ONEFOUR,
+            &outResources->arrowOnefour);
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_ARROW_TWOTHREE,
+            &outResources->arrowTwothree);
 }
 
 
@@ -1020,8 +1030,7 @@ static jlong nativeInit(JNIEnv* env, jclass clazz,
         return 0;
     }
 
-    NativeInputManager* im = new NativeInputManager(contextObj, serviceObj,
-            messageQueue->getLooper());
+    NativeInputManager* im = new NativeInputManager(contextObj, serviceObj,messageQueue->getLooper());
     im->incStrong(0);
     return reinterpret_cast<jlong>(im);
 }
@@ -1347,6 +1356,14 @@ static void nativeMonitor(JNIEnv* env, jclass clazz, jlong ptr) {
     im->getInputManager()->getDispatcher()->monitor();
 }
 
+//SetPointerIcon By System Icon Type
+static void nativeSetPointerIcon(JNIEnv* env, jclass clazz, jlong ptr, int type){
+    //ALOGD("nativeSetPointerIcon is being calling");
+    NativeInputManager* im = reinterpret_cast<NativeInputManager*>(ptr);
+    sp<PointerControllerInterface> pc = im->obtainPointerController(0);
+    pc->pointerIconChange(type);
+}
+
 // ----------------------------------------------------------------------------
 
 static JNINativeMethod gInputManagerMethods[] = {
@@ -1405,6 +1422,8 @@ static JNINativeMethod gInputManagerMethods[] = {
             (void*) nativeDump },
     { "nativeMonitor", "(J)V",
             (void*) nativeMonitor },
+    { "nativeSetPointerIcon" , "(JI)V",
+            (void*) nativeSetPointerIcon },
 };
 
 #define FIND_CLASS(var, className) \

@@ -50,6 +50,18 @@ public final class PointerIcon implements Parcelable {
     /** Style constant: Arrow icon.  (Default mouse pointer) */
     public static final int STYLE_ARROW = 1000;
 
+    /** Style constant: UpDown side resize Arrow icon.   */
+    public static final int STYLE_ARROW_UPDOWN = 1100;
+
+    /** Style constant: LeftRight side resiez Arrow icon. */
+    public static final int STYLE_ARROW_LEFTRIGHT = 1101;
+
+    /** Style constant: 1st and 4th corner resize Arrow icon.*/
+    public static final int STYLE_ARROW_ONEFOUR = 1102;
+
+    /** Style constant: 2nd and 3rd corner resize Arrow icon. */
+    public static final int STYLE_ARROW_TWOTHREE = 1103;
+
     /** {@hide} Style constant: Spot hover icon for touchpads. */
     public static final int STYLE_SPOT_HOVER = 2000;
 
@@ -427,6 +439,14 @@ public final class PointerIcon implements Parcelable {
         switch (style) {
             case STYLE_ARROW:
                 return com.android.internal.R.styleable.Pointer_pointerIconArrow;
+            case STYLE_ARROW_UPDOWN:
+                return com.android.internal.R.styleable.Pointer_pointerIconArrowUpDown;
+            case STYLE_ARROW_LEFTRIGHT:
+                return com.android.internal.R.styleable.Pointer_pointerIconArrowLeftRight;
+            case STYLE_ARROW_ONEFOUR:
+                return com.android.internal.R.styleable.Pointer_pointerIconArrowOneFour;
+            case STYLE_ARROW_TWOTHREE:
+                return com.android.internal.R.styleable.Pointer_pointerIconArrowTwoThree;
             case STYLE_SPOT_HOVER:
                 return com.android.internal.R.styleable.Pointer_pointerIconSpotHover;
             case STYLE_SPOT_TOUCH:

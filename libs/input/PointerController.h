@@ -38,6 +38,11 @@ struct PointerResources {
     SpriteIcon spotHover;
     SpriteIcon spotTouch;
     SpriteIcon spotAnchor;
+    SpriteIcon arrowNormal;
+    SpriteIcon arrowUpdown;
+    SpriteIcon arrowLeftright;
+    SpriteIcon arrowOnefour;
+    SpriteIcon arrowTwothree;
 };
 
 
@@ -85,6 +90,7 @@ public:
     virtual int32_t getButtonState() const;
     virtual void setPosition(float x, float y);
     virtual void getPosition(float* outX, float* outY) const;
+    virtual void pointerIconChange(int type);
     virtual void fade(Transition transition);
     virtual void unfade(Transition transition);
 

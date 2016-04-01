@@ -49,7 +49,8 @@ static const nsecs_t SPOT_FADE_DURATION = 200 * 1000000LL; // 200 ms
 // Time to spend fading out the pointer completely.
 static const nsecs_t POINTER_FADE_DURATION = 500 * 1000000LL; // 500 ms
 
-
+//Type of the Icon to change
+static int ICON_CHANGE_TYPE = 0;
 // --- PointerController ---
 
 PointerController::PointerController(const sp<PointerControllerPolicyInterface>& policy,
@@ -418,6 +419,16 @@ void PointerController::setPointerIcon(const SpriteIcon& icon) {
     updatePointerLocked();
 }
 
+void PointerController::pointerIconChange(int type) {
+    AutoMutex _l(mLock);
+
+    mLocked.pointerIconChanged = true;
+    ICON_CHANGE_TYPE = type;
+    //ALOGD("pointerIconChange is being calling %d",type);
+
+    updatePointerLocked();
+}
+
 void PointerController::handleMessage(const Message& message) {
     switch (message.what) {
     case MSG_ANIMATE:
@@ -513,17 +524,48 @@ void PointerController::updatePointerLocked() {
     mLocked.pointerSprite->setLayerStack(mLocked.displayId);
     mLocked.pointerSprite->setLayer(Sprite::BASE_LAYER_POINTER);
     mLocked.pointerSprite->setPosition(mLocked.pointerX, mLocked.pointerY);
-
     if (mLocked.pointerAlpha > 0) {
         mLocked.pointerSprite->setAlpha(mLocked.pointerAlpha);
         mLocked.pointerSprite->setVisible(true);
     } else {
         mLocked.pointerSprite->setVisible(false);
     }
-
+    //if(mLocked.pointerIconChanged)
+    //ALOGD("pointerIconChanged is true!,type = %d",ICON_CHANGE_TYPE);
     if (mLocked.pointerIconChanged || mLocked.presentationChanged) {
-        mLocked.pointerSprite->setIcon(mLocked.presentation == PRESENTATION_POINTER
-                ? mLocked.pointerIcon : mResources.spotAnchor);
+        //Changing the PointerIcon according to ICON_CHANGE_TYPE.
+        //ALOGD("+++++++++++++icon set is %d",ICON_CHANGE_TYPE);
+        switch(ICON_CHANGE_TYPE){
+        case 0:
+            mLocked.pointerSprite->setIcon(mResources.arrowNormal);
+            break;
+        case 1:
+            mLocked.pointerSprite->setIcon(mResources.arrowUpdown);
+            break;
+        case 2:
+            mLocked.pointerSprite->setIcon(mResources.arrowUpdown);
+            break;
+        case 3:
+            mLocked.pointerSprite->setIcon(mResources.arrowLeftright);
+            break;
+        case 4:
+            mLocked.pointerSprite->setIcon(mResources.arrowLeftright);
+            break;
+        case 5:
+            mLocked.pointerSprite->setIcon(mResources.arrowOnefour);
+            break;
+        case 6:
+            mLocked.pointerSprite->setIcon(mResources.arrowTwothree);
+            break;
+        case 7:
+            mLocked.pointerSprite->setIcon(mResources.arrowTwothree);
+            break;
+        case 8:
+            mLocked.pointerSprite->setIcon(mResources.arrowOnefour);
+         break;
+        default:
+            mLocked.pointerSprite->setIcon(mLocked.presentation == PRESENTATION_POINTER? mLocked.pointerIcon : mResources.spotHover);
+        }
         mLocked.pointerIconChanged = false;
         mLocked.presentationChanged = false;
     }

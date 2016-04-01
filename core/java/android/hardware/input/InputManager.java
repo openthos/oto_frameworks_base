@@ -224,6 +224,17 @@ public final class InputManager {
     }
 
     /**
+     * Send a System PointerIcon type to change the mouse arrow.
+     */
+    public void setPointerIcon(int type){
+        //Log.e(TAG,"setPointerIcon in InputManager is being caller",null);
+        try {
+            mIm.setPointerIcon(type);
+        } catch (RemoteException ex) {
+            Log.w(TAG, "Could not set pintericon.", ex);
+        }
+    }
+    /**
      * Gets information about the input device with the specified descriptor.
      * @param descriptor The input device descriptor.
      * @return The input device or null if not found.
