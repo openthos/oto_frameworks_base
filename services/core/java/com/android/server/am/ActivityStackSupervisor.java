@@ -142,7 +142,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
      *
      * Whether the Tieto Multiwindow is enabled.
      */
-    public static final String TIETO_MULTIWINDOW_ENABLED = "tieto_multiwindow";
+    public static final String TIETO_MULTIWINDOW_DISABLED = "tieto_multiwindow";
 
     /** How long we wait until giving up on the last activity telling us it is idle. */
     static final int IDLE_TIMEOUT = 10*1000;
@@ -1620,7 +1620,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             // FIXME: mContext is not merged into 5.1 originally.
             boolean multiwindowEnabled = Settings.System.getInt(mService.mContext.getContentResolver(),
-                    Settings.System.TIETO_MULTIWINDOW_ENABLED, 0) != 0;
+                    Settings.System.TIETO_MULTIWINDOW_DISABLED, 0) == 0;
             if (multiwindowEnabled && (r.intent != null)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             }

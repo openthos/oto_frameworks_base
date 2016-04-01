@@ -2522,7 +2522,7 @@ public final class Settings {
          * Whether the Tieto Multiwindow is enabled.
          * @hide
          */
-        public static final String TIETO_MULTIWINDOW_ENABLED = "tieto_multiwindow";
+        public static final String TIETO_MULTIWINDOW_DISABLED = "tieto_multiwindow";
 
         /**
          * @deprecated Use {@link android.provider.Settings.Global#LOW_BATTERY_SOUND}
@@ -2707,7 +2707,7 @@ public final class Settings {
              *
              * Whether the Tieto Multiwindow is enabled.
              */
-            TIETO_MULTIWINDOW_ENABLED,
+            TIETO_MULTIWINDOW_DISABLED,
             SHOW_WEB_SUGGESTIONS,
             NOTIFICATION_LIGHT_PULSE,
             SIP_CALL_OPTIONS,
