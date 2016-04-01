@@ -1317,6 +1317,10 @@ please see styles_device_defaults.xml.
     <!-- Pointer styles -->
     <style name="Pointer">
         <item name="pointerIconArrow">@drawable/pointer_arrow_icon</item>
+        <item name="pointerIconArrowUpDown">@drawable/pointer_arrow_updown</item>
+        <item name="pointerIconArrowLeftRight">@drawable/pointer_arrow_leftright</item>
+        <item name="pointerIconArrowOneFour">@drawable/pointer_arrow_lean14</item>
+        <item name="pointerIconArrowTwoThree">@drawable/pointer_arrow_lean23</item>
         <item name="pointerIconSpotHover">@drawable/pointer_spot_hover_icon</item>
         <item name="pointerIconSpotTouch">@drawable/pointer_spot_touch_icon</item>
         <item name="pointerIconSpotAnchor">@drawable/pointer_spot_anchor_icon</item>
