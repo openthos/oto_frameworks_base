@@ -114,6 +114,8 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.lang.Runtime;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -3517,6 +3519,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         private LinearLayout mHeader;
         private ImageButton mCloseBtn;
+        private ImageButton mLaunchBtn;
         private ImageButton mMaximizeBtn;
         private View mInnerBorder;
         private View mOuterBorder;
@@ -3550,6 +3553,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mStatusBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
             mBorderPadding = mDecorView.getPaddingLeft() + mTopBarHeight;
             mCloseBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwCloseBtn);
+            mLaunchBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwLaunchBtn);
             mMaximizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMaximizeBtn);
             mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
             mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
@@ -3686,6 +3690,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         ActivityManagerNative.getDefault().closeActivity(getStackId());
                     } catch (RemoteException e) {
                         Log.e(TAG, "Close button failes", e);
+                    }
+                }
+            });
+
+
+            mLaunchBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Runtime.getRuntime().exec("input keyevent " + KeyEvent.KEYCODE_BACK);
+                    } catch (IOException e) {
+                        Log.e(TAG, "Back button failes", e);
                     }
                 }
             });
