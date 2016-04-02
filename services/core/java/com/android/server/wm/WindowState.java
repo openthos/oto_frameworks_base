@@ -448,10 +448,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
              */
             int type = a.type;
             if (mToken != null && mToken.appWindowToken != null) {
-                Task task = mService.mTaskIdToTask.get(mToken.appWindowToken.groupId);
-                if (task.mStack.isFloating()) {
-                    type = WindowManager.LayoutParams.TYPE_MULTIWINDOW_APPLICATION;
-                }
+                type = WindowManager.LayoutParams.TYPE_MULTIWINDOW_APPLICATION;
             }
             // The multiplier here is to reserve space for multiple
             // windows in the same type layer.
