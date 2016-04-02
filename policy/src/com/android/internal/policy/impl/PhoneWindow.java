@@ -1121,9 +1121,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     public boolean performPanelIdentifierAction(int featureId, int id, int flags) {
 
         PanelFeatureState st = getPanelState(featureId, true);
-        if (!preparePanel(st, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU))) {
-            return false;
-        }
+        //if (!preparePanel(st, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU))) {
+        //    return false;
+        //}
         if (st.menu == null) {
             return false;
         }
@@ -1822,10 +1822,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 return false;
             }
 
-            case KeyEvent.KEYCODE_MENU: {
-                onKeyDownPanel((featureId < 0) ? FEATURE_OPTIONS_PANEL : featureId, event);
-                return true;
-            }
+            //case KeyEvent.KEYCODE_MENU: {
+            //    onKeyDownPanel((featureId < 0) ? FEATURE_OPTIONS_PANEL : featureId, event);
+            //    return true;
+            //}
 
             case KeyEvent.KEYCODE_BACK: {
                 if (event.getRepeatCount() > 0) break;
@@ -1916,11 +1916,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 return false;
             }
 
-            case KeyEvent.KEYCODE_MENU: {
-                onKeyUpPanel(featureId < 0 ? FEATURE_OPTIONS_PANEL : featureId,
-                        event);
-                return true;
-            }
+            //case KeyEvent.KEYCODE_MENU: {
+            //    onKeyUpPanel(featureId < 0 ? FEATURE_OPTIONS_PANEL : featureId,
+            //            event);
+            //    return true;
+            //}
 
             case KeyEvent.KEYCODE_BACK: {
                 if (featureId < 0) break;
@@ -2490,13 +2490,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
             int y = (int)event.getY();
             if (action == MotionEvent.ACTION_MOVE) {
-                if (y < (getHeight()-30)) {
-                    Log.i(TAG, "Opening!");
-                    openPanel(FEATURE_OPTIONS_PANEL, new KeyEvent(
-                            KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU));
-                    mWatchingForMenu = false;
-                    return true;
-                }
+                //if (y < (getHeight()-30)) {
+                //    Log.i(TAG, "Opening!");
+                //    openPanel(FEATURE_OPTIONS_PANEL, new KeyEvent(
+                //            KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU));
+                //    mWatchingForMenu = false;
+                //    return true;
+                //}
             } else if (action == MotionEvent.ACTION_UP) {
                 mWatchingForMenu = false;
             }
