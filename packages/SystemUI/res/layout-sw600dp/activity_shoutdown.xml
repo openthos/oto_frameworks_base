@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:layout_marginLeft="50dp"
+    android:layout_marginTop="50dp"
+    android:orientation="vertical" >
+	<TextView 
+	    style="@style/Mstyle"
+	    android:text="重启"/>
+	<TextView 
+	    android:id="@+id/sdowm_text"
+	    style="@style/Mstyle"
+	    android:text="关机"/>
+
+</LinearLayout>

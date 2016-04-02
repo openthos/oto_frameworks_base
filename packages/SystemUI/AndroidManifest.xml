@@ -370,6 +370,16 @@
             </intent-filter>
         </activity>
 
+        <!-- startup menu activity -->
+        <activity
+            android:name=".StartupMenu"
+            android:exported="true"
+            android:label="@string/screen_pinning_title"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true">
+        </activity>
+
         <!-- Doze with notifications, run in main sysui process for every user  -->
         <service
             android:name=".doze.DozeService"
