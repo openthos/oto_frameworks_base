@@ -6,12 +6,12 @@
     android:layout_marginLeft="50dp"
     android:layout_marginTop="50dp"
     android:orientation="vertical" >
-	<TextView 
+	<TextView
 	    style="@style/Mstyle"
-	    android:text="重启"/>
-	<TextView 
+	    android:text="@string/startup_menu_restart"/>
+	<TextView
 	    android:id="@+id/sdowm_text"
 	    style="@style/Mstyle"
-	    android:text="关机"/>
+	    android:text="@string/startup_menu_shutdown"/>
 
 </LinearLayout>

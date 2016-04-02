@@ -7,10 +7,10 @@
 
 
     <Button
-       	android:id="@+id/bt_view"
+        android:id="@+id/bt_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
-        android:text="开始"/>
+        android:layout_height="wrap_content"
+
+        android:text="@string/startup_menu_start"/>
 
 </LinearLayout>

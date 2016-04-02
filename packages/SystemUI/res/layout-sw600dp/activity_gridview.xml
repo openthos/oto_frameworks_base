@@ -8,11 +8,11 @@
     <ImageView
         android:id="@+id/package_image"
         android:layout_width="50dp"
-        android:layout_height="50dp" 
+        android:layout_height="50dp"
         android:src="@drawable/ic_launcher"/>
-    <TextView 
+    <TextView
         android:id="@+id/package_name"
         style="@style/Mstyle"
-        android:text="应用"/>
+        android:text="@string/startup_menu_app"/>
 
 </LinearLayout>

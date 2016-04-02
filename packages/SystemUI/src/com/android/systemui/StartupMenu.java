@@ -38,9 +38,9 @@ import android.widget.Toast;
 
 public class StartupMenu extends Activity {
 	private GridView gv_view;
-	private List<AppInfo> appInfos;// 手机里所有应用信息
-	private List<AppInfo> userappInfos;// 用户安装的应用集合
-	private List<AppInfo> systemappInfos;// 系统自带的应用集合
+	private List<AppInfo> appInfos;
+	private List<AppInfo> userappInfos;
+	private List<AppInfo> systemappInfos;
 	private MaAdapter adapter;
 	private AppInfo appInfo;
 	private TextView shoutdown_view;
@@ -186,7 +186,6 @@ public class StartupMenu extends Activity {
 				holder.tv_name = (TextView) view
 						.findViewById(R.id.package_name);
 
-				// 保存对应关系
 				view.setTag(holder);
 
 			}
@@ -209,7 +208,7 @@ public class StartupMenu extends Activity {
 			public void run() {
 				userappInfos = new ArrayList<AppInfo>();
 				systemappInfos = new ArrayList<AppInfo>();
-				appInfos = com.example.systemui.util.AppInfoProvider.getAppInfos(StartupMenu.this);
+				appInfos = com.android.systemui.util.AppInfoProvider.getAppInfos(StartupMenu.this);
 				for (AppInfo appInfo : appInfos) {
 					if (appInfo.isUser()) {
 						userappInfos.add(appInfo);
@@ -217,7 +216,6 @@ public class StartupMenu extends Activity {
 						systemappInfos.add(appInfo);
 					}
 				}
-				// 发消息给主线程
 				handler.sendEmptyMessage(0);
 			};
 		}.start();
@@ -231,7 +229,6 @@ public class StartupMenu extends Activity {
 			PackageManager pm = getPackageManager();
 			String packName  = appInfo.getPackName();
 			try {
-				//功能清单文件
 				PackageInfo packInfo = pm.getPackageInfo(packName, PackageManager.GET_ACTIVITIES);
 				ActivityInfo [] activitys = packInfo.activities;
 				if(activitys!=null&&activitys.length>0){
@@ -240,7 +237,6 @@ public class StartupMenu extends Activity {
 					intent.setClassName(packName, className);
 					startActivity(intent);
 				}else{
-					Toast.makeText(this, "这个应用没有页面", 1).show();
 				}
 			} catch (NameNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -255,6 +251,6 @@ public class StartupMenu extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		fillData();// 重新加载数据
+		fillData();
 	}
 }

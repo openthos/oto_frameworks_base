@@ -7,13 +7,7 @@ public class AppInfo {
 	private Drawable icon;
 	private String name;
 	private String packName;
-	/**
-	 * true用户程序，false系统应用
-	 */
 	private boolean isUser;
-	/**
-	 * true安装手机内部，false安装手机外部
-	 */
 	private boolean isRom;
 
 	public Drawable getIcon() {
