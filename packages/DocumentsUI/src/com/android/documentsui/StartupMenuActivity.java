@@ -1,15 +1,16 @@
-package com.android.documentui;
+package com.android.documentsui;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.android.documentui.util.AppInfo;
+import com.android.documentsui.util.AppInfo;
 
 import android.R.layout;
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.view.ViewGroup;
+import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -37,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class StartupMenuActivity extends Activity {
+        private Context mContext;
 	private GridView gv_view;
 	private List<AppInfo> appInfos;
 	private List<AppInfo> userappInfos;
@@ -58,9 +61,14 @@ public class StartupMenuActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.start_activity);
+                mContext = this;
 		fillData();
+		//gv_view = (GridView) findViewById(R.id.gv_view);
+                //final View view = inflater.inflate(R.layout.fragment_directory, mContext, false);
+		//gv_view = (GridView) view.findViewById(R.id.grid);
 		gv_view = (GridView) findViewById(R.id.gv_view);
+
 		gv_view.setOnItemClickListener(new MyItemclick());
 		shoutdown_view=(TextView) findViewById(R.id.shoutdown_view);
 		shoutdown_view.setOnClickListener(new OnClickListener() {
@@ -68,7 +76,7 @@ public class StartupMenuActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				View contentView = View.inflate(StartupMenuActivity.this,
-						R.layout.activity_shoutdown, null);
+						R.layout.activity_shutdown, null);
 				shout_text= (TextView) contentView.findViewById(R.id.sdowm_text);
 				popupWindow = new PopupWindow(contentView, 200,
 						100);
@@ -209,7 +217,7 @@ public class StartupMenuActivity extends Activity {
 			public void run() {
 				userappInfos = new ArrayList<AppInfo>();
 				systemappInfos = new ArrayList<AppInfo>();
-				appInfos = com.android.systemui.util.AppInfoProvider.getAppInfos(StartupMenuActivity.this);
+				appInfos = com.android.documentsui.util.AppInfoProvider.getAppInfos(StartupMenuActivity.this);
 				for (AppInfo appInfo : appInfos) {
 					if (appInfo.isUser()) {
 						userappInfos.add(appInfo);

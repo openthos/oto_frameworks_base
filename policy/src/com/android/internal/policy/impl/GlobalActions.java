@@ -197,7 +197,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             final Intent intent = new Intent();
             //intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.egg.LLandActivity"));
             //intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.StartupMenu"));
-            intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.DocumentsActivity"));
+            intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.StartupMenuActivity"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         }

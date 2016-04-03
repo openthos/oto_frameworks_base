@@ -1,4 +1,4 @@
-package com.android.documentui.util;
+package com.android.documentsui.util;
 
 import android.graphics.drawable.Drawable;
 

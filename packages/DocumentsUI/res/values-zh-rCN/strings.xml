@@ -55,6 +55,7 @@
     <string name="toast_no_application" msgid="1339885974067891667">"无法打开文件"</string>
     <string name="toast_failed_delete" msgid="2180678019407244069">"无法删除部分文档"</string>
     <string name="share_via" msgid="8966594246261344259">"分享方式"</string>
+    <string name="startup_menu">"Startup menu"</string>
     <string name="startup_menu_app">"Applicatoin"</string>
     <string name="startup_menu_start">"Start"</string>
     <string name="startup_menu_restart">"Restart"</string>

@@ -1,4 +1,4 @@
-package com.android.documentui.util;
+package com.android.documentsui.util;
 
 import java.util.ArrayList;
 import java.util.List;
