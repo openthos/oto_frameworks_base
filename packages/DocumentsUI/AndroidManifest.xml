@@ -42,6 +42,16 @@
             </intent-filter>
         </activity>
 
+        <!-- startup menu activity -->
+        <activity
+            android:name=".StartupMenuActivity"
+            android:exported="true"
+            android:label="@string/screen_pinning_title"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true">
+        </activity>
+
         <provider
             android:name=".RecentsProvider"
             android:authorities="com.android.documentsui.recents"

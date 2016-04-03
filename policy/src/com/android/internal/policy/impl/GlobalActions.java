@@ -196,7 +196,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             Log.i(TAG, "------========== gchen_tag: call our own intent for startupMenu in handleShow()! -------------------------------------------");
             final Intent intent = new Intent();
             //intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.egg.LLandActivity"));
-            intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.StartupMenu"));
+            //intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.StartupMenu"));
+            intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.DocumentsActivity"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         }

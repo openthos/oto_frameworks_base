@@ -55,4 +55,13 @@
     <string name="toast_no_application" msgid="1339885974067891667">"Cannot open file"</string>
     <string name="toast_failed_delete" msgid="2180678019407244069">"Unable to delete some documents"</string>
     <string name="share_via" msgid="8966594246261344259">"Share via"</string>
+    <string name="startup_menu_app">"Applicatoin"</string>
+    <string name="startup_menu_start">"Start"</string>
+    <string name="startup_menu_restart">"Restart"</string>
+    <string name="startup_menu_shutdown">"Shutdown"</string>
+    <string name="startup_menu_my_computer">"My computer"</string>
+    <string name="startup_menu_security_center">"Security center"</string>
+    <string name="startup_menu_help_feedback">"Help and feedback"</string>
+    <string name="startup_menu_system_settings">"System settings"</string>
+    <string name="startup_menu_to_pad">"To pad"</string>
 </resources>
