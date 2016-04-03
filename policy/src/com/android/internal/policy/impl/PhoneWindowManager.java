@@ -584,6 +584,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_LAUNCH_VOICE_ASSIST_WITH_WAKE_LOCK = 12;
     private static final int MSG_POWER_DELAYED_PRESS = 13;
     private static final int MSG_POWER_LONG_PRESS = 14;
+    private static final int MSG_DISPATCH_TESTWORK = 15;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -606,6 +607,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_DISPATCH_SHOW_GLOBAL_ACTIONS:
                     showGlobalActionsInternal();
+                    break;
+                case MSG_DISPATCH_TESTWORK:
+                    testWorkInternal();
                     break;
                 case MSG_KEYGUARD_DRAWN_COMPLETE:
                     if (DEBUG_WAKEUP) Slog.w(TAG, "Setting mKeyguardDrawComplete");
@@ -1102,6 +1106,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void showGlobalActions() {
         mHandler.removeMessages(MSG_DISPATCH_SHOW_GLOBAL_ACTIONS);
         mHandler.sendEmptyMessage(MSG_DISPATCH_SHOW_GLOBAL_ACTIONS);
+    }
+
+    public void testWork() {
+        mHandler.removeMessages(MSG_DISPATCH_TESTWORK);
+        mHandler.sendEmptyMessage(MSG_DISPATCH_TESTWORK);
+    }
+
+    void testWorkInternal() {
+        Log.i(TAG, "------========== gchen_tag: call testWorkInternal in PhoneWindowManager! ===========================-------------------------------------------");
+        if (mGlobalActions == null) {
+            mGlobalActions = new GlobalActions(mContext, mWindowManagerFuncs);
+        }
+        mGlobalActions.showDialog(false, isDeviceProvisioned());
     }
 
     void showGlobalActionsInternal() {
@@ -2532,27 +2549,29 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
             if (down && repeatCount == 0) {
-                if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
-                    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
-                    mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
-                            null, null, null, 0, null, null);
-                    return -1;
-                } else if (SHOW_PROCESSES_ON_ALT_MENU &&
-                        (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
-                    Intent service = new Intent();
-                    service.setClassName(mContext, "com.android.server.LoadAverageService");
-                    ContentResolver res = mContext.getContentResolver();
-                    boolean shown = Settings.Global.getInt(
-                            res, Settings.Global.SHOW_PROCESSES, 0) != 0;
-                    if (!shown) {
-                        mContext.startService(service);
-                    } else {
-                        mContext.stopService(service);
-                    }
-                    Settings.Global.putInt(
-                            res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
-                    return -1;
-                }
+                Log.i(TAG, "------========== gchen_tag: catch KEYCODE_MENU in PhoneWindowManager! ===========================");
+                testWork();
+                //if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
+                //    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
+                //    mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
+                //            null, null, null, 0, null, null);
+                //    return -1;
+                //} else if (SHOW_PROCESSES_ON_ALT_MENU &&
+                //        (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
+                //    Intent service = new Intent();
+                //    service.setClassName(mContext, "com.android.server.LoadAverageService");
+                //    ContentResolver res = mContext.getContentResolver();
+                //    boolean shown = Settings.Global.getInt(
+                //            res, Settings.Global.SHOW_PROCESSES, 0) != 0;
+                //    if (!shown) {
+                //        mContext.startService(service);
+                //    } else {
+                //        mContext.stopService(service);
+                //    }
+                //    Settings.Global.putInt(
+                //            res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
+                //    return -1;
+                //}
             }
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {

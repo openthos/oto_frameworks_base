@@ -77,6 +77,8 @@ import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import android.content.ComponentName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,12 +166,15 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     public void showDialog(boolean keyguardShowing, boolean isDeviceProvisioned) {
         mKeyguardShowing = keyguardShowing;
         mDeviceProvisioned = isDeviceProvisioned;
+        Log.i(TAG, "------========== gchen_tag: call showDialog in GlobalAction! -------------------------------------------");
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
             // Show delayed, so that the dismiss of the previous dialog completes
+            Log.i(TAG, "------========== gchen_tag: call sendEmptyMessage() in showDialog! -------------------------------------------");
             mHandler.sendEmptyMessage(MESSAGE_SHOW);
         } else {
+            Log.i(TAG, "------========== gchen_tag: call handleShow() in showDialog! -------------------------------------------");
             handleShow();
         }
     }
@@ -187,22 +192,32 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     }
 
     private void handleShow() {
-        awakenIfNecessary();
-        mDialog = createDialog();
-        prepareDialog();
+        {
+            Log.i(TAG, "------========== gchen_tag: call our own intent for startupMenu in handleShow()! -------------------------------------------");
+            final Intent intent = new Intent();
+            //intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.egg.LLandActivity"));
+            intent.setComponent(new ComponentName("com.android.systemui", "com.android.systemui.StartupMenu"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        }
+        //awakenIfNecessary();
+        //mDialog = createDialog();
+        //prepareDialog();
 
         // If we only have 1 item and it's a simple press action, just do this action.
-        if (mAdapter.getCount() == 1
-                && mAdapter.getItem(0) instanceof SinglePressAction
-                && !(mAdapter.getItem(0) instanceof LongPressAction)) {
-            ((SinglePressAction) mAdapter.getItem(0)).onPress();
-        } else {
-            WindowManager.LayoutParams attrs = mDialog.getWindow().getAttributes();
-            attrs.setTitle("GlobalActions");
-            mDialog.getWindow().setAttributes(attrs);
-            mDialog.show();
-            mDialog.getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_DISABLE_EXPAND);
-        }
+        //if (mAdapter.getCount() == 1
+        //        && mAdapter.getItem(0) instanceof SinglePressAction
+        //        && !(mAdapter.getItem(0) instanceof LongPressAction)) {
+        //    Log.i(TAG, "------========== gchen_tag: call onPress() in handleShow()! -------------------------------------------");
+        //    ((SinglePressAction) mAdapter.getItem(0)).onPress();
+        //} else {
+        //    Log.i(TAG, "------========== gchen_tag: call normal show in handleShow()! -------------------------------------------");
+        //    WindowManager.LayoutParams attrs = mDialog.getWindow().getAttributes();
+        //    attrs.setTitle("GlobalActions");
+        //    mDialog.getWindow().setAttributes(attrs);
+        //    mDialog.show();
+        //    mDialog.getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_DISABLE_EXPAND);
+        //}
     }
 
     /**

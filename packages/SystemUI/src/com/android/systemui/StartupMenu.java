@@ -109,6 +109,7 @@ public class StartupMenu extends Activity {
 		
 		vi.setVisibility(View.GONE);
 	}
+
 	class MyItemclick implements OnItemClickListener{
 
 		@Override
