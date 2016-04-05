@@ -3521,6 +3521,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private ImageButton mCloseBtn;
         private ImageButton mLaunchBtn;
         private ImageButton mMaximizeBtn;
+        private ImageButton mMinimizeBtn;
         private View mInnerBorder;
         private View mOuterBorder;
         private View mBackground;
@@ -3555,6 +3556,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mCloseBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwCloseBtn);
             mLaunchBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwLaunchBtn);
             mMaximizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMaximizeBtn);
+            mMinimizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMinimizeBtn);
             mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
             mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
             mBackground = mDecorView.findViewById(com.android.internal.R.id.mwBackground);
@@ -3730,6 +3732,25 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         }
                     } catch (RemoteException e) {
                         Log.e(TAG, "Maximize failed", e);
+                    }
+                }
+            });
+
+            mMinimizeBtn.setOnClickListener(new OnClickListener() {
+                private final static int TEST_WIDTH = 200;
+                private final static int TEST_HEIGHT = 30;
+                private final static int TEST_LEFT = 100;
+                private final static int TEST_TOP = 200;
+                private final static int TEST_RIGHT = TEST_LEFT + TEST_WIDTH;
+                private final static int TEST_BOTTOM = TEST_TOP + TEST_HEIGHT;
+
+                @Override
+                public void onClick(View v) {
+                    Rect mini = new Rect(TEST_LEFT, TEST_TOP, TEST_RIGHT, TEST_BOTTOM);
+                    try {
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mini);
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Minimize failed", e);
                     }
                 }
             });
