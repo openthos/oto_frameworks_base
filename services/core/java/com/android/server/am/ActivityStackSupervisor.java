@@ -175,10 +175,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int WINDOW_INIT_HEIGHT = 300;
 
     /* For initializing startup menu window positon */
-    static final int WINDOW_STARTUP_MENU_LEFT = 0;
-    static final int WINDOW_STARTUP_MENU_TOP = 330;
-    static final int WINDOW_STARTUP_MENU_RIGHT = 330;
-    static final int WINDOW_STARTUP_MENU_BOTTOM = 580;
+    static final int WINDOW_STARTUP_MENU_WIDTH = 400;
+    static final int WINDOW_STARTUP_MENU_HEIGHT = 350;
 
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
@@ -1679,7 +1677,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * for now
              */
             if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
-                mService.relayoutWindow(stackId, getInitializingRect(intentFlags));
+                mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
@@ -1690,10 +1688,18 @@ public final class ActivityStackSupervisor implements DisplayListener {
         return mHomeStack;
     }
 
-    Rect getInitializingRect(int intentFlags) {
+    Rect getInitializingRect(int intentFlags, int displayId) {
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
-             return new Rect(WINDOW_STARTUP_MENU_LEFT, WINDOW_STARTUP_MENU_TOP,
-                             WINDOW_STARTUP_MENU_RIGHT, WINDOW_STARTUP_MENU_BOTTOM);
+             ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
+             int bottom = activityDisplay.mDisplayInfo.logicalHeight
+                              - activityDisplay.mDisplayInfo.overscanBottom
+                              - activityDisplay.mDisplayInfo.overscanTop;
+             //int width = mWindowManager.mContext.getResources().getDimensionPixelSize(
+             //                 com.android.documentsui.R.dimen.startup_menu_width);
+             //int height = mWindowManager.mContext.getResources().getDimensionPixelSize(
+             //                 com.android.documentsui.R.dimen.startup_menu_height);
+             return new Rect(0, bottom - WINDOW_STARTUP_MENU_HEIGHT,
+                             WINDOW_STARTUP_MENU_WIDTH, bottom);
         }
 
         mInitPosX += WINDOW_OFFSET_STEP;
