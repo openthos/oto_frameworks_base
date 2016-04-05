@@ -584,7 +584,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_LAUNCH_VOICE_ASSIST_WITH_WAKE_LOCK = 12;
     private static final int MSG_POWER_DELAYED_PRESS = 13;
     private static final int MSG_POWER_LONG_PRESS = 14;
-    private static final int MSG_DISPATCH_TESTWORK = 15;
+    private static final int MSG_STARTUP_MENU = 15;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -608,8 +608,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 case MSG_DISPATCH_SHOW_GLOBAL_ACTIONS:
                     showGlobalActionsInternal();
                     break;
-                case MSG_DISPATCH_TESTWORK:
-                    testWorkInternal();
+                case MSG_STARTUP_MENU:
+                    startupMenuInternal();
                     break;
                 case MSG_KEYGUARD_DRAWN_COMPLETE:
                     if (DEBUG_WAKEUP) Slog.w(TAG, "Setting mKeyguardDrawComplete");
@@ -1108,17 +1108,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_DISPATCH_SHOW_GLOBAL_ACTIONS);
     }
 
-    public void testWork() {
-        mHandler.removeMessages(MSG_DISPATCH_TESTWORK);
-        mHandler.sendEmptyMessage(MSG_DISPATCH_TESTWORK);
+    public void startupMenu() {
+        mHandler.removeMessages(MSG_STARTUP_MENU);
+        mHandler.sendEmptyMessage(MSG_STARTUP_MENU);
     }
 
-    void testWorkInternal() {
-        Log.i(TAG, "------========== gchen_tag: call testWorkInternal in PhoneWindowManager! ===========================-------------------------------------------");
-        if (mGlobalActions == null) {
-            mGlobalActions = new GlobalActions(mContext, mWindowManagerFuncs);
-        }
-        mGlobalActions.showDialog(false, isDeviceProvisioned());
+    void startupMenuInternal() {
+        final Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.StartupMenuActivity"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU | Intent. FLAG_ACTIVITY_CLEAR_TASK);
+        mContext.startActivity(intent);
     }
 
     void showGlobalActionsInternal() {
@@ -2549,8 +2548,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
             if (down && repeatCount == 0) {
-                Log.i(TAG, "------========== gchen_tag: catch KEYCODE_MENU in PhoneWindowManager! ===========================");
-                testWork();
+                startupMenu();
                 //if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
                 //    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
                 //    mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
