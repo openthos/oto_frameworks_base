@@ -3614,6 +3614,12 @@ public class Intent implements Parcelable, Cloneable {
     public static final int FLAG_ACTIVITY_RUN_IN_WINDOW = 0x00000100;
 
     /**
+     * For startup menu
+     * {@hide}
+     */
+    public static final int FLAG_ACTIVITY_RUN_STARTUP_MENU = 0x00000200;
+
+    /**
      * When combined with {@link #FLAG_GRANT_READ_URI_PERMISSION} and/or
      * {@link #FLAG_GRANT_WRITE_URI_PERMISSION}, the URI permission grant
      * applies to any URI that is a prefix match against the original granted

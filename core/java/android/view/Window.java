@@ -1883,6 +1883,21 @@ public abstract class Window {
      * Setters and getters
      */
     private int mStackId = -1;
+    private boolean mShowFrame = true;
+
+    /**
+     * @hide
+     */
+    public void enableShowFrame(boolean show) {
+        mShowFrame = show;
+    }
+
+    /**
+     * @hide
+     */
+    public boolean isShowFrame() {
+        return mShowFrame;
+    }
 
     /**
      * @hide

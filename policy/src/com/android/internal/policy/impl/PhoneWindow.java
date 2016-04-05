@@ -2859,13 +2859,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         @Override
         public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-            if (mDecorMW != null) {
+            if ((mDecorMW != null) && isShowFrame()) {
                 int of = mDecorMW.getBorderPadding();
                 Rect tmp = insets.getSystemWindowInsets();
                 tmp.top += of;
-                //tmp.left += of;
-                //tmp.bottom += of;
-                //tmp.right += of;
                 tmp.left += MW_WINDOW_CHECK_RESIZE_DIFF;
                 tmp.bottom += MW_WINDOW_CHECK_RESIZE_DIFF;
                 tmp.right += MW_WINDOW_CHECK_RESIZE_DIFF;

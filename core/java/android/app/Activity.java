@@ -5945,6 +5945,12 @@ public class Activity extends ContextThemeWrapper
         return -1;
     }
 
+    private void setWindowAttributes() {
+        mWindow.setStackId(getStackId());
+        mWindow.enableShowFrame((mIntent != null) &&
+                                ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) == 0));
+    }
+
     final void attach(Context context, ActivityThread aThread,
             Instrumentation instr, IBinder token, int ident,
             Application application, Intent intent, ActivityInfo info,
@@ -6013,14 +6019,14 @@ public class Activity extends ContextThemeWrapper
     }
 
     final void performCreate(Bundle icicle) {
-        mWindow.setStackId(getStackId());
+        setWindowAttributes();
         onCreate(icicle);
         mActivityTransitionState.readState(icicle);
         performCreateCommon();
     }
 
     final void performCreate(Bundle icicle, PersistableBundle persistentState) {
-        mWindow.setStackId(getStackId());
+        setWindowAttributes();
         onCreate(icicle, persistentState);
         mActivityTransitionState.readState(icicle);
         performCreateCommon();

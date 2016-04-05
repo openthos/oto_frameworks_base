@@ -174,6 +174,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int WINDOW_INIT_WIDTH = 400;
     static final int WINDOW_INIT_HEIGHT = 300;
 
+    /* For initializing startup menu window positon */
+    static final int WINDOW_STARTUP_MENU_LEFT = 0;
+    static final int WINDOW_STARTUP_MENU_TOP = 330;
+    static final int WINDOW_STARTUP_MENU_RIGHT = 330;
+    static final int WINDOW_STARTUP_MENU_BOTTOM = 580;
+
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
     private static final String LOCK_TASK_TAG = "Lock-to-App";
@@ -1673,7 +1679,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * for now
              */
             if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
-                mService.relayoutWindow(stackId, getInitializingRect());
+                mService.relayoutWindow(stackId, getInitializingRect(intentFlags));
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);
@@ -1684,7 +1690,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
         return mHomeStack;
     }
 
-    Rect getInitializingRect() {
+    Rect getInitializingRect(int intentFlags) {
+        if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
+             return new Rect(WINDOW_STARTUP_MENU_LEFT, WINDOW_STARTUP_MENU_TOP,
+                             WINDOW_STARTUP_MENU_RIGHT, WINDOW_STARTUP_MENU_BOTTOM);
+        }
+
         mInitPosX += WINDOW_OFFSET_STEP;
         if (mInitPosX > WINDOW_OFFSET_MAX) {
             mInitPosX = WINDOW_OFFSET_STEP;
