@@ -2186,16 +2186,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public int prepareAddWindowLw(WindowState win, WindowManager.LayoutParams attrs) {
         switch (attrs.type) {
             case TYPE_STATUS_BAR:
-                mContext.enforceCallingOrSelfPermission(
-                        android.Manifest.permission.STATUS_BAR_SERVICE,
-                        "PhoneWindowManager");
-                if (mStatusBar != null) {
-                    if (mStatusBar.isAlive()) {
-                        return WindowManagerGlobal.ADD_MULTIPLE_SINGLETON;
-                    }
-                }
-                mStatusBar = win;
-                mStatusBarController.setWindow(win);
+                //mContext.enforceCallingOrSelfPermission(
+                //        android.Manifest.permission.STATUS_BAR_SERVICE,
+                //        "PhoneWindowManager");
+                //if (mStatusBar != null) {
+                //    if (mStatusBar.isAlive()) {
+                //        return WindowManagerGlobal.ADD_MULTIPLE_SINGLETON;
+                //    }
+                //}
+                //mStatusBar = win;
+                //mStatusBarController.setWindow(win);
                 break;
             case TYPE_NAVIGATION_BAR:
                 mContext.enforceCallingOrSelfPermission(
