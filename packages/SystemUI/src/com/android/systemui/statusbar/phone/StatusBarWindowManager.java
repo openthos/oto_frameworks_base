@@ -15,7 +15,6 @@
  */
 
 package com.android.systemui.statusbar.phone;
-
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
@@ -79,7 +78,7 @@ public class StatusBarWindowManager {
                         | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
                 PixelFormat.TRANSLUCENT);
         mLp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-        mLp.gravity = Gravity.TOP;
+        mLp.gravity = Gravity.BOTTOM;
         mLp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         mLp.setTitle("StatusBar");
         mLp.packageName = mContext.getPackageName();
