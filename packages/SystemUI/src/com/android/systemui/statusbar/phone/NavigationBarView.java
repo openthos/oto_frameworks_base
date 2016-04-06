@@ -105,20 +105,11 @@ public class NavigationBarView extends LinearLayout {
         @Override
         public void startTransition(LayoutTransition transition, ViewGroup container,
                 View view, int transitionType) {
-            if (view.getId() == R.id.home && transitionType == LayoutTransition.APPEARING) {
-                mHomeAppearing = true;
-                mStartDelay = transition.getStartDelay(transitionType);
-                mDuration = transition.getDuration(transitionType);
-                mInterpolator = transition.getInterpolator(transitionType);
-            }
         }
 
         @Override
         public void endTransition(LayoutTransition transition, ViewGroup container,
                 View view, int transitionType) {
-            if (view.getId() == R.id.home && transitionType == LayoutTransition.APPEARING) {
-                mHomeAppearing = false;
-            }
         }
 
         public void onBackAltCleared() {
@@ -240,10 +231,6 @@ public class NavigationBarView extends LinearLayout {
         return mCurrentView.findViewById(R.id.menu);
     }
 
-    public View getHomeButton() {
-        return mCurrentView.findViewById(R.id.home);
-    }
-
     public View getImeSwitchButton() {
         return mCurrentView.findViewById(R.id.ime_switcher);
     }
@@ -336,8 +323,6 @@ public class NavigationBarView extends LinearLayout {
             // Unless home is hidden, then in DPM locked mode and no exit available.
             disableRecent = false;
         }
-
-        getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
 
         mBarTransitions.applyBackButtonQuiescentAlpha(mBarTransitions.getMode(), true /*animate*/);
     }
@@ -445,7 +430,7 @@ public class NavigationBarView extends LinearLayout {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
-        mDelegateHelper.setInitialTouchRegion(getHomeButton());
+        //mDelegateHelper.setInitialTouchRegion(getHomeButton());
     }
 
     @Override
@@ -614,7 +599,6 @@ public class NavigationBarView extends LinearLayout {
                         mVertical ? "true" : "false",
                         mShowMenu ? "true" : "false"));
 
-        dumpButton(pw, "home", getHomeButton());
         dumpButton(pw, "menu", getMenuButton());
 
         pw.println("    }");

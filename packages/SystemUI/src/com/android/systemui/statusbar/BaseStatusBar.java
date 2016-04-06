@@ -167,9 +167,6 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected int mLayoutDirection = -1; // invalid
     protected AccessibilityManager mAccessibilityManager;
 
-    // on-screen navigation buttons
-    protected NavigationBarView mNavigationBarView = null;
-
     protected Boolean mScreenOn;
 
     // The second field is a bit different from the first one because it only listens to screen on/
@@ -1063,8 +1060,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         mSearchPanelView.setOnTouchListener(
                  new TouchOutsideListener(MSG_CLOSE_SEARCH_PANEL, mSearchPanelView));
         mSearchPanelView.setVisibility(View.GONE);
-        boolean vertical = mNavigationBarView != null && mNavigationBarView.isVertical();
-        mSearchPanelView.setHorizontal(vertical);
+        mSearchPanelView.setHorizontal(false);
 
         WindowManager.LayoutParams lp = getSearchLayoutParams(mSearchPanelView.getLayoutParams());
 

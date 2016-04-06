@@ -345,13 +345,6 @@ public class StatusBarKeyguardViewManager {
         }
     }
 
-    private Runnable mMakeNavigationBarVisibleRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mPhoneStatusBar.getNavigationBarView().setVisibility(View.VISIBLE);
-        }
-    };
-
     private void updateStates() {
         int vis = mContainer.getSystemUiVisibility();
         boolean showing = mShowing;
@@ -365,18 +358,6 @@ public class StatusBarKeyguardViewManager {
                 mContainer.setSystemUiVisibility(vis & ~View.STATUS_BAR_DISABLE_BACK);
             } else {
                 mContainer.setSystemUiVisibility(vis | View.STATUS_BAR_DISABLE_BACK);
-            }
-        }
-        if ((!(showing && !occluded) || bouncerShowing)
-                != (!(mLastShowing && !mLastOccluded) || mLastBouncerShowing) || mFirstUpdate) {
-            if (mPhoneStatusBar.getNavigationBarView() != null) {
-                if (!(showing && !occluded) || bouncerShowing) {
-                    mContainer.postOnAnimationDelayed(mMakeNavigationBarVisibleRunnable,
-                            getNavBarShowDelay());
-                } else {
-                    mContainer.removeCallbacks(mMakeNavigationBarVisibleRunnable);
-                    mPhoneStatusBar.getNavigationBarView().setVisibility(View.GONE);
-                }
             }
         }
 
