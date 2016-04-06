@@ -2230,7 +2230,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 Gravity.TOP,
                 STATUS_BAR_BACKGROUND_TRANSITION_NAME,
                 com.android.internal.R.id.statusBarBackground,
-                FLAG_FULLSCREEN);
+                0);
         private final ColorViewState mNavigationColorViewState = new ColorViewState(
                 SYSTEM_UI_FLAG_HIDE_NAVIGATION, FLAG_TRANSLUCENT_NAVIGATION,
                 Gravity.BOTTOM,
@@ -4023,10 +4023,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             requestFeature(FEATURE_SWIPE_TO_DISMISS);
         }
 
-        if (a.getBoolean(R.styleable.Window_windowFullscreen, false)) {
-            setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN & (~getForcedWindowFlags()));
-        }
-
         if (a.getBoolean(R.styleable.Window_windowTranslucentStatus,
                 false)) {
             setFlags(FLAG_TRANSLUCENT_STATUS, FLAG_TRANSLUCENT_STATUS
@@ -4716,12 +4712,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         setAttributes(newParams);
 
                         int flags = 0;
-                        if (newParams.x == 0) {
-                            flags = FLAG_FULLSCREEN;
-                        } else {
                             flags = FLAG_LAYOUT_NO_LIMITS;
-                        }
-                        setFlags(flags, FLAG_FULLSCREEN | FLAG_LAYOUT_NO_LIMITS);
+                        setFlags(flags, FLAG_LAYOUT_NO_LIMITS);
                     }
 
                     @Override
@@ -4730,7 +4722,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         newParams.x = 0;
                         newParams.alpha = 1;
                         setAttributes(newParams);
-                        setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN | FLAG_LAYOUT_NO_LIMITS);
+                        setFlags(0, FLAG_LAYOUT_NO_LIMITS);
                     }
                 });
     }

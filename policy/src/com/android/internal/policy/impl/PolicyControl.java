@@ -86,7 +86,7 @@ public class PolicyControl {
         attrs = attrs != null ? attrs : win.getAttrs();
         int flags = attrs.flags;
         if (sImmersiveStatusFilter != null && sImmersiveStatusFilter.matches(attrs)) {
-            flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            //flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
             flags &= ~(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     | WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         }
