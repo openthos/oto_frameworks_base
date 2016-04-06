@@ -539,9 +539,9 @@ void PointerController::updatePointerLocked() {
         case 0:
             mLocked.pointerSprite->setIcon(mResources.arrowNormal);
             break;
-        case 1:
+        /*case 1:
             mLocked.pointerSprite->setIcon(mResources.arrowUpdown);
-            break;
+            break;*/
         case 2:
             mLocked.pointerSprite->setIcon(mResources.arrowUpdown);
             break;

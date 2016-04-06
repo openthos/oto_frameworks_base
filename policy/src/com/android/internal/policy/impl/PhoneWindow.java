@@ -3598,8 +3598,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private View mInnerBorder;
         private View mOuterBorder;
         private View mBackground;
-        private View mLeftResize;
-        private View mRightResize;
+        //private View mLeftResize;
+        //private View mRightResize;
         private ImageView mAppIcon;
         private TextView mAppName;
 
@@ -3633,8 +3633,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
             mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
             mBackground = mDecorView.findViewById(com.android.internal.R.id.mwBackground);
-            mLeftResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeLeft);
-            mRightResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeRight);
+            //mLeftResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeLeft);
+            //mRightResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeRight);
             mAppIcon = (ImageView) mDecorView.findViewById(com.android.internal.R.id.mwIcon);
             mAppName =(TextView) mDecorView.findViewById(com.android.internal.R.id.mwTitle);
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
@@ -3651,17 +3651,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 @Override
                 public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     switch(ways) {
-                        case MW_WINDOW_RESIZE_TOP:
-                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.top = frame.top + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.top = frame.top + mLastDy;
-                                }
-                                mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left;
-                                mTmpFrame.right = frame.right;
-                                break;
                         case MW_WINDOW_RESIZE_BOTTOM:
                                 mTmpFrame.top = frame.top;
                                 if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
@@ -3759,6 +3748,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                                     mTmpFrame.right = frame.right + mLastDx;
                                 }
                                 break;
+                        /** Top needn't get window resize touch events. */
+                        case MW_WINDOW_RESIZE_TOP:
+                                /* if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.top = frame.top + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.top = frame.top + mLastDy;
+                                }
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break; */
                         default:
                                 mTmpFrame.top = frame.top;
                                 mTmpFrame.bottom = frame.bottom;
@@ -3781,7 +3782,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }, mMaximizeBtn, mFullScreen));
 
-            mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
+            /**mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
                 public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
@@ -3800,9 +3801,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     }
                     return mTmpFrame;
                 }
-            }, mMaximizeBtn, mLeftResize, mFullScreen));
+            }, mMaximizeBtn, mLeftResize, mFullScreen));**/
 
-            mRightResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
+            /**mRightResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
                 public Rect resize(Rect frame, int diffX, int diffY, int ways) {
                     mTmpFrame.left = frame.left;
@@ -3821,7 +3822,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     }
                     return mTmpFrame;
                 }
-            }, mMaximizeBtn, mRightResize, mFullScreen));
+            }, mMaximizeBtn, mRightResize, mFullScreen));**/
 
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -3922,8 +3923,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         void setFocus(){
             int tietoBlue = com.android.internal.R.color.mw_blue_decor;
-            mLeftResize.setBackgroundResource(tietoBlue);
-            mRightResize.setBackgroundResource(tietoBlue);
+            //mLeftResize.setBackgroundResource(tietoBlue);
+            //mRightResize.setBackgroundResource(tietoBlue);
             mHeader.setBackgroundResource(tietoBlue);
             if (mRemoteConnected) {
                 mInnerBorder.setBackgroundResource(0);
@@ -3937,10 +3938,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         void unsetFocus() {
-            mLeftResize.setBackgroundResource(0);
-            mRightResize.setBackgroundResource(0);
-            mLeftResize.setBackgroundColor(Color.TRANSPARENT);
-            mRightResize.setBackgroundColor(Color.TRANSPARENT);
+            //mLeftResize.setBackgroundResource(0);
+            //mRightResize.setBackgroundResource(0);
+            //mLeftResize.setBackgroundColor(Color.TRANSPARENT);
+            //mRightResize.setBackgroundColor(Color.TRANSPARENT);
             mHeader.setBackgroundResource(0);
             mHeader.setBackgroundColor(Color.TRANSPARENT);
             if (mRemoteConnected) {
