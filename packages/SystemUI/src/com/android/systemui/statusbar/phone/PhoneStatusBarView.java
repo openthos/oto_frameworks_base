@@ -128,8 +128,17 @@ public class PhoneStatusBarView extends PanelBar {
         mLastFullyOpenedPanel = openPanel;
     }
 
+    private boolean checkValidEvent(int x) {
+        return x >= 500;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        if (checkValidEvent((int)event.getX()) == false) {
+            return false;
+        }
+
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
         if (DEBUG_GESTURES) {
