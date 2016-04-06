@@ -176,7 +176,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     /* For initializing startup menu window positon */
     static final int WINDOW_STARTUP_MENU_WIDTH = 400;
-    static final int WINDOW_STARTUP_MENU_HEIGHT = 350;
+    static final int WINDOW_STARTUP_MENU_HEIGHT = 380;
 
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
