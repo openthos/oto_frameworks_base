@@ -39,7 +39,17 @@
         android:scaleType="center"
         android:visibility="gone"
         />
-
+    <com.android.systemui.statusbar.policy.KeyButtonView
+        android:id="@+id/status_bar_startup_menu"
+        android:layout_width="@dimen/status_bar_icon_size"
+        android:layout_height="match_parent"
+        android:paddingStart="6dip"
+        android:paddingBottom="2dip"
+        android:src="@drawable/ic_sysbar_menu"
+        android:scaleType="center"
+        systemui:keyCode="82"
+        systemui:keyRepeat="true"
+        />
     <LinearLayout android:id="@+id/status_bar_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
