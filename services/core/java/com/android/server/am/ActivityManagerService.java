@@ -206,6 +206,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.KeyEvent;
 
 import dalvik.system.VMRuntime;
 
@@ -378,6 +379,10 @@ public final class ActivityManagerService extends ActivityManagerNative
     // Delay in notifying task stack change listeners (in millis)
     static final int NOTIFY_TASK_STACK_CHANGE_LISTENERS_DELAY = 1000;
 
+    /* At present, totally, we only provide 6 statusbar activities */
+    static final int STATUSBAR_ACTIVITY_ID_START = KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START;
+    static final int STATUSBAR_ACTIVITY_ID_END = STATUSBAR_ACTIVITY_ID_START + 6;
+
     /** All system services */
     SystemServiceManager mSystemServiceManager;
 
@@ -431,6 +436,8 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
         return null;
     }
+
+    ArrayList<StatusbarActivity> mStatusbarActivities = new ArrayList<StatusbarActivity>();
 
     /**
      * Activity we have told the window manager to have key focus.
@@ -19754,6 +19761,87 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
+    public class StatusbarActivity {
+        int mActivityId;   /* For status bar activity */
+        int mStackId;      /* The related TaskStack id */
+        boolean mHiden;    /* The related TaskStack id whether is already hide or not */
+        Rect mRestoreRect = new Rect(); /* Retore the original layout if mHiden is true */
+    }
+
+    private int findStatusbarActivityId(int statusbarActivityId) {
+        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
+            if (statusbarActivityId == mStatusbarActivities.get(idx).mActivityId) {
+                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, activity id: %d", idx, statusbarActivityId));
+                return idx;
+            }
+        }
+        Log.i(TAG, String.format("======================= gchen_tag: can not find activity id: %d", statusbarActivityId));
+        return -1;
+    }
+
+    private int findStatusbarActivityStackId(int stackId) {
+        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
+            if (stackId == mStatusbarActivities.get(idx).mStackId) {
+                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, stack id: %d, activity id: %d", idx, stackId, mStatusbarActivities.get(idx).mActivityId));
+                return idx;
+            }
+        }
+        Log.i(TAG, String.format("======================= gchen_tag: can not find stack id: %d", stackId));
+        return -1;
+    }
+
+    private void removeStatusbarActivity(int stackId) {
+        int idx = findStatusbarActivityStackId(stackId);
+        if (idx >= 0) {
+            mStatusbarActivities.remove(idx);
+        }
+    }
+
+    @Override
+    public int createStatusbarActivity(int stackId) {
+        for (int id = STATUSBAR_ACTIVITY_ID_START; id < STATUSBAR_ACTIVITY_ID_END; id++) {
+            if (findStatusbarActivityId(id) == -1) {
+                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d", id));
+                final StatusbarActivity a = new StatusbarActivity();
+                a.mActivityId = id;
+                a.mStackId = stackId;
+                a.mHiden = false;
+                mStatusbarActivities.add(a);
+                return id;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+        int idx = findStatusbarActivityStackId(stackId);
+        if (idx < 0) {
+            return;
+        }
+
+        StatusbarActivity a = mStatusbarActivities.get(idx);
+        a.mHiden = true;
+        a.mRestoreRect.set(rect);
+        Log.i(TAG, String.format("======================= gchen_tag: call saveInfoInStatusbarActivity() for id: %d, RECT(%d, %d, %d, %d)........",
+                                 a.mActivityId, a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
+    }
+
+    @Override
+    public void touchStatusbarActivity(int statusbarActivityId) {
+        int idx = findStatusbarActivityId(statusbarActivityId);
+        if (idx < 0) {
+            return;
+        }
+
+        StatusbarActivity a = mStatusbarActivities.get(idx);
+        Log.i(TAG, String.format("======================= gchen_tag: call touchStatusbarActivity() for id: %d, stackId: %d", a.mActivityId, a.mStackId));
+        if (a.mHiden == true) {
+            Log.i(TAG, String.format("======================= gchen_tag: hiden RECT(%d, %d, %d, %d)........",
+                                     a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
+        }
+    }
+
     @Override
     public boolean relayoutWindow(int stackId, Rect r) {
         /**
@@ -19793,6 +19881,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         } else {
             succeed = false;
         }
+        removeStatusbarActivity(stackId);
         Binder.restoreCallingIdentity(ident);
         return succeed;
     }

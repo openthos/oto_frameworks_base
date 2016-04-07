@@ -574,6 +574,12 @@ public interface IActivityManager extends IInterface {
         }
     }
 
+    public int createStatusbarActivity(int stackId) throws RemoteException;
+
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) throws RemoteException;
+
+    public void touchStatusbarActivity(int statusbarActivityId) throws RemoteException;
+
     /**
      * Date: Feb 25, 2014
      * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -835,6 +841,10 @@ public interface IActivityManager extends IInterface {
     int GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
 
     int GET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+190;
+
+    int STATUSBAR_ACTIVITY_CREAT = IBinder.FIRST_CALL_TRANSACTION+191;
+    int STATUSBAR_ACTIVITY_SAVEINFO = IBinder.FIRST_CALL_TRANSACTION+192;
+    int STATUSBAR_ACTIVITY_TOUCH = IBinder.FIRST_CALL_TRANSACTION+193;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

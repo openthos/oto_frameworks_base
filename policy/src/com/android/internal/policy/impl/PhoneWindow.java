@@ -3646,6 +3646,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mAppName.setText(pm.getApplicationLabel(ai));
             mAppIcon.setImageDrawable(icon);
 
+            if (isShowFrame()) {
+                try {
+                    int statusbarActivityId = ActivityManagerNative.getDefault().createStatusbarActivity(getStackId());
+                    Log.i(TAG, String.format("============== gchen_tag: get statusbar activity id: %d .............", statusbarActivityId));
+                } catch (RemoteException e) {
+                    Log.e(TAG, "create statusbar activity failed", e);
+                }
+            }
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3886,7 +3894,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 @Override
                 public void onClick(View v) {
                     Rect mini = new Rect(TEST_LEFT, TEST_TOP, TEST_RIGHT, TEST_BOTTOM);
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
                     try {
+                            ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
                             ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mini);
                     } catch (RemoteException e) {
                         Log.e(TAG, "Minimize failed", e);

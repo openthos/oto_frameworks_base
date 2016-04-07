@@ -2673,6 +2673,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 launchAssistAction(Intent.EXTRA_ASSIST_INPUT_HINT_KEYBOARD);
             }
             return -1;
+        } else if ((keyCode >= KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START)
+                   && (keyCode < KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_END)) {
+            if (down && repeatCount == 0) {
+                Log.i(TAG, String.format("=============== gchen_tag: keycode = %d -------------------------------", keyCode));
+                try {
+                    ActivityManagerNative.getDefault().touchStatusbarActivity(keyCode);
+                } catch (RemoteException e) {
+                }
+            }
+            return -1;
         }
 
         // Shortcuts are invoked through Search+key, so intercept those here

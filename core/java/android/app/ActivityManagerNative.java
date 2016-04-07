@@ -2373,6 +2373,33 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
+        case STATUSBAR_ACTIVITY_CREAT: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            int statusbarActivityId = createStatusbarActivity(stackId);
+            reply.writeNoException();
+            reply.writeInt(statusbarActivityId);
+            return true;
+        }
+
+        case STATUSBAR_ACTIVITY_SAVEINFO: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            Rect r = new Rect();
+            r.readFromParcel(data);
+            saveInfoInStatusbarActivity(stackId, r);
+            reply.writeNoException();
+            return true;
+        }
+
+        case STATUSBAR_ACTIVITY_TOUCH: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int statusbarActivityId = data.readInt();
+            touchStatusbarActivity(statusbarActivityId);
+            reply.writeNoException();
+            return true;
+        }
+
         /**
          * Date: Feb 25, 2014
          * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -5549,6 +5576,42 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
+    public int createStatusbarActivity(int stackId) throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        mRemote.transact(STATUSBAR_ACTIVITY_CREAT, data, reply, 0);
+        reply.readException();
+        int result = reply.readInt();
+        data.recycle();
+        reply.recycle();
+        return result;
+    }
+
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        int flags = 0;
+        rect.writeToParcel(data, flags);
+        mRemote.transact(STATUSBAR_ACTIVITY_SAVEINFO, data, reply, 0);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
+
+    public void touchStatusbarActivity(int statusbarActivityId) throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(statusbarActivityId);
+        mRemote.transact(STATUSBAR_ACTIVITY_TOUCH, data, reply, 0);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
 
     /**
      * Date: Feb 25, 2014

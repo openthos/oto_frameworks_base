@@ -1619,7 +1619,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * TietoTODO: There is quiet assumption that task stack id is the same
              * as stack box id. Can it be different?
              */
-            int parentStackId = HOME_STACK_ID;
             int intentFlags = 0;
 
             // FIXME: mContext is not merged into 5.1 originally.
@@ -1676,7 +1675,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * Activities which run on external are run fullscreen. At least
              * for now
              */
-            if ((parentStackId == HOME_STACK_ID) && isMultiwindow) {
+            if (isMultiwindow) {
                 mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
