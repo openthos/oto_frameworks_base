@@ -59,7 +59,7 @@
             systemui:keyRepeat="true"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_0"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -68,9 +68,10 @@
             android:scaleType="center"
             systemui:keyCode="1000000"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_1"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -79,9 +80,10 @@
             android:scaleType="center"
             systemui:keyCode="1000001"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_2"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -90,9 +92,10 @@
             android:scaleType="center"
             systemui:keyCode="1000002"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_3"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -101,9 +104,10 @@
             android:scaleType="center"
             systemui:keyCode="1000003"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_4"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -112,9 +116,10 @@
             android:scaleType="center"
             systemui:keyCode="1000004"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
         <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_startup_menu"
+            android:id="@+id/status_bar_activity_5"
             android:layout_width="100dip"
             android:layout_height="match_parent"
             android:paddingStart="6dip"
@@ -123,6 +128,7 @@
             android:scaleType="center"
             systemui:keyCode="1000005"
             systemui:keyRepeat="true"
+            android:visibility="gone"
             />
     </LinearLayout>
 

@@ -19793,6 +19793,10 @@ public final class ActivityManagerService extends ActivityManagerNative
     private void removeStatusbarActivity(int stackId) {
         int idx = findStatusbarActivityStackId(stackId);
         if (idx >= 0) {
+            final StatusbarActivity a = mStatusbarActivities.get(idx);
+            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+
+            statusBarManager.showStatusbarActivity(a.mActivityId, false);
             mStatusbarActivities.remove(idx);
         }
     }
@@ -19801,12 +19805,16 @@ public final class ActivityManagerService extends ActivityManagerNative
     public int createStatusbarActivity(int stackId) {
         for (int id = STATUSBAR_ACTIVITY_ID_START; id < STATUSBAR_ACTIVITY_ID_END; id++) {
             if (findStatusbarActivityId(id) == -1) {
-                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d", id));
+                StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
                 final StatusbarActivity a = new StatusbarActivity();
+
                 a.mActivityId = id;
                 a.mStackId = stackId;
                 a.mHiden = false;
+                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d", id));
                 mStatusbarActivities.add(a);
+
+                statusBarManager.showStatusbarActivity(id, true);
                 return id;
             }
         }
@@ -19839,7 +19847,10 @@ public final class ActivityManagerService extends ActivityManagerNative
         if (a.mHiden == true) {
             Log.i(TAG, String.format("======================= gchen_tag: hiden RECT(%d, %d, %d, %d)........",
                                      a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
+            relayoutWindow(a.mStackId, a.mRestoreRect);
+            a.mHiden = false;
         }
+        setFocusedStack(a.mStackId);
     }
 
     @Override

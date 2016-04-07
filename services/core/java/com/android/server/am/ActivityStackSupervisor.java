@@ -436,31 +436,32 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStack(boolean toFront, String reason) {
-        ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
-        final int topNdx = stacks.size() - 1;
-        if (topNdx <= 0) {
-            return;
-        }
-        ActivityStack topStack = stacks.get(topNdx);
-        final boolean homeInFront = topStack == mHomeStack;
-        if (homeInFront != toFront) {
-            mLastFocusedStack = topStack;
-            stacks.remove(mHomeStack);
-            stacks.add(toFront ? topNdx : 0, mHomeStack);
-            mFocusedStack = stacks.get(topNdx);
-            if (DEBUG_STACK) Slog.d(TAG, "moveHomeTask: topStack old=" + topStack + " new="
-                    + mFocusedStack);
-        }
-        EventLog.writeEvent(EventLogTags.AM_HOME_STACK_MOVED,
-                mCurrentUser, toFront ? 1 : 0, stacks.get(topNdx).getStackId(),
-                mFocusedStack == null ? -1 : mFocusedStack.getStackId(), reason);
+        return;
+        //ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
+        //final int topNdx = stacks.size() - 1;
+        //if (topNdx <= 0) {
+        //    return;
+        //}
+        //ActivityStack topStack = stacks.get(topNdx);
+        //final boolean homeInFront = topStack == mHomeStack;
+        //if (homeInFront != toFront) {
+        //    mLastFocusedStack = topStack;
+        //    stacks.remove(mHomeStack);
+        //    stacks.add(toFront ? topNdx : 0, mHomeStack);
+        //    mFocusedStack = stacks.get(topNdx);
+        //    if (DEBUG_STACK) Slog.d(TAG, "moveHomeTask: topStack old=" + topStack + " new="
+        //            + mFocusedStack);
+        //}
+        //EventLog.writeEvent(EventLogTags.AM_HOME_STACK_MOVED,
+        //        mCurrentUser, toFront ? 1 : 0, stacks.get(topNdx).getStackId(),
+        //        mFocusedStack == null ? -1 : mFocusedStack.getStackId(), reason);
 
-        if (mService.mBooting || !mService.mBooted) {
-            final ActivityRecord r = topRunningActivityLocked();
-            if (r != null && r.idle) {
-                checkFinishBootingLocked();
-            }
-        }
+        //if (mService.mBooting || !mService.mBooted) {
+        //    final ActivityRecord r = topRunningActivityLocked();
+        //    if (r != null && r.idle) {
+        //        checkFinishBootingLocked();
+        //    }
+        //}
     }
 
     void moveHomeStackTaskToTop(int homeStackTaskType, String reason) {
@@ -1725,7 +1726,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
             }
 
             if (isHomeActivity) {
-                moveHomeStack(isHomeActivity, reason);
+                Slog.i(TAG, String.format("Call moveHomeStack() for %d in ActivityStackSupervisor", r.task.stack.mStackId));
+                moveHomeStack(false, reason);
             } else {
                 setFocusedStack(r.task.stack.mStackId);
             }
@@ -1733,15 +1735,19 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void setFocusedStack(int stackId) {
-        //Slog.i(TAG, String.format("Call setFocusedStack(stackId) for %d in ActivityStackSupervisor", stackId));
+        if (stackId == HOME_STACK_ID) {
+            return;
+        }
+
         int numDisplays = mActivityDisplays.size();
+        Slog.i(TAG, String.format("Call setFocusedStack(stackId) for %d in ActivityStackSupervisor", stackId));
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             if ((stacks != null) && (stacks.size() > 0)) {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
                     if (stack.mStackId == stackId) {
-                        //Slog.i(TAG, String.format("set stackId: %d, origin: %d in displayId: %d", stackId, mFocusedStack.mStackId, displayNdx));
+                        Slog.i(TAG, String.format("set stackId: %d, origin: %d in displayId: %d", stackId, mFocusedStack.mStackId, displayNdx));
                         stacks.remove(stack);
                         stacks.add(stack);
                         mLastFocusedStack = mFocusedStack;

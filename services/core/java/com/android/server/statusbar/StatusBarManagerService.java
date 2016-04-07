@@ -151,6 +151,16 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
                 }
             }
         }
+
+        @Override
+        public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+            if (mBar != null) {
+                try {
+                    mBar.showStatusbarActivity(statusbarActivityId, show);
+                } catch (RemoteException e) {
+                }
+            }
+        }
     };
 
     // ================================================================================

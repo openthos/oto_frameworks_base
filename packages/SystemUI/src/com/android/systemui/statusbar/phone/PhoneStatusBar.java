@@ -2442,6 +2442,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override // CommandQueue
+    public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+        final View v;
+
+        if (mStatusBarWindow == null) {
+            return;
+        }
+
+        switch (statusbarActivityId) {
+        case 1000000:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_0);
+            break;
+        case 1000001:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_1);
+            break;
+        case 1000002:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_2);
+            break;
+        case 1000003:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_3);
+            break;
+        case 1000004:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_4);
+            break;
+        case 1000005:
+        default:
+            v = mStatusBarView.findViewById(R.id.status_bar_activity_5);
+            break;
+        }
+
+        Log.i(TAG, String.format("========================= gchen_tag: catch showStatusbarActivity() activity id: %d, show: %d-------------------",
+                                 statusbarActivityId, show ? 1 : 0));
+        v.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override // CommandQueue
     public void buzzBeepBlinked() {
         if (mDozeServiceHost != null) {
             mDozeServiceHost.fireBuzzBeepBlinked();

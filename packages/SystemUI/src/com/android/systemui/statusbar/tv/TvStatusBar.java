@@ -103,6 +103,10 @@ public class TvStatusBar extends BaseStatusBar {
     public void notificationLightPulse(int argb, int onMillis, int offMillis) {
     }
 
+    @Override // CommandQueue
+    public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+    }
+
     @Override
     protected WindowManager.LayoutParams getSearchLayoutParams(
             LayoutParams layoutParams) {
