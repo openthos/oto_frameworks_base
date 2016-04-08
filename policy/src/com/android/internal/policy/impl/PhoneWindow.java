@@ -3884,16 +3884,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             });
 
             mMinimizeBtn.setOnClickListener(new OnClickListener() {
-                private final static int TEST_WIDTH = 200;
-                private final static int TEST_HEIGHT = 30;
-                private final static int TEST_LEFT = 100;
-                private final static int TEST_TOP = 200;
-                private final static int TEST_RIGHT = TEST_LEFT + TEST_WIDTH;
-                private final static int TEST_BOTTOM = TEST_TOP + TEST_HEIGHT;
-
                 @Override
                 public void onClick(View v) {
-                    Rect mini = new Rect(TEST_LEFT, TEST_TOP, TEST_RIGHT, TEST_BOTTOM);
+                    Rect mini = new Rect(0, 0, 0, 0);
                     Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
                     try {
                             ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
