@@ -19796,13 +19796,13 @@ public final class ActivityManagerService extends ActivityManagerNative
             final StatusbarActivity a = mStatusbarActivities.get(idx);
             StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
 
-            statusBarManager.showStatusbarActivity(a.mActivityId, false);
+            statusBarManager.showStatusbarActivity(a.mActivityId, false, "gone");
             mStatusbarActivities.remove(idx);
         }
     }
 
     @Override
-    public int createStatusbarActivity(int stackId) {
+    public int createStatusbarActivity(int stackId, String pkg) {
         for (int id = STATUSBAR_ACTIVITY_ID_START; id < STATUSBAR_ACTIVITY_ID_END; id++) {
             if (findStatusbarActivityId(id) == -1) {
                 StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
@@ -19811,10 +19811,10 @@ public final class ActivityManagerService extends ActivityManagerNative
                 a.mActivityId = id;
                 a.mStackId = stackId;
                 a.mHiden = false;
-                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d", id));
+                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, pkg name: ", id) + pkg);
                 mStatusbarActivities.add(a);
 
-                statusBarManager.showStatusbarActivity(id, true);
+                statusBarManager.showStatusbarActivity(id, true, pkg);
                 return id;
             }
         }

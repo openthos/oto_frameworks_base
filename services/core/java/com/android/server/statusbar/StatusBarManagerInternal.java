@@ -24,5 +24,5 @@ public interface StatusBarManagerInternal {
     void notificationLightPulse(int argb, int onMillis, int offMillis);
     void notificationLightOff();
     void showScreenPinningRequest();
-    void showStatusbarActivity(int statusbarActivityId, boolean show);
+    void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg);
 }

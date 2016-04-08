@@ -47,6 +47,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -2442,11 +2445,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override // CommandQueue
-    public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
         final View v;
 
         if (mStatusBarWindow == null) {
             return;
+        }
+
+        Drawable pkgicon = null;
+        PackageManager pm = getPackageManagerForUser(-1);
+        try {
+            final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+            if (ai != null) {
+                pkgicon = pm.getApplicationIcon(ai);
+            } else {
+                pkgicon = pm.getDefaultActivityIcon();
+            }
+        } catch (NameNotFoundException e) {
+            pkgicon = pm.getDefaultActivityIcon();
         }
 
         switch (statusbarActivityId) {
@@ -2471,8 +2487,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             break;
         }
 
-        Log.i(TAG, String.format("========================= gchen_tag: catch showStatusbarActivity() activity id: %d, show: %d-------------------",
-                                 statusbarActivityId, show ? 1 : 0));
+        Log.i(TAG, String.format("========================= gchen_tag: catch showStatusbarActivity() activity id: %d, show: %d -------------------, pkg ",
+                                 statusbarActivityId, show ? 1 : 0) + pkg);
+        if (show == true) {
+            ((ImageView)v).setImageDrawable(pkgicon);
+        }
         v.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 

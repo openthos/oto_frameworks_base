@@ -44,6 +44,6 @@ oneway interface IStatusBar
     void cancelPreloadRecentApps();
     void showScreenPinningRequest();
 
-    void showStatusbarActivity(int statusbarActivityId, boolean show);
+    void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg);
 }
 

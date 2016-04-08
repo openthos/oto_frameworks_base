@@ -2376,7 +2376,8 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
         case STATUSBAR_ACTIVITY_CREAT: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
-            int statusbarActivityId = createStatusbarActivity(stackId);
+            String pkg = data.readString();
+            int statusbarActivityId = createStatusbarActivity(stackId, pkg);
             reply.writeNoException();
             reply.writeInt(statusbarActivityId);
             return true;
@@ -5576,11 +5577,12 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
-    public int createStatusbarActivity(int stackId) throws RemoteException {
+    public int createStatusbarActivity(int stackId, String pkg) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
         data.writeInterfaceToken(IActivityManager.descriptor);
         data.writeInt(stackId);
+        data.writeString(pkg);
         mRemote.transact(STATUSBAR_ACTIVITY_CREAT, data, reply, 0);
         reply.readException();
         int result = reply.readInt();

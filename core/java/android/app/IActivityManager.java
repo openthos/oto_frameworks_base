@@ -574,7 +574,7 @@ public interface IActivityManager extends IInterface {
         }
     }
 
-    public int createStatusbarActivity(int stackId) throws RemoteException;
+    public int createStatusbarActivity(int stackId, String pkg) throws RemoteException;
 
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) throws RemoteException;
 

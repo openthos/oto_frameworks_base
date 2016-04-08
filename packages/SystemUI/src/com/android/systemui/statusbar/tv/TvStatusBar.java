@@ -104,7 +104,7 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override // CommandQueue
-    public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
     }
 
     @Override

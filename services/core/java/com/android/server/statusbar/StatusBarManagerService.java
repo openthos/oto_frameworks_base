@@ -153,10 +153,10 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
 
         @Override
-        public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+        public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
             if (mBar != null) {
                 try {
-                    mBar.showStatusbarActivity(statusbarActivityId, show);
+                    mBar.showStatusbarActivity(statusbarActivityId, show, pkg);
                 } catch (RemoteException e) {
                 }
             }

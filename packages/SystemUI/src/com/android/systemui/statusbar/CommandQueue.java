@@ -100,7 +100,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void notificationLightOff();
         public void notificationLightPulse(int argb, int onMillis, int offMillis);
         public void showScreenPinningRequest();
-        public void showStatusbarActivity(int statusbarActivityId, boolean show);
+        public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg);
     }
 
     public CommandQueue(Callbacks callbacks, StatusBarIconList list) {
@@ -248,10 +248,10 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
-    public void showStatusbarActivity(int statusbarActivityId, boolean show) {
+    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
         synchronized (mList) {
             // don't coalesce these
-            mHandler.obtainMessage(MSG_SHOW_STATUSBAR_ACTIVITY, statusbarActivityId, show ? 1 : 0, null).sendToTarget();
+            mHandler.obtainMessage(MSG_SHOW_STATUSBAR_ACTIVITY, statusbarActivityId, show ? 1 : 0, pkg).sendToTarget();
         }
     }
 
@@ -338,7 +338,7 @@ public class CommandQueue extends IStatusBar.Stub {
                     mCallbacks.showScreenPinningRequest();
                     break;
                 case MSG_SHOW_STATUSBAR_ACTIVITY:
-                    mCallbacks.showStatusbarActivity(msg.arg1, msg.arg2 != 0);
+                    mCallbacks.showStatusbarActivity(msg.arg1, msg.arg2 != 0, (String)msg.obj);
                     break;
             }
         }

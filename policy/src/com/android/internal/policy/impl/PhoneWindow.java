@@ -3648,7 +3648,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
             if (isShowFrame()) {
                 try {
-                    int statusbarActivityId = ActivityManagerNative.getDefault().createStatusbarActivity(getStackId());
+                    int statusbarActivityId = ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), ai.packageName);
                     Log.i(TAG, String.format("============== gchen_tag: get statusbar activity id: %d .............", statusbarActivityId));
                 } catch (RemoteException e) {
                     Log.e(TAG, "create statusbar activity failed", e);
