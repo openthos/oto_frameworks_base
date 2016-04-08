@@ -129,8 +129,7 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     private boolean checkValidEvent(int x) {
-        //return x >= 500;
-        return false;
+        return x >= 600;
     }
 
     @Override
