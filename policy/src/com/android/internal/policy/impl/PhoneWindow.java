@@ -3383,7 +3383,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         Rect mFrame =  new Rect();
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
         private void getResizeWays(int x, int y) {
-        if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+        if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF / 2) {
             if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
                 mResizeWays = MW_WINDOW_RESIZE_TOPLEFT;
             } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
@@ -3482,7 +3482,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         private void getResizeWays(int x, int y) {
-           if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+           if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF / 2) {
                if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
                    mResizeWays = MW_WINDOW_RESIZE_TOPLEFT;
                } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
@@ -3756,9 +3756,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                                     mTmpFrame.right = frame.right + mLastDx;
                                 }
                                 break;
-                        /** Top needn't get window resize touch events. */
                         case MW_WINDOW_RESIZE_TOP:
-                                /* if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
+                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
                                     mTmpFrame.top = frame.top + diffY;
                                     mLastDy = diffY;
                                 } else {
@@ -3767,7 +3766,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                                 mTmpFrame.bottom = frame.bottom;
                                 mTmpFrame.left = frame.left;
                                 mTmpFrame.right = frame.right;
-                                break; */
+                                break;
                         default:
                                 mTmpFrame.top = frame.top;
                                 mTmpFrame.bottom = frame.bottom;
