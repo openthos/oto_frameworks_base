@@ -175,8 +175,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int WINDOW_INIT_HEIGHT = 300;
 
     /* For initializing startup menu window positon */
-    static final int WINDOW_STARTUP_MENU_WIDTH = 400;
-    static final int WINDOW_STARTUP_MENU_HEIGHT = 380;
+    static final int WINDOW_STARTUP_MENU_PART_WIDTH = 3;
+    static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3;
 
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
@@ -1694,12 +1694,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
              int bottom = activityDisplay.mDisplayInfo.logicalHeight
                               - activityDisplay.mDisplayInfo.overscanBottom
                               - activityDisplay.mDisplayInfo.overscanTop;
-             //int width = mWindowManager.mContext.getResources().getDimensionPixelSize(
-             //                 com.android.documentsui.R.dimen.startup_menu_width);
-             //int height = mWindowManager.mContext.getResources().getDimensionPixelSize(
-             //                 com.android.documentsui.R.dimen.startup_menu_height);
-             return new Rect(0, bottom - WINDOW_STARTUP_MENU_HEIGHT,
-                             WINDOW_STARTUP_MENU_WIDTH, bottom);
+             int top = bottom / WINDOW_STARTUP_MENU_PART_HEIGHT;
+             int right = activityDisplay.mDisplayInfo.logicalWidth / WINDOW_STARTUP_MENU_PART_WIDTH;
+             return new Rect(0, top, right, bottom);
         }
 
         mInitPosX += WINDOW_OFFSET_STEP;
