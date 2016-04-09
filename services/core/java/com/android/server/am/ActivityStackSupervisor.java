@@ -171,8 +171,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
     /* For initializing window position ofsset step */
     static final int WINDOW_OFFSET_STEP = 35;
     static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
-    static final int WINDOW_INIT_WIDTH = 400;
-    static final int WINDOW_INIT_HEIGHT = 300;
+    static final int WINDOW_INIT_PART_WIDTH = 2;
+    static final int WINDOW_INIT_PART_HEIGHT = 2;
 
     /* For initializing startup menu window positon */
     static final int WINDOW_STARTUP_MENU_PART_WIDTH = 3;
@@ -1689,11 +1689,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     Rect getInitializingRect(int intentFlags, int displayId) {
+        ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
+
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
-             ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
-             int bottom = activityDisplay.mDisplayInfo.logicalHeight
-                              - activityDisplay.mDisplayInfo.overscanBottom
-                              - activityDisplay.mDisplayInfo.overscanTop;
+             int bottom = activityDisplay.mDisplayInfo.logicalHeight - mWindowManager.getStatusbarHeight();
              int top = bottom / WINDOW_STARTUP_MENU_PART_HEIGHT;
              int right = activityDisplay.mDisplayInfo.logicalWidth / WINDOW_STARTUP_MENU_PART_WIDTH;
              return new Rect(0, top, right, bottom);
@@ -1707,7 +1706,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (mInitPosY > WINDOW_OFFSET_MAX) {
             mInitPosY = WINDOW_OFFSET_STEP;
         }
-        return new Rect(mInitPosX, mInitPosY, mInitPosX + WINDOW_INIT_WIDTH, mInitPosY + WINDOW_INIT_HEIGHT);
+        return new Rect(mInitPosX, mInitPosY,
+                        mInitPosX + activityDisplay.mDisplayInfo.logicalWidth / WINDOW_INIT_PART_WIDTH,
+                        mInitPosY + activityDisplay.mDisplayInfo.logicalHeight / WINDOW_INIT_PART_HEIGHT);
     }
 
     void setFocusedStack(ActivityRecord r, String reason) {

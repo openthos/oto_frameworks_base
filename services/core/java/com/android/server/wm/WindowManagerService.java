@@ -11834,4 +11834,8 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         return false;
     }
+
+    public int getStatusbarHeight() {
+        return mContext.getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+    }
 }
