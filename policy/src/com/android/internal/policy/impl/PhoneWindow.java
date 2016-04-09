@@ -3638,7 +3638,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mAppIcon = (ImageView) mDecorView.findViewById(com.android.internal.R.id.mwIcon);
             mAppName =(TextView) mDecorView.findViewById(com.android.internal.R.id.mwTitle);
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-            mFullScreen = new Rect(0, mStatusBarHeight + mMultiwindowHeight, metrics.widthPixels, metrics.heightPixels);
+            mFullScreen = new Rect(0, mMultiwindowHeight, metrics.widthPixels, metrics.heightPixels - mStatusBarHeight);
 
             PackageManager pm = getContext().getPackageManager();
             ApplicationInfo ai = getContext().getApplicationInfo();
