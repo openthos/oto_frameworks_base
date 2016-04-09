@@ -33,6 +33,8 @@ public class PhoneStatusBarView extends PanelBar {
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
     private static final boolean DEBUG_GESTURES = false;
 
+    private static final int STATUSBAR_VALID_PART_CLICK_AREA = 8;
+
     PhoneStatusBar mBar;
 
     PanelView mLastFullyOpenedPanel = null;
@@ -130,7 +132,7 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     private boolean checkValidEvent(int x) {
-        return x >= 600;
+        return x >= mBar.mCurrentDisplaySize.x - mBar.mCurrentDisplaySize.x / STATUSBAR_VALID_PART_CLICK_AREA;
     }
 
     @Override
