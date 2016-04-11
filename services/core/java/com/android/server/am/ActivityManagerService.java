@@ -4306,6 +4306,8 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
             // Keep track of the root activity of the task before we finish it
             TaskRecord tr = r.task;
+            closeActivity(tr.stack.mStackId, false, tr.stack.numActivities());
+
             ActivityRecord rootR = tr.getRootActivity();
             if (rootR == null) {
                 Slog.w(TAG, "Finishing task with all activities already finished");
@@ -19763,7 +19765,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     public class StatusbarActivity {
         int mActivityId;   /* For status bar activity */
-        int mStackId;      /* The related TaskStack id */
+        String mPkg;       /* The package name */
+        ArrayList<Integer> mStackIds = new ArrayList<Integer>();   /* The related TaskStack ids */
         boolean mHiden;    /* The related TaskStack id whether is already hide or not */
         Rect mRestoreRect = new Rect(); /* Retore the original layout if mHiden is true */
     }
@@ -19779,51 +19782,82 @@ public final class ActivityManagerService extends ActivityManagerNative
         return -1;
     }
 
-    private int findStatusbarActivityStackId(int stackId) {
+    private int findStatusbarActivityByStackId(int stackId, boolean remove) {
         for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            if (stackId == mStatusbarActivities.get(idx).mStackId) {
-                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, stack id: %d, activity id: %d", idx, stackId, mStatusbarActivities.get(idx).mActivityId));
-                return idx;
+            StatusbarActivity a = mStatusbarActivities.get(idx);
+            for (int j = a.mStackIds.size() - 1; j >= 0; --j) {
+                if (stackId == a.mStackIds.get(j)) {
+                    Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, stack id: %d, activity id: %d, in %d", idx, stackId, mStatusbarActivities.get(idx).mActivityId, j));
+                    if (remove) {
+                        a.mStackIds.remove(j);
+                    }
+                    return idx;
+                }
             }
         }
         Log.i(TAG, String.format("======================= gchen_tag: can not find stack id: %d", stackId));
         return -1;
     }
 
-    private void removeStatusbarActivity(int stackId) {
-        int idx = findStatusbarActivityStackId(stackId);
+    private int findStatusbarActivityByPkg(String pkg) {
+        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
+            if (mStatusbarActivities.get(idx).mPkg.compareTo(pkg) == 0) {
+                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, activity id: %d, pkg: ", idx, mStatusbarActivities.get(idx).mActivityId) + pkg);
+                return idx;
+            }
+        }
+        Log.i(TAG, String.format("======================= gchen_tag: can not find pkg: ") + pkg);
+        return -1;
+    }
+
+    private void removeStatusbarActivity(int stackId, boolean force, int activities) {
+        int idx = findStatusbarActivityByStackId(stackId, true);
         if (idx >= 0) {
             final StatusbarActivity a = mStatusbarActivities.get(idx);
+            if ((a.mStackIds.size() != 0) && (force == false) && (activities > 1)) {
+                Log.i(TAG, String.format("======================= gchen_tag: skip for id: %d, stack id: %d, activities: %d", idx, stackId, activities));
+                return;
+            }
             StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
-
             statusBarManager.showStatusbarActivity(a.mActivityId, false, "gone");
+            a.mStackIds.clear();
             mStatusbarActivities.remove(idx);
         }
     }
 
     @Override
     public int createStatusbarActivity(int stackId, String pkg) {
+        int activityId = -1;
         for (int id = STATUSBAR_ACTIVITY_ID_START; id < STATUSBAR_ACTIVITY_ID_END; id++) {
-            if (findStatusbarActivityId(id) == -1) {
-                StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
-                final StatusbarActivity a = new StatusbarActivity();
-
-                a.mActivityId = id;
-                a.mStackId = stackId;
-                a.mHiden = false;
-                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, pkg name: ", id) + pkg);
-                mStatusbarActivities.add(a);
-
-                statusBarManager.showStatusbarActivity(id, true, pkg);
+            int idx = findStatusbarActivityByPkg(pkg);
+            if (idx != -1 ) {
+                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, stack id: %d, pkg name: ", id, stackId) + pkg);
+                mStatusbarActivities.get(idx).mStackIds.add(stackId);
                 return id;
             }
+            if ((activityId == -1) && (findStatusbarActivityId(id) == -1)) {
+                activityId = id;
+            }
         }
-        return -1;
+
+        if (activityId != -1) {
+            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+            final StatusbarActivity a = new StatusbarActivity();
+
+            a.mActivityId = activityId;
+            a.mStackIds.add(stackId);
+            a.mHiden = false;
+            a.mPkg = pkg;
+            Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, stack id: %d, pkg name: ", activityId, stackId) + pkg);
+            mStatusbarActivities.add(a);
+            statusBarManager.showStatusbarActivity(activityId, true, pkg);
+        }
+        return activityId;
     }
 
     @Override
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
-        int idx = findStatusbarActivityStackId(stackId);
+        int idx = findStatusbarActivityByStackId(stackId, false);
         if (idx < 0) {
             return;
         }
@@ -19843,14 +19877,15 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
 
         StatusbarActivity a = mStatusbarActivities.get(idx);
-        Log.i(TAG, String.format("======================= gchen_tag: call touchStatusbarActivity() for id: %d, stackId: %d", a.mActivityId, a.mStackId));
+        int stackId = a.mStackIds.get(a.mStackIds.size() - 1);
+        Log.i(TAG, String.format("======================= gchen_tag: call touchStatusbarActivity() for id: %d, stackId: %d", a.mActivityId, stackId));
         if (a.mHiden == true) {
             Log.i(TAG, String.format("======================= gchen_tag: hiden RECT(%d, %d, %d, %d)........",
                                      a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
-            relayoutWindow(a.mStackId, a.mRestoreRect);
+            relayoutWindow(stackId, a.mRestoreRect);
             a.mHiden = false;
         }
-        setFocusedStack(a.mStackId);
+        setFocusedStack(stackId);
     }
 
     @Override
@@ -19873,15 +19908,15 @@ public final class ActivityManagerService extends ActivityManagerNative
         return true;
     }
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Method for closing application by stackbox id and closing their tasks.
-     */
-    @Override
-    public boolean closeActivity(int stackId) {
+    private boolean closeActivity(int stackId, boolean individual, int activities) {
         boolean succeed;
+
+        removeStatusbarActivity(stackId, individual, activities);
+        if (!individual) {
+            return true;
+        }
+
+        /* FIXME: may memory leak which is missed by finishActivity()?? */
         long ident = Binder.clearCallingIdentity();
         StackInfo stack = getStackInfo(stackId);
         if (stack != null) {
@@ -19892,9 +19927,19 @@ public final class ActivityManagerService extends ActivityManagerNative
         } else {
             succeed = false;
         }
-        removeStatusbarActivity(stackId);
         Binder.restoreCallingIdentity(ident);
         return succeed;
+    }
+
+    /**
+     * Date: Aug 28, 2014
+     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
+     *
+     * Method for closing application by stackbox id and closing their tasks.
+     */
+    @Override
+    public boolean closeActivity(int stackId) {
+        return closeActivity(stackId, true, 0);
     }
 
     /**
