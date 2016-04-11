@@ -3863,7 +3863,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         if (!customMaximizedWindowSize.equals(new Rect())) {
                             mFullScreen = customMaximizedWindowSize;
                         } else {
-                            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels - mStatusBarHeight);
+                            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
                         }
                         if (!actualWindowSize.equals(mFullScreen)){
                             mOldSize = actualWindowSize;
