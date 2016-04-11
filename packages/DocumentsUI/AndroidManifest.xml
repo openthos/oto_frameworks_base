@@ -12,7 +12,7 @@
 
         <activity
             android:name=".DocumentsActivity"
-            android:theme="@style/DocumentsTheme"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             android:icon="@drawable/ic_doc_text">
             <intent-filter>
                 <action android:name="android.intent.action.OPEN_DOCUMENT" />
