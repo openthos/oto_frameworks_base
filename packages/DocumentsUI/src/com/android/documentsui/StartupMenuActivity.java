@@ -21,14 +21,15 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup.LayoutParams;
-//import android.view.WindowManager.LayoutParams;
-//import android.view.WindowManager;
+//import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager.LayoutParams;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -71,27 +72,31 @@ public class StartupMenuActivity extends Activity {
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                //getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-                //getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-                setContentView(R.layout.start_activity);
-                mContext = this;
                 sp = getSharedPreferences("config",MODE_PRIVATE);
                 //STARTUP_MENU = !STARTUP_MENU;
                 editor = sp.edit();
                 //editor.putBoolean("showsystem",STARTUP_MENU);
                 //editor.commit();
                 try{
-                    STARTUP_MENU = sp.getBoolean("showsystem",STARTUP_MENU);
+                    STARTUP_MENU = sp.getBoolean("showsystem",true);
                 }catch(Exception e){
                     STARTUP_MENU = true;
                 }
-                if(STARTUP_MENU){
-                  StartupMenuActivity.this.finish();
+                if(!STARTUP_MENU){
+                    //STARTUP_MENU = !STARTUP_MENU;
+                    //editor.putBoolean("showsystem",STARTUP_MENU);
+                    //editor.commit();
+                    finish();
                 }
                 STARTUP_MENU = !STARTUP_MENU;
                 editor.putBoolean("showsystem",STARTUP_MENU);
                 editor.commit();
+                super.onCreate(savedInstanceState);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+		 getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+                setContentView(R.layout.start_activity);
+                mContext = this;
                 fillData();
                 int stmm = 0;
                 if(STARTUP_MENU)
@@ -148,17 +153,29 @@ public class StartupMenuActivity extends Activity {
                 View vi= View.inflate(StartupMenuActivity.this, R.layout.start_activity, null);
                 vi.setVisibility(View.GONE);
         }
+	 /*@Override
+        public boolean onKeyDown(int keyCode , KeyEvent event) {
+            if(keyCode == KeyEvent.KEYCODE_MENU) {
+                finish();
+            }
+            return super.onKeyDown(keyCode,event);
+        }*/
 
-        //@Override
-        //public boolean onTouchEvent(MotionEvent event){
-        //        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-        //              finish();
-              //              return true;
-            //        }
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+                try{
+                    Runtime.getRuntime().exec("input keyevent KEYCODE_MENU");
+                } catch(Exception e) {
 
-            //        // Delegate everything else to Activity.
-            //        return super.onTouchEvent(event);
-        //}
+                }
+                //finish();
+                return true;
+            }
+
+            // Delegate everything else to Activity.
+            return super.onTouchEvent(event);
+        }
 
         class MyItemclick implements OnItemClickListener{
 
@@ -286,11 +303,12 @@ public class StartupMenuActivity extends Activity {
                                         String className = activityInfo.name;
                                         Log.e("LADEHUNTER",packName+" "+className,null);
                                         Runtime.getRuntime().exec("am start -n "+packName+"/"+className);
-                                        STARTUP_MENU = !STARTUP_MENU;
+                                        /*STARTUP_MENU = !STARTUP_MENU;
                                         editor.putBoolean("showsystem",STARTUP_MENU);
                                         editor.commit();
-                                        //ll_layout.setVisibility(View.GONE);
-                                        StartupMenuActivity.this.finish();
+                                        //ll_layout.setVisibility(View.GONE);*/
+                                        Runtime.getRuntime().exec("input keyevent KEYCODE_MENU");
+                                        //StartupMenuActivity.this.finish();
                                         //intent.setClassName(packName, className);
                                         //startActivity(intent);
                                 }else{
