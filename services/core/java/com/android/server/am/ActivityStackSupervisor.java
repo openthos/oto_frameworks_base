@@ -436,32 +436,31 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStack(boolean toFront, String reason) {
-        return;
-        //ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
-        //final int topNdx = stacks.size() - 1;
-        //if (topNdx <= 0) {
-        //    return;
-        //}
-        //ActivityStack topStack = stacks.get(topNdx);
-        //final boolean homeInFront = topStack == mHomeStack;
-        //if (homeInFront != toFront) {
-        //    mLastFocusedStack = topStack;
-        //    stacks.remove(mHomeStack);
-        //    stacks.add(toFront ? topNdx : 0, mHomeStack);
-        //    mFocusedStack = stacks.get(topNdx);
-        //    if (DEBUG_STACK) Slog.d(TAG, "moveHomeTask: topStack old=" + topStack + " new="
-        //            + mFocusedStack);
-        //}
-        //EventLog.writeEvent(EventLogTags.AM_HOME_STACK_MOVED,
-        //        mCurrentUser, toFront ? 1 : 0, stacks.get(topNdx).getStackId(),
-        //        mFocusedStack == null ? -1 : mFocusedStack.getStackId(), reason);
+        ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
+        final int topNdx = stacks.size() - 1;
+        if (topNdx <= 0) {
+            return;
+        }
+        ActivityStack topStack = stacks.get(topNdx);
+        final boolean homeInFront = topStack == mHomeStack;
+        if (homeInFront != toFront) {
+            mLastFocusedStack = topStack;
+            stacks.remove(mHomeStack);
+            stacks.add(toFront ? topNdx : 0, mHomeStack);
+            mFocusedStack = stacks.get(topNdx);
+            if (DEBUG_STACK) Slog.d(TAG, "moveHomeTask: topStack old=" + topStack + " new="
+                    + mFocusedStack);
+        }
+        EventLog.writeEvent(EventLogTags.AM_HOME_STACK_MOVED,
+                mCurrentUser, toFront ? 1 : 0, stacks.get(topNdx).getStackId(),
+                mFocusedStack == null ? -1 : mFocusedStack.getStackId(), reason);
 
-        //if (mService.mBooting || !mService.mBooted) {
-        //    final ActivityRecord r = topRunningActivityLocked();
-        //    if (r != null && r.idle) {
-        //        checkFinishBootingLocked();
-        //    }
-        //}
+        if (mService.mBooting || !mService.mBooted) {
+            final ActivityRecord r = topRunningActivityLocked();
+            if (r != null && r.idle) {
+                checkFinishBootingLocked();
+            }
+        }
     }
 
     void moveHomeStackTaskToTop(int homeStackTaskType, String reason) {
@@ -1711,19 +1710,22 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         mInitPosY + activityDisplay.mDisplayInfo.logicalHeight / WINDOW_INIT_PART_HEIGHT);
     }
 
+    boolean isHomeActivity(ActivityRecord r) {
+            final TaskRecord task = r.task;
+            boolean ret = !r.isApplicationActivity() || r.isHomeActivity();
+            if (!ret && task != null) {
+                ret = !task.isApplicationTask();
+            }
+            if (!ret && task != null) {
+                final ActivityRecord parent = task.stack.mActivityContainer.mParentActivity;
+                ret = parent != null && parent.isHomeActivity();
+            }
+            return ret;
+    }
+
     void setFocusedStack(ActivityRecord r, String reason) {
         if (r != null) {
-            final TaskRecord task = r.task;
-            boolean isHomeActivity = !r.isApplicationActivity();
-            if (!isHomeActivity && task != null) {
-                isHomeActivity = !task.isApplicationTask();
-            }
-            if (!isHomeActivity && task != null) {
-                final ActivityRecord parent = task.stack.mActivityContainer.mParentActivity;
-                isHomeActivity = parent != null && parent.isHomeActivity();
-            }
-
-            if (isHomeActivity) {
+            if (isHomeActivity(r)) {
                 Slog.i(TAG, String.format("Call moveHomeStack() for %d in ActivityStackSupervisor", r.task.stack.mStackId));
                 moveHomeStack(false, reason);
             } else {
