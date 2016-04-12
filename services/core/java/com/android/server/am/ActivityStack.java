@@ -242,6 +242,7 @@ final class ActivityStack {
      * Does stack run any Activities in window?
      */
     private boolean mIsMultiwindowStack;
+    boolean mIsStartupMenuStack = false;
 
     static final int PAUSE_TIMEOUT_MSG = ActivityManagerService.FIRST_ACTIVITY_STACK_MSG + 1;
     static final int DESTROY_TIMEOUT_MSG = ActivityManagerService.FIRST_ACTIVITY_STACK_MSG + 2;
@@ -4163,5 +4164,13 @@ final class ActivityStack {
 
     public void setMultiwindowStack(boolean isMultiwindow) {
         mIsMultiwindowStack = isMultiwindow;
+    }
+
+    public boolean isStartupMenuStack() {
+        return mIsStartupMenuStack;
+    }
+
+    public void setStartupMenuStack(boolean isStartupMenu) {
+        mIsStartupMenuStack = isStartupMenu;
     }
 }

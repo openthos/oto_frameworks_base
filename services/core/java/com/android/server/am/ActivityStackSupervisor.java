@@ -1682,6 +1682,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     " stackId=" + stackId);
             setFocusedStack(stackId);
             mFocusedStack.setMultiwindowStack(isMultiwindow);
+            mFocusedStack.setStartupMenuStack((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0);
+            if (mFocusedStack.isStartupMenuStack()) {
+                Slog.i(TAG, String.format("======================= gchen_tag: startActivity for startup menu for %d in ActivityStackSupervisor", stackId));
+            }
             return mFocusedStack;
         }
         return mHomeStack;
@@ -1740,23 +1744,56 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         int numDisplays = mActivityDisplays.size();
+        boolean findMenu = false;
+        boolean findStack = false;
+
         Slog.i(TAG, String.format("Call setFocusedStack(stackId) for %d in ActivityStackSupervisor", stackId));
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             if ((stacks != null) && (stacks.size() > 0)) {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
-                    if (stack.mStackId == stackId) {
+                    if ((stack.mStackId == stackId) && (findStack == false)) {
                         Slog.i(TAG, String.format("set stackId: %d, origin: %d in displayId: %d", stackId, mFocusedStack.mStackId, displayNdx));
                         stacks.remove(stack);
                         stacks.add(stack);
                         mLastFocusedStack = mFocusedStack;
                         mFocusedStack = stack;
-                        return;
+                        if (findMenu == true) {
+                            return;
+                        }
+                        findStack = true;
+                    } else if (stack.isStartupMenuStack() && (findMenu == false)) {
+                        Slog.i(TAG, String.format("======================= gchen_tag: closeActivity in checkStartupMenu for %d in ActivityStackSupervisor", stack.mStackId));
+                        stacks.remove(stack);
+                        mService.closeActivity(stack.mStackId);
+                        if (findStack == true) {
+                            return;
+                        }
+                        findMenu = true;
                     }
                 }
             }
         }
+    }
+
+    boolean killStartupMenu() {
+        int numDisplays = mActivityDisplays.size();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
+            if ((stacks != null) && (stacks.size() > 0)) {
+                for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                    ActivityStack stack = stacks.get(stackNdx);
+                    if (stack.isStartupMenuStack()) {
+                        Slog.i(TAG, String.format("======================= gchen_tag: closeActivity in checkStartupMenu for %d in ActivityStackSupervisor", stack.mStackId));
+                        stacks.remove(stack);
+                        mService.closeActivity(stack.mStackId);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     final int startActivityUncheckedLocked(ActivityRecord r, ActivityRecord sourceRecord,

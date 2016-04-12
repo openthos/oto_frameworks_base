@@ -2401,6 +2401,15 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
+        case STARTUP_MENU_ACTIVITY_KILL: {
+            data.enforceInterface(IActivityManager.descriptor);
+            boolean[] ret = new boolean[1];
+            ret[0] = killStartupMenu();
+            reply.writeNoException();
+            reply.writeBooleanArray(ret);
+            return true;
+        }
+
         /**
          * Date: Feb 25, 2014
          * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -5613,6 +5622,19 @@ class ActivityManagerProxy implements IActivityManager
         reply.readException();
         data.recycle();
         reply.recycle();
+    }
+
+    public boolean killStartupMenu() throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        mRemote.transact(STARTUP_MENU_ACTIVITY_KILL, data, reply, 0);
+        reply.readException();
+        boolean[] ret = new boolean[1];
+        reply.readBooleanArray(ret);
+        data.recycle();
+        reply.recycle();
+        return ret[0];
     }
 
     /**

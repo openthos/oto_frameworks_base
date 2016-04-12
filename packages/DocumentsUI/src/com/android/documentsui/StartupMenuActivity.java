@@ -8,7 +8,10 @@ import com.android.documentsui.util.AppInfo;
 import android.R.layout;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManagerNative;
 import android.content.Intent;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -60,8 +63,6 @@ public class StartupMenuActivity extends Activity {
         private TextView shout_text;
         private PopupWindow popupWindow;
         private SharedPreferences sp;
-        private boolean STARTUP_MENU;
-        private Editor editor;
         private Handler handler = new Handler() {
                 public void handleMessage(android.os.Message msg) {
                         adapter = new MaAdapter();
@@ -72,38 +73,13 @@ public class StartupMenuActivity extends Activity {
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
-                sp = getSharedPreferences("config",MODE_PRIVATE);
-                //STARTUP_MENU = !STARTUP_MENU;
-                editor = sp.edit();
-                //editor.putBoolean("showsystem",STARTUP_MENU);
-                //editor.commit();
-                try{
-                    STARTUP_MENU = sp.getBoolean("showsystem",true);
-                }catch(Exception e){
-                    STARTUP_MENU = true;
-                }
-                if(!STARTUP_MENU){
-                    //STARTUP_MENU = !STARTUP_MENU;
-                    //editor.putBoolean("showsystem",STARTUP_MENU);
-                    //editor.commit();
-                    finish();
-                }
-                STARTUP_MENU = !STARTUP_MENU;
-                editor.putBoolean("showsystem",STARTUP_MENU);
-                editor.commit();
                 super.onCreate(savedInstanceState);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-		 getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+                getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
                 setContentView(R.layout.start_activity);
                 mContext = this;
                 fillData();
-                int stmm = 0;
-                if(STARTUP_MENU)
-                        stmm = 1;
-                else
-                        stmm = 0;
-                Log.e("LADEHUNTER","OnCREATE a STM!!!!!!!!"+" "+stmm,null);
                 ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
                 StartupMenuActivity.this.setFinishOnTouchOutside(true);
                 //gv_view = (GridView) findViewById(R.id.gv_view);
@@ -164,13 +140,12 @@ public class StartupMenuActivity extends Activity {
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-                try{
-                    Runtime.getRuntime().exec("input keyevent KEYCODE_MENU");
-                } catch(Exception e) {
-
-                }
                 //finish();
-                return true;
+                try {
+                    ActivityManagerNative.getDefault().killStartupMenu();
+                    System.exit(0);
+                } catch (RemoteException e) {
+                }
             }
 
             // Delegate everything else to Activity.
@@ -303,14 +278,6 @@ public class StartupMenuActivity extends Activity {
                                         String className = activityInfo.name;
                                         Log.e("LADEHUNTER",packName+" "+className,null);
                                         Runtime.getRuntime().exec("am start -n "+packName+"/"+className);
-                                        /*STARTUP_MENU = !STARTUP_MENU;
-                                        editor.putBoolean("showsystem",STARTUP_MENU);
-                                        editor.commit();
-                                        //ll_layout.setVisibility(View.GONE);*/
-                                        Runtime.getRuntime().exec("input keyevent KEYCODE_MENU");
-                                        //StartupMenuActivity.this.finish();
-                                        //intent.setClassName(packName, className);
-                                        //startActivity(intent);
                                 }else{
                                 }
                         } catch (NameNotFoundException e) {

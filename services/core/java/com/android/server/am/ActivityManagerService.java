@@ -19890,6 +19890,12 @@ public final class ActivityManagerService extends ActivityManagerNative
         setFocusedStack(stackId);
     }
 
+
+    @Override
+    public boolean killStartupMenu() {
+            return mStackSupervisor.killStartupMenu();
+    }
+
     @Override
     public boolean relayoutWindow(int stackId, Rect r) {
         /**

@@ -580,6 +580,8 @@ public interface IActivityManager extends IInterface {
 
     public void touchStatusbarActivity(int statusbarActivityId) throws RemoteException;
 
+    public boolean killStartupMenu() throws RemoteException;
+
     /**
      * Date: Feb 25, 2014
      * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -845,6 +847,8 @@ public interface IActivityManager extends IInterface {
     int STATUSBAR_ACTIVITY_CREAT = IBinder.FIRST_CALL_TRANSACTION+191;
     int STATUSBAR_ACTIVITY_SAVEINFO = IBinder.FIRST_CALL_TRANSACTION+192;
     int STATUSBAR_ACTIVITY_TOUCH = IBinder.FIRST_CALL_TRANSACTION+193;
+
+    int STARTUP_MENU_ACTIVITY_KILL = IBinder.FIRST_CALL_TRANSACTION+194;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

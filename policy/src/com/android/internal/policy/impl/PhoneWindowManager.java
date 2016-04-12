@@ -1114,6 +1114,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startupMenuInternal() {
+        try {
+            if (ActivityManagerNative.getDefault().killStartupMenu()) {
+                return;
+            }
+        } catch (RemoteException e) {
+        }
+
         final Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.StartupMenuActivity"));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU | Intent. FLAG_ACTIVITY_CLEAR_TASK);
