@@ -3753,7 +3753,7 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public int getOrientationFromAppTokensLocked() {
-        int lastOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        /*int lastOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
         boolean findingBehind = false;
         boolean lastFullscreen = false;
         // TODO: Multi window.
@@ -3825,7 +3825,9 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
         if (DEBUG_ORIENTATION) Slog.v(TAG, "No app is requesting an orientation");
-        return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        return ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;*/
+        Slog.v(TAG, "++++xiej, 04-13,7:26, getOrientationFromAppTokensLocked");
+        return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
     }
 
     @Override
