@@ -124,27 +124,30 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                        AppInfo appInfo = mlistAppInfo.get(position);
-                        PackageManager pm = this.getPackageManager();
-                        String packName  = appInfo.getPkgName();
-                        try {
-                                PackageInfo packInfo = pm.getPackageInfo(packName, PackageManager.GET_ACTIVITIES);
-                                ActivityInfo [] activitys = packInfo.activities;
-                                if(activitys!=null&&activitys.length>0){
-                                        ActivityInfo activityInfo = activitys[0];
-                                        String className = activityInfo.name;
-                                        Log.e("LADEHUNTER",packName+" "+className,null);
-                                        Runtime.getRuntime().exec("am start -n "+packName+"/"+className);
-                                }
-                        } catch (NameNotFoundException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                        }
-                } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                }
+                Intent intent = mlistAppInfo.get(position).getIntent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                //try {
+                //        AppInfo appInfo = mlistAppInfo.get(position);
+                //        PackageManager pm = this.getPackageManager();
+                //        String packName  = appInfo.getPkgName();
+                //        try {
+                //                PackageInfo packInfo = pm.getPackageInfo(packName, PackageManager.GET_ACTIVITIES);
+                //                ActivityInfo [] activitys = packInfo.activities;
+                //                if(activitys!=null&&activitys.length>0){
+                //                        ActivityInfo activityInfo = activitys[0];
+                //                        String className = activityInfo.name;
+                //                        Log.e("LADEHUNTER",packName+" "+className,null);
+                //                        Runtime.getRuntime().exec("am start -n "+packName+"/"+className);
+                //                }
+                //        } catch (NameNotFoundException e) {
+                //                // TODO Auto-generated catch block
+                //                e.printStackTrace();
+                //        }
+                //} catch (Exception e) {
+                //        // TODO Auto-generated catch block
+                //        e.printStackTrace();
+                //}
         }
 
         @Override
@@ -155,12 +158,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         break;
                 case R.id.system_setting:
                         if (android.os.Build.VERSION.SDK_INT > 13) {
-                                startActivity(new Intent(
-                                                android.provider.Settings.ACTION_SETTINGS));
-                        } else {
-                                Intent intent = new Intent(
-                                                android.provider.Settings.ACTION_WIFI_IP_SETTINGS);
-                                startActivity(intent);
+                                startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                         } else {
+                                startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
+                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         }
                         break;
                 case R.id.power_off:
