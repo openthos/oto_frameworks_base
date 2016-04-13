@@ -2410,8 +2410,8 @@ public final class ActivityManagerService extends ActivityManagerNative
             if (stack != null) {
                 ActivityRecord r = stack.topRunningActivityLocked(null);
                 if (r != null) {
-                    setFocusedActivityLocked(r, "setFocusedStack");
                     if (!mStackSupervisor.isHomeActivity(r)) {
+                        setFocusedActivityLocked(r, "setFocusedStack");
                         moveTaskToFront(r.task.taskId, 0, null);
                     }
                 }
