@@ -166,7 +166,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         }
                         break;
                 case R.id.power_off:
-                        repotOff();
                         break;
 
                 }

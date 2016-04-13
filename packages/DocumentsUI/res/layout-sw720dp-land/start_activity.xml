@@ -9,15 +9,15 @@
 
 
     <LinearLayout
-        android:layout_width="400dp"
+        android:layout_width="@dimen/px495"
         android:layout_height="match_parent"
         android:orientation="horizontal" >
 
         <LinearLayout
-            android:layout_width="100dp"
+            android:layout_width="@dimen/px150"
             android:layout_height="match_parent"
             android:gravity="bottom"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/px15"
             android:orientation="vertical" >
 
             <TextView
@@ -36,7 +36,6 @@
                 android:id="@+id/power_off"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_power"
-                android:drawableRight="@drawable/startup_dotrightpushed_s"
                 android:text="@string/power_off" />
         </LinearLayout>
 	<ImageView
@@ -45,15 +44,15 @@
 		android:src="#808080"
 	/>
         <LinearLayout
-            android:layout_width="260dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <GridView
                 android:id="@+id/gv_view"
-                android:layout_width="250dp"
+                android:layout_width="@dimen/px340"
                 android:layout_height="wrap_content"
-                android:numColumns="3"
+                android:numColumns="4"
                 android:verticalSpacing="3dip"
                 android:horizontalSpacing="3dip" />
         </LinearLayout>

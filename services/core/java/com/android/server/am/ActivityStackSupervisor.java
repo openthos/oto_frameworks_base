@@ -1697,7 +1697,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
              int bottom = activityDisplay.mDisplayInfo.logicalHeight - mWindowManager.getStatusbarHeight();
              int top = bottom / WINDOW_STARTUP_MENU_PART_HEIGHT;
-             int right = activityDisplay.mDisplayInfo.logicalWidth / WINDOW_STARTUP_MENU_PART_WIDTH;
+             //int right = activityDisplay.mDisplayInfo.logicalWidth / WINDOW_STARTUP_MENU_PART_WIDTH;
+             int right = 330;
              return new Rect(0, top, right, bottom);
         }
 
