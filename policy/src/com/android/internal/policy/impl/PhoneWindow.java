@@ -3654,6 +3654,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     Log.e(TAG, "create statusbar activity failed", e);
                 }
             }
+	if(isShowFrame()){
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3777,6 +3778,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
+	}
 
             mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3924,10 +3926,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         void setFocus(){
-            int tietoBlue = com.android.internal.R.color.mw_blue_decor;
+            int tietoGray = com.android.internal.R.color.mw_gray_decor;
             //mLeftResize.setBackgroundResource(tietoBlue);
             //mRightResize.setBackgroundResource(tietoBlue);
-            mHeader.setBackgroundResource(tietoBlue);
+            mHeader.setBackgroundResource(tietoGray);
             if (mRemoteConnected) {
                 mInnerBorder.setBackgroundResource(0);
                 mInnerBorder.setBackgroundColor(Color.TRANSPARENT);

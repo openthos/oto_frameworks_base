@@ -16,6 +16,8 @@
 
 package com.android.systemui.statusbar.phone;
 
+import android.app.ActivityManager;
+import android.app.ActivityManagerNative;
 import android.content.Intent;
 import android.content.Context;
 import android.content.res.Resources;
@@ -194,6 +196,10 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
+	/*try{
+		ActivityManagerNative.getDefault().killStartupMenu();
+	}catch (Exception e){
+	}*/
         return mBar.interceptTouchEvent(event) || super.onInterceptTouchEvent(event);
     }
 

@@ -1119,6 +1119,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 return;
             }
         } catch (RemoteException e) {
+	    Log.e("LADEHUNTER","Exception when try to kill starup menu !!!!",null);
         }
 
         final Intent intent = new Intent();

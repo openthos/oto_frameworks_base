@@ -18,7 +18,7 @@
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:orientation="horizontal"
-            android:background="@color/mw_blue_decor" >
+            android:background="@color/mw_gray_decor" >
             <ImageView
                 android:id="@+id/mwIcon"
                 android:layout_width="20dp"
