@@ -1,59 +1,75 @@
 package com.android.documentsui.util;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
 public class AppInfo {
 
-	private Drawable icon;
-	private String name;
-	private String packName;
-	private boolean isUser;
-	private boolean isRom;
+	private String appLabel;
+	private Drawable appIcon;
+	private Intent intent;
+	private String pkgName;
 
-	public Drawable getIcon() {
-		return icon;
+	private long cachesize;
+	private long datasize;
+	private long codesieze;
+
+	public long getCachesize() {
+		return cachesize;
 	}
 
-	public void setIcon(Drawable icon) {
-		this.icon = icon;
+	public void setCachesize(long cachesize) {
+		this.cachesize = cachesize;
 	}
 
-	public String getName() {
-		return name;
+	public long getDatasize() {
+		return datasize;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setDatasize(long datasize) {
+		this.datasize = datasize;
 	}
 
-	public String getPackName() {
-		return packName;
+	public long getCodesieze() {
+		return codesieze;
 	}
 
-	public void setPackName(String packName) {
-		this.packName = packName;
+	public void setCodesieze(long codesieze) {
+		this.codesieze = codesieze;
 	}
 
-	public boolean isUser() {
-		return isUser;
+	public AppInfo() {
 	}
 
-	public void setUser(boolean isUser) {
-		this.isUser = isUser;
+	public String getAppLabel() {
+		return appLabel;
 	}
 
-	public boolean isRom() {
-		return isRom;
+	public void setAppLabel(String appName) {
+		this.appLabel = appName;
 	}
 
-	public void setRom(boolean isRom) {
-		this.isRom = isRom;
+	public Drawable getAppIcon() {
+		return appIcon;
 	}
 
-	@Override
-	public String toString() {
-		return "AppInfo [name=" + name + ", packName=" + packName + ", isUser="
-				+ isUser + ", isRom=" + isRom + "]";
+	public void setAppIcon(Drawable appIcon) {
+		this.appIcon = appIcon;
 	}
 
+	public Intent getIntent() {
+		return intent;
+	}
+
+	public void setIntent(Intent intent) {
+		this.intent = intent;
+	}
+
+	public String getPkgName() {
+		return pkgName;
+	}
+
+	public void setPkgName(String pkgName) {
+		this.pkgName = pkgName;
+	}
 }

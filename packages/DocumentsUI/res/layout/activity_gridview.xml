@@ -9,10 +9,15 @@
         android:id="@+id/package_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_gravity="center"
         android:src="@drawable/ic_launcher"/>
     <TextView
         android:id="@+id/package_name"
-        style="@style/Mstyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="10sp"
+        android:textColor="@android:color/white"
         android:text="@string/startup_menu_app"/>
 
 </LinearLayout>

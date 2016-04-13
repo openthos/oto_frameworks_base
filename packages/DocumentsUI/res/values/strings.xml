@@ -107,5 +107,8 @@
 
     <!-- Title of dialog when prompting user to select an app to share documents with [CHAR LIMIT=32] -->
     <string name="share_via">Share via</string>
-
+    <string name="my_computer">Computer</string>
+    <string name="power_off">Power off</string>
+    <string name="system_setting">Setting</string>
+    <string name="system_restart">Restart</string>
 </resources>
