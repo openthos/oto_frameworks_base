@@ -3778,7 +3778,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
-	}
+	
 
             mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3790,7 +3790,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
-
+	}
             /**mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
                 public Rect resize(Rect frame, int diffX, int diffY, int ways) {
