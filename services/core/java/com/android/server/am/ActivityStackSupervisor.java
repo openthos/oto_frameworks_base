@@ -1711,8 +1711,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mInitPosY = WINDOW_OFFSET_STEP;
         }
         return new Rect(mInitPosX, mInitPosY,
-                        mInitPosX + activityDisplay.mDisplayInfo.logicalWidth / WINDOW_INIT_PART_WIDTH,
-                        mInitPosY + activityDisplay.mDisplayInfo.logicalHeight / WINDOW_INIT_PART_HEIGHT);
+                        //mInitPosX + activityDisplay.mDisplayInfo.logicalWidth / WINDOW_INIT_PART_WIDTH,
+                        //mInitPosY + activityDisplay.mDisplayInfo.logicalHeight / WINDOW_INIT_PART_HEIGHT);
+                        mInitPosX + activityDisplay.mDisplayInfo.logicalWidth * 2 / 3,
+                        mInitPosY + activityDisplay.mDisplayInfo.logicalHeight * 3 / 4);
     }
 
     boolean isHomeActivity(ActivityRecord r) {
