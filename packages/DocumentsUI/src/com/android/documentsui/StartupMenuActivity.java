@@ -155,6 +155,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 switch (v.getId()) {
                 case R.id.my_computer:
                         /* start FileManager */
+                        for(int i=0;i<mlistAppInfo.size();i++){
+                                AppInfo appInfo = mlistAppInfo.get(i);
+                                PackageManager pm = this.getPackageManager();
+                                String packName  = appInfo.getPkgName();
+                                Log.v("LADEHUNTER","===========Try to call file manager============,packName = "+ packName);
+                                if (packName.compareTo("com.cyanogenmod.filemanager") == 0){
+                                        Log.v("LADEHUNTER","===========Find file manager============");
+                                        Intent intent = appInfo.getIntent();
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                }
+                        }
                         break;
                 case R.id.system_setting:
                         if (android.os.Build.VERSION.SDK_INT > 13) {
@@ -166,8 +178,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         }
                         break;
                 case R.id.power_off:
+                        Log.v("LADEHUNTER", "broadcast->shutdown");
+                        Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                        intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         break;
-
                 }
         }
 

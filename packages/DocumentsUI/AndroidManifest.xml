@@ -1,10 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.android.documentsui">
+        package="com.android.documentsui"
+        android:sharedUserId="android.uid.system">
 
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
     <uses-permission android:name="android.permission.REMOVE_TASKS" />
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
+    <uses-permission android:name="android.permission.SHUTDOWN" />
 
     <application
         android:name=".DocumentsApplication"
