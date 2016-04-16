@@ -1842,7 +1842,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     @Override
     public int windowTypeToLayerLw(int type) {
         if (type >= FIRST_APPLICATION_WINDOW && type <= LAST_APPLICATION_WINDOW) {
-            return 2;
+            return 3;
         }
         switch (type) {
         case TYPE_UNIVERSE_BACKGROUND:
