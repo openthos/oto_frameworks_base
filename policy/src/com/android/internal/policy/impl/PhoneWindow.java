@@ -3999,7 +3999,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             System.out.println(s);
         }
 
-        mIsFloating = a.getBoolean(R.styleable.Window_windowIsFloating, false);
+        mIsFloating = false;
         int flagsToUpdate = (FLAG_LAYOUT_IN_SCREEN|FLAG_LAYOUT_INSET_DECOR)
                 & (~getForcedWindowFlags());
         if (mIsFloating) {

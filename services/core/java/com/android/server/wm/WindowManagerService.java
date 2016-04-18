@@ -4339,18 +4339,11 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (DEBUG_STARTING_WINDOW) Slog.v(TAG, "Translucent="
                         + ent.array.getBoolean(
                                 com.android.internal.R.styleable.Window_windowIsTranslucent, false)
-                        + " Floating="
-                        + ent.array.getBoolean(
-                                com.android.internal.R.styleable.Window_windowIsFloating, false)
                         + " ShowWallpaper="
                         + ent.array.getBoolean(
                                 com.android.internal.R.styleable.Window_windowShowWallpaper, false));
                 if (ent.array.getBoolean(
                         com.android.internal.R.styleable.Window_windowIsTranslucent, false)) {
-                    return;
-                }
-                if (ent.array.getBoolean(
-                        com.android.internal.R.styleable.Window_windowIsFloating, false)) {
                     return;
                 }
                 if (ent.array.getBoolean(
