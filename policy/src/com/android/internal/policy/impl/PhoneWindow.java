@@ -3887,7 +3887,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMinimizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Rect mini = new Rect(0, 0, 0, 0);
+                    //Rect mini = new Rect(0, 0, 0, 0);
+                    Rect mini = new Rect(0, 0, 1, 1);
                     Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
                     try {
                             ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);

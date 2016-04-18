@@ -19893,7 +19893,10 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean killStartupMenu() {
-            return mStackSupervisor.killStartupMenu();
+            mStackSupervisor.moveHomeStack(true,"killStartupMenu");
+            boolean ksm = mStackSupervisor.killStartupMenu();
+            mStackSupervisor.moveHomeStack(false,"killStartupMenu");
+            return ksm;
     }
 
     @Override
