@@ -383,6 +383,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final int STATUSBAR_ACTIVITY_ID_START = KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START;
     static final int STATUSBAR_ACTIVITY_ID_END = STATUSBAR_ACTIVITY_ID_START + 6;
 
+    private static final long STATUSBAR_ACTIVITY_REMOVE_INTERVAL = 300; // 0.3 second
+
     /** All system services */
     SystemServiceManager mSystemServiceManager;
 
@@ -438,6 +440,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     ArrayList<StatusbarActivity> mStatusbarActivities = new ArrayList<StatusbarActivity>();
+    final Thread mSBAThread;
 
     /**
      * Activity we have told the window manager to have key focus.
@@ -2165,6 +2168,28 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         };
 
+        mSBAThread = new Thread("Statusbar Activity Cleaner") {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        try {
+                            synchronized(this) {
+                                boolean ret = true;
+                                while (ret) {
+                                    ret = killUselessStatusbarActivity();
+                                }
+                            }
+                            this.sleep(STATUSBAR_ACTIVITY_REMOVE_INTERVAL);
+                        } catch (InterruptedException e) {
+                        }
+                    } catch (Exception e) {
+                        Slog.e(TAG, "Unexpected exception for Statusbar Activity Cleaner");
+                    }
+                }
+            }
+        };
+
         Watchdog.getInstance().addMonitor(this);
         Watchdog.getInstance().addThread(mHandler);
     }
@@ -2180,6 +2205,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     private void start() {
         Process.removeAllProcessGroups();
         mProcessCpuThread.start();
+        mSBAThread.start();
 
         mBatteryStatsService.publish(mContext);
         mAppOpsService.publish(mContext);
@@ -4308,7 +4334,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
             // Keep track of the root activity of the task before we finish it
             TaskRecord tr = r.task;
-            closeActivity(tr.stack.mStackId, false, tr.stack.numActivities());
+            int num = tr.stack.numActivities();
 
             ActivityRecord rootR = tr.getRootActivity();
             if (rootR == null) {
@@ -4358,6 +4384,9 @@ public final class ActivityManagerService extends ActivityManagerNative
                     if (!res) {
                         Slog.i(TAG, "Failed to finish by app-request");
                     }
+                }
+                if (res) {
+                    closeActivity(tr.stack.mStackId, false, num - 1);
                 }
                 return res;
             } finally {
@@ -19767,129 +19796,109 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     public class StatusbarActivity {
         int mActivityId;   /* For status bar activity */
-        String mPkg;       /* The package name */
-        ArrayList<Integer> mStackIds = new ArrayList<Integer>();   /* The related TaskStack ids */
-        boolean mHiden;    /* The related TaskStack id whether is already hide or not */
+        int mStackId;      /* The related ActivityStack */
+        boolean mHiden;    /* The related ActivityStack whether is already hide or not */
         Rect mRestoreRect = new Rect(); /* Retore the original layout if mHiden is true */
+    }
+
+    private boolean killUselessStatusbarActivity() {
+        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
+            int stackId = mStatusbarActivities.get(idx).mStackId;
+            /* The stack id is always increating, so need not care about reusing sync */
+            if (mStackSupervisor.isStackDisappear(stackId)) {
+                removeStatusbarActivity(stackId, true, 0);
+                Slog.i(TAG, String.format("============== gchen_tag: remove stack: %d", stackId));
+                return true;
+            }
+        }
+        return false;
     }
 
     private int findStatusbarActivityId(int statusbarActivityId) {
         for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
             if (statusbarActivityId == mStatusbarActivities.get(idx).mActivityId) {
-                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, activity id: %d", idx, statusbarActivityId));
                 return idx;
             }
         }
-        Log.i(TAG, String.format("======================= gchen_tag: can not find activity id: %d", statusbarActivityId));
         return -1;
     }
 
-    private int findStatusbarActivityByStackId(int stackId, boolean remove) {
+    private int findStatusbarActivityByStackId(int stackId) {
         for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
             StatusbarActivity a = mStatusbarActivities.get(idx);
-            for (int j = a.mStackIds.size() - 1; j >= 0; --j) {
-                if (stackId == a.mStackIds.get(j)) {
-                    Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, stack id: %d, activity id: %d, in %d", idx, stackId, mStatusbarActivities.get(idx).mActivityId, j));
-                    if (remove) {
-                        a.mStackIds.remove(j);
-                    }
-                    return idx;
-                }
-            }
-        }
-        Log.i(TAG, String.format("======================= gchen_tag: can not find stack id: %d", stackId));
-        return -1;
-    }
-
-    private int findStatusbarActivityByPkg(String pkg) {
-        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            if (mStatusbarActivities.get(idx).mPkg.compareTo(pkg) == 0) {
-                Log.i(TAG, String.format("======================= gchen_tag: find ok idx: %d, activity id: %d, pkg: ", idx, mStatusbarActivities.get(idx).mActivityId) + pkg);
+            if (stackId == a.mStackId) {
                 return idx;
             }
         }
-        Log.i(TAG, String.format("======================= gchen_tag: can not find pkg: ") + pkg);
         return -1;
     }
 
     private void removeStatusbarActivity(int stackId, boolean force, int activities) {
-        int idx = findStatusbarActivityByStackId(stackId, true);
+        int idx = findStatusbarActivityByStackId(stackId);
         if (idx >= 0) {
             final StatusbarActivity a = mStatusbarActivities.get(idx);
-            if ((a.mStackIds.size() != 0) && (force == false) && (activities > 1)) {
-                Log.i(TAG, String.format("======================= gchen_tag: skip for id: %d, stack id: %d, activities: %d", idx, stackId, activities));
+            if ((force == false) && (activities > 0)) {
                 return;
             }
             StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
             statusBarManager.showStatusbarActivity(a.mActivityId, false, "gone");
-            a.mStackIds.clear();
             mStatusbarActivities.remove(idx);
         }
     }
 
     @Override
     public int createStatusbarActivity(int stackId, String pkg) {
-        int activityId = -1;
-        for (int id = STATUSBAR_ACTIVITY_ID_START; id < STATUSBAR_ACTIVITY_ID_END; id++) {
-            int idx = findStatusbarActivityByPkg(pkg);
-            if (idx != -1 ) {
-                Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, stack id: %d, pkg name: ", id, stackId) + pkg);
-                mStatusbarActivities.get(idx).mStackIds.add(stackId);
-                return id;
-            }
-            if ((activityId == -1) && (findStatusbarActivityId(id) == -1)) {
-                activityId = id;
+        int id = STATUSBAR_ACTIVITY_ID_START;
+
+        synchronized (mSBAThread) {
+            removeStatusbarActivity(stackId, true, 0);
+            for (; id < STATUSBAR_ACTIVITY_ID_END; id++) {
+                if (findStatusbarActivityId(id) == -1) {
+                    StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+                    final StatusbarActivity a = new StatusbarActivity();
+
+                    a.mActivityId = id;
+                    a.mStackId = stackId;
+                    a.mHiden = false;
+                    mStatusbarActivities.add(a);
+                    statusBarManager.showStatusbarActivity(id, true, pkg);
+                    break;
+                }
             }
         }
-
-        if (activityId != -1) {
-            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
-            final StatusbarActivity a = new StatusbarActivity();
-
-            a.mActivityId = activityId;
-            a.mStackIds.add(stackId);
-            a.mHiden = false;
-            a.mPkg = pkg;
-            Log.i(TAG, String.format("======================= gchen_tag: call statusbarActivityIds.add() for id: %d, stack id: %d, pkg name: ", activityId, stackId) + pkg);
-            mStatusbarActivities.add(a);
-            statusBarManager.showStatusbarActivity(activityId, true, pkg);
-        }
-        return activityId;
+        return (id == STATUSBAR_ACTIVITY_ID_END) ? -1 : id;
     }
 
     @Override
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
-        int idx = findStatusbarActivityByStackId(stackId, false);
-        if (idx < 0) {
-            return;
-        }
+        synchronized (mSBAThread) {
+            int idx = findStatusbarActivityByStackId(stackId);
+            if (idx < 0) {
+                return;
+            }
 
-        StatusbarActivity a = mStatusbarActivities.get(idx);
-        a.mHiden = true;
-        a.mRestoreRect.set(rect);
-        Log.i(TAG, String.format("======================= gchen_tag: call saveInfoInStatusbarActivity() for id: %d, RECT(%d, %d, %d, %d)........",
-                                 a.mActivityId, a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
+            StatusbarActivity a = mStatusbarActivities.get(idx);
+            a.mHiden = true;
+            a.mRestoreRect.set(rect);
+        }
     }
 
     @Override
     public void touchStatusbarActivity(int statusbarActivityId) {
-        int idx = findStatusbarActivityId(statusbarActivityId);
-        if (idx < 0) {
-            return;
-        }
+        synchronized (mSBAThread) {
+            int idx = findStatusbarActivityId(statusbarActivityId);
+            if (idx < 0) {
+                return;
+            }
 
-        StatusbarActivity a = mStatusbarActivities.get(idx);
-        int stackId = a.mStackIds.get(a.mStackIds.size() - 1);
-        Log.i(TAG, String.format("======================= gchen_tag: call touchStatusbarActivity() for id: %d, stackId: %d", a.mActivityId, stackId));
-        if (a.mHiden == true) {
-            Log.i(TAG, String.format("======================= gchen_tag: hiden RECT(%d, %d, %d, %d)........",
-                                     a.mRestoreRect.left, a.mRestoreRect.top, a.mRestoreRect.right, a.mRestoreRect.bottom));
-            relayoutWindow(stackId, a.mRestoreRect);
-            a.mHiden = false;
+            StatusbarActivity a = mStatusbarActivities.get(idx);
+            if (a.mHiden == true) {
+                relayoutWindow(a.mStackId, a.mRestoreRect);
+                a.mHiden = false;
+            }
+            setFocusedStack(a.mStackId);
         }
-        setFocusedStack(stackId);
     }
-
 
     @Override
     public boolean killStartupMenu() {
@@ -19922,7 +19931,10 @@ public final class ActivityManagerService extends ActivityManagerNative
     private boolean closeActivity(int stackId, boolean individual, int activities) {
         boolean succeed;
 
-        removeStatusbarActivity(stackId, individual, activities);
+        synchronized (mSBAThread) {
+            removeStatusbarActivity(stackId, individual, activities);
+        }
+
         if (!individual) {
             return true;
         }

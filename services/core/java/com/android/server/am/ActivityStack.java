@@ -437,6 +437,10 @@ final class ActivityStack {
         return null;
     }
 
+    boolean isDisappear() {
+        return topActivity() == null;
+    }
+
     final TaskRecord topTask() {
         final int size = mTaskHistory.size();
         if (size > 0) {

@@ -2731,6 +2731,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 + task.stack);
     }
 
+    boolean isStackDisappear(int stackId) {
+        ActivityContainer activityContainer = mActivityContainers.get(stackId);
+        if (activityContainer == null) {
+            return true;
+        }
+        return activityContainer.mStack.isDisappear();
+    }
+
     ActivityStack getStack(int stackId) {
         ActivityContainer activityContainer = mActivityContainers.get(stackId);
         if (activityContainer != null) {
