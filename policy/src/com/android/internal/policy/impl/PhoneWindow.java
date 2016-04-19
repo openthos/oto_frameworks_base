@@ -3646,15 +3646,86 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mAppName.setText(pm.getApplicationLabel(ai));
             mAppIcon.setImageDrawable(icon);
 
-            if (isShowFrame()) {
-                try {
-                    int statusbarActivityId = ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), ai.packageName);
-                    Log.i(TAG, String.format("============== gchen_tag: get statusbar activity id: %d .............", statusbarActivityId));
-                } catch (RemoteException e) {
-                    Log.e(TAG, "create statusbar activity failed", e);
-                }
+            if(isShowFrame()) {
+                initForShowFrame(ai.packageName);
             }
-	if(isShowFrame()){
+
+            mCloseBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        ActivityManagerNative.getDefault().closeActivity(getStackId());
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Close button failes", e);
+                    }
+                }
+            });
+
+
+            mLaunchBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Runtime.getRuntime().exec("input keyevent " + KeyEvent.KEYCODE_BACK);
+                    } catch (IOException e) {
+                        Log.e(TAG, "Back button failes", e);
+                    }
+                }
+            });
+
+            mMaximizeBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    try {
+                        Rect customMaximizedWindowSize = ActivityManagerNative.getDefault().getMaximizedWindowSize();
+                        if (!customMaximizedWindowSize.equals(new Rect())) {
+                            mFullScreen = customMaximizedWindowSize;
+                        } else {
+                            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
+                        }
+                        if (!actualWindowSize.equals(mFullScreen)){
+                            mOldSize = actualWindowSize;
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mFullScreen);
+                            actualWindowSize = mFullScreen;
+                        } else {
+                            if (mOldSize == null) {
+                                mOldSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                            }
+                            actualWindowSize = mOldSize;
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mOldSize);
+                        }
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Maximize failed", e);
+                    }
+                }
+            });
+
+            mMinimizeBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Rect mini = new Rect(0, 0, 0, 0);
+                    Rect mini = new Rect(0, 0, 1, 1);
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    try {
+                            ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mini);
+                    } catch (RemoteException e) {
+                        Log.e(TAG, "Minimize failed", e);
+                    }
+                }
+            });
+
+            setFocus();
+        }
+
+        private void initForShowFrame(String pkg) {
+            try {
+                ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), pkg);
+            } catch (RemoteException e) {
+                Log.e(TAG, "create statusbar activity failed", e);
+            }
+
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3778,7 +3849,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
-	
 
             mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
                 @Override
@@ -3790,116 +3860,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
-	}
-            /**mLeftResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
-                @Override
-                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
-                    if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                        mTmpFrame.left = frame.left + diffX;
-                        mLastDx = diffX;
-                    } else {
-                        mTmpFrame.left = frame.left + mLastDx;
-                    }
-                    mTmpFrame.top = frame.top;
-                    mTmpFrame.right = frame.right;
-                    if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                        mTmpFrame.bottom = frame.bottom + diffY;
-                        mLastDy = diffY;
-                    } else {
-                        mTmpFrame.bottom = frame.bottom + mLastDy;
-                    }
-                    return mTmpFrame;
-                }
-            }, mMaximizeBtn, mLeftResize, mFullScreen));**/
-
-            /**mRightResize.setOnTouchListener(new TouchListener(new ResizeWindow() {
-                @Override
-                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
-                    mTmpFrame.left = frame.left;
-                    mTmpFrame.top = frame.top;
-                    if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                        mTmpFrame.right = frame.right + diffX;
-                        mLastDx = diffX;
-                    } else {
-                        mTmpFrame.right = frame.right + mLastDx;
-                    }
-                    if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                        mTmpFrame.bottom = frame.bottom + diffY;
-                        mLastDy = diffY;
-                    } else {
-                        mTmpFrame.bottom = frame.bottom + mLastDy;
-                    }
-                    return mTmpFrame;
-                }
-            }, mMaximizeBtn, mRightResize, mFullScreen));**/
-
-            mCloseBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        ActivityManagerNative.getDefault().closeActivity(getStackId());
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Close button failes", e);
-                    }
-                }
-            });
-
-
-            mLaunchBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Runtime.getRuntime().exec("input keyevent " + KeyEvent.KEYCODE_BACK);
-                    } catch (IOException e) {
-                        Log.e(TAG, "Back button failes", e);
-                    }
-                }
-            });
-
-            mMaximizeBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
-                    try {
-                        Rect customMaximizedWindowSize = ActivityManagerNative.getDefault().getMaximizedWindowSize();
-                        if (!customMaximizedWindowSize.equals(new Rect())) {
-                            mFullScreen = customMaximizedWindowSize;
-                        } else {
-                            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
-                        }
-                        if (!actualWindowSize.equals(mFullScreen)){
-                            mOldSize = actualWindowSize;
-                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mFullScreen);
-                            actualWindowSize = mFullScreen;
-                        } else {
-                            if (mOldSize == null) {
-                                mOldSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
-                            }
-                            actualWindowSize = mOldSize;
-                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mOldSize);
-                        }
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Maximize failed", e);
-                    }
-                }
-            });
-
-            mMinimizeBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Rect mini = new Rect(0, 0, 0, 0);
-                    Rect mini = new Rect(0, 0, 1, 1);
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
-                    try {
-                            ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
-                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mini);
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Minimize failed", e);
-                    }
-                }
-            });
-
-            setFocus();
         }
 
         public int getTopBarHeight() {
