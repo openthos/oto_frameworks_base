@@ -5946,6 +5946,7 @@ public class Activity extends ContextThemeWrapper
     }
 
     private void setWindowAttributes() {
+        mWindow.setTaskId(getTaskId());
         mWindow.setStackId(getStackId());
         mWindow.enableShowFrame((mIntent != null) &&
                                 ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) == 0));

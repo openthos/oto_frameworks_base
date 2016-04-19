@@ -43,6 +43,7 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
@@ -3640,14 +3641,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
             mFullScreen = new Rect(0, mMultiwindowHeight, metrics.widthPixels, metrics.heightPixels - mStatusBarHeight);
 
-            PackageManager pm = getContext().getPackageManager();
-            ApplicationInfo ai = getContext().getApplicationInfo();
-            Drawable icon = ai.loadIcon(pm);
-            mAppName.setText(pm.getApplicationLabel(ai));
-            mAppIcon.setImageDrawable(icon);
-
+            String packageName = setMWWindowTitle();
             if(isShowFrame()) {
-                initForShowFrame(ai.packageName);
+                initForShowFrame(packageName);
             }
 
             mCloseBtn.setOnClickListener(new OnClickListener() {
@@ -3860,6 +3856,43 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     return mTmpFrame;
                 }
             }, mMaximizeBtn, mFullScreen));
+        }
+
+        private String setMWWindowTitleDefault() {
+            PackageManager pm = getContext().getPackageManager();
+            ApplicationInfo ai = getContext().getApplicationInfo();
+            Drawable icon = ai.loadIcon(pm);
+            mAppName.setText(pm.getApplicationLabel(ai));
+            mAppIcon.setImageDrawable(icon);
+            return ai.packageName;
+        }
+
+        private String setMWWindowTitleByPkg(String pkg) {
+            try {
+                PackageManager pm = getContext().getPackageManager();
+                final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+                if (ai != null) {
+                    mAppName.setText(pm.getApplicationLabel(ai));
+                    mAppIcon.setImageDrawable(pm.getApplicationIcon(ai));
+                    return pkg;
+                }
+            } catch (NameNotFoundException e) {
+            }
+            return setMWWindowTitleDefault();
+        }
+
+        private String setMWWindowTitle() {
+            try {
+                List<ActivityManager.RunningTaskInfo> tasks = ActivityManagerNative.getDefault().getTasks(20, 0);
+                for (int idx = tasks.size() - 1; idx >= 0; --idx) {
+                    ActivityManager.RunningTaskInfo task = tasks.get(idx);
+                    if (task.id == getTaskId()) {
+                        return setMWWindowTitleByPkg(task.baseActivity.getPackageName());
+                    }
+                }
+            } catch (RemoteException e) {
+            }
+            return setMWWindowTitleDefault();
         }
 
         public int getTopBarHeight() {

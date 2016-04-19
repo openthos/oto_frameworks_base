@@ -1883,6 +1883,7 @@ public abstract class Window {
      * Setters and getters
      */
     private int mStackId = -1;
+    private int mTaskId = -1;
     private boolean mShowFrame = true;
 
     /**
@@ -1911,6 +1912,20 @@ public abstract class Window {
      */
     public int getStackId() {
         return mStackId;
+    }
+
+    /**
+     * @hide
+     */
+    public void setTaskId(int id) {
+        mTaskId = id;
+    }
+
+    /**
+     * @hide
+     */
+    public int getTaskId() {
+        return mTaskId;
     }
 
     /**
