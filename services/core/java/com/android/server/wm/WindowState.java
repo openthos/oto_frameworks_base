@@ -122,6 +122,8 @@ final class WindowState implements WindowManagerPolicy.WindowState {
     int mRequestedHeight;
     int mLastRequestedWidth;
     int mLastRequestedHeight;
+    boolean mTruncateWidth = false;
+    boolean mTruncateHeight = false;
 
     int mLayer;
     boolean mHaveFrame;
@@ -828,9 +830,44 @@ final class WindowState implements WindowManagerPolicy.WindowState {
     private void getStackBounds(TaskStack stack, Rect bounds) {
         if (stack != null) {
             stack.getBounds(bounds);
+            if (mTruncateWidth) {
+                setRequestedWidth(bounds.width());
+            }
+            if (mTruncateHeight) {
+                setRequestedHeight(bounds.height());
+            }
             return;
         }
         bounds.set(mFrame);
+    }
+
+    private int getContainingWidth() {
+        return (int)(mContainingFrame.width() - 2 * mAttrs.x);
+    }
+
+    private int getContainingHeight() {
+        return (int)(mContainingFrame.height() - 2 * mAttrs.x);
+    }
+
+    private void setRequestedWidth(int width) {
+        if (width > mContainingFrame.width()) {
+            width = getContainingWidth();
+            mTruncateWidth = true;
+        }
+        mRequestedWidth = width;
+    }
+
+    private void setRequestedHeight(int height) {
+        if (height > mContainingFrame.height()) {
+            height = getContainingHeight();
+            mTruncateHeight = true;
+        }
+        mRequestedHeight = height;
+    }
+
+    public void setRequestedSize(int width, int height) {
+        setRequestedWidth(width);
+        setRequestedHeight(height);
     }
 
     public long getInputDispatchingTimeoutNanos() {
