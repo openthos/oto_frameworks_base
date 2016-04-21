@@ -831,27 +831,19 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         if (stack != null) {
             stack.getBounds(bounds);
             if (mTruncateWidth) {
-                setRequestedWidth(bounds.width());
+                setRequestedWidth(bounds.width() - 2 * mAttrs.x);
             }
             if (mTruncateHeight) {
-                setRequestedHeight(bounds.height());
+                // FIXME: please fix the hardcode number '10', next.
+                setRequestedHeight(bounds.height() - mAttrs.y - 10);
             }
             return;
         }
         bounds.set(mFrame);
     }
 
-    private int getContainingWidth() {
-        return (int)(mContainingFrame.width() - 2 * mAttrs.x);
-    }
-
-    private int getContainingHeight() {
-        return (int)(mContainingFrame.height() - 2 * mAttrs.x);
-    }
-
     private void setRequestedWidth(int width) {
         if (width > mContainingFrame.width()) {
-            width = getContainingWidth();
             mTruncateWidth = true;
         }
         mRequestedWidth = width;
@@ -859,7 +851,6 @@ final class WindowState implements WindowManagerPolicy.WindowState {
 
     private void setRequestedHeight(int height) {
         if (height > mContainingFrame.height()) {
-            height = getContainingHeight();
             mTruncateHeight = true;
         }
         mRequestedHeight = height;
