@@ -413,6 +413,11 @@ public class FrameLayout extends ViewGroup {
             mPaddingBottom + mForegroundPaddingBottom;
     }
 
+    //A new method for onMeasure and LayoutChildren to get Border from DecorView
+    public View getLMChildAt(int index){
+	return super.getChildAt(index);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -431,7 +436,7 @@ public class FrameLayout extends ViewGroup {
         int childState = 0;
 
         for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
+            final View child = getLMChildAt(i);
             if (mMeasureAllChildren || child.getVisibility() != GONE) {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -527,7 +532,7 @@ public class FrameLayout extends ViewGroup {
         mForegroundBoundsChanged = true;
         
         for (int i = 0; i < count; i++) {
-            final View child = getChildAt(i);
+            final View child = getLMChildAt(i);
             if (child.getVisibility() != GONE) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 

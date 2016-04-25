@@ -2250,6 +2250,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private int mLastRightInset = 0;
         private boolean mLastHasTopStableInset = false;
         private boolean mLastHasBottomStableInset = false;
+        private boolean mwIsOver = false;
         private int mLastWindowFlags = 0;
 
         private int mRootScrollY = 0;
@@ -2270,6 +2271,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         public void setBackgroundFallback(int resId) {
             mBackgroundFallback.setDrawable(resId != 0 ? getContext().getDrawable(resId) : null);
             setWillNotDraw(getBackground() == null && !mBackgroundFallback.hasFallback());
+        }
+
+	//A symbol to show the installation of mwBorder is completed
+        public void mwOver(){
+            mwIsOver = true;
         }
 
         @Override
@@ -2540,6 +2546,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }
             return super.dispatchPopulateAccessibilityEvent(event);
+        }
+
+	//Override getChildAt method to make sure that apk can get which view it want from DecorView
+        public View getChildAt(int index){
+	    //It only work in multiwindow mode
+            if(mwIsOver && index == 0){
+                return super.getChildAt(1);
+            }
+            return super.getChildAt(index);
         }
 
         @Override
@@ -4311,6 +4326,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mDecor = generateDecor();
             if(isMWPanel()) {
                 installMWDecor(mDecor);
+                mDecor.mwOver();
             }
             mDecor.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
             mDecor.setIsRootNamespace(true);
