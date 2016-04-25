@@ -15,6 +15,8 @@
 
 package com.android.internal.policy.impl;
 
+import android.provider.ContactsContract;
+import android.net.Uri;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.AppOpsManager;
@@ -585,6 +587,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_POWER_DELAYED_PRESS = 13;
     private static final int MSG_POWER_LONG_PRESS = 14;
     private static final int MSG_STARTUP_MENU = 15;
+    private static final int MSG_STARTUP_FILE_MANAGER = 16;
+    private static final int MSG_STARTUP_BROWSER = 17;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -635,6 +639,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_POWER_LONG_PRESS:
                     powerLongPress();
+                    break;
+                case MSG_STARTUP_FILE_MANAGER:
+                    startFileManager();
+                    break;
+                case MSG_STARTUP_BROWSER:
+                    startExplorer();
                     break;
             }
         }
@@ -1113,13 +1123,48 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_MENU);
     }
 
+    public void sendFileManager() {
+        mHandler.removeMessages(MSG_STARTUP_FILE_MANAGER);
+        mHandler.sendEmptyMessage(MSG_STARTUP_FILE_MANAGER);
+    }
+
+    public void intentExplorer() {
+        mHandler.removeMessages(MSG_STARTUP_BROWSER);
+        mHandler.sendEmptyMessage(MSG_STARTUP_BROWSER);
+    }
+
+    void startFileManager() {
+        try {
+            PackageManager manager=mContext.getPackageManager();
+            Intent lanuch = new Intent();
+            lanuch = manager.getLaunchIntentForPackage("com.cyanogenmod.filemanager");
+            lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mContext.startActivity(lanuch);
+        } catch (ActivityNotFoundException e) {
+            Slog.w(TAG, "No activity to handle assist action.", e);
+        }
+    }
+
+    void startExplorer() {
+        try {
+            Intent intent1 = new Intent();
+            intent1.setAction("android.intent.action.VIEW");
+            Uri content_uri = Uri.parse("http://www.baidu.com");
+            intent1.setData(content_uri);
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent1);
+        } catch (ActivityNotFoundException e) {
+            Slog.w(TAG, "No activity to handle assist action.", e);
+        }
+    }
+
     void startupMenuInternal() {
         try {
             if (ActivityManagerNative.getDefault().killStartupMenu()) {
                 return;
             }
         } catch (RemoteException e) {
-	    Log.e("LADEHUNTER","Exception when try to kill starup menu !!!!",null);
+            Log.e("LADEHUNTER","Exception when try to kill starup menu !!!!",null);
         }
 
         final Intent intent = new Intent();
@@ -2577,6 +2622,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 //            res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
                 //    return -1;
                 //}
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
+            if (down) {
+                sendFileManager();
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BROWSER) {
+            if (down) {
+                intentExplorer();
             }
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {

@@ -749,6 +749,12 @@ public class KeyEvent extends InputEvent implements Parcelable {
     /** Key code constant: Help key. */
     public static final int KEYCODE_HELP = 259;
 
+    public static final int KEYCODE_CUSTOMIZE_START = 100000;
+    /** Start menu file manager. */
+    public static final int KEYCODE_CUSTOMIZE_FILE_MANAGER  = KEYCODE_CUSTOMIZE_START;
+    /** Start menu explorer. */
+    public static final int KEYCODE_CUSTOMIZE_BROWSER = KEYCODE_CUSTOMIZE_START + 1;
+
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_START = 1000000;
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_END = 2000000;
 
@@ -1770,6 +1776,8 @@ public class KeyEvent extends InputEvent implements Parcelable {
      */
     public static final boolean isSystemKey(int keyCode) {
         switch (keyCode) {
+            case KeyEvent.KEYCODE_CUSTOMIZE_BROWSER:
+            case KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER:
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_SOFT_RIGHT:
             case KeyEvent.KEYCODE_HOME:

@@ -58,6 +58,29 @@
             systemui:keyCode="82"
             systemui:keyRepeat="true"
             />
+	<com.android.systemui.statusbar.policy.KeyButtonView
+            android:id="@+id/status_bar_file_manager_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingStart="6dip"
+            android:paddingBottom="2dip"
+            android:src="@drawable/startmenu_file_manager_image"
+            android:scaleType="centerInside"
+            systemui:keyCode="100000"
+            systemui:keyRepeat="true"
+            />
+        <com.android.systemui.statusbar.policy.KeyButtonView
+            android:id="@+id/status_bar_browser_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingStart="6dip"
+            android:paddingBottom="2dip"
+            android:src="@drawable/startmenu_browser_image"
+            android:scaleType="centerInside"
+            systemui:keyCode="100001"
+            systemui:keyRepeat="true"
+            />
+
         <com.android.systemui.statusbar.policy.KeyButtonView
             android:id="@+id/status_bar_activity_0"
             android:layout_width="40dp"
