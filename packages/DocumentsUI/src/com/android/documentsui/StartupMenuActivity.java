@@ -70,161 +70,93 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-                getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
-                setContentView(R.layout.start_activity);
+            super.onCreate(savedInstanceState);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+            getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+            setContentView(R.layout.start_activity);
+            mContext=this;
+            ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
+            gv_view = (GridView) findViewById(R.id.gv_view);
+            StartupMenuActivity.this.setFinishOnTouchOutside(true);
 
-                mContext = this;
-                ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
-                gv_view = (GridView) findViewById(R.id.gv_view);
-                StartupMenuActivity.this.setFinishOnTouchOutside(true);
+            mlistAppInfo = new ArrayList<AppInfo>();
+            queryAppInfo();
+            StartupMenuAdapter browseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            gv_view.setAdapter(browseAppAdapter);
+            gv_view.setOnItemClickListener(this);
 
-                mlistAppInfo = new ArrayList<AppInfo>();
-                queryAppInfo();
-                StartupMenuAdapter browseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
-                gv_view.setAdapter(browseAppAdapter);
-                gv_view.setOnItemClickListener(this);
-
-                my_computer = (TextView) findViewById(R.id.my_computer);
-                system_setting = (TextView) findViewById(R.id.system_setting);
-                power_off = (TextView) findViewById(R.id.power_off);
-                my_computer.setOnClickListener(this);
-                power_off.setOnClickListener(this);
-                system_setting.setOnClickListener(this);
+            my_computer = (TextView) findViewById(R.id.my_computer);
+            system_setting = (TextView) findViewById(R.id.system_setting);
+            power_off = (TextView) findViewById(R.id.power_off);
+            my_computer.setOnClickListener(this);
+            power_off.setOnClickListener(this);
+            system_setting.setOnClickListener(this);
         }
 
         public void queryAppInfo() {
-                PackageManager pm = this.getPackageManager();
-                Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-                mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                List<ResolveInfo> resolveInfos = pm
-                                .queryIntentActivities(mainIntent, 0);
-                Collections.sort(resolveInfos,
-                                new ResolveInfo.DisplayNameComparator(pm));
-                if (mlistAppInfo != null) {
-                        mlistAppInfo.clear();
-                        for (ResolveInfo reInfo : resolveInfos) {
-                                String activityName = reInfo.activityInfo.name;
-                                String pkgName = reInfo.activityInfo.packageName;
-                                String appLabel = (String) reInfo.loadLabel(pm);
-                                Drawable icon = reInfo.loadIcon(pm);
-                                Intent launchIntent = new Intent();
-                                launchIntent.setComponent(new ComponentName(pkgName,
-                                                activityName));
-                                AppInfo appInfo = new AppInfo();
-                                appInfo.setAppLabel(appLabel);
-                                appInfo.setPkgName(pkgName);
-                                appInfo.setAppIcon(icon);
-                                appInfo.setIntent(launchIntent);
-                                mlistAppInfo.add(appInfo);
-                        }
+            PackageManager pm = this.getPackageManager();
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
+            Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+            if (mlistAppInfo != null) {
+                mlistAppInfo.clear();
+                for (ResolveInfo reInfo : resolveInfos) {
+                    String activityName = reInfo.activityInfo.name;
+                    String pkgName = reInfo.activityInfo.packageName;
+                    String appLabel = (String) reInfo.loadLabel(pm);
+                    Drawable icon = reInfo.loadIcon(pm);
+                    Intent launchIntent = new Intent();
+                    launchIntent.setComponent(new ComponentName(pkgName,activityName));
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setAppLabel(appLabel);
+                    appInfo.setPkgName(pkgName);
+                    appInfo.setAppIcon(icon);
+                    appInfo.setIntent(launchIntent);
+                    mlistAppInfo.add(appInfo);
                 }
+            }
         }
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = mlistAppInfo.get(position).getIntent();
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                //try {
-                //        AppInfo appInfo = mlistAppInfo.get(position);
-                //        PackageManager pm = this.getPackageManager();
-                //        String packName  = appInfo.getPkgName();
-                //        try {
-                //                PackageInfo packInfo = pm.getPackageInfo(packName, PackageManager.GET_ACTIVITIES);
-                //                ActivityInfo [] activitys = packInfo.activities;
-                //                if(activitys!=null&&activitys.length>0){
-                //                        ActivityInfo activityInfo = activitys[0];
-                //                        String className = activityInfo.name;
-                //                        Log.e("LADEHUNTER",packName+" "+className,null);
-                //                        Runtime.getRuntime().exec("am start -n "+packName+"/"+className);
-                //                }
-                //        } catch (NameNotFoundException e) {
-                //                // TODO Auto-generated catch block
-                //                e.printStackTrace();
-                //        }
-                //} catch (Exception e) {
-                //        // TODO Auto-generated catch block
-                //        e.printStackTrace();
-                //}
+            Intent intent = mlistAppInfo.get(position).getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
 
         @Override
         public void onClick(View v) {
-                switch (v.getId()) {
-                case R.id.my_computer:
-                        /* start FileManager */
-                        for(int i=0;i<mlistAppInfo.size();i++){
-                                AppInfo appInfo = mlistAppInfo.get(i);
-                                PackageManager pm = this.getPackageManager();
-                                String packName  = appInfo.getPkgName();
-                                Log.v("LADEHUNTER","===========Try to call file manager============,packName = "+ packName);
-                                if (packName.compareTo("com.cyanogenmod.filemanager") == 0){
-                                        Log.v("LADEHUNTER","===========Find file manager============");
-                                        Intent intent = appInfo.getIntent();
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(intent);
-                                }
-                        }
-                        break;
-                case R.id.system_setting:
-                        if (android.os.Build.VERSION.SDK_INT > 13) {
-                                startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
-                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                         } else {
-                                startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
-                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                        }
-                        break;
-                case R.id.power_off:
-                        Log.v("LADEHUNTER", "broadcast->shutdown");
-                        Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
-                        intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        break;
+            switch (v.getId()) {
+            case R.id.my_computer:
+            /* start FileManager */
+            for (int i=0;i<mlistAppInfo.size();i++) {
+                AppInfo appInfo = mlistAppInfo.get(i);
+                PackageManager pm = this.getPackageManager();
+                String packName  = appInfo.getPkgName();
+                if (packName.compareTo("com.cyanogenmod.filemanager") == 0) {
+                    Intent intent = appInfo.getIntent();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
-        }
-
-        private boolean ONCK_DOWN;
-
-        private void repotOff() {
-                ONCK_DOWN = !ONCK_DOWN;
-                if (ONCK_DOWN) {
-                        contentView = View.inflate(StartupMenuActivity.this,
-                                        R.layout.activity_shutdown, null);
-                        shut_text = (TextView) contentView.findViewById(R.id.sdowm_text);
-                        popupWindow = new PopupWindow(contentView, 100, 200);
-                        popupWindow.setBackgroundDrawable(new ColorDrawable(
-                                        Color.TRANSPARENT));
-                        int[] location = new int[2];
-                        shut_text.getLocationInWindow(location);
-                        popupWindow.showAtLocation(contentView, Gravity.LEFT, 100, 300);
-
-                        AlphaAnimation aa = new AlphaAnimation(0.2f, 1.0f);
-                        aa.setDuration(500);
-
-                        ScaleAnimation sa = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f,
-                                        Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF,
-                                        0.5f);
-                        sa.setDuration(500);
-                        AnimationSet set = new AnimationSet(false);
-                        set.addAnimation(sa);
-                        set.addAnimation(aa);
-                        contentView.startAnimation(set);
-                        shut_text.setOnClickListener(new OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                        try {
-                                                Runtime.getRuntime().exec("poweroff");
-                                        } catch (IOException e) {
-                                                e.printStackTrace();
-                                        }
-                                }
-                        });
+            }
+                break;
+            case R.id.system_setting:
+                if (android.os.Build.VERSION.SDK_INT > 13) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 } else {
-                        popupWindow.dismiss();
+                    startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
+                   .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                }
+                break;
+            case R.id.power_off:
+                Log.v("LADEHUNTER", "broadcast->shutdown");
+                Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                break;
                 }
         }
 

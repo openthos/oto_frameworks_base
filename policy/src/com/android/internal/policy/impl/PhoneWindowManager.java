@@ -1149,7 +1149,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         try {
             Intent intent1 = new Intent();
             intent1.setAction("android.intent.action.VIEW");
-            Uri content_uri = Uri.parse("http://www.baidu.com");
+            Uri content_uri = Uri.parse("http://www.emindsoft.com.cn");
             intent1.setData(content_uri);
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent1);

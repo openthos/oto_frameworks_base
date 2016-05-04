@@ -686,6 +686,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
         mNotificationIconArea = mStatusBarView.findViewById(R.id.notification_icon_area_inner);
         mMoreIcon = mStatusBarView.findViewById(R.id.moreIcon);
+        PackageManager pm1 = getPackageManagerForUser(-1);
+        try {
+            ApplicationInfo ai1 = pm1.getApplicationInfo("com.cyanogenmod.filemanager", 0);
+            ((ImageView)mStatusBarView.findViewById(R.id.status_bar_file_manager_view)).setImageDrawable(pm1.getApplicationIcon(ai1));
+            ApplicationInfo ai2 = pm1.getApplicationInfo("com.android.browser", 0);
+            ((ImageView)mStatusBarView.findViewById(R.id.status_bar_browser_view)).setImageDrawable(pm1.getApplicationIcon(ai2));
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
 
         mStackScroller = (NotificationStackScrollLayout) mStatusBarWindow.findViewById(
@@ -2413,7 +2422,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mStatusBarWindow == null) {
             return;
         }
-
+        if (pkg.equals("com.cyanogenmod.filemanager") || pkg.equals("com.android.browser")) {
+            return;
+        }
         Drawable pkgicon = null;
         PackageManager pm = getPackageManagerForUser(-1);
         try {
