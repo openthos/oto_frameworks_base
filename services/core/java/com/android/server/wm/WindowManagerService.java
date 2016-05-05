@@ -4346,6 +4346,10 @@ public class WindowManagerService extends IWindowManager.Stub
                     return;
                 }
                 if (ent.array.getBoolean(
+			com.android.internal.R.styleable.Window_windowIsFloating, false)) {
+                    return;
+                }
+                if (ent.array.getBoolean(
                         com.android.internal.R.styleable.Window_windowShowWallpaper, false)) {
                     if (mWallpaperTarget == null) {
                         // If this theme is requesting a wallpaper, and the wallpaper

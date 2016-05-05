@@ -156,6 +156,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                try {
+                    ActivityManagerNative.getDefault().killStartupMenu();
+                    System.exit(0);
+                } catch (RemoteException e) {
+                }
+
                 break;
                 }
         }
