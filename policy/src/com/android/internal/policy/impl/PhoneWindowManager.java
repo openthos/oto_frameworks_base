@@ -1135,7 +1135,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     void startFileManager() {
         try {
-            PackageManager manager=mContext.getPackageManager();
+            PackageManager manager = mContext.getPackageManager();
             Intent lanuch = new Intent();
             lanuch = manager.getLaunchIntentForPackage("com.cyanogenmod.filemanager");
             lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -1147,11 +1147,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     void startExplorer() {
         try {
+            PackageManager manager = mContext.getPackageManager();
             Intent intent1 = new Intent();
-            intent1.setAction("android.intent.action.VIEW");
-            Uri content_uri = Uri.parse("http://www.emindsoft.com.cn");
-            intent1.setData(content_uri);
-            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent1 = manager.getLaunchIntentForPackage("com.android.browser");
+            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(intent1);
         } catch (ActivityNotFoundException e) {
             Slog.w(TAG, "No activity to handle assist action.", e);
