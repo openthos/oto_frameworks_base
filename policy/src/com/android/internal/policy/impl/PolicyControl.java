@@ -67,8 +67,7 @@ public class PolicyControl {
         int vis = win != null ? win.getSystemUiVisibility() : attrs.systemUiVisibility;
         if (sImmersiveStatusFilter != null && sImmersiveStatusFilter.matches(attrs)) {
             vis |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
             vis &= ~(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.STATUS_BAR_TRANSLUCENT);
         }

@@ -1832,8 +1832,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         if (ActivityManager.isHighEndGfx()
                 && (attrs.flags & FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0) {
-            attrs.subtreeSystemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            attrs.subtreeSystemUiVisibility |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         }
     }
 
@@ -3239,7 +3238,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             } else if ((fl & FLAG_FULLSCREEN) != 0 || (fl & FLAG_LAYOUT_IN_OVERSCAN) != 0) {
                 outContentInsets.setEmpty();
             } else if ((systemUiVisibility & (View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)) == 0) {
+                        )) == 0) {
                 outContentInsets.set(mCurLeft, mCurTop,
                         availRight - mCurRight, availBottom - mCurBottom);
             } else {
@@ -3831,8 +3830,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     }
                 }
             } else if ((fl & FLAG_LAYOUT_IN_SCREEN) != 0 || (sysUiFl
-                    & (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)) != 0) {
+                    & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) != 0) {
                 if (DEBUG_LAYOUT) Slog.v(TAG, "layoutWindowLw(" + attrs.getTitle() +
                         "): IN_SCREEN");
                 // A window that has requested to fill the entire screen just

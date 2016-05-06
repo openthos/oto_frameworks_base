@@ -2807,8 +2807,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * Flags that can impact the layout in relation to system UI.
      */
     public static final int SYSTEM_UI_LAYOUT_FLAGS =
-            SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 
     /** @hide */
     @IntDef(flag = true,

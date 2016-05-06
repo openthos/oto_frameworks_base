@@ -1115,10 +1115,6 @@ public final class ViewRootImpl implements ViewParent,
 
     private int getImpliedSystemUiVisibility(WindowManager.LayoutParams params) {
         int vis = 0;
-        // Translucent decor window flags imply stable system ui visibility.
-        if ((params.flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) != 0) {
-            vis |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        }
         if ((params.flags & WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION) != 0) {
             vis |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         }
