@@ -14,7 +14,7 @@
         <LinearLayout
             android:id="@+id/mw_decor_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/mw_inner_border"
+            android:layout_height="@dimen/mw_header_border"
             android:layout_alignParentTop="true"
             android:layout_gravity="center"
             android:orientation="horizontal"
@@ -72,12 +72,4 @@
                 android:src="@drawable/mw_btn_close" />
         </LinearLayout>
     </RelativeLayout>
-    <View
-        android:id="@+id/mwBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/mw_inner_border"
-        android:layout_marginTop="@dimen/mw_inner_border"
-        android:layout_marginRight="@dimen/mw_inner_border"
-        android:layout_marginBottom="@dimen/mw_inner_border"/>
 </RelativeLayout>

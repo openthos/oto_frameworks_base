@@ -143,7 +143,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     public final static int MW_WINDOW_MIN_WIDTH = 250;
     public final static int MW_WINDOW_MIN_HEIGHT = 180;
 
-    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 10;
+    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 5;
 
     public final static int MW_WINDOW_RESIZE_NONE = 0;
     public final static int MW_WINDOW_RESIZE_TOP = 1;
@@ -2839,9 +2839,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         public void setWindowBackground(Drawable drawable) {
-            if (mDecorMW != null) {
-                mDecorMW.setBackground(drawable);
-            }
             if (getBackground() != drawable) {
                 setBackgroundDrawable(drawable);
                 if (drawable != null) {
@@ -3612,7 +3609,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private ImageButton mMinimizeBtn;
         private View mInnerBorder;
         private View mOuterBorder;
-        private View mBackground;
         //private View mLeftResize;
         //private View mRightResize;
         private ImageView mAppIcon;
@@ -3637,7 +3633,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mDecorView = getLayoutInflater().inflate(com.android.internal.R.layout.mw_decor, null);
 
             mHeader = (LinearLayout)mDecorView.findViewById(com.android.internal.R.id.mw_decor_header);
-            mTopBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_inner_border);
+            mTopBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_header_border);
             //mMultiwindowHeight = getContext().getResources().getDimensionPixelSize(android.R.dimen.mw_app_height);
             mStatusBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
             mBorderPadding = mDecorView.getPaddingLeft() + mTopBarHeight;
@@ -3647,7 +3643,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMinimizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMinimizeBtn);
             mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
             mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
-            mBackground = mDecorView.findViewById(com.android.internal.R.id.mwBackground);
             //mLeftResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeLeft);
             //mRightResize = mDecorView.findViewById(com.android.internal.R.id.mwResizeRight);
             mAppIcon = (ImageView) mDecorView.findViewById(com.android.internal.R.id.mwIcon);
@@ -3984,11 +3979,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 //            anim.setDuration(500);
 //            anim.start();
         }
-
-        public void setBackground(Drawable d) {
-            mBackground.setBackground(d);
-        }
-
     }
 
     protected ViewGroup generateLayout(DecorView decor) {
