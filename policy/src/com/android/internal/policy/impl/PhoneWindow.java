@@ -2841,7 +2841,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         public void setWindowBackground(Drawable drawable) {
             if (mDecorMW != null) {
                 mDecorMW.setBackground(drawable);
-                drawable = new ColorDrawable(Color.TRANSPARENT);
             }
             if (getBackground() != drawable) {
                 setBackgroundDrawable(drawable);
