@@ -140,11 +140,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
 
-    public final static int MW_WINDOW_MIN_WIDTH = 250;
-    public final static int MW_WINDOW_MIN_HEIGHT = 180;
-
-    public final static int MW_WINDOW_CHECK_RESIZE_DIFF = 5;
-
     public final static int MW_WINDOW_RESIZE_NONE = 0;
     public final static int MW_WINDOW_RESIZE_TOP = 1;
     public final static int MW_WINDOW_RESIZE_BOTTOM = 2;
@@ -163,6 +158,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private static final Transition USE_DEFAULT_TRANSITION = new TransitionSet();
 
+    private int mBorderPadding = 0;
+
     /**
      * Simple callback used by the context menu and its submenus. The options
      * menu submenus do not use this (their behavior is more complex).
@@ -179,8 +176,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     // This is the top-level view of the window, containing the window decor.
     private DecorView mDecor;
-    // Move decor to FocusedStackFrame
-    private DecorMWView mDecorMW;
+    private DecorMW mDecorWM;
 
     // This is the view in which the window contents are placed. It is either
     // mDecor itself, or a child of mDecor where the contents go.
@@ -2862,15 +2858,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         @Override
         public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-            if ((mDecorMW != null) && isShowFrame()) {
-                int of = mDecorMW.getBorderPadding();
-                Rect tmp = insets.getSystemWindowInsets();
-                tmp.top += of;
-                tmp.left += MW_WINDOW_CHECK_RESIZE_DIFF;
-                tmp.bottom += MW_WINDOW_CHECK_RESIZE_DIFF;
-                tmp.right += MW_WINDOW_CHECK_RESIZE_DIFF;
-                insets = insets.replaceSystemWindowInsets(tmp);
-            }
             mFrameOffsets.set(insets.getSystemWindowInsets());
             insets = updateColorViews(insets, true /* animate */);
             insets = updateStatusGuard(insets);
@@ -3377,25 +3364,25 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
 
         private void getResizeWays(int x, int y) {
-            if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF / 2) {
-                if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            if (y - mFrame.top <= mBorderPadding / 2) {
+                if(x - mFrame.left <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_TOPLEFT;
-                } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+                } else if(mFrame.right - x <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_TOPRIGHT;
                 } else {
                     mResizeWays = MW_WINDOW_RESIZE_TOP;
                 }
-            } else if (mFrame.bottom - y <= MW_WINDOW_CHECK_RESIZE_DIFF) {
-                if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (mFrame.bottom - y <= mBorderPadding) {
+                if(x - mFrame.left <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOMLEFT;
-                } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+                } else if(mFrame.right - x <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOMRIGHT;
                 } else {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOM;
                 }
-            } else if (x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (x - mFrame.left <= mBorderPadding) {
                 mResizeWays = MW_WINDOW_RESIZE_LEFT;
-            } else if (mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (mFrame.right - x <= mBorderPadding) {
                 mResizeWays = MW_WINDOW_RESIZE_RIGHT;
             } else {
                 mResizeWays = MW_WINDOW_RESIZE_NONE;
@@ -3426,7 +3413,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     }
 
     private class TouchListener implements OnTouchListener {
-
         private boolean mRelayoutSuccess = false;
         private Rect mFrame = new Rect();
         private Rect mNewFrame;
@@ -3435,7 +3421,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private ResizeWindow mResizeWindow;
         private Rect mFullScreen;
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
-
 
         public TouchListener(ResizeWindow rw, Rect fullScreen) {
             mResizeWindow = rw;
@@ -3462,25 +3447,25 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         private void getResizeWays(int x, int y) {
-            if (y - mFrame.top <= MW_WINDOW_CHECK_RESIZE_DIFF / 2) {
-                if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            if (y - mFrame.top <= mBorderPadding / 2) {
+                if(x - mFrame.left <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_TOPLEFT;
-                } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+                } else if(mFrame.right - x <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_TOPRIGHT;
                 } else {
                     mResizeWays = MW_WINDOW_RESIZE_TOP;
                 }
-            } else if (mFrame.bottom - y <= MW_WINDOW_CHECK_RESIZE_DIFF) {
-                if(x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (mFrame.bottom - y <= mBorderPadding) {
+                if(x - mFrame.left <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOMLEFT;
-                } else if(mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+                } else if(mFrame.right - x <= mBorderPadding) {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOMRIGHT;
                 } else {
                     mResizeWays = MW_WINDOW_RESIZE_BOTTOM;
                 }
-            } else if (x - mFrame.left <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (x - mFrame.left <= mBorderPadding) {
                 mResizeWays = MW_WINDOW_RESIZE_LEFT;
-            } else if (mFrame.right - x <= MW_WINDOW_CHECK_RESIZE_DIFF) {
+            } else if (mFrame.right - x <= mBorderPadding) {
                 mResizeWays = MW_WINDOW_RESIZE_RIGHT;
             } else {
                 mResizeWays = MW_WINDOW_RESIZE_NONE;
@@ -3539,53 +3524,181 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         public abstract Rect resize(Rect frame, int diffX, int diffY, int ways);
     }
 
-    class DecorMWView {
+    class DecorMW {
+
+        public final static int MW_WINDOW_MIN_WIDTH = 250;
+        public final static int MW_WINDOW_MIN_HEIGHT = 180;
 
         private LinearLayout mHeader;
         private ImageButton mCloseBtn;
         private ImageButton mLaunchBtn;
         private ImageButton mMaximizeBtn;
         private ImageButton mMinimizeBtn;
-        private View mInnerBorder;
         private View mOuterBorder;
-        private ImageView mAppIcon;
-        private TextView mAppName;
 
-        private View mDecorView;
-        private int mBorderPadding;
         private Rect mFullScreen;
         private Rect mOldSize;
 
-        public DecorMWView() {
+        public DecorMW(ViewGroup root) {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-            String packageName;
             int statusBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
 
-            mDecorView = getLayoutInflater().inflate(com.android.internal.R.layout.mw_decor, null);
-
-            mBorderPadding = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_header_border)
-                             + mDecorView.getPaddingLeft();
+            mBorderPadding = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_outer_border)
+                             + root.getPaddingLeft();
             mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels - statusBarHeight);
 
-            mHeader = (LinearLayout)mDecorView.findViewById(com.android.internal.R.id.mw_decor_header);
+            mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_decor_header);
             mHeader.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
-            mInnerBorder = mDecorView.findViewById(com.android.internal.R.id.mwInnerBorder);
-            mInnerBorder.setBackgroundResource(com.android.internal.R.color.mw_transparent_white);
-            mOuterBorder = mDecorView.findViewById(com.android.internal.R.id.mwOuterBorder);
+            mOuterBorder = root.findViewById(com.android.internal.R.id.mwOuterBorder);
             mOuterBorder.setBackgroundResource(com.android.internal.R.drawable.mw_outer_border);
 
-            mCloseBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwCloseBtn);
-            mLaunchBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwLaunchBtn);
-            mMaximizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMaximizeBtn);
-            mMinimizeBtn = (ImageButton)mDecorView.findViewById(com.android.internal.R.id.mwMinimizeBtn);
+            mCloseBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwCloseBtn);
+            mLaunchBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwLaunchBtn);
+            mMaximizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMaximizeBtn);
+            mMinimizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMinimizeBtn);
 
-            mAppIcon = (ImageView) mDecorView.findViewById(com.android.internal.R.id.mwIcon);
-            mAppName =(TextView) mDecorView.findViewById(com.android.internal.R.id.mwTitle);
-            packageName = setMWWindowTitle();
+            String packageName = setMWWindowTitle(root);
 
-            if(isShowFrame()) {
-                initForShowFrame(packageName);
+            try {
+                ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), packageName);
+            } catch (RemoteException e) {
+                Log.e(TAG, "create statusbar activity failed", e);
             }
+
+            mOuterBorder.setOnHoverListener(new HoverListener());
+            mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
+                @Override
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+                    switch(ways) {
+                        case MW_WINDOW_RESIZE_BOTTOM:
+                                mTmpFrame.top = frame.top;
+                                if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.bottom = frame.bottom + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.bottom = frame.bottom + mLastDy;
+                                }
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_LEFT:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.left = frame.left + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.left = frame.left + mLastDx;
+                                }
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_RIGHT:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.right = frame.right + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.right = frame.right + mLastDx;
+                                }
+                                break;
+                        case MW_WINDOW_RESIZE_TOPLEFT:
+                                if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.top = frame.top + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.top = frame.top + mLastDy;
+                                }
+                                mTmpFrame.bottom = frame.bottom;
+                                if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.left = frame.left + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.left = frame.left + mLastDx;
+                                }
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_TOPRIGHT:
+                                if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.top = frame.top + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.top = frame.top + mLastDy;
+                                }
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.right = frame.right + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.right = frame.right + mLastDx;
+                                }
+                                break;
+                        case MW_WINDOW_RESIZE_BOTTOMLEFT:
+                                mTmpFrame.top = frame.top;
+                                if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.bottom = frame.bottom + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.bottom = frame.bottom + mLastDy;
+                                }
+                                if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.left = frame.left + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.left = frame.left + mLastDx;
+                                }
+                                mTmpFrame.right = frame.right;
+                                break;
+                        case MW_WINDOW_RESIZE_BOTTOMRIGHT:
+                                mTmpFrame.top = frame.top;
+                                if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.bottom = frame.bottom + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.bottom = frame.bottom + mLastDy;
+                                }
+                                mTmpFrame.left = frame.left;
+                                if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                    mTmpFrame.right = frame.right + diffX;
+                                    mLastDx = diffX;
+                                } else {
+                                    mTmpFrame.right = frame.right + mLastDx;
+                                }
+                                break;
+                        case MW_WINDOW_RESIZE_TOP:
+                                if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                    mTmpFrame.top = frame.top + diffY;
+                                    mLastDy = diffY;
+                                } else {
+                                    mTmpFrame.top = frame.top + mLastDy;
+                                }
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break;
+                        default:
+                                mTmpFrame.top = frame.top;
+                                mTmpFrame.bottom = frame.bottom;
+                                mTmpFrame.left = frame.left;
+                                mTmpFrame.right = frame.right;
+                                break;
+                    }
+                    return mTmpFrame;
+                }
+            }, mFullScreen));
+
+            mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
+                @Override
+                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+                    mTmpFrame.left = frame.left + diffX;
+                    mTmpFrame.top = frame.top + diffY;
+                    mTmpFrame.right = frame.right + diffX;
+                    mTmpFrame.bottom = frame.bottom + diffY;
+                    return mTmpFrame;
+                }
+            }, mFullScreen));
 
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -3597,7 +3710,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     }
                 }
             });
-
 
             mLaunchBtn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -3652,196 +3764,49 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     }
                 }
             });
-
-            mDecorView.invalidate();
         }
 
-        private void initForShowFrame(String pkg) {
-            try {
-                ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), pkg);
-            } catch (RemoteException e) {
-                Log.e(TAG, "create statusbar activity failed", e);
-            }
+        private String setMWWindowTitleDefault(ViewGroup root) {
+            TextView appName = (TextView)root.findViewById(com.android.internal.R.id.mwTitle);
+            ImageView appIcon = (ImageView)root.findViewById(com.android.internal.R.id.mwIcon);
 
-            mOuterBorder.setOnHoverListener(new HoverListener());
-            mOuterBorder.setOnTouchListener(new TouchListener(new ResizeWindow() {
-                @Override
-                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
-                    switch(ways) {
-                        case MW_WINDOW_RESIZE_BOTTOM:
-                                mTmpFrame.top = frame.top;
-                                if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.bottom = frame.bottom + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.bottom = frame.bottom + mLastDy;
-                                }
-                                mTmpFrame.left = frame.left;
-                                mTmpFrame.right = frame.right;
-                                break;
-                        case MW_WINDOW_RESIZE_LEFT:
-                                mTmpFrame.top = frame.top;
-                                mTmpFrame.bottom = frame.bottom;
-                                if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.left = frame.left + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.left = frame.left + mLastDx;
-                                }
-                                mTmpFrame.right = frame.right;
-                                break;
-                        case MW_WINDOW_RESIZE_RIGHT:
-                                mTmpFrame.top = frame.top;
-                                mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left;
-                                if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.right = frame.right + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.right = frame.right + mLastDx;
-                                }
-                                break;
-                        case MW_WINDOW_RESIZE_TOPLEFT:
-                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.top = frame.top + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.top = frame.top + mLastDy;
-                                }
-                                mTmpFrame.bottom = frame.bottom;
-                                if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.left = frame.left + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.left = frame.left + mLastDx;
-                                }
-                                mTmpFrame.right = frame.right;
-                                break;
-                        case MW_WINDOW_RESIZE_TOPRIGHT:
-                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.top = frame.top + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.top = frame.top + mLastDy;
-                                }
-                                mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left;
-                                if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.right = frame.right + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.right = frame.right + mLastDx;
-                                }
-                                break;
-                        case MW_WINDOW_RESIZE_BOTTOMLEFT:
-                                mTmpFrame.top = frame.top;
-                                if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.bottom = frame.bottom + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.bottom = frame.bottom + mLastDy;
-                                }
-                                if (frame.right - (frame.left + diffX) >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.left = frame.left + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.left = frame.left + mLastDx;
-                                }
-                                mTmpFrame.right = frame.right;
-                                break;
-                        case MW_WINDOW_RESIZE_BOTTOMRIGHT:
-                                mTmpFrame.top = frame.top;
-                                if (frame.bottom + diffY - frame.top >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.bottom = frame.bottom + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.bottom = frame.bottom + mLastDy;
-                                }
-                                mTmpFrame.left = frame.left;
-                                if (frame.right + diffX - frame.left >= PhoneWindow.MW_WINDOW_MIN_WIDTH) {
-                                    mTmpFrame.right = frame.right + diffX;
-                                    mLastDx = diffX;
-                                } else {
-                                    mTmpFrame.right = frame.right + mLastDx;
-                                }
-                                break;
-                        case MW_WINDOW_RESIZE_TOP:
-                                if (frame.bottom - (frame.top + diffY) >= PhoneWindow.MW_WINDOW_MIN_HEIGHT) {
-                                    mTmpFrame.top = frame.top + diffY;
-                                    mLastDy = diffY;
-                                } else {
-                                    mTmpFrame.top = frame.top + mLastDy;
-                                }
-                                mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left;
-                                mTmpFrame.right = frame.right;
-                                break;
-                        default:
-                                mTmpFrame.top = frame.top;
-                                mTmpFrame.bottom = frame.bottom;
-                                mTmpFrame.left = frame.left;
-                                mTmpFrame.right = frame.right;
-                                break;
-                    }
-                    return mTmpFrame;
-                }
-            }, mFullScreen));
-
-            mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
-                @Override
-                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
-                    mTmpFrame.left = frame.left + diffX;
-                    mTmpFrame.top = frame.top + diffY;
-                    mTmpFrame.right = frame.right + diffX;
-                    mTmpFrame.bottom = frame.bottom + diffY;
-                    return mTmpFrame;
-                }
-            }, mFullScreen));
-        }
-
-        private String setMWWindowTitleDefault() {
             PackageManager pm = getContext().getPackageManager();
             ApplicationInfo ai = getContext().getApplicationInfo();
             Drawable icon = ai.loadIcon(pm);
-            mAppName.setText(pm.getApplicationLabel(ai));
-            mAppIcon.setImageDrawable(icon);
+            appName.setText(pm.getApplicationLabel(ai));
+            appIcon.setImageDrawable(icon);
             return ai.packageName;
         }
 
-        private String setMWWindowTitleByPkg(String pkg) {
+        private String setMWWindowTitleByPkg(ViewGroup root, String pkg) {
             try {
                 PackageManager pm = getContext().getPackageManager();
                 final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
                 if (ai != null) {
-                    mAppName.setText(pm.getApplicationLabel(ai));
-                    mAppIcon.setImageDrawable(pm.getApplicationIcon(ai));
+                    TextView appName = (TextView)root.findViewById(com.android.internal.R.id.mwTitle);
+                    ImageView appIcon = (ImageView)root.findViewById(com.android.internal.R.id.mwIcon);
+
+                    appName.setText(pm.getApplicationLabel(ai));
+                    appIcon.setImageDrawable(pm.getApplicationIcon(ai));
                     return pkg;
                 }
             } catch (NameNotFoundException e) {
             }
-            return setMWWindowTitleDefault();
+            return setMWWindowTitleDefault(root);
         }
 
-        private String setMWWindowTitle() {
+        private String setMWWindowTitle(ViewGroup root) {
             try {
                 List<ActivityManager.RunningTaskInfo> tasks = ActivityManagerNative.getDefault().getTasks(20, 0);
                 for (int idx = tasks.size() - 1; idx >= 0; --idx) {
                     ActivityManager.RunningTaskInfo task = tasks.get(idx);
                     if (task.id == getTaskId()) {
-                        return setMWWindowTitleByPkg(task.baseActivity.getPackageName());
+                        return setMWWindowTitleByPkg(root, task.baseActivity.getPackageName());
                     }
                 }
             } catch (RemoteException e) {
             }
-            return setMWWindowTitleDefault();
-        }
-
-        public int getBorderPadding() {
-            return mBorderPadding;
-        }
-
-        public View getView(){
-            return mDecorView;
+            return setMWWindowTitleDefault(root);
         }
     }
 
@@ -4116,6 +4081,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         View in = mLayoutInflater.inflate(layoutResource, null);
         decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mContentRoot = (ViewGroup) in;
+        if(isMWPanel()) {
+            mDecorWM = new DecorMW(mContentRoot);
+        }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
         if (contentParent == null) {
@@ -4178,9 +4146,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private void installDecor() {
         if (mDecor == null) {
             mDecor = generateDecor();
-            if(isMWPanel()) {
-                installMWDecor(mDecor);
-            }
             mDecor.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
             mDecor.setIsRootNamespace(true);
             if (!mInvalidatePanelMenuPosted && mInvalidatePanelMenuFeatures != 0) {
@@ -4313,11 +4278,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }
         }
-    }
-
-    private void installMWDecor(DecorView decor) {
-        mDecorMW = new DecorMWView();
-        decor.addView(mDecorMW.getView());
     }
 
     private Transition getTransition(Transition currentValue, Transition defaultValue, int id) {

@@ -5923,8 +5923,9 @@ public class Activity extends ContextThemeWrapper
     }
 
     private int getStackId() {
-        if (mIntent != null &&
-                (mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) {
+        if ((mIntent != null) &&
+                (((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) ||
+                 ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0))) {;
             return -1;
         }
         try {
@@ -5948,8 +5949,6 @@ public class Activity extends ContextThemeWrapper
     private void setWindowAttributes() {
         mWindow.setTaskId(getTaskId());
         mWindow.setStackId(getStackId());
-        mWindow.enableShowFrame((mIntent != null) &&
-                                ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) == 0));
     }
 
     final void attach(Context context, ActivityThread aThread,
