@@ -834,8 +834,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                 setRequestedWidth(bounds.width() - 2 * mAttrs.x);
             }
             if (mTruncateHeight) {
-                // FIXME: please fix the hardcode number '10', next.
-                setRequestedHeight(bounds.height() - mAttrs.y - 10);
+                setRequestedHeight(bounds.height() - mAttrs.x - mAttrs.y);
             }
             return;
         }
