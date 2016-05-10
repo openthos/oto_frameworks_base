@@ -4020,9 +4020,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         int features = getLocalFeatures();
         // System.out.println("Features: 0x" + Integer.toHexString(features));
         if ((features & (1 << FEATURE_SWIPE_TO_DISMISS)) != 0) {
-            layoutResource = R.layout.screen_swipe_dismiss;
+            layoutResource = isMWPanel() ? R.layout.screen_swipe_dismiss_mw
+                                         : R.layout.screen_swipe_dismiss;
         } else if ((features & ((1 << FEATURE_LEFT_ICON) | (1 << FEATURE_RIGHT_ICON))) != 0) {
-            if (mIsFloating) {
+            if (isMWPanel()) {
+                layoutResource = R.layout.screen_title_icons_mw;
+            } else if (mIsFloating) {
                 TypedValue res = new TypedValue();
                 getContext().getTheme().resolveAttribute(
                         R.attr.dialogTitleIconsDecorLayout, res, true);
@@ -4037,12 +4040,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 && (features & (1 << FEATURE_ACTION_BAR)) == 0) {
             // Special case for a window with only a progress bar (and title).
             // XXX Need to have a no-title version of embedded windows.
-            layoutResource = R.layout.screen_progress;
+            layoutResource = isMWPanel() ? R.layout.screen_progress_mw : R.layout.screen_progress;
             // System.out.println("Progress!");
         } else if ((features & (1 << FEATURE_CUSTOM_TITLE)) != 0) {
             // Special case for a window with a custom title.
             // If the window is floating, we need a dialog layout
-            if (mIsFloating) {
+            if (isMWPanel()) {
+                layoutResource = R.layout.screen_custom_title_mw;
+            } else if (mIsFloating) {
                 TypedValue res = new TypedValue();
                 getContext().getTheme().resolveAttribute(
                         R.attr.dialogCustomTitleDecorLayout, res, true);
@@ -4055,7 +4060,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         } else if ((features & (1 << FEATURE_NO_TITLE)) == 0) {
             // If no other features and not embedded, only need a title.
             // If the window is floating, we need a dialog layout
-            if (mIsFloating) {
+            if (isMWPanel()) {
+                if ((features & (1 << FEATURE_ACTION_BAR)) != 0) {
+                    layoutResource = a.getResourceId(
+                            R.styleable.Window_windowActionBarFullscreenDecorLayoutMW,
+                            R.layout.screen_action_bar_mw);
+                } else {
+                    layoutResource = R.layout.screen_title_mw;
+                }
+            } else if (mIsFloating) {
                 TypedValue res = new TypedValue();
                 getContext().getTheme().resolveAttribute(
                         R.attr.dialogTitleDecorLayout, res, true);
@@ -4069,10 +4082,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
             // System.out.println("Title!");
         } else if ((features & (1 << FEATURE_ACTION_MODE_OVERLAY)) != 0) {
-            layoutResource = R.layout.screen_simple_overlay_action_mode;
+            layoutResource = isMWPanel() ? R.layout.screen_simple_overlay_action_mode_mw
+                                         : R.layout.screen_simple_overlay_action_mode;
         } else {
             // Embedded, so no decoration is needed.
-            layoutResource = R.layout.screen_simple;
+            layoutResource = isMWPanel() ? R.layout.screen_simple_mw : R.layout.screen_simple;
             // System.out.println("Simple!");
         }
 

@@ -1504,13 +1504,21 @@
   <java-symbol type="layout" name="global_actions_silent_mode" />
   <java-symbol type="layout" name="recent_apps_dialog" />
   <java-symbol type="layout" name="screen_action_bar" />
+  <java-symbol type="layout" name="screen_action_bar_mw" />
   <java-symbol type="layout" name="screen_custom_title" />
+  <java-symbol type="layout" name="screen_custom_title_mw" />
   <java-symbol type="layout" name="screen_progress" />
+  <java-symbol type="layout" name="screen_progress_mw" />
   <java-symbol type="layout" name="screen_simple" />
+  <java-symbol type="layout" name="screen_simple_mw" />
   <java-symbol type="layout" name="screen_simple_overlay_action_mode" />
+  <java-symbol type="layout" name="screen_simple_overlay_action_mode_mw" />
   <java-symbol type="layout" name="screen_swipe_dismiss" />
+  <java-symbol type="layout" name="screen_swipe_dismiss_mw" />
   <java-symbol type="layout" name="screen_title" />
+  <java-symbol type="layout" name="screen_title_mw" />
   <java-symbol type="layout" name="screen_title_icons" />
+  <java-symbol type="layout" name="screen_title_icons_mw" />
   <java-symbol type="string" name="system_ui_date_pattern" />
   <java-symbol type="string" name="android_start_title" />
   <java-symbol type="string" name="android_upgrading_title" />
@@ -2070,6 +2078,7 @@
   <java-symbol type="attr" name="titleTextAppearance" />
   <java-symbol type="attr" name="subtitleTextAppearance" />
   <java-symbol type="attr" name="windowActionBarFullscreenDecorLayout" />
+  <java-symbol type="attr" name="windowActionBarFullscreenDecorLayoutMW" />
   <java-symbol type="drawable" name="ic_lock_bugreport" />
   <java-symbol type="id" name="icon_frame" />
   <java-symbol type="style" name="Animation.VolumePanel" />
@@ -2165,7 +2174,6 @@
   <java-symbol type="id" name="mwMaximizeBtn" />
   <java-symbol type="id" name="mwMinimizeBtn" />
   <java-symbol type="id" name="mw_decor_header" />
-  <java-symbol type="id" name="mwInnerBorder" />
   <java-symbol type="id" name="mwOuterBorder" />
   <java-symbol type="id" name="mwIcon" />
   <java-symbol type="id" name="mwTitle" />
@@ -2173,7 +2181,6 @@
   <java-symbol type="color" name="mw_gray_decor" />
   <java-symbol type="color" name="mw_transparent_white" />
   <java-symbol type="color" name="mw_white_border" />
-  <java-symbol type="dimen" name="mw_inner_border" />
   <java-symbol type="dimen" name="mw_outer_border" />
   <java-symbol type="dimen" name="mw_header_border" />
   <java-symbol type="drawable" name="mw_outer_border" />
