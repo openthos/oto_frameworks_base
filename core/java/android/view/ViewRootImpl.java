@@ -1851,29 +1851,29 @@ public final class ViewRootImpl implements ViewParent,
             // By this point all views have been sized and positioned
             // We can compute the transparent area
 
-            if ((host.mPrivateFlags & View.PFLAG_REQUEST_TRANSPARENT_REGIONS) != 0) {
-                // start out transparent
-                // TODO: AVOID THAT CALL BY CACHING THE RESULT?
-                host.getLocationInWindow(mTmpLocation);
-                mTransparentRegion.set(mTmpLocation[0], mTmpLocation[1],
-                        mTmpLocation[0] + host.mRight - host.mLeft,
-                        mTmpLocation[1] + host.mBottom - host.mTop);
+            //if ((host.mPrivateFlags & View.PFLAG_REQUEST_TRANSPARENT_REGIONS) != 0) {
+            //    // start out transparent
+            //    // TODO: AVOID THAT CALL BY CACHING THE RESULT?
+            //    host.getLocationInWindow(mTmpLocation);
+            //    mTransparentRegion.set(mTmpLocation[0], mTmpLocation[1],
+            //            mTmpLocation[0] + host.mRight - host.mLeft,
+            //            mTmpLocation[1] + host.mBottom - host.mTop);
 
-                host.gatherTransparentRegion(mTransparentRegion);
-                if (mTranslator != null) {
-                    mTranslator.translateRegionInWindowToScreen(mTransparentRegion);
-                }
+            //    host.gatherTransparentRegion(mTransparentRegion);
+            //    if (mTranslator != null) {
+            //        mTranslator.translateRegionInWindowToScreen(mTransparentRegion);
+            //    }
 
-                if (!mTransparentRegion.equals(mPreviousTransparentRegion)) {
-                    mPreviousTransparentRegion.set(mTransparentRegion);
-                    mFullRedrawNeeded = true;
-                    // reconfigure window manager
-                    try {
-                        mWindowSession.setTransparentRegion(mWindow, mTransparentRegion);
-                    } catch (RemoteException e) {
-                    }
-                }
-            }
+            //    if (!mTransparentRegion.equals(mPreviousTransparentRegion)) {
+            //        mPreviousTransparentRegion.set(mTransparentRegion);
+            //        mFullRedrawNeeded = true;
+            //        // reconfigure window manager
+            //        try {
+            //            mWindowSession.setTransparentRegion(mWindow, mTransparentRegion);
+            //        } catch (RemoteException e) {
+            //        }
+            //    }
+            //}
 
             if (DBG) {
                 System.out.println("======================================");
