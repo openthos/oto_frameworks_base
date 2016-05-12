@@ -162,6 +162,10 @@ import java.util.List;
 /** {@hide} */
 public class WindowManagerService extends IWindowManager.Stub
         implements Watchdog.Monitor, WindowManagerPolicy.WindowManagerFuncs {
+
+    static final String ISSUE_WIN_WPS_NEWFILE = "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.newfiles.NewFileActivity";
+    static final String ISSUE_WIN_WPS_PAD = "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.PadHomeActivity";
+
     static final String TAG = "WindowManager";
     static final boolean DEBUG = false;
     static final boolean DEBUG_ADD_REMOVE = false;
@@ -1055,7 +1059,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (atoken != null && lastWindow == atoken.startingWindow) {
                     placeWindowBefore(lastWindow, win);
                     tokenWindowsPos = indexOfWinInWindowList(lastWindow, token.windows);
-                } else {
+                } else if ((win.mAttrs.getTitle().toString().compareTo(ISSUE_WIN_WPS_NEWFILE) != 0)
+                           && (win.mAttrs.getTitle().toString().compareTo(ISSUE_WIN_WPS_PAD) != 0)) {
                     int newIdx = findIdxBasedOnAppTokens(win);
                     //there is a window above this one associated with the same
                     //apptoken note that the window could be a floating window
