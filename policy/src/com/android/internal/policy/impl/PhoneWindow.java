@@ -3359,6 +3359,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
     }
 
+    private void setFocusedStack() {
+        try {
+            if (ActivityManagerNative.getDefault().getFocusedStackId() != getStackId()) {
+                ActivityManagerNative.getDefault().setFocusedStack(getStackId());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class HoverListener implements OnHoverListener {
         Rect mFrame =  new Rect();
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
@@ -3478,13 +3488,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             int rawY = (int) event.getRawY();
 
             if(MotionEvent.ACTION_DOWN == event.getAction()) {
-                try {
-                    if (ActivityManagerNative.getDefault().getFocusedStackId() != getStackId()) {
-                        ActivityManagerNative.getDefault().setFocusedStack(getStackId());
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                setFocusedStack();
                 mLastX = (int) event.getRawX();
                 mLastY = (int) event.getRawY();
                 mResizeWindow.mLastDx = 0;
@@ -3764,6 +3768,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     }
                 }
             });
+
+            setFocusedStack();
         }
 
         private String setMWWindowTitleDefault(ViewGroup root) {
