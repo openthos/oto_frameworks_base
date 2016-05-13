@@ -122,7 +122,20 @@ public class TaskStack {
         }
     }
 
+    private boolean isHomeStack() {
+        TaskStack stack = mDisplayContent.getHomeStack();
+        if ((stack != null) && (stack.mStackId == mStackId)) {
+            return true;
+        }
+        return false;
+    }
+
     boolean setBounds(Rect bounds) {
+
+        if (!isHomeStack()) {
+            return false;
+        }
+
         boolean oldFullscreen = mFullscreen;
         if (mDisplayContent != null) {
             mDisplayContent.getLogicalDisplayRect(mTmpRect);
