@@ -111,4 +111,8 @@
     <string name="power_off">Power off</string>
     <string name="system_setting">Setting</string>
     <string name="system_restart">Restart</string>
+    <string name="system_sleep">Sleep</string>
+    <string name="system_lock">Lock</string>
+    <string name="app_name">StartupMenu</string>
+    <string name="action_settings">Settings</string>
 </resources>

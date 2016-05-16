@@ -916,4 +916,8 @@
 
     <!-- Hide quick settings tile confirmation button -->
     <string name="quick_settings_reset_confirmation_button">Hide</string>
+
+    <!-- LockActivity settings  2016/5/11-->
+    <string name="app_name">LocknActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

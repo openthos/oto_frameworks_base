@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.android.documentsui.util.AppInfo;
 
+import android.content.ActivityNotFoundException;
+import android.util.Slog;
 import android.R.layout;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +16,7 @@ import android.os.RemoteException;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -32,6 +36,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.View.OnGenericMotionListener;
 import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
 import android.view.WindowManager.LayoutParams;
@@ -65,7 +70,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private View contentView;
         private LinearLayout ll_layout;
         private TextView shut_text;
-        private TextView my_computer, system_setting, power_off;
+        private TextView my_computer, system_setting;
         private PopupWindow popupWindow;
 
         @Override
@@ -88,9 +93,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             my_computer = (TextView) findViewById(R.id.my_computer);
             system_setting = (TextView) findViewById(R.id.system_setting);
-            power_off = (TextView) findViewById(R.id.power_off);
             my_computer.setOnClickListener(this);
-            power_off.setOnClickListener(this);
             system_setting.setOnClickListener(this);
         }
 
@@ -150,31 +153,79 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 }
                 break;
-            case R.id.power_off:
+            case R.id.shut_power_off:
                 Log.v("LADEHUNTER", "broadcast->shutdown");
                 Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
                 intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                try {
-                    ActivityManagerNative.getDefault().killStartupMenu();
-                    System.exit(0);
-                } catch (RemoteException e) {
-                }
-
+                killStartupMenu();
                 break;
+	    case R.id.restart:
+                try {
+                    Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                break;
+            case R.id.sleep:
+                if (popupWindow != null) {
+                    popupWindow.dismiss();
+                }
+                Log.v("This sleep : ", "COMING SOON...");
+                Toast.makeText(this, "This sleep: COMING SOON...", 0).show();
+                break;
+            case R.id.lock:
+                if (popupWindow != null) {
+                    popupWindow.dismiss();
+                }
+                Intent intentLock = new Intent("android.intent.action.LOCKNOW");
+                intentLock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intentLock);
+                break;
+            }
+        }
+
+        public void powerOff(View v) {
+            LinearLayout layout = new LinearLayout(StartupMenuActivity.this);
+            layout.setBackgroundColor(Color.WHITE);
+            View tv = LayoutInflater.from(StartupMenuActivity.this).inflate(R.layout.shutdown_activity,
+                                                                            null);
+            tv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                               LayoutParams.WRAP_CONTENT));
+            TextView shut_power_off = (TextView) tv.findViewById(R.id.shut_power_off);
+            TextView restart = (TextView) tv.findViewById(R.id.restart);
+            TextView sleep = (TextView) tv.findViewById(R.id.sleep);
+            TextView lock = (TextView) tv.findViewById(R.id.lock);
+            shut_power_off.setOnClickListener(this);
+            restart.setOnClickListener(this);
+            sleep.setOnClickListener(this);
+            lock.setOnClickListener(this);
+            layout.addView(tv);
+
+            popupWindow = new PopupWindow(layout,100,230);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
+            popupWindow.showAtLocation(v, Gravity.RIGHT, 100, 230);
+	}
+
+        private void killStartupMenu() {
+            try {
+                ActivityManagerNative.getDefault().killStartupMenu();
+                System.exit(0);
+            } catch (RemoteException e) {
+            }
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-                //finish();
-                try {
-                    ActivityManagerNative.getDefault().killStartupMenu();
-                    System.exit(0);
-                } catch (RemoteException e) {
-                }
+                killStartupMenu();
             }
 
             // Delegate everything else to Activity.
