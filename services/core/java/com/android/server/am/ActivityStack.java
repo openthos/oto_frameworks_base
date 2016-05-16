@@ -2502,14 +2502,6 @@ final class ActivityStack {
 
     private void adjustFocusedActivityLocked(ActivityRecord r, String reason) {
         if (mStackSupervisor.isFrontStack(this) && mService.mFocusedActivity == r) {
-            ActivityRecord next = topRunningActivityLocked(null);
-            if (next != r) {
-                final TaskRecord task = r.task;
-                if (r.frontOfTask && task == topTask() && task.isOverHomeStack()) {
-                    mStackSupervisor.moveHomeStackTaskToTop(task.getTaskToReturnTo(),
-                            reason + " adjustFocus");
-                }
-            }
             ActivityRecord top = mStackSupervisor.topRunningActivityLocked();
             if (top != null) {
                 mService.setFocusedActivityLocked(top, reason + " adjustTopFocus");
@@ -3066,10 +3058,6 @@ final class ActivityStack {
         if (task != null && task.removeActivity(r)) {
             if (DEBUG_STACK) Slog.i(TAG,
                     "removeActivityFromHistoryLocked: last activity removed from " + this);
-            if (mStackSupervisor.isFrontStack(this) && task == topTask() &&
-                    task.isOverHomeStack()) {
-                mStackSupervisor.moveHomeStackTaskToTop(task.getTaskToReturnTo(), reason);
-            }
             removeTask(task, reason);
         }
         cleanUpActivityServicesLocked(r);
@@ -3481,22 +3469,6 @@ final class ActivityStack {
             // negative. Similarly for recent tasks moved to the top which will be most positive.
             if (!toFront) {
                 task.mLastTimeMoved *= -1;
-            }
-        }
-    }
-
-    void moveHomeStackTaskToTop(int homeStackTaskType) {
-        final int top = mTaskHistory.size() - 1;
-        for (int taskNdx = top; taskNdx >= 0; --taskNdx) {
-            final TaskRecord task = mTaskHistory.get(taskNdx);
-            if (task.taskType == homeStackTaskType) {
-                if (DEBUG_TASKS || DEBUG_STACK)
-                    Slog.d(TAG, "moveHomeStackTaskToTop: moving " + task);
-                mTaskHistory.remove(taskNdx);
-                mTaskHistory.add(top, task);
-                updateTaskMovement(task, true);
-                mWindowManager.moveTaskToTop(task.taskId);
-                return;
             }
         }
     }

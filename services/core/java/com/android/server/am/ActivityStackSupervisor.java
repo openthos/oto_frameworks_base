@@ -463,15 +463,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
     }
 
-    void moveHomeStackTaskToTop(int homeStackTaskType, String reason) {
-        if (homeStackTaskType == RECENTS_ACTIVITY_TYPE) {
-            mWindowManager.showRecentApps();
-            return;
-        }
-        moveHomeStack(true, reason);
-        mHomeStack.moveHomeStackTaskToTop(homeStackTaskType);
-    }
-
     boolean resumeHomeStackTask(int homeStackTaskType, ActivityRecord prev, String reason) {
         if (!mService.mBooting && !mService.mBooted) {
             // Not ready yet!
@@ -482,7 +473,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mWindowManager.showRecentApps();
             return false;
         }
-        moveHomeStackTaskToTop(homeStackTaskType, reason);
         if (prev != null) {
             prev.task.setTaskToReturnTo(APPLICATION_ACTIVITY_TYPE);
         }
@@ -866,7 +856,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void startHomeActivity(Intent intent, ActivityInfo aInfo, String reason) {
-        moveHomeStackTaskToTop(HOME_ACTIVITY_TYPE, reason);
         startActivityLocked(null, intent, null, aInfo, null, null, null, null, 0, 0, 0, null,
                 0, 0, 0, null, false, null, null, null);
     }
