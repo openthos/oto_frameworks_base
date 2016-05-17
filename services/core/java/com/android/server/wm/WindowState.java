@@ -517,17 +517,23 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         return mAttrs.packageName;
     }
 
+    private boolean refreshContainingFrame(TaskStack stack, Rect pf) {
+        if ((stack != null) && (!stack.isFullscreen() || stack.isFloating())) {
+            getStackBounds(stack, mContainingFrame);
+            if ((pf != null) && mUnderStatusBar && !stack.isFloating()) {
+                mContainingFrame.top = pf.top;
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void computeFrameLw(Rect pf, Rect df, Rect of, Rect cf, Rect vf, Rect dcf, Rect sf) {
         mHaveFrame = true;
 
         TaskStack stack = mAppToken != null ? getStack() : null;
-        if ((stack != null) && (!stack.isFullscreen() || stack.isFloating())) {
-            getStackBounds(stack, mContainingFrame);
-            if (mUnderStatusBar && !stack.isFloating()) {
-                mContainingFrame.top = pf.top;
-            }
-        } else {
+        if (!refreshContainingFrame(stack, pf)) {
             mContainingFrame.set(pf);
         }
 
@@ -856,6 +862,9 @@ final class WindowState implements WindowManagerPolicy.WindowState {
     }
 
     public void setRequestedSize(int width, int height) {
+        if (mAppToken != null) {
+            refreshContainingFrame(getStack(), null);
+        }
         setRequestedWidth(width);
         setRequestedHeight(height);
     }
