@@ -383,7 +383,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final int STATUSBAR_ACTIVITY_ID_START = KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START;
     static final int STATUSBAR_ACTIVITY_ID_END = STATUSBAR_ACTIVITY_ID_START + 6;
 
-    private static final long STATUSBAR_ACTIVITY_REMOVE_INTERVAL = 300; // 0.3 second
+    private static final long GABAGE_REMOVE_INTERVAL = 100; // 0.1 second
+    private static final long FOCUS_JUST_CHANGED_TIMES = 2; // about 0.2 second
 
     /** All system services */
     SystemServiceManager mSystemServiceManager;
@@ -403,6 +404,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     // default actuion automatically.  Important for devices without direct input
     // devices.
     private boolean mShowDialogs = true;
+
+    private boolean mFocusJustChanged = false;
 
      /**
      * Date: Aug 29, 2014
@@ -2171,6 +2174,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         mSBAThread = new Thread("Statusbar Activity Cleaner") {
             @Override
             public void run() {
+                int times = 0;
                 while (true) {
                     try {
                         try {
@@ -2179,8 +2183,15 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 while (ret) {
                                     ret = killUselessStatusbarActivity();
                                 }
+
+                                if (mFocusJustChanged) {
+                                    if (++times > FOCUS_JUST_CHANGED_TIMES) {
+                                        mFocusJustChanged = false;
+                                        times = 0;
+                                    }
+                                }
                             }
-                            this.sleep(STATUSBAR_ACTIVITY_REMOVE_INTERVAL);
+                            this.sleep(GABAGE_REMOVE_INTERVAL);
                         } catch (InterruptedException e) {
                         }
                     } catch (Exception e) {
@@ -2432,17 +2443,23 @@ public final class ActivityManagerService extends ActivityManagerNative
     public void setFocusedStack(int stackId) {
         if (DEBUG_FOCUS) Slog.d(TAG, "setFocusedStack: stackId=" + stackId);
         synchronized (ActivityManagerService.this) {
-            ActivityStack stack = mStackSupervisor.getStack(stackId);
-            if (stack != null) {
-                ActivityRecord r = stack.topRunningActivityLocked(null);
-                if (r != null) {
-                    if (!mStackSupervisor.isHomeActivity(r)) {
-                        setFocusedActivityLocked(r, "setFocusedStack");
-                        moveTaskToFront(r.task.taskId, 0, null);
+            if (!mFocusJustChanged) {
+                ActivityStack stack = mStackSupervisor.getStack(stackId);
+                if (stack != null) {
+                    ActivityRecord r = stack.topRunningActivityLocked(null);
+                    if (r != null) {
+                        if (!mStackSupervisor.isHomeActivity(r)) {
+                            setFocusedActivityLocked(r, "setFocusedStack");
+                            moveTaskToFront(r.task.taskId, 0, null);
+                        }
                     }
                 }
             }
         }
+    }
+
+    public void setFocusJustChanged() {
+        mFocusJustChanged = true;
     }
 
     /** Sets the task stack listener that gets callbacks when a task stack changes. */

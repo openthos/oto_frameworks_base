@@ -1729,6 +1729,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void setFocusedStack(int stackId, String reason) {
+        mService.setFocusJustChanged();
         Slog.i(TAG, "============= gchen_tag: call setFocusedStack(), reason: " + reason + " stackId: " + stackId);
         setFocusedStack(stackId);
     }
