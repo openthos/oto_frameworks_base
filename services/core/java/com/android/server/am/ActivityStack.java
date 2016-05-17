@@ -3490,7 +3490,9 @@ final class ActivityStack {
             return;
         }
 
-        mStackSupervisor.setFocusedStack(tr.stack.mStackId);
+        Slog.i(TAG, "=============== gchen_tag: stackId: " + tr.stack.mStackId + " in moveTaskToFrontLocked: " + reason);
+        mStackSupervisor.setFocusedStack(tr.stack.mStackId,
+                                         "called in moveTaskToFrontLocked in ActivityStack.java ");
 
         // Shift all activities with this task up to the top
         // of the stack, keeping them in the same internal order.
