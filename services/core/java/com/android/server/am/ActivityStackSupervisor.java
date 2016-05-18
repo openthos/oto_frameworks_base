@@ -89,6 +89,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.service.voice.IVoiceInteractionSession;
 import android.util.ArraySet;
+import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Slog;
 import android.util.SparseArray;
@@ -2737,6 +2738,26 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (activityContainer != null) {
             return activityContainer.mStack;
         }
+        return null;
+    }
+
+    ActivityStack getUpdateStack(){
+        int numDisplays = mActivityDisplays.size();
+        Rect bounds = new Rect();
+        DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
+            if ((stacks != null) && (stacks.size() > 0)) {
+                for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                    ActivityStack stack = stacks.get(stackNdx);
+                    int newStackId = stack.getStackId();
+                    mWindowManager.getStackBounds(newStackId,bounds);
+                    if(bounds.left < metrics.widthPixels  && bounds.top < metrics.heightPixels)
+                        return stack;
+                }
+            }
+        }
+
         return null;
     }
 

@@ -2462,6 +2462,22 @@ public final class ActivityManagerService extends ActivityManagerNative
         mFocusJustChanged = true;
     }
 
+    @Override
+    public void unsetFocusedStack(int stackId){
+        synchronized (ActivityManagerService.this) {
+            ActivityStack stack = mStackSupervisor.getUpdateStack();
+            if (stack != null) {
+                ActivityRecord r = stack.topRunningActivityLocked(null);
+                if (r != null) {
+                    if (!mStackSupervisor.isHomeActivity(r)) {
+                        setFocusedActivityLocked(r, "setFocusedStack");
+                        moveTaskToFront(r.task.taskId, 0, null);
+                    }
+                }
+            }
+        }
+    }
+
     /** Sets the task stack listener that gets callbacks when a task stack changes. */
     @Override
     public void registerTaskStackListener(ITaskStackListener listener) throws RemoteException {

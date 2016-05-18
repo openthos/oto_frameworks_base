@@ -3369,6 +3369,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
     }
 
+    private void unsetFocusedStack() {
+        try {
+            if (ActivityManagerNative.getDefault().getFocusedStackId() == getStackId()) {
+                ActivityManagerNative.getDefault().unsetFocusedStack(getStackId());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class HoverListener implements OnHoverListener {
         Rect mFrame =  new Rect();
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
@@ -3757,15 +3767,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMinimizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Rect mini = new Rect(0, 0, 0, 0);
-                    Rect mini = new Rect(0, 0, 1, 1);
                     Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    Rect outOfScreen = new Rect(actualWindowSize.left + metrics.widthPixels,
+                                                actualWindowSize.top + metrics.heightPixels,
+                                                actualWindowSize.right + metrics.widthPixels,
+                                                actualWindowSize.bottom + metrics.heightPixels);
                     try {
-                            ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
-                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mini);
+                        ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(getStackId(), actualWindowSize);
+                        ActivityManagerNative.getDefault().relayoutWindow(getStackId(), outOfScreen);
                     } catch (RemoteException e) {
                         Log.e(TAG, "Minimize failed", e);
                     }
+                    unsetFocusedStack();
                 }
             });
 

@@ -5280,6 +5280,10 @@ public class WindowManagerService extends IWindowManager.Stub
         bounds.setEmpty();
     }
 
+    public DisplayMetrics getDisplayMetrics(){
+        return mContext.getResources().getDisplayMetrics();
+    }
+
     // -------------------------------------------------------------
     // Misc IWindowSession methods
     // -------------------------------------------------------------
