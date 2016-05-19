@@ -2171,7 +2171,26 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         };
 
-        mSBAThread = new Thread("Statusbar Activity Cleaner") {
+        mSBAThread = new Thread("System Background Assistant") {
+
+            private void unsetHomeStack() {
+                synchronized (ActivityManagerService.this) {
+                    if (mStackSupervisor.needResetHomeStack()) {
+                        ActivityStack stack = mStackSupervisor.getUpdateStack();
+                        if (stack != null) {
+                            ActivityRecord r = stack.topRunningActivityLocked(null);
+                            if (r != null) {
+                                if (!mStackSupervisor.isHomeActivity(r)) {
+                                    setFocusedActivityLocked(r, "setFocusedStack");
+                                    moveTaskToFront(r.task.taskId, 0, null);
+                                    mStackSupervisor.moveHomeStack(false,"unsetHomeStack");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             @Override
             public void run() {
                 int times = 0;
@@ -2183,19 +2202,21 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 while (ret) {
                                     ret = killUselessStatusbarActivity();
                                 }
+                            }
 
-                                if (mFocusJustChanged) {
-                                    if (++times > FOCUS_JUST_CHANGED_TIMES) {
-                                        mFocusJustChanged = false;
-                                        times = 0;
-                                    }
+                            if (mFocusJustChanged) {
+                                if (++times > FOCUS_JUST_CHANGED_TIMES) {
+                                    mFocusJustChanged = false;
+                                    times = 0;
+                                    unsetHomeStack();
                                 }
                             }
+
                             this.sleep(GABAGE_REMOVE_INTERVAL);
                         } catch (InterruptedException e) {
                         }
                     } catch (Exception e) {
-                        Slog.e(TAG, "Unexpected exception for Statusbar Activity Cleaner");
+                        Slog.e(TAG, "Unexpected exception for System Background Assistant");
                     }
                 }
             }

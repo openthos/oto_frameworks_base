@@ -181,6 +181,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
+    private final static String HOME_FRONT_ACTIVITY_RECENTS = "com.android.systemui/.recents.RecentsActivity";
+
     private static final String LOCK_TASK_TAG = "Lock-to-App";
 
     /** Status Bar Service **/
@@ -413,6 +415,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
             return mHomeStack;
         }
         return mFocusedStack;
+    }
+
+    boolean needResetHomeStack() {
+        ActivityStack stack = getFocusedStack();
+        if ((stack == null) || (stack.mStackId != HOME_STACK_ID)) {
+            return false;
+        }
+        ActivityRecord r = stack.topRunningActivityLocked(null);
+        return r.shortComponentName.compareTo(HOME_FRONT_ACTIVITY_RECENTS) != 0;
     }
 
     ActivityStack getLastStack() {
