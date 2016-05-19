@@ -2269,6 +2269,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
 
         @Override
+        public void addView(View child, int index) {
+            /* Single root view for decor, and use mContentParent for child instead of */
+            mContentParent.addView(child, index);
+        }
+
+        @Override
+        public void removeView(View view) {
+            /* Forbid to remove root view, explicitly */
+        }
+
+        @Override
         public void onDraw(Canvas c) {
             super.onDraw(c);
             mBackgroundFallback.draw(mContentRoot, c, mContentParent);
