@@ -46,6 +46,17 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".DocumentsActivityMW"
+            android:theme="@style/DocumentsThemeMW"
+            android:icon="@drawable/ic_doc_text">
+            <intent-filter>
+                <action android:name="android.provider.action.MANAGE_ROOT_MW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="vnd.android.document/root" />
+            </intent-filter>
+        </activity>
+
         <!-- startup menu activity -->
         <activity
             android:name=".StartupMenuActivity"

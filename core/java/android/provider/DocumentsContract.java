@@ -104,6 +104,8 @@ public final class DocumentsContract {
     /** {@hide} */
     public static final String ACTION_MANAGE_ROOT = "android.provider.action.MANAGE_ROOT";
     /** {@hide} */
+    public static final String ACTION_MANAGE_ROOT_MW = "android.provider.action.MANAGE_ROOT_MW";
+    /** {@hide} */
     public static final String ACTION_MANAGE_DOCUMENT = "android.provider.action.MANAGE_DOCUMENT";
 
     /**

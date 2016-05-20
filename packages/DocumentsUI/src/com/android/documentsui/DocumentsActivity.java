@@ -134,17 +134,22 @@ public class DocumentsActivity extends Activity {
         final Context context = this;
         final Resources res = getResources();
         mShowAsDialog = res.getBoolean(R.bool.show_as_dialog);
+        final Intent intent = getIntent();
+        final String action = intent.getAction();
+        final boolean isMW = DocumentsContract.ACTION_MANAGE_ROOT_MW.equals(action);
 
         if (mShowAsDialog) {
             // Strongly define our horizontal dimension; we leave vertical as
             // WRAP_CONTENT so that system resizes us when IME is showing.
-            final WindowManager.LayoutParams a = getWindow().getAttributes();
+            if (!isMW) {
+                final WindowManager.LayoutParams a = getWindow().getAttributes();
 
-            final Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
-            a.width = (int) res.getFraction(R.dimen.dialog_width, size.x, size.x);
+                final Point size = new Point();
+                getWindowManager().getDefaultDisplay().getSize(size);
+                a.width = (int) res.getFraction(R.dimen.dialog_width, size.x, size.x);
 
-            getWindow().setAttributes(a);
+                getWindow().setAttributes(a);
+            }
 
         } else {
             // Non-dialog means we have a drawer
@@ -234,6 +239,8 @@ public class DocumentsActivity extends Activity {
         } else if (Intent.ACTION_OPEN_DOCUMENT_TREE.equals(action)) {
             mState.action = ACTION_OPEN_TREE;
         } else if (DocumentsContract.ACTION_MANAGE_ROOT.equals(action)) {
+            mState.action = ACTION_MANAGE;
+        } else if (DocumentsContract.ACTION_MANAGE_ROOT_MW.equals(action)) {
             mState.action = ACTION_MANAGE;
         }
 
