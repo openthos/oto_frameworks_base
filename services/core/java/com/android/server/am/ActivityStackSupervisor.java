@@ -2761,10 +2761,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if ((stacks != null) && (stacks.size() > 0)) {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
-                    int newStackId = stack.getStackId();
-                    mWindowManager.getStackBounds(newStackId,bounds);
-                    if(bounds.left < metrics.widthPixels  && bounds.top < metrics.heightPixels)
-                        return stack;
+                    int stackId = stack.getStackId();
+                    if (stackId != HOME_STACK_ID) {
+                        mWindowManager.getStackBounds(stackId, bounds);
+                        if(bounds.left < metrics.widthPixels && bounds.top < metrics.heightPixels) {
+                            return stack;
+                        }
+                    }
                 }
             }
         }
