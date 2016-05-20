@@ -25,6 +25,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -62,16 +63,44 @@ import android.widget.AdapterView.OnItemClickListener;
 public class StartupMenuActivity extends Activity implements OnClickListener,
                 OnItemClickListener {
 
+        public static final int FILTER_ALL_APP = 1;
+        public static final int FILTER_SYSYTEM_APP = 2;
+        public static final int FILTER_THIRD_APP = 3;
+
         private GridView gv_view = null;
         private List<AppInfo> mlistAppInfo = null;
         LayoutInflater infater = null;
 
         private Context mContext;
         private View contentView;
-        private LinearLayout ll_layout;
+        private LinearLayout ll_layout,ll_loading;
         private TextView shut_text;
-        private TextView my_computer, system_setting;
+        private TextView my_computer, system_setting,name_sort,time_sort,frequency_sort;
         private PopupWindow popupWindow;
+        private StartupMenuAdapter browseAppAdapter;
+        private int CLICKS = 0;
+
+        private Handler handler = new Handler () {
+            public void handleMessage (android.os.Message msg) {
+                switch (msg.what) {
+                case FILTER_ALL_APP:
+                    concealProgressBar();
+                    queryAppInfo(FILTER_ALL_APP);
+                    dapterReload();
+                    break;
+                case FILTER_SYSYTEM_APP:
+                    concealProgressBar();
+                    queryAppInfo(FILTER_SYSYTEM_APP);
+                    dapterReload();
+                    break;
+                case FILTER_THIRD_APP:
+                    concealProgressBar();
+                    queryAppInfo(FILTER_THIRD_APP);
+                    dapterReload();
+                    break;
+                }
+            }
+        };
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +111,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             setContentView(R.layout.start_activity);
             mContext=this;
             ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
+            ll_loading = (LinearLayout)findViewById(R.id.ll_loading);
+
             gv_view = (GridView) findViewById(R.id.gv_view);
             StartupMenuActivity.this.setFinishOnTouchOutside(true);
 
             mlistAppInfo = new ArrayList<AppInfo>();
-            queryAppInfo();
-            StartupMenuAdapter browseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            queryAppInfo(FILTER_ALL_APP);
+            browseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
             gv_view.setAdapter(browseAppAdapter);
             gv_view.setOnItemClickListener(this);
 
@@ -95,9 +126,41 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             system_setting = (TextView) findViewById(R.id.system_setting);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
+
+            name_sort = (TextView) findViewById(R.id.name_sort);
+            time_sort = (TextView) findViewById(R.id.time_sort);
+            frequency_sort = (TextView) findViewById(R.id.frequency_sort);
+            name_sort.setOnClickListener(this);
+            time_sort.setOnClickListener(this);
+            frequency_sort.setOnClickListener(this);
         }
 
-        public void queryAppInfo() {
+        private void dapterReload() {
+            browseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            gv_view.setAdapter(browseAppAdapter);
+        }
+
+        private void concealProgressBar() {
+            ll_loading.setVisibility(View.GONE);
+            mlistAppInfo = new ArrayList<AppInfo>();
+        }
+
+        public void appType(PackageManager pm, ResolveInfo reInfo) {
+            String activityName = reInfo.activityInfo.name;
+            String pkgName = reInfo.activityInfo.packageName;
+            String appLabel = (String) reInfo.loadLabel(pm);
+            Drawable icon = reInfo.loadIcon(pm);
+            Intent launchIntent = new Intent();
+            launchIntent.setComponent(new ComponentName(pkgName,activityName));
+            AppInfo appInfo = new AppInfo();
+            appInfo.setAppLabel(appLabel);
+            appInfo.setPkgName(pkgName);
+            appInfo.setAppIcon(icon);
+            appInfo.setIntent(launchIntent);
+            mlistAppInfo.add(appInfo);
+        }
+
+        public void queryAppInfo(int a) {
             PackageManager pm = this.getPackageManager();
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -106,18 +169,19 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             if (mlistAppInfo != null) {
                 mlistAppInfo.clear();
                 for (ResolveInfo reInfo : resolveInfos) {
-                    String activityName = reInfo.activityInfo.name;
-                    String pkgName = reInfo.activityInfo.packageName;
-                    String appLabel = (String) reInfo.loadLabel(pm);
-                    Drawable icon = reInfo.loadIcon(pm);
-                    Intent launchIntent = new Intent();
-                    launchIntent.setComponent(new ComponentName(pkgName,activityName));
-                    AppInfo appInfo = new AppInfo();
-                    appInfo.setAppLabel(appLabel);
-                    appInfo.setPkgName(pkgName);
-                    appInfo.setAppIcon(icon);
-                    appInfo.setIntent(launchIntent);
-                    mlistAppInfo.add(appInfo);
+                    ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
+                    if (a == FILTER_ALL_APP ) {
+                        appType(pm, reInfo);
+                    }
+                    if (a == FILTER_SYSYTEM_APP && isSystemApp(applicationInfo)) {
+                        appType(pm, reInfo);
+                    }
+                    if (a == FILTER_THIRD_APP && !isSystemApp(applicationInfo)) {
+                        appType(pm, reInfo);
+                        if (CLICKS == 3) {
+                            CLICKS = 0;
+                        }
+                    }
                 }
             }
         }
@@ -183,7 +247,42 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 intentLock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 break;
+            case R.id.name_sort:
+                mlistAppInfo.clear();
+                browseAppAdapter.notifyDataSetChanged();
+                ll_loading.setVisibility(View.VISIBLE);
+                thread(FILTER_ALL_APP);
+                break;
+            case R.id.time_sort:
+                Toast.makeText(this, "This time_sort: COMING SOON...", 0).show();
+                break;
+            case R.id.frequency_sort:
+                if (CLICKS == 3) {
+                    CLICKS = 0;
+                }
+                CLICKS++;
+                mlistAppInfo.clear();
+                browseAppAdapter.notifyDataSetChanged();
+                ll_loading.setVisibility(View.VISIBLE);
+                thread(CLICKS);
+                break;
             }
+        }
+
+        private void thread (final int a) {
+            new Thread () {
+                public void run () {
+                    try {
+                        sleep(3000);
+                        handler.sendEmptyMessage(a);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                };
+            }.start();
+        }
+        private boolean isSystemApp(ApplicationInfo applicationInfo) {
+            return (applicationInfo.flags & applicationInfo.FLAG_SYSTEM) > 0;
         }
 
         public void powerOff(View v) {
