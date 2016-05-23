@@ -144,29 +144,29 @@ public class PhoneStatusBarView extends PanelBar {
             return false;
         }
 
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            if (android.os.Build.VERSION.SDK_INT > 13) {
-                mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
-                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            } else {
-                mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
-                                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            }
-            return true;
-        }
-        return false;
-
-        //boolean barConsumedEvent = mBar.interceptTouchEvent(event);
-
-        //if (DEBUG_GESTURES) {
-        //    if (event.getActionMasked() != MotionEvent.ACTION_MOVE) {
-        //        EventLog.writeEvent(EventLogTags.SYSUI_PANELBAR_TOUCH,
-        //                event.getActionMasked(), (int) event.getX(), (int) event.getY(),
-        //                barConsumedEvent ? 1 : 0);
+        //if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+        //    if (android.os.Build.VERSION.SDK_INT > 13) {
+        //        mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+        //                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        //    } else {
+        //        mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
+        //                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         //    }
+        //    return true;
         //}
+        //return false;
 
-        //return barConsumedEvent || super.onTouchEvent(event);
+        boolean barConsumedEvent = mBar.interceptTouchEvent(event);
+
+        if (DEBUG_GESTURES) {
+            if (event.getActionMasked() != MotionEvent.ACTION_MOVE) {
+                EventLog.writeEvent(EventLogTags.SYSUI_PANELBAR_TOUCH,
+                        event.getActionMasked(), (int) event.getX(), (int) event.getY(),
+                        barConsumedEvent ? 1 : 0);
+            }
+        }
+
+        return barConsumedEvent || super.onTouchEvent(event);
     }
 
     @Override
