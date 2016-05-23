@@ -77,6 +77,8 @@ public class PopupWindow {
 
     private static final int DEFAULT_ANCHORED_GRAVITY = Gravity.TOP | Gravity.START;
 
+    private static final int DEFAULT_POPUP_WINDOW_WIDTH = 130;
+
     private Context mContext;
     private WindowManager mWindowManager;
     
@@ -894,6 +896,9 @@ public class PopupWindow {
      * @param y the popup's y location offset
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
+        Rect frame = parent.getViewRootImpl().mWinFrame;
+        x = x - frame.left;
+        y = y - frame.top;
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
 
@@ -1006,6 +1011,28 @@ public class PopupWindow {
         p.windowAnimations = computeAnimationResource();
 
         invokePopup(p);
+    }
+
+    private int boundXoff(View anchor, int xoff, int width) {
+        Rect frame = anchor.getViewRootImpl().mWinFrame;
+        int left = frame.left + anchor.getLeft();
+        int right = frame.left + anchor.getRight();
+
+        if (width == -1) {
+            width = anchor.getWidth();
+        } else if (width == -2) {
+            // For wrap_content, don't know the real size, so use default width instead of.
+            width = DEFAULT_POPUP_WINDOW_WIDTH;
+        } else if (width < 0) {
+            width = 0;
+        }
+
+        if (right + xoff + width > frame.right) {
+            xoff = frame.right - width - right;
+        } else if (left + xoff < frame.left) {
+            xoff = frame.left - left;
+        }
+        return xoff;
     }
 
     private void updateAboveAnchor(boolean aboveAnchor) {
@@ -1222,6 +1249,9 @@ public class PopupWindow {
      */
     private boolean findDropDownPosition(View anchor, WindowManager.LayoutParams p, int xoff,
             int yoff, int gravity) {
+
+        xoff = boundXoff(anchor, xoff, mPopupWidth);
+
         final int anchorHeight = anchor.getHeight();
         final int anchorWidth = anchor.getWidth();
         if (mOverlapAnchor) {
