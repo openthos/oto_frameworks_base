@@ -1631,6 +1631,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
             boolean isMultiwindow = (intentFlags & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) != 0;
+            boolean runFullScreen = (intentFlags & Intent.FLAG_RUN_FULLSCREEN) != 0;
 
             /**
              * Date: Feb 27, 2014
@@ -1677,7 +1678,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * for now
              */
             if (isMultiwindow) {
-                mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
+                if(runFullScreen) {
+                    DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
+                    Rect rectFullScreen = new Rect(0, 0 , metrics.widthPixels , metrics.heightPixels);
+                    mService.relayoutWindow(stackId, rectFullScreen);
+                } else {
+                    mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
+                }
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
                     " stackId=" + stackId);

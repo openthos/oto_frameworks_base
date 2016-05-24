@@ -3900,6 +3900,7 @@ public class Intent implements Parcelable, Cloneable {
      * called -- no BroadcastReceiver components will be launched.
      */
     public static final int FLAG_RECEIVER_REGISTERED_ONLY = 0x40000000;
+    public static final int FLAG_RUN_FULLSCREEN = 0x80000000;
     /**
      * If set, when sending a broadcast the new broadcast will replace
      * any existing pending broadcast that matches it.  Matching is defined
