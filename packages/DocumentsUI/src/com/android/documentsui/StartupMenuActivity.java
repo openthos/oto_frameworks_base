@@ -1,9 +1,14 @@
 package com.android.documentsui;
 
 import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import com.android.documentsui.util.AppInfo;
 
@@ -63,6 +68,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class StartupMenuActivity extends Activity implements OnClickListener,
                 OnItemClickListener {
 
+        public static final int FILTER_TIME_SORT = 0;
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
@@ -80,6 +86,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private StartupMenuAdapter browseAppAdapter;
         private int CLICKS = 0;
 
+        private String converToString;
+        private Date sysDate;
+
         private Handler handler = new Handler () {
             public void handleMessage (android.os.Message msg) {
                 switch (msg.what) {
@@ -96,6 +105,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 case FILTER_THIRD_APP:
                     concealProgressBar();
                     queryAppInfo(FILTER_THIRD_APP);
+                    dapterReload();
+                    break;
+                case FILTER_TIME_SORT:
+                    concealProgressBar();
+                    queryAppInfo(FILTER_ALL_APP);
+                    timeSort();
                     dapterReload();
                     break;
                 }
@@ -135,6 +150,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             frequency_sort.setOnClickListener(this);
         }
 
+        private void timeSort() {
+            Collections.sort(mlistAppInfo, new Comparator<Object>() {
+                public int compare(Object lhs, Object rhs) {
+                    AppInfo p1 = (AppInfo) lhs;
+                    AppInfo p2 = (AppInfo) rhs;
+                    return p2.getDate().compareTo(p1.getDate());
+                };
+            });
+        }
+
         private void dapterReload() {
             browseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
             gv_view.setAdapter(browseAppAdapter);
@@ -143,6 +168,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private void concealProgressBar() {
             ll_loading.setVisibility(View.GONE);
             mlistAppInfo = new ArrayList<AppInfo>();
+        }
+
+        public static String ConverToString(Date date) {
+            DateFormat df = new SimpleDateFormat("YYYY-MM-dd");
+            return df.format(date);
         }
 
         public void appType(PackageManager pm, ResolveInfo reInfo) {
@@ -155,6 +185,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             AppInfo appInfo = new AppInfo();
             appInfo.setAppLabel(appLabel);
             appInfo.setPkgName(pkgName);
+            appInfo.setDate(sysDate);
             appInfo.setAppIcon(icon);
             appInfo.setIntent(launchIntent);
             mlistAppInfo.add(appInfo);
@@ -169,6 +200,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             if (mlistAppInfo != null) {
                 mlistAppInfo.clear();
                 for (ResolveInfo reInfo : resolveInfos) {
+                    File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
+                    sysDate = new Date(file.lastModified());
                     ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
                     if (a == FILTER_ALL_APP ) {
                         appType(pm, reInfo);
@@ -255,7 +288,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 thread(FILTER_ALL_APP);
                 break;
             case R.id.time_sort:
-                Toast.makeText(this, "This time_sort: COMING SOON...", 0).show();
+                mlistAppInfo.clear();
+                browseAppAdapter.notifyDataSetChanged();
+                ll_loading.setVisibility(View.VISIBLE);
+                thread(FILTER_TIME_SORT);
                 break;
             case R.id.frequency_sort:
                 if (CLICKS == 3) {

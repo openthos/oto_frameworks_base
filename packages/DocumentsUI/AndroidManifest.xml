@@ -62,7 +62,7 @@
             android:name=".StartupMenuActivity"
             android:exported="true"
             android:label="@string/startup_menu"
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:launchMode="singleTop"
             android:excludeFromRecents="true">
         </activity>
