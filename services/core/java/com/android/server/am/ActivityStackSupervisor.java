@@ -1679,8 +1679,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
              */
             if (isMultiwindow) {
                 if(runFullScreen) {
-                    DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
-                    Rect rectFullScreen = new Rect(0, 0 , metrics.widthPixels , metrics.heightPixels);
+                    ActivityDisplay activityDisplay = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
+                    Rect rectFullScreen = new Rect(0, 0, activityDisplay.mDisplayInfo.logicalWidth,
+                                                   activityDisplay.mDisplayInfo.logicalHeight);
                     mService.relayoutWindow(stackId, rectFullScreen);
                 } else {
                     mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
