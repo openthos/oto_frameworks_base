@@ -280,41 +280,6 @@ public abstract class PanelView extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                float h = y - mInitialTouchY;
-
-                // If the panel was collapsed when touching, we only need to check for the
-                // y-component of the gesture, as we have no conflicting horizontal gesture.
-                if (Math.abs(h) > mTouchSlop
-                        && (Math.abs(h) > Math.abs(x - mInitialTouchX)
-                                || mInitialOffsetOnTouch == 0f)) {
-                    mTouchSlopExceeded = true;
-                    if (waitForTouchSlop && !mTracking) {
-                        if (!mJustPeeked && mInitialOffsetOnTouch != 0f) {
-                            mInitialOffsetOnTouch = mExpandedHeight;
-                            mInitialTouchX = x;
-                            mInitialTouchY = y;
-                            h = 0;
-                        }
-                        cancelHeightAnimator();
-                        removeCallbacks(mPeekRunnable);
-                        mPeekPending = false;
-                        onTrackingStarted();
-                    }
-                }
-                final float newHeight = Math.max(0, h + mInitialOffsetOnTouch);
-                if (newHeight > mPeekHeight) {
-                    if (mPeekAnimator != null) {
-                        mPeekAnimator.cancel();
-                    }
-                    mJustPeeked = false;
-                }
-                if (-h >= getFalsingThreshold()) {
-                    mTouchAboveFalsingThreshold = true;
-                }
-                if (!mJustPeeked && (!waitForTouchSlop || mTracking) && !isTrackingBlocked()) {
-                    setExpandedHeightInternal(newHeight);
-                }
-
                 trackMovement(event);
                 break;
 
@@ -447,20 +412,7 @@ public abstract class PanelView extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                final float h = y - mInitialTouchY;
                 trackMovement(event);
-                if (scrolledToBottom || mTouchStartedInEmptyArea) {
-                    if (h < -mTouchSlop && h < -Math.abs(x - mInitialTouchX)) {
-                        cancelHeightAnimator();
-                        mInitialOffsetOnTouch = mExpandedHeight;
-                        mInitialTouchY = y;
-                        mInitialTouchX = x;
-                        mTracking = true;
-                        mTouchSlopExceeded = true;
-                        onTrackingStarted();
-                        return true;
-                    }
-                }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:

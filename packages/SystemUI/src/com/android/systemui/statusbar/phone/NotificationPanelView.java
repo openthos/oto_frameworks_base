@@ -177,6 +177,8 @@ public class NotificationPanelView extends PanelView implements
     private float mKeyguardStatusBarAnimateAlpha = 1f;
     private int mOldLayoutDirection;
 
+    private boolean mForPC = true;
+
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(!DEBUG);
@@ -547,29 +549,7 @@ public class NotificationPanelView extends PanelView implements
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                final float h = y - mInitialTouchY;
                 trackMovement(event);
-                if (mQsTracking) {
-
-                    // Already tracking because onOverscrolled was called. We need to update here
-                    // so we don't stop for a frame until the next touch event gets handled in
-                    // onTouchEvent.
-                    setQsExpansion(h + mInitialHeightOnTouch);
-                    trackMovement(event);
-                    mIntercepting = false;
-                    return true;
-                }
-                if (Math.abs(h) > mTouchSlop && Math.abs(h) > Math.abs(x - mInitialTouchX)
-                        && shouldQuickSettingsIntercept(mInitialTouchX, mInitialTouchY, h)) {
-                    mQsTracking = true;
-                    onQsExpansionStarted();
-                    mInitialHeightOnTouch = mQsExpansionHeight;
-                    mInitialTouchY = y;
-                    mInitialTouchX = x;
-                    mIntercepting = false;
-                    mNotificationStackScroller.removeLongPressCallback();
-                    return true;
-                }
                 break;
 
             case MotionEvent.ACTION_CANCEL:
@@ -633,12 +613,32 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private float getQsExpansionFraction() {
+        if (mForPC) {
+            return 1f;
+        }
         return Math.min(1f, (mQsExpansionHeight - mQsMinExpansionHeight)
                 / (getTempQsMaxExpansion() - mQsMinExpansionHeight));
     }
 
+    // Skip ACTION_UP to prevent the window disappear so quickly.
+    private boolean skipTouch(MotionEvent event) {
+        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+            float offset = (float)(mStatusBar.mCurrentDisplaySize.x -
+                        getResources().getDimensionPixelSize(R.dimen.notification_panel_width));
+            if (event.getX() >= offset) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        if (skipTouch(event)) {
+            return false;
+        }
+
         if (mBlockTouches) {
             return false;
         }
@@ -665,12 +665,6 @@ public class NotificationPanelView extends PanelView implements
         }
         if (mExpandedHeight != 0) {
             handleQsDown(event);
-        }
-        if (!mQsExpandImmediate && mQsTracking) {
-            onQsTouch(event);
-            if (!mConflictingQsExpansionGesture) {
-                return true;
-            }
         }
         if (event.getActionMasked() == MotionEvent.ACTION_CANCEL
                 || event.getActionMasked() == MotionEvent.ACTION_UP) {
@@ -767,11 +761,6 @@ public class NotificationPanelView extends PanelView implements
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                final float h = y - mInitialTouchY;
-                setQsExpansion(h + mInitialHeightOnTouch);
-                if (h >= getFalsingThreshold()) {
-                    mQsTouchAboveFalsingThreshold = true;
-                }
                 trackMovement(event);
                 break;
 
@@ -1105,7 +1094,11 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private void setQsExpansion(float height) {
-        height = Math.min(Math.max(height, mQsMinExpansionHeight), mQsMaxExpansionHeight);
+        if (mForPC) {
+            height = mQsMaxExpansionHeight;
+        } else {
+            height = Math.min(Math.max(height, mQsMinExpansionHeight), mQsMaxExpansionHeight);
+        }
         mQsFullyExpanded = height == mQsMaxExpansionHeight;
         if (height > mQsMinExpansionHeight && !mQsExpanded && !mStackScrollerOverscrolling) {
             setQsExpanded(true);
@@ -1173,7 +1166,9 @@ public class NotificationPanelView extends PanelView implements
     }
 
     private float calculateQsTopPadding() {
-        if (mKeyguardShowing
+        if (mForPC) {
+            return mNotificationTopPadding;
+        } else if (mKeyguardShowing
                 && (mQsExpandImmediate || mIsExpanding && mQsExpandedWhenExpandingStarted)) {
 
             // Either QS pushes the notifications down when fully expanded, or QS is fully above the

@@ -2218,7 +2218,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mStatusBarWindowManager.setStatusBarFocusable(false);
 
             mStatusBarWindow.cancelExpandHelper();
-            mStatusBarView.collapseAllPanels(true);
+            mStatusBarView.collapseAllPanels(false);
         }
     }
 
@@ -2305,7 +2305,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public void animateCollapseQuickSettings() {
         if (mState == StatusBarState.SHADE) {
-            mStatusBarView.collapseAllPanels(true);
+            mStatusBarView.collapseAllPanels(false);
         }
     }
 

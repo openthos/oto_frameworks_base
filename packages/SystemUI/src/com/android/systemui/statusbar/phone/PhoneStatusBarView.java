@@ -31,7 +31,6 @@ import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 
 public class PhoneStatusBarView extends PanelBar {
-    private static final String TAG = "PhoneStatusBarView";
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
     private static final boolean DEBUG_GESTURES = false;
 
@@ -43,6 +42,8 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mNotificationPanel;
     private final PhoneStatusBarTransitions mBarTransitions;
     private ScrimController mScrimController;
+
+    private boolean mSkipActionUp = false;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -140,6 +141,23 @@ public class PhoneStatusBarView extends PanelBar {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        if ((int)event.getX() > mBar.mIconSize) {
+            try {
+                ActivityManagerNative.getDefault().killStartupMenu();
+            } catch (Exception e) {
+            }
+        }
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            if (mNotificationPanel.getVisibility() == View.VISIBLE) {
+                mBar.makeExpandedInvisible();
+                mSkipActionUp = true;
+                return false;
+            }
+            mSkipActionUp = false;
+        } else if ((event.getActionMasked() == MotionEvent.ACTION_UP) && mSkipActionUp) {
+            return false;
+        }
+
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
         }
@@ -196,10 +214,6 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
-	/*try{
-		ActivityManagerNative.getDefault().killStartupMenu();
-	}catch (Exception e){
-	}*/
         return mBar.interceptTouchEvent(event) || super.onInterceptTouchEvent(event);
     }
 

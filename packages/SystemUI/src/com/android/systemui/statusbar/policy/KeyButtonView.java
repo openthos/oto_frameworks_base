@@ -40,6 +40,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 
 import com.android.systemui.R;
+import com.android.systemui.statusbar.phone.PhoneStatusBarView;
 
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK;
 import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK;
@@ -171,6 +172,15 @@ public class KeyButtonView extends ImageView {
     public boolean onTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
         int x, y;
+
+        Object current = getParent();
+        while (current instanceof View ) {
+            if (current instanceof PhoneStatusBarView) {
+                ((View)current).onTouchEvent(ev);
+                break;
+            }
+            current = ((View)current).getParent();
+        }
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
