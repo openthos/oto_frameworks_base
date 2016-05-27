@@ -278,7 +278,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     popupWindow.dismiss();
                 }
                 Intent intentLock = new Intent("android.intent.action.LOCKNOW");
-                intentLock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 break;
             case R.id.name_sort:
