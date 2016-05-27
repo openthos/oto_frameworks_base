@@ -229,17 +229,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public void onClick(View v) {
             switch (v.getId()) {
             case R.id.my_computer:
-            /* start FileManager */
-            for (int i=0;i<mlistAppInfo.size();i++) {
-                AppInfo appInfo = mlistAppInfo.get(i);
-                PackageManager pm = this.getPackageManager();
-                String packName  = appInfo.getPkgName();
-                if (packName.compareTo("com.cyanogenmod.filemanager") == 0) {
-                    Intent intent = appInfo.getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                /* start FileManager */
+                for (int i=0;i<mlistAppInfo.size();i++) {
+                    AppInfo appInfo = mlistAppInfo.get(i);
+                    PackageManager pm = this.getPackageManager();
+                    String packName  = appInfo.getPkgName();
+                    if (packName.compareTo("com.cyanogenmod.filemanager") == 0) {
+                        Intent intent = appInfo.getIntent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
                 }
-            }
                 break;
             case R.id.system_setting:
                 if (android.os.Build.VERSION.SDK_INT > 13) {

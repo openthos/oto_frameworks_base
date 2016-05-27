@@ -216,6 +216,17 @@
                 android:gravity="center_vertical|start"
                 />
         </com.android.keyguard.AlphaOptimizedLinearLayout>
+
+        <com.android.systemui.statusbar.policy.KeyButtonView
+            android:id="@+id/status_bar_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:paddingBottom="2dip"
+            android:src="@drawable/startmenu_file_manager_image"
+            android:scaleType="centerInside"
+            systemui:keyCode="100003"
+            systemui:keyRepeat="true"
+            />
     </LinearLayout>
 
     <ViewStub

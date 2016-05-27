@@ -754,6 +754,9 @@ public class KeyEvent extends InputEvent implements Parcelable {
     public static final int KEYCODE_CUSTOMIZE_FILE_MANAGER  = KEYCODE_CUSTOMIZE_START;
     /** Start menu explorer. */
     public static final int KEYCODE_CUSTOMIZE_BROWSER = KEYCODE_CUSTOMIZE_START + 1;
+    /** Start menu home. */
+    public static final int KEYCODE_CUSTOMIZE_HOME = KEYCODE_CUSTOMIZE_START + 3;
+
 
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_START = 1000000;
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_END = 2000000;
@@ -1776,6 +1779,7 @@ public class KeyEvent extends InputEvent implements Parcelable {
      */
     public static final boolean isSystemKey(int keyCode) {
         switch (keyCode) {
+            case KeyEvent.KEYCODE_CUSTOMIZE_HOME:
             case KeyEvent.KEYCODE_CUSTOMIZE_BROWSER:
             case KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER:
             case KeyEvent.KEYCODE_MENU:

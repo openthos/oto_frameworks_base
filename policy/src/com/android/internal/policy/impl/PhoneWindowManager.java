@@ -15,6 +15,10 @@
 
 package com.android.internal.policy.impl;
 
+import android.app.ActivityManager.RecentTaskInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.provider.ContactsContract;
 import android.net.Uri;
 import android.app.ActivityManager;
@@ -589,6 +593,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_MENU = 15;
     private static final int MSG_STARTUP_FILE_MANAGER = 16;
     private static final int MSG_STARTUP_BROWSER = 17;
+    private static final int MSG_STARTUP_HOME = 18;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -645,6 +650,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_BROWSER:
                     startExplorer();
+                    break;
+                case MSG_STARTUP_HOME:
+                    startHomeManager();
                     break;
             }
         }
@@ -1128,6 +1136,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_FILE_MANAGER);
     }
 
+    public void sendHomeManager() {
+        mHandler.removeMessages(MSG_STARTUP_HOME);
+        mHandler.sendEmptyMessage(MSG_STARTUP_HOME);
+    }
+
     public void intentExplorer() {
         mHandler.removeMessages(MSG_STARTUP_BROWSER);
         mHandler.sendEmptyMessage(MSG_STARTUP_BROWSER);
@@ -1152,6 +1165,64 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             intent1 = manager.getLaunchIntentForPackage("com.android.browser");
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(intent1);
+        } catch (ActivityNotFoundException e) {
+            Slog.w(TAG, "No activity to handle assist action.", e);
+        }
+    }
+
+    void startHomeManager() {
+        try {
+            final Context context = mContext;
+            final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            final PackageManager mPackageManager = context.getPackageManager();
+            final ActivityManager mActivityManager = (ActivityManager)
+                context.getSystemService(Context.ACTIVITY_SERVICE);
+
+            final List<RecentTaskInfo> recentTasks =
+                mActivityManager.getRecentTasks(Integer.MAX_VALUE, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+
+            ActivityInfo homeActivityInfo =
+                new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
+                .resolveActivityInfo(mPackageManager, 0);
+
+
+            int index = 0;
+            int numTasks = recentTasks.size();
+            Log.d(TAG, "numTasks" + numTasks);
+            Rect mini = new Rect(0, 0, 1, 1);
+            Rect defaultWindowSize = new Rect(200,200,800,600);
+            List<Integer> stackIdList = new ArrayList<>();
+            for (int i = 0; i < numTasks; ++i) {
+                final RecentTaskInfo mRecentTaskInfo = recentTasks.get(i);
+                // exclude the home activity
+                Intent intent = new Intent(mRecentTaskInfo.baseIntent);
+                if (mRecentTaskInfo.origActivity != null) {
+                    intent.setComponent(mRecentTaskInfo.origActivity);
+                }
+
+                if (homeActivityInfo != null) {
+                    if (homeActivityInfo.packageName.equals(
+                        intent.getComponent().getPackageName())
+                        && homeActivityInfo.name.equals(
+                        intent.getComponent().getClassName())) {
+                        continue;
+                    }
+                }
+
+                Log.d("umic",""+mRecentTaskInfo.stackId);
+                    final int id = mRecentTaskInfo.stackId;
+                    stackIdList.add(id);
+            }
+            for(int id : stackIdList){
+                Rect actualWindowSize = defaultWindowSize;
+                Rect normalRect = actualWindowSize;
+                try{
+                    ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(id, normalRect);
+                    ActivityManagerNative.getDefault().relayoutWindow(id, mini);
+                }catch(RemoteException e){
+                    Log.e("umic","Minimize failed",e);
+                }
+            }
         } catch (ActivityNotFoundException e) {
             Slog.w(TAG, "No activity to handle assist action.", e);
         }
@@ -2630,7 +2701,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (down) {
                 intentExplorer();
             }
-        } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_HOME) {
+            if (down) {
+                sendHomeManager();
+            }
+        }else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {
                 if (repeatCount == 0) {
                     mSearchKeyShortcutPending = true;
