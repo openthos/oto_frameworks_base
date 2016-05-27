@@ -135,7 +135,9 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     private boolean checkValidEvent(int x) {
-        return x >= mBar.mCurrentDisplaySize.x - mBar.mCurrentDisplaySize.x / STATUSBAR_VALID_PART_CLICK_AREA;
+        return (x >= mBar.mCurrentDisplaySize.x
+                     - mBar.mCurrentDisplaySize.x / STATUSBAR_VALID_PART_CLICK_AREA) // right side
+               && (x < mBar.mCurrentDisplaySize.x - mBar.mIconSize); // also skip home button
     }
 
     @Override
@@ -161,18 +163,6 @@ public class PhoneStatusBarView extends PanelBar {
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
         }
-
-        //if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-        //    if (android.os.Build.VERSION.SDK_INT > 13) {
-        //        mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
-        //                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        //    } else {
-        //        mBar.mContext.startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
-        //                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-        //    }
-        //    return true;
-        //}
-        //return false;
 
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
