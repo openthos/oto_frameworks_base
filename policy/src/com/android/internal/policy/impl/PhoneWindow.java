@@ -4010,8 +4010,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 params.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             }
             if (!haveDimAmount()) {
-                params.dimAmount = a.getFloat(
-                        android.R.styleable.Window_backgroundDimAmount, 0.5f);
+                params.dimAmount = 0f;
             }
         }
 
