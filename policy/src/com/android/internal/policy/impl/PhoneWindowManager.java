@@ -2665,7 +2665,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
             }
             return -1;
-        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+        } else if (keyCode == KeyEvent.KEYCODE_STARTUPMENU) {
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
