@@ -2385,7 +2385,11 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
             String pkg = data.readString();
-            int statusbarActivityId = createStatusbarActivity(stackId, pkg);
+            boolean[] params = new boolean[2];
+            data.readBooleanArray(params);
+            boolean apkRun = params[0];
+            boolean isDocked = params[1];
+            int statusbarActivityId = createStatusbarActivity(stackId, pkg, apkRun, isDocked);
             reply.writeNoException();
             reply.writeInt(statusbarActivityId);
             return true;
@@ -5606,12 +5610,16 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
-    public int createStatusbarActivity(int stackId, String pkg) throws RemoteException {
+    public int createStatusbarActivity(int stackId, String pkg, boolean apkRun, boolean isDocked) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
+        boolean[] params = new boolean[2];
+        params[0] = apkRun;
+        params[1] = isDocked;
         data.writeInterfaceToken(IActivityManager.descriptor);
         data.writeInt(stackId);
         data.writeString(pkg);
+        data.writeBooleanArray(params);
         mRemote.transact(STATUSBAR_ACTIVITY_CREAT, data, reply, 0);
         reply.readException();
         int result = reply.readInt();

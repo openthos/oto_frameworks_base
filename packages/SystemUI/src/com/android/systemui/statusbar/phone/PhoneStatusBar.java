@@ -689,10 +689,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         PackageManager pm1 = getPackageManagerForUser(-1);
         try {
             ApplicationInfo ai1 = pm1.getApplicationInfo("com.cyanogenmod.filemanager", 0);
-            ((ImageView)mStatusBarView.findViewById(R.id.status_bar_file_manager_view)).setImageDrawable(pm1.getApplicationIcon(ai1));
+            ActivityManagerNative.getDefault().createStatusbarActivity(
+                      ActivityManager.NOT_RUNNING_STACK_ID, "com.cyanogenmod.filemanager", false, true);
             ApplicationInfo ai2 = pm1.getApplicationInfo("com.android.browser", 0);
-            ((ImageView)mStatusBarView.findViewById(R.id.status_bar_browser_view)).setImageDrawable(pm1.getApplicationIcon(ai2));
-        } catch (NameNotFoundException e) {
+            ActivityManagerNative.getDefault().createStatusbarActivity(
+                      ActivityManager.NOT_RUNNING_STACK_ID, "com.android.browser", false, true);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
@@ -1533,7 +1535,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNotificationIcons.addView(v, i, params);
             }
         }
-	}
+    }
 
         // Resort notification icons
 
@@ -2422,9 +2424,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mStatusBarWindow == null) {
             return;
         }
-        if (pkg.equals("com.cyanogenmod.filemanager") || pkg.equals("com.android.browser")) {
-            return;
-        }
         Drawable pkgicon = null;
         PackageManager pm = getPackageManagerForUser(-1);
         try {
@@ -2454,7 +2453,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         case 1000004:
             v = mStatusBarView.findViewById(R.id.status_bar_activity_4);
             break;
-        case 1000005:
+        case 1500000:
+            v = mStatusBarView.findViewById(R.id.docked_status_bar_activity_0);
+            break;
+        case 1500001:
+            v = mStatusBarView.findViewById(R.id.docked_status_bar_activity_1);
+            break;
         default:
             v = mStatusBarView.findViewById(R.id.status_bar_activity_5);
             break;

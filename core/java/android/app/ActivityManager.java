@@ -307,6 +307,13 @@ public class ActivityManager {
     /** @hide Process is being cached for later use and is empty. */
     public static final int PROCESS_STATE_CACHED_EMPTY = 13;
 
+    // Duplicate with HOME_STACK_ID in ActivityStackSupervisor, which need be removed later.
+    //public static final int HOME_STACK_ID = 0;
+    // Hardcoded number anywhere, which need be replaced later.
+    //public static final int SYSTEM_STACK_ID = -1;
+    // For not running stack.
+    public static final int NOT_RUNNING_STACK_ID = -2;
+
     Point mAppTaskThumbnailSize;
 
     /*package*/ ActivityManager(Context context, Handler handler) {
