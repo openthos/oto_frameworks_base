@@ -117,6 +117,6 @@
     <string name="action_settings">Settings</string>
     <string name="name_sort">NameSort</string>
     <string name="time_sort">TimeSort</string>
-    <string name="frequency_sort">Frequency_sort</string>
+    <string name="type_sort">Typesort</string>
     <string name="system_loading">Loading...</string>
 </resources>

@@ -79,7 +79,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         private Context mContext;
         private View contentView;
-        private LinearLayout ll_layout,ll_loading;
+        private LinearLayout ll_layout;
         private TextView shut_text;
         private TextView my_computer, system_setting,name_sort,time_sort,frequency_sort;
         private PopupWindow popupWindow;
@@ -126,7 +126,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             setContentView(R.layout.start_activity);
             mContext=this;
             ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
-            ll_loading = (LinearLayout)findViewById(R.id.ll_loading);
 
             gv_view = (GridView) findViewById(R.id.gv_view);
             StartupMenuActivity.this.setFinishOnTouchOutside(true);
@@ -166,7 +165,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         private void concealProgressBar() {
-            ll_loading.setVisibility(View.GONE);
             mlistAppInfo = new ArrayList<AppInfo>();
         }
 
@@ -284,13 +282,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             case R.id.name_sort:
                 mlistAppInfo.clear();
                 browseAppAdapter.notifyDataSetChanged();
-                ll_loading.setVisibility(View.VISIBLE);
                 thread(FILTER_ALL_APP);
                 break;
             case R.id.time_sort:
                 mlistAppInfo.clear();
                 browseAppAdapter.notifyDataSetChanged();
-                ll_loading.setVisibility(View.VISIBLE);
                 thread(FILTER_TIME_SORT);
                 break;
             case R.id.frequency_sort:
@@ -300,7 +296,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 CLICKS++;
                 mlistAppInfo.clear();
                 browseAppAdapter.notifyDataSetChanged();
-                ll_loading.setVisibility(View.VISIBLE);
                 thread(CLICKS);
                 break;
             }
@@ -309,12 +304,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private void thread (final int a) {
             new Thread () {
                 public void run () {
-                    try {
-                        sleep(3000);
-                        handler.sendEmptyMessage(a);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    handler.sendEmptyMessage(a);
                 };
             }.start();
         }
