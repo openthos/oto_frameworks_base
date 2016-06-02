@@ -143,12 +143,6 @@ public class PhoneStatusBarView extends PanelBar {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if ((int)event.getX() > mBar.mIconSize) {
-            try {
-                ActivityManagerNative.getDefault().killStartupMenu();
-            } catch (Exception e) {
-            }
-        }
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             if (mNotificationPanel.getVisibility() == View.VISIBLE) {
                 mBar.makeExpandedInvisible();
@@ -162,6 +156,11 @@ public class PhoneStatusBarView extends PanelBar {
 
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
+        }
+
+        try {
+            ActivityManagerNative.getDefault().killStartupMenu();
+        } catch (Exception e) {
         }
 
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);

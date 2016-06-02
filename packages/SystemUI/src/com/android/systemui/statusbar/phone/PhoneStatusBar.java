@@ -295,13 +295,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     LinearLayout mStatusIcons;
     LinearLayout mStatusIconsKeyguard;
 
-    // the icons themselves
-    IconMerger mNotificationIcons;
-    View mNotificationIconArea;
-
-    // [+>
-    View mMoreIcon;
-
     // expanded notifications
     NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
     View mExpandedContents;
@@ -315,7 +308,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private QSPanel mQSPanel;
 
     // top bar
-    StatusBarHeaderView mHeader;
     KeyguardStatusBarView mKeyguardStatusBar;
     View mKeyguardStatusView;
     KeyguardBottomAreaView mKeyguardBottomArea;
@@ -684,8 +676,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
         mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
-        mNotificationIconArea = mStatusBarView.findViewById(R.id.notification_icon_area_inner);
-        mMoreIcon = mStatusBarView.findViewById(R.id.moreIcon);
         PackageManager pm1 = getPackageManagerForUser(-1);
         try {
             ApplicationInfo ai1 = pm1.getApplicationInfo("com.cyanogenmod.filemanager", 0);
@@ -739,8 +729,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView.setScrimController(mScrimController);
         mDozeScrimController = new DozeScrimController(mScrimController, context);
 
-        mHeader = (StatusBarHeaderView) mStatusBarWindow.findViewById(R.id.header);
-        mHeader.setActivityStarter(this);
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
         mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
         mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
@@ -806,23 +794,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (SignalClusterView) mStatusBarView.findViewById(R.id.signal_cluster);
         final SignalClusterView signalClusterKeyguard =
                 (SignalClusterView) mKeyguardStatusBar.findViewById(R.id.signal_cluster);
-        final SignalClusterView signalClusterQs =
-                (SignalClusterView) mHeader.findViewById(R.id.signal_cluster);
         mNetworkController.addSignalCluster(signalCluster);
         mNetworkController.addSignalCluster(signalClusterKeyguard);
-        mNetworkController.addSignalCluster(signalClusterQs);
         signalCluster.setSecurityController(mSecurityController);
         signalCluster.setNetworkController(mNetworkController);
         signalClusterKeyguard.setSecurityController(mSecurityController);
         signalClusterKeyguard.setNetworkController(mNetworkController);
-        signalClusterQs.setSecurityController(mSecurityController);
-        signalClusterQs.setNetworkController(mNetworkController);
         final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
         if (isAPhone) {
             mNetworkController.addEmergencyListener(new NetworkControllerImpl.EmergencyListener() {
                 @Override
                 public void setEmergencyCallsOnly(boolean emergencyOnly) {
-                    mHeader.setShowEmergencyCallsOnly(emergencyOnly);
                 }
             });
         }
@@ -876,7 +858,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mQSPanel.setTiles(qsh.getTiles());
             mBrightnessMirrorController = new BrightnessMirrorController(mStatusBarWindow);
             mQSPanel.setBrightnessMirror(mBrightnessMirrorController);
-            mHeader.setQSPanel(mQSPanel);
             qsh.setCallback(new QSTileHost.Callback() {
                 @Override
                 public void onTilesChanged() {
@@ -886,15 +867,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         // User info. Trigger first load.
-        mHeader.setUserInfoController(mUserInfoController);
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mUserInfoController.reloadUserInfo();
 
-        mHeader.setBatteryController(mBatteryController);
         ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
                 mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
-        mHeader.setNextAlarmController(mNextAlarmController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
@@ -1478,7 +1456,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         boolean showEmptyShade =
                 mState != StatusBarState.KEYGUARD &&
                         mNotificationData.getActiveNotifications().size() == 0;
-        mNotificationPanel.setShadeEmpty(showEmptyShade);
+        mNotificationPanel.setShadeEmpty(true);
     }
 
     private void updateSpeedbump() {
@@ -1500,44 +1478,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     protected void updateNotifications() {
-        // TODO: Move this into updateNotificationIcons()?
-        if (mNotificationIcons == null) return;
-
-
+        mNotificationData.filterAndSort();
+        updateNotificationShade();
     }
-
-    private void updateNotificationIcons() {
-        final LinearLayout.LayoutParams params
-            = new LinearLayout.LayoutParams(mIconSize + 2*mIconHPadding, mNaturalBarHeight);
-
-        ArrayList<Entry> activeNotifications = mNotificationData.getActiveNotifications();
-        final int N = activeNotifications.size();
-        ArrayList<StatusBarIconView> toShow = new ArrayList<>(N);
-
-        // Filter out notifications with low scores.
-        for (int i = 0; i < N; i++) {
-            Entry ent = activeNotifications.get(i);
-            if (ent.notification.getScore() < HIDE_ICONS_BELOW_SCORE &&
-                    !NotificationData.showNotificationEvenIfUnprovisioned(ent.notification)) {
-                continue;
-            }
-            toShow.add(ent.icon);
-        }
-
-
-        ArrayList<View> toRemove = new ArrayList<View>();
-
-        final int toRemoveCount = toRemove.size();
-
-        for (int i=0; i<toShow.size(); i++) {
-            View v = toShow.get(i);
-            if (v.getParent() == null) {
-                mNotificationIcons.addView(v, i, params);
-            }
-        }
-    }
-
-        // Resort notification icons
 
     @Override
     protected void updateRowStates() {
@@ -1944,17 +1887,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 // close recents if it's visible
                 mHandler.removeMessages(MSG_HIDE_RECENT_APPS);
                 mHandler.sendEmptyMessage(MSG_HIDE_RECENT_APPS);
-            }
-        }
-
-        if ((diff & StatusBarManager.DISABLE_NOTIFICATION_ICONS) != 0) {
-            if ((state & StatusBarManager.DISABLE_NOTIFICATION_ICONS) != 0) {
-                if (mTicking) {
-                    haltTicker();
-                }
-                animateStatusBarHide(mNotificationIconArea, animate);
-            } else {
-                animateStatusBarShow(mNotificationIconArea, animate);
             }
         }
 
@@ -2464,8 +2396,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             break;
         }
 
-        Log.i(TAG, String.format("========================= gchen_tag: catch showStatusbarActivity() activity id: %d, show: %d -------------------, pkg ",
-                                 statusbarActivityId, show ? 1 : 0) + pkg);
         if (show == true) {
             ((ImageView)v).setImageDrawable(pkgicon);
         }
@@ -3452,15 +3382,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mNetworkController != null && (modeChange || command.equals(COMMAND_NETWORK))) {
             mNetworkController.dispatchDemoCommand(command, args);
-        }
-        if (modeChange || command.equals(COMMAND_NOTIFICATIONS)) {
-            View notifications = mStatusBarView == null ? null
-                    : mStatusBarView.findViewById(R.id.notification_icon_area);
-            if (notifications != null) {
-                String visible = args.getString("visible");
-                int vis = mDemoMode && "false".equals(visible) ? View.INVISIBLE : View.VISIBLE;
-                notifications.setVisibility(vis);
-            }
         }
         if (command.equals(COMMAND_BARS)) {
             String mode = args.getString("mode");

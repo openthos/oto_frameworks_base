@@ -463,6 +463,7 @@ public class NotificationStackScrollLayout extends ViewGroup
      * @param height the new height of the stack
      */
     public void setStackHeight(float height) {
+        height = 300.0f;  // FIXME: need read from xml config file, next.
         mLastSetStackHeight = height;
         setIsExpanded(height > 0.0f);
         int newStackHeight = (int) height;
