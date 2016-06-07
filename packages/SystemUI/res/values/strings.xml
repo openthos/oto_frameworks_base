@@ -44,6 +44,12 @@
         <item quantity="other">%d screens in Overview</item>
     </plurals>
 
+    <string name="status_bar_maxmize">Maxmize window</string>
+    <string name="status_bar_minimize">Minimize window</string>
+    <string name="status_bar_dock">Dock to statusbar</string>
+    <string name="status_bar_undock">Undock from statusbar</string>
+    <string name="status_bar_open">Open window</string>
+    <string name="status_bar_close">Close window</string>
     <!-- The label in the bar at the top of the status bar when there are no notifications
          showing.  [CHAR LIMIT=40]-->
     <string name="status_bar_no_notifications_title">No notifications</string>

@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.util.Slog;
+import android.graphics.Rect;
 
 import com.android.internal.statusbar.IStatusBar;
 import com.android.internal.statusbar.IStatusBarService;
@@ -153,10 +154,30 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
 
         @Override
-        public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
+        public void showStatusbarActivity(int stackId, String pkg) {
             if (mBar != null) {
                 try {
-                    mBar.showStatusbarActivity(statusbarActivityId, show, pkg);
+                    mBar.showStatusbarActivity(stackId, pkg);
+                } catch (RemoteException e) {
+                }
+            }
+        }
+
+        @Override
+        public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+            if (mBar != null) {
+                try {
+                    mBar.saveInfoInStatusbarActivity(stackId, rect);
+                } catch (RemoteException e) {
+                }
+            }
+        }
+
+        @Override
+        public void removeStatusbarActivity(int stackId) {
+            if (mBar != null) {
+                try {
+                    mBar.removeStatusbarActivity(stackId);
                 } catch (RemoteException e) {
                 }
             }

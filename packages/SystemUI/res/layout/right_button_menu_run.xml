@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#88000000"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/rbm_close"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_close" />
+
+    <TextView
+        android:id="@+id/rbm_dock"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_dock" />
+
+</LinearLayout>

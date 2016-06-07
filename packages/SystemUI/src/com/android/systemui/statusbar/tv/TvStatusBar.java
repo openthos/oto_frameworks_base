@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar.tv;
 
+import android.graphics.Rect;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService.RankingMap;
 import android.service.notification.StatusBarNotification;
@@ -88,6 +89,18 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override // CommandQueue
+    public void showStatusbarActivity(int stackId, String pkg) {
+    }
+
+    @Override // CommandQueue
+    public void removeStatusbarActivity(int stackId) {
+    }
+
+    @Override // CommandQueue
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+    }
+
+    @Override // CommandQueue
     public void setWindowState(int window, int state) {
     }
 
@@ -101,10 +114,6 @@ public class TvStatusBar extends BaseStatusBar {
 
     @Override // CommandQueue
     public void notificationLightPulse(int argb, int onMillis, int offMillis) {
-    }
-
-    @Override // CommandQueue
-    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
     }
 
     @Override

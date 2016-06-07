@@ -381,9 +381,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     /* At present, totally, we only provide 6 statusbar activities */
     static final int STATUSBAR_ACTIVITY_ID_START = KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START;
-    static final int STATUSBAR_ACTIVITY_ID_END = STATUSBAR_ACTIVITY_ID_START + 6;
-    static final int STATUSBAR_DOCKED_ACTIVITY_ID_START = KeyEvent.KEYCODE_DOCKED_STATUSBAR_ACTIVITY_ID_START;
-    static final int STATUSBAR_DOCKED_ACTIVITY_ID_END = STATUSBAR_DOCKED_ACTIVITY_ID_START + 6;
+    static final int STATUSBAR_ACTIVITY_ID_END =KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_END;
 
     private static final long GABAGE_REMOVE_INTERVAL = 100; // 0.1 second
     private static final long FOCUS_JUST_CHANGED_TIMES = 2; // about 0.2 second
@@ -444,7 +442,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         return null;
     }
 
-    ArrayList<StatusbarActivity> mStatusbarActivities = new ArrayList<StatusbarActivity>();
+    ArrayList<Integer> mStatusbarActivities = new ArrayList<Integer>();
     final Thread mSBAThread;
 
     /**
@@ -19850,22 +19848,12 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
-    public class StatusbarActivity {
-        int mActivityId;   /* For status bar activity */
-        int mStackId;      /* The related ActivityStack */
-        boolean mHiden;    /* The related ActivityStack whether is already hide or not */
-        boolean mApkRun;
-        boolean mIsDocked;
-        String mPkgName;
-        Rect mRestoreRect = new Rect(); /* Retore the original layout if mHiden is true */
-    }
-
     private boolean killUselessStatusbarActivity() {
         for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            int stackId = mStatusbarActivities.get(idx).mStackId;
+            int stackId = mStatusbarActivities.get(idx);
             /* The stack id is always increating, so need not care about reusing sync */
-            if (mStackSupervisor.isStackDisappear(stackId) && !mStatusbarActivities.get(idx).mIsDocked) {
-                removeStatusbarActivity(stackId, true, 0);
+            if (mStackSupervisor.isStackDisappear(stackId)) {
+                removeStatusbarActivity(stackId);
                 Slog.i(TAG, String.format("============== gchen_tag: remove stack: %d", stackId));
                 return true;
             }
@@ -19873,123 +19861,26 @@ public final class ActivityManagerService extends ActivityManagerNative
         return false;
     }
 
-    private int findStatusbarActivityId(int statusbarActivityId) {
-        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            if (statusbarActivityId == mStatusbarActivities.get(idx).mActivityId) {
-                return idx;
-            }
-        }
-        return -1;
-    }
-
-    private int findStatusbarActivityByStackId(int stackId) {
-        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            StatusbarActivity a = mStatusbarActivities.get(idx);
-            if (stackId == a.mStackId) {
-                return idx;
-            }
-        }
-        return -1;
-    }
-
-    private void removeStatusbarActivity(int stackId, boolean force, int activities) {
-        int idx = findStatusbarActivityByStackId(stackId);
-        if (idx >= 0) {
-            final StatusbarActivity a = mStatusbarActivities.get(idx);
-            if ((force == false) && (activities > 0)) {
-                return;
-            }
-            if (a.mIsDocked) {
-                a.mApkRun = false;
-                a.mStackId = ActivityManager.NOT_RUNNING_STACK_ID;
-                return;
-            }
-            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
-            statusBarManager.showStatusbarActivity(a.mActivityId, false, "gone");
-            mStatusbarActivities.remove(idx);
-        }
-    }
-
-    public boolean findDockedStatusbarActivity(String pkg){
-        for (int idx = mStatusbarActivities.size() - 1; idx >= 0; --idx) {
-            if (pkg.equals(mStatusbarActivities.get(idx).mPkgName)) {
-                return mStatusbarActivities.get(idx).mIsDocked;
-            }
-        }
-        return false;
+    private void removeStatusbarActivity(int stackId) {
+        StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+        statusBarManager.removeStatusbarActivity(stackId);
+        mStatusbarActivities.remove((Integer)stackId);
     }
 
     @Override
-    public int createStatusbarActivity(int stackId, String pkg, boolean apkRun, boolean isDocked) {
-        int id = (isDocked) ? STATUSBAR_DOCKED_ACTIVITY_ID_START : STATUSBAR_ACTIVITY_ID_START;
-
+    public void createStatusbarActivity(int stackId, String pkg) {
         synchronized (mSBAThread) {
-            removeStatusbarActivity(stackId, true, 0);
-            for (; id < STATUSBAR_DOCKED_ACTIVITY_ID_END; id++) {
-                int index = findStatusbarActivityId(id);
-                if ( index  == -1 && !findDockedStatusbarActivity(pkg)){
-                    StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
-                    final StatusbarActivity a = new StatusbarActivity();
-
-                    a.mActivityId = id;
-                    a.mStackId = stackId;
-                    a.mHiden = false;
-                    a.mPkgName = pkg;
-                    a.mApkRun = apkRun;
-                    a.mIsDocked = isDocked;
-                    mStatusbarActivities.add(a);
-                    statusBarManager.showStatusbarActivity(id, true, pkg);
-                    break;
-                } else if(index != -1 && pkg.equals(mStatusbarActivities.get(index).mPkgName)) {
-                    mStatusbarActivities.get(index).mStackId = stackId;
-                    mStatusbarActivities.get(index).mHiden = false;
-                    mStatusbarActivities.get(index).mApkRun = apkRun;
-                    break;
-                }
-            }
+            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+            statusBarManager.showStatusbarActivity(stackId, pkg);
+            mStatusbarActivities.add((Integer)stackId);
         }
-        return (id == STATUSBAR_DOCKED_ACTIVITY_ID_END) ? -1 : id;
     }
 
     @Override
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
         synchronized (mSBAThread) {
-            int idx = findStatusbarActivityByStackId(stackId);
-            if (idx < 0) {
-                return;
-            }
-
-            StatusbarActivity a = mStatusbarActivities.get(idx);
-            a.mHiden = true;
-            a.mRestoreRect.set(rect);
-        }
-    }
-
-    @Override
-    public void touchStatusbarActivity(int statusbarActivityId) {
-        synchronized (mSBAThread) {
-            int idx = findStatusbarActivityId(statusbarActivityId);
-            if (idx < 0) {
-                return;
-            }
-
-            StatusbarActivity a = mStatusbarActivities.get(idx);
-            if (a.mIsDocked && !a.mApkRun) {
-                try {
-                    PackageManager manager = mContext.getPackageManager();
-                    Intent lanuch = new Intent();
-                    lanuch = manager.getLaunchIntentForPackage(a.mPkgName);
-                    lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    mContext.startActivity(lanuch);
-                } catch(Exception e) {
-                }
-                return;
-            }
-            if (a.mHiden == true) {
-                relayoutWindow(a.mStackId, a.mRestoreRect);
-                a.mHiden = false;
-            }
-            setFocusedStack(a.mStackId);
+            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+            statusBarManager.saveInfoInStatusbarActivity(stackId, rect);
         }
     }
 
@@ -20025,7 +19916,9 @@ public final class ActivityManagerService extends ActivityManagerNative
         boolean succeed;
 
         synchronized (mSBAThread) {
-            removeStatusbarActivity(stackId, individual, activities);
+            if(individual && activities == 0) {
+                removeStatusbarActivity(stackId);
+            }
         }
 
         if (!individual) {

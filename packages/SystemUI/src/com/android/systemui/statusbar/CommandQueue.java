@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar;
 
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -58,6 +59,8 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_NOTIFICATION_LIGHT_PULSE   = 17 << MSG_SHIFT;
     private static final int MSG_SHOW_SCREEN_PIN_REQUEST    = 18 << MSG_SHIFT;
     private static final int MSG_SHOW_STATUSBAR_ACTIVITY    = 19 << MSG_SHIFT;
+    private static final int MSG_SAVEINFO_STATUSBAR_ACTIVITY    = 20 << MSG_SHIFT;
+    private static final int MSG_REMOVE_STATUSBAR_ACTIVITY  = 21 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -100,7 +103,9 @@ public class CommandQueue extends IStatusBar.Stub {
         public void notificationLightOff();
         public void notificationLightPulse(int argb, int onMillis, int offMillis);
         public void showScreenPinningRequest();
-        public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg);
+        public void showStatusbarActivity(int stackId, String pkg);
+        public void saveInfoInStatusbarActivity(int stackId, Rect rect);
+        public void removeStatusbarActivity(int stackId);
     }
 
     public CommandQueue(Callbacks callbacks, StatusBarIconList list) {
@@ -248,10 +253,24 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
-    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
+    public void showStatusbarActivity(int stackId, String pkg) {
         synchronized (mList) {
             // don't coalesce these
-            mHandler.obtainMessage(MSG_SHOW_STATUSBAR_ACTIVITY, statusbarActivityId, show ? 1 : 0, pkg).sendToTarget();
+            mHandler.obtainMessage(MSG_SHOW_STATUSBAR_ACTIVITY, stackId, 0,  pkg).sendToTarget();
+        }
+    }
+
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+        synchronized (mList) {
+            // don't coalesce these
+            mHandler.obtainMessage(MSG_SAVEINFO_STATUSBAR_ACTIVITY, stackId, 0,  rect).sendToTarget();
+        }
+    }
+
+    public void removeStatusbarActivity(int stackId) {
+        synchronized (mList) {
+            // don't coalesce these
+            mHandler.obtainMessage(MSG_REMOVE_STATUSBAR_ACTIVITY, stackId).sendToTarget();
         }
     }
 
@@ -338,7 +357,13 @@ public class CommandQueue extends IStatusBar.Stub {
                     mCallbacks.showScreenPinningRequest();
                     break;
                 case MSG_SHOW_STATUSBAR_ACTIVITY:
-                    mCallbacks.showStatusbarActivity(msg.arg1, msg.arg2 != 0, (String)msg.obj);
+                    mCallbacks.showStatusbarActivity(msg.arg1, (String)msg.obj);
+                    break;
+                case MSG_SAVEINFO_STATUSBAR_ACTIVITY:
+                    mCallbacks.saveInfoInStatusbarActivity(msg.arg1, (Rect)msg.obj);
+                    break;
+                case MSG_REMOVE_STATUSBAR_ACTIVITY:
+                    mCallbacks.removeStatusbarActivity((int)msg.obj);
                     break;
             }
         }

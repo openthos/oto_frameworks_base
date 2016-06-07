@@ -18,6 +18,7 @@ package com.android.internal.statusbar;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import android.service.notification.StatusBarNotification;
+import android.graphics.Rect;
 
 /** @hide */
 oneway interface IStatusBar
@@ -44,6 +45,8 @@ oneway interface IStatusBar
     void cancelPreloadRecentApps();
     void showScreenPinningRequest();
 
-    void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg);
+    void showStatusbarActivity(int stackId, String pkg);
+    void saveInfoInStatusbarActivity(int stackId, in Rect rect);
+    void removeStatusbarActivity(int stackId);
 }
 

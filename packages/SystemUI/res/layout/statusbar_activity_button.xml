@@ -1,0 +1,8 @@
+<com.android.systemui.statusbar.policy.ActivityKeyView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/statusbar_activity_button"
+    android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:paddingStart="6dip"
+    android:paddingBottom="2dip"
+    android:scaleType="centerInside" />

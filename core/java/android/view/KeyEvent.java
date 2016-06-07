@@ -759,12 +759,10 @@ public class KeyEvent extends InputEvent implements Parcelable {
 
 
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_START = 1000000;
-    public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_END = 1500000;
-    public static final int KEYCODE_DOCKED_STATUSBAR_ACTIVITY_ID_START = KEYCODE_STATUSBAR_ACTIVITY_ID_END;
-    public static final int KEYCODE_DOCKED_STATUSBAR_ACTIVITY_ID_END = 2000000;
+    public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_END = 2000000;
 
     /** Startup Menu */
-    public static final int KEYCODE_STARTUPMENU = KEYCODE_DOCKED_STATUSBAR_ACTIVITY_ID_END;
+    public static final int KEYCODE_STARTUPMENU = KEYCODE_STATUSBAR_ACTIVITY_ID_END;
 
     private static final int LAST_KEYCODE = KEYCODE_STARTUPMENU + 1;
 

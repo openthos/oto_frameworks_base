@@ -117,9 +117,11 @@ import android.view.animation.PathInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.statusbar.StatusbarActivity;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.BatteryMeterView;
@@ -162,6 +164,7 @@ import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.HotspotControllerImpl;
 import com.android.systemui.statusbar.policy.KeyButtonView;
+import com.android.systemui.statusbar.policy.ActivityKeyView;
 import com.android.systemui.statusbar.policy.KeyguardMonitor;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.LocationControllerImpl;
@@ -294,6 +297,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // left-hand icons
     LinearLayout mStatusIcons;
     LinearLayout mStatusIconsKeyguard;
+
+    // status_bar_activity
+    LinearLayout mStatusBarActivities;
 
     // expanded notifications
     NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
@@ -644,7 +650,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
-
+        mStatusBarActivities = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_activity_contents);
+        loadDockedApk("com.cyanogenmod.filemanager");
+        loadDockedApk("com.android.browser");
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
 
@@ -676,17 +684,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
         mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
-        PackageManager pm1 = getPackageManagerForUser(-1);
-        try {
-            ApplicationInfo ai1 = pm1.getApplicationInfo("com.cyanogenmod.filemanager", 0);
-            ActivityManagerNative.getDefault().createStatusbarActivity(
-                      ActivityManager.NOT_RUNNING_STACK_ID, "com.cyanogenmod.filemanager", false, true);
-            ApplicationInfo ai2 = pm1.getApplicationInfo("com.android.browser", 0);
-            ActivityManagerNative.getDefault().createStatusbarActivity(
-                      ActivityManager.NOT_RUNNING_STACK_ID, "com.android.browser", false, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
 
         mStackScroller = (NotificationStackScrollLayout) mStatusBarWindow.findViewById(
@@ -2335,6 +2332,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         checkBarModes();
     }
 
+    private void loadDockedApk(String pkg) {
+        try {
+            LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            PackageManager pm = getPackageManagerForUser(-1);
+            ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+            Drawable pkgicon = pm.getApplicationIcon(ai);
+            ActivityKeyView akv = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
+            StatusbarActivity sa = new StatusbarActivity(ActivityManager.NOT_RUNNING_STACK_ID, pkg, true, false);
+            akv.setStatusbarActivity(sa);
+            ((ImageView)akv).setImageDrawable(pkgicon);
+            akv.setVisibility(View.VISIBLE);
+            mStatusBarActivities.addView(akv);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override // CommandQueue
     public void setWindowState(int window, int state) {
         boolean showing = state == WINDOW_STATE_SHOWING;
@@ -2349,57 +2363,87 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    public int findStatusbarActivityByPkg(String Pkg) {
+        for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
+           if (mStatusBarActivities.getChildAt(i) instanceof ActivityKeyView) {
+                ActivityKeyView kbv = (ActivityKeyView) mStatusBarActivities.getChildAt(i);
+                if(kbv.getVisibility() == View.GONE) {
+                    mStatusBarActivities.removeView(kbv);
+                    continue;
+                }
+                if(kbv.getStatusbarActivity().mPkgName.equals(Pkg)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     @Override // CommandQueue
-    public void showStatusbarActivity(int statusbarActivityId, boolean show, String pkg) {
-        final View v;
+    public void showStatusbarActivity(int stackId, String pkg) {
+        final ActivityKeyView v;
 
         if (mStatusBarWindow == null) {
             return;
         }
-        Drawable pkgicon = null;
-        PackageManager pm = getPackageManagerForUser(-1);
-        try {
-            final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
-            if (ai != null) {
-                pkgicon = pm.getApplicationIcon(ai);
-            } else {
+
+        int idx = findStatusbarActivityByPkg(pkg);
+
+        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (idx == -1) {
+            Drawable pkgicon = null;
+            PackageManager pm = getPackageManagerForUser(-1);
+            try {
+                final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+                if (ai != null) {
+                    pkgicon = pm.getApplicationIcon(ai);
+                } else {
+                    pkgicon = pm.getDefaultActivityIcon();
+                }
+            } catch (NameNotFoundException e) {
                 pkgicon = pm.getDefaultActivityIcon();
             }
-        } catch (NameNotFoundException e) {
-            pkgicon = pm.getDefaultActivityIcon();
-        }
-
-        switch (statusbarActivityId) {
-        case 1000000:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_0);
-            break;
-        case 1000001:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_1);
-            break;
-        case 1000002:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_2);
-            break;
-        case 1000003:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_3);
-            break;
-        case 1000004:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_4);
-            break;
-        case 1500000:
-            v = mStatusBarView.findViewById(R.id.docked_status_bar_activity_0);
-            break;
-        case 1500001:
-            v = mStatusBarView.findViewById(R.id.docked_status_bar_activity_1);
-            break;
-        default:
-            v = mStatusBarView.findViewById(R.id.status_bar_activity_5);
-            break;
-        }
-
-        if (show == true) {
+            v = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
+            StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
+            v.setStatusbarActivity(sa);
             ((ImageView)v).setImageDrawable(pkgicon);
+            v.setVisibility(View.VISIBLE);
+            mStatusBarActivities.addView(v);
+        } else {
+            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).activityStart(stackId);
         }
-        v.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public int findStatusbarActivityByStackId(int stackId) {
+        for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
+           if (mStatusBarActivities.getChildAt(i) instanceof ActivityKeyView) {
+                ActivityKeyView kbv = (ActivityKeyView) mStatusBarActivities.getChildAt(i);
+                if(kbv.getStatusbarActivity().mStackId == stackId) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    @Override // CommandQueue
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+        int idx = findStatusbarActivityByStackId(stackId);
+        if(idx >= 0) {
+            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).saveStackInfo(rect);
+        }
+    }
+
+    @Override // CommandQueue
+    public void removeStatusbarActivity(int stackId) {
+        int idx = findStatusbarActivityByStackId(stackId);
+        if(idx >= 0) {
+            if(!((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).getStatusbarActivity().mIsDocked) {
+                mStatusBarActivities.removeView((ActivityKeyView) mStatusBarActivities.getChildAt(idx));
+            } else {
+                ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).activityClosed();
+            }
+        }
     }
 
     @Override // CommandQueue

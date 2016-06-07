@@ -53,7 +53,7 @@ public class KeyButtonView extends ImageView {
     public static final float DEFAULT_QUIESCENT_ALPHA = 1f;
 
     private long mDownTime;
-    private int mCode;
+    protected int mCode;
     private int mTouchSlop;
     private float mDrawingAlpha = 1f;
     private float mQuiescentAlpha = DEFAULT_QUIESCENT_ALPHA;

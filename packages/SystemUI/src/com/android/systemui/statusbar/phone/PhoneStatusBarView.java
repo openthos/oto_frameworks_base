@@ -29,6 +29,7 @@ import android.view.accessibility.AccessibilityEvent;
 
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.policy.ActivityKeyView;
 
 public class PhoneStatusBarView extends PanelBar {
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
@@ -203,6 +204,9 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            ActivityKeyView.dismissRBM();
+        }
         return mBar.interceptTouchEvent(event) || super.onInterceptTouchEvent(event);
     }
 

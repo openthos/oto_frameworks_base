@@ -42,185 +42,112 @@
         android:visibility="gone"
         android:layout_gravity="bottom"
         />
-
-    <LinearLayout android:id="@+id/status_bar_contents_left"
-        android:layout_width="700dip"
-        android:layout_height="@dimen/status_bar_height"
-        android:paddingStart="6dp"
-        android:paddingEnd="8dp"
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        >
+        android:layout_gravity="bottom">
+
         <com.android.systemui.statusbar.policy.KeyButtonView
             android:id="@+id/status_bar_startup_menu"
             android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_height="match_parent"
             android:paddingStart="6dip"
             android:paddingBottom="2dip"
             android:src="@drawable/ic_sysbar_menu"
             android:scaleType="centerInside"
             systemui:keyCode="2000000"
             systemui:keyRepeat="true"
+            android:layout_gravity="bottom"
             />
-	<com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/docked_status_bar_activity_0"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/startmenu_file_manager_image"
-            android:scaleType="centerInside"
-            systemui:keyCode="1500000"
-            systemui:keyRepeat="true"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/docked_status_bar_activity_1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/startmenu_browser_image"
-            android:scaleType="centerInside"
-            systemui:keyCode="1500001"
-            systemui:keyRepeat="true"
-            />
-
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_0"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000000"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000001"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000002"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000003"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_4"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000004"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-        <com.android.systemui.statusbar.policy.KeyButtonView
-            android:id="@+id/status_bar_activity_5"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingStart="6dip"
-            android:paddingBottom="2dip"
-            android:src="@drawable/ic_sysbar_lights_out_dot_small"
-            android:scaleType="centerInside"
-            systemui:keyCode="1000005"
-            systemui:keyRepeat="true"
-            android:visibility="gone"
-            />
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/status_bar_contents"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/status_bar_height"
-        android:paddingStart="6dp"
-        android:paddingEnd="8dp"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        >
-
-        <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
-            android:id="@+id/notification_icon_area"
-            android:layout_width="0dip"
+        <HorizontalScrollView
+            android:id="@+id/status_bar_scroll_view"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            >
-            <!-- The alpha of this area is both controlled from PhoneStatusBarTransitions and
-                 PhoneStatusBar (DISABLE_NOTIFICATION_ICONS), so we need two views here. -->
-            <com.android.keyguard.AlphaOptimizedLinearLayout
-                android:id="@+id/notification_icon_area_inner"
+            android:layout_toRightOf="@+id/status_bar_startup_menu"
+            android:layout_toLeftOf="@+id/status_bar_contents">
+
+            <LinearLayout android:id="@+id/status_bar_activity_contents"
+                android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingStart="6dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal"
                 >
-                <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
-                    android:layout_width="@dimen/status_bar_icon_size"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/stat_notify_more"
-                    android:visibility="gone"
-                    />
-                <com.android.systemui.statusbar.phone.IconMerger android:id="@+id/notificationIcons"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"/>
-            </com.android.keyguard.AlphaOptimizedLinearLayout>
-        </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
 
-        <com.android.keyguard.AlphaOptimizedLinearLayout android:id="@+id/system_icon_area"
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <LinearLayout android:id="@+id/status_bar_contents"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:paddingStart="6dp"
+            android:paddingEnd="8dp"
+            android:layout_alignParentRight="true"
             android:orientation="horizontal"
-            android:layout_gravity="bottom"
             >
 
-            <include layout="@layout/system_icons" />
+            <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
+                android:id="@+id/notification_icon_area"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                >
+                <!-- The alpha of this area is both controlled from PhoneStatusBarTransitions and
+                     PhoneStatusBar (DISABLE_NOTIFICATION_ICONS), so we need two views here. -->
+                <com.android.keyguard.AlphaOptimizedLinearLayout
+                    android:id="@+id/notification_icon_area_inner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
+                        android:layout_width="@dimen/status_bar_icon_size"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/stat_notify_more"
+                        android:visibility="gone"
+                        />
+                    <com.android.systemui.statusbar.phone.IconMerger android:id="@+id/notificationIcons"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"/>
+                </com.android.keyguard.AlphaOptimizedLinearLayout>
+                <View
+                    android:layout_width="5dp"
+                    android:layout_height="match_parent"
+                />
+            </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
 
-            <com.android.systemui.statusbar.policy.Clock
-                android:id="@+id/clock"
-                android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+            <com.android.keyguard.AlphaOptimizedLinearLayout android:id="@+id/system_icon_area"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:singleLine="true"
-                android:paddingStart="7dp"
-                android:gravity="center_vertical|start"
-                />
-        </com.android.keyguard.AlphaOptimizedLinearLayout>
-        <View
-            android:layout_width="5dp"
-            android:layout_height="match_parent"
-        />
-    </LinearLayout>
+                android:orientation="horizontal"
+                >
+
+                <include layout="@layout/system_icons" />
+
+                <com.android.systemui.statusbar.policy.Clock
+                    android:id="@+id/clock"
+                    android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:singleLine="true"
+                    android:paddingStart="7dp"
+                    android:gravity="center_vertical|start"
+                    />
+            </com.android.keyguard.AlphaOptimizedLinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
 
     <ViewStub
         android:id="@+id/ticker_stub"
