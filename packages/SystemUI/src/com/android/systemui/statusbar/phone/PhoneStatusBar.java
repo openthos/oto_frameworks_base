@@ -2387,7 +2387,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return;
         }
 
-        int idx = findStatusbarActivityByPkg(pkg);
+        int idx = findStatusbarActivityByStackId(stackId);
+        if (idx >= 0 ) {
+            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).resizeStack();
+            return;
+        }
+
+        idx = findStatusbarActivityByPkg(pkg);
 
         LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (idx == -1) {
@@ -2410,7 +2416,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             v.setVisibility(View.VISIBLE);
             mStatusBarActivities.addView(v);
         } else {
-            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).activityStart(stackId);
+            ActivityKeyView akv = (ActivityKeyView) mStatusBarActivities.getChildAt(idx);
+            akv.resizeStack();
+            akv.activityStart(stackId);
         }
     }
 

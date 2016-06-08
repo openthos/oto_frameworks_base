@@ -19867,6 +19867,16 @@ public final class ActivityManagerService extends ActivityManagerNative
         mStatusbarActivities.remove((Integer)stackId);
     }
 
+    public void resizeStatusbarActivity(int stackId){
+        synchronized (mSBAThread) {
+            if (mStatusbarActivities.indexOf((Integer)stackId) != -1) {
+                StatusBarManagerInternal statusBarManager =
+                        LocalServices.getService(StatusBarManagerInternal.class);
+                statusBarManager.showStatusbarActivity(stackId, "");
+            }
+        }
+    }
+
     @Override
     public void createStatusbarActivity(int stackId, String pkg) {
         synchronized (mSBAThread) {

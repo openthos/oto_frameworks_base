@@ -219,7 +219,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Intent intent = mlistAppInfo.get(position).getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
 

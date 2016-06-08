@@ -2062,6 +2062,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                             + " from " + intentActivity);
                     targetStack.moveToFront("intentActivityFound");
                     final ActivityStack lastStack = mFocusedStack;
+                    mService.resizeStatusbarActivity(targetStack.mStackId);
                     setFocusedStack(targetStack.mStackId, "1st call in startActivityUncheckedLocked");
                     if (intentActivity.task.intent == null) {
                         // This task was started because of movement of

@@ -207,6 +207,17 @@ public class ActivityKeyView extends ImageView {
         }
     }
 
+    public void resizeStack(){
+        if(mActivity.mHiden){
+            //Resize
+            try {
+                ActivityManagerNative.getDefault().relayoutWindow(mActivity.mStackId,
+                                                                  mActivity.mRestoreRect);
+            } catch(Exception exc) {
+            }
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         int button = e.getButtonState();
@@ -257,18 +268,10 @@ public class ActivityKeyView extends ImageView {
                     } catch(Exception exc) {
                     }
                 } else if(mActivity.mHiden) {
-                    //Resize
-                    try {
-                    ActivityManagerNative.getDefault().relayoutWindow(mActivity.mStackId, mActivity.mRestoreRect);
-                    } catch(Exception exc) {
-                    }
+                    resizeStack();
                 }
             } else if(mActivity.mHiden) {
-                //Resize
-                try {
-                ActivityManagerNative.getDefault().relayoutWindow(mActivity.mStackId, mActivity.mRestoreRect);
-                } catch(Exception exc) {
-                }
+                resizeStack();
             }
             setFocusedStack();
         }
