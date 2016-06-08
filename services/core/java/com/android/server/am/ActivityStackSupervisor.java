@@ -20,6 +20,7 @@ package com.android.server.am;
 import static android.Manifest.permission.START_ANY_ACTIVITY;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_TASK_ON_HOME;
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.android.server.am.ActivityManagerService.localLOGV;
 import static com.android.server.am.ActivityManagerService.DEBUG_CONFIGURATION;
@@ -1631,7 +1632,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
             boolean isMultiwindow = (intentFlags & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) != 0;
-            boolean runFullScreen = (intentFlags & Intent.FLAG_RUN_FULLSCREEN) != 0;
+            boolean runFullScreen = (intentFlags
+                                     & (Intent.FLAG_RUN_FULLSCREEN
+                                        | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN))
+                                    != 0;
 
             /**
              * Date: Feb 27, 2014

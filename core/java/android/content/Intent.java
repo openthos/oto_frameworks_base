@@ -3507,6 +3507,15 @@ public class Intent implements Parcelable, Cloneable {
     /** {@hide} */
     public static final String EXTRA_REASON = "android.intent.extra.REASON";
 
+    /**
+     * For passing Rect
+     */
+    public static final String EXTRA_RECT_NAME = "android.intent.extra.rect_name";
+    public static final String EXTRA_RECT_LEFT = "android.intent.extra.rect_left";
+    public static final String EXTRA_RECT_TOP = "android.intent.extra.rect_top";
+    public static final String EXTRA_RECT_RIGHT = "android.intent.extra.rect_right";
+    public static final String EXTRA_RECT_BOTTOM = "android.intent.extra.rect_bottom";
+
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).
@@ -3618,6 +3627,11 @@ public class Intent implements Parcelable, Cloneable {
      * {@hide}
      */
     public static final int FLAG_ACTIVITY_RUN_STARTUP_MENU = 0x00000200;
+
+    /**
+     * Both full screen and single window.
+     */
+    public static final int FLAG_ACTIVITY_SINGLE_FULLSCREEN = 0x00000400;
 
     /**
      * When combined with {@link #FLAG_GRANT_READ_URI_PERMISSION} and/or

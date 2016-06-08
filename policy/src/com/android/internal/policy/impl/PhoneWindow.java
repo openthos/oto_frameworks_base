@@ -42,6 +42,7 @@ import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
@@ -306,6 +307,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private Boolean mSharedElementsUseOverlay;
 
     private Rect mTempRect;
+
+    private Intent mIntentLineRect = new Intent();
 
     static class WindowManagerHolder {
         static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
@@ -3444,7 +3447,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     }
 
     private class TouchListener implements OnTouchListener {
-        private boolean mRelayoutSuccess = false;
         private Rect mFrame = new Rect();
         private Rect mNewFrame;
         private int mLastX = 0;
@@ -3503,6 +3505,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
         }
 
+        private void sendNewFrame(int flags) {
+            mIntentLineRect.setFlags(flags);
+            mIntentLineRect.putExtra(Intent.EXTRA_RECT_LEFT, mNewFrame.left);
+            mIntentLineRect.putExtra(Intent.EXTRA_RECT_TOP, mNewFrame.top);
+            mIntentLineRect.putExtra(Intent.EXTRA_RECT_RIGHT, mNewFrame.right);
+            mIntentLineRect.putExtra(Intent.EXTRA_RECT_BOTTOM, mNewFrame.bottom);
+            getContext().startActivity(mIntentLineRect);
+        }
+
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             int rawX = (int) event.getRawX();
@@ -3514,11 +3525,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mLastY = (int) event.getRawY();
                 mResizeWindow.mLastDx = 0;
                 mResizeWindow.mLastDy = 0;
-                mRelayoutSuccess = false;
                 mFrame.set(mDecor.getViewRootImpl().mWinFrame);
                 mNewFrame = mFrame;
                 getResizeWays(rawX, rawY);
                 InputManager.getInstance().setPointerIcon(mResizeWays);
+                if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
+                    sendNewFrame(Intent.FLAG_ACTIVITY_NEW_TASK
+                                 | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
+                                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                }
             }
             if(MotionEvent.ACTION_MOVE == event.getAction()) {
                 try {
@@ -3527,7 +3542,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     Rect r = mResizeWindow.resize(mFrame, dx, dy, mResizeWays);
                     if (fitWindowInScreen(r)) {
                         mNewFrame = r;
-                        mRelayoutSuccess = ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
+                        if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
+                            sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                        } else {
+                            ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
+                        }
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -3536,6 +3555,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if(MotionEvent.ACTION_UP == event.getAction()) {
                 mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
                 mFrame.set(mNewFrame);
+                if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
+                    try {
+                        ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
+                        mNewFrame.left = mNewFrame.top = mNewFrame.right = mNewFrame.bottom = -1;
+                        sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                        ActivityManagerNative.getDefault().setFocusedStack(getStackId());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mResizeWays = MW_WINDOW_RESIZE_NONE;
             }
             return true;
@@ -3550,6 +3579,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     }
 
     class DecorMW {
+
+        private final static String LINERECT_LOCATION = "com.android.linerect";
+        private final static String LINERECT_ACTIVITY = "com.android.linerect.LineRectActivity";
 
         public final static int MW_WINDOW_MIN_WIDTH = 250;
         public final static int MW_WINDOW_MIN_HEIGHT = 180;
@@ -3581,6 +3613,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mLaunchBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwLaunchBtn);
             mMaximizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMaximizeBtn);
             mMinimizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMinimizeBtn);
+
+            mIntentLineRect = new Intent();
+            mIntentLineRect.setComponent(new ComponentName(LINERECT_LOCATION, LINERECT_ACTIVITY));
 
             String packageName = setMWWindowTitle(root);
 
