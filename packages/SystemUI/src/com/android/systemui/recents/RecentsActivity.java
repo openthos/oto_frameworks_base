@@ -115,11 +115,14 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                     startActivityAsUser(mLaunchIntent, UserHandle.CURRENT);
                 }
             } else {
-                finish();
-                overridePendingTransition(R.anim.recents_to_launcher_enter,
-                        R.anim.recents_to_launcher_exit);
+                quitFromRecents();
             }
         }
+    }
+
+    private void quitFromRecents() {
+        finish();
+        overridePendingTransition(R.anim.recents_to_launcher_enter, R.anim.recents_to_launcher_exit);
     }
 
     /**
@@ -133,6 +136,7 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
                 if (intent.getBooleanExtra(AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_ALT_TAB, false)) {
                     // If we are hiding from releasing Alt-Tab, dismiss Recents to the focused app
                     dismissRecentsToFocusedTaskOrHome(false);
+                    quitFromRecents(); // Alway let recents disappear by force.
                 } else if (intent.getBooleanExtra(AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_HOME_KEY, false)) {
                     // Otherwise, dismiss Recents to Home
                     dismissRecentsToHome(true);
