@@ -12,6 +12,7 @@ public class AppInfo {
     private Intent intent;
     private String pkgName;
     private Date date;
+    private int number;
 
     private long cachesize;
     private long datasize;
@@ -82,5 +83,13 @@ public class AppInfo {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public int getNumber() {
+        return number;
     }
 }

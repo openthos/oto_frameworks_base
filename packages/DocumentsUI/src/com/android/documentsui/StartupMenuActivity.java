@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import com.android.documentsui.util.AppInfo;
+import com.android.documentsui.util.MySqliteOpenHelper;
 
 import android.content.ActivityNotFoundException;
 import android.util.Slog;
@@ -25,12 +27,14 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ContentValues;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -62,8 +66,11 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 public class StartupMenuActivity extends Activity implements OnClickListener,
                 OnItemClickListener {
@@ -73,49 +80,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
 
-        private GridView gv_view = null;
         private List<AppInfo> mlistAppInfo = null;
-        LayoutInflater infater = null;
 
         private Context mContext;
-        private View contentView;
-        private LinearLayout ll_layout;
-        private TextView shut_text;
-        private TextView my_computer, system_setting,name_sort,time_sort,frequency_sort;
-        private PopupWindow popupWindow;
-        private StartupMenuAdapter browseAppAdapter;
+        private PopupWindow mPopupWindow;
+        private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
         private int CLICKS = 0;
 
-        private String converToString;
-        private Date sysDate;
-
-        private Handler handler = new Handler () {
-            public void handleMessage (android.os.Message msg) {
-                switch (msg.what) {
-                case FILTER_ALL_APP:
-                    concealProgressBar();
-                    queryAppInfo(FILTER_ALL_APP);
-                    dapterReload();
-                    break;
-                case FILTER_SYSYTEM_APP:
-                    concealProgressBar();
-                    queryAppInfo(FILTER_SYSYTEM_APP);
-                    dapterReload();
-                    break;
-                case FILTER_THIRD_APP:
-                    concealProgressBar();
-                    queryAppInfo(FILTER_THIRD_APP);
-                    dapterReload();
-                    break;
-                case FILTER_TIME_SORT:
-                    concealProgressBar();
-                    queryAppInfo(FILTER_ALL_APP);
-                    timeSort();
-                    dapterReload();
-                    break;
-                }
-            }
-        };
+        private MySqliteOpenHelper mMsoh;
+        private SQLiteDatabase mdb;
+        private int mNumber;
+        private GridView gv_view;
+        private boolean mIsHasReayDb;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -125,71 +101,34 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
             setContentView(R.layout.start_activity);
             mContext=this;
-            ll_layout = (LinearLayout)findViewById(R.id.ll_layout);
+
+            mMsoh = new MySqliteOpenHelper(StartupMenuActivity.this, "Application_database.db", null, 1);
+            mdb = mMsoh.getWritableDatabase();
 
             gv_view = (GridView) findViewById(R.id.gv_view);
             StartupMenuActivity.this.setFinishOnTouchOutside(true);
 
             mlistAppInfo = new ArrayList<AppInfo>();
-            queryAppInfo(FILTER_ALL_APP);
-            browseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
-            gv_view.setAdapter(browseAppAdapter);
+            queryAppInfo();
+            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            gv_view.setAdapter(mBrowseAppAdapter);
             gv_view.setOnItemClickListener(this);
 
-            my_computer = (TextView) findViewById(R.id.my_computer);
-            system_setting = (TextView) findViewById(R.id.system_setting);
-            my_computer.setOnClickListener(this);
-            system_setting.setOnClickListener(this);
-
-            name_sort = (TextView) findViewById(R.id.name_sort);
-            time_sort = (TextView) findViewById(R.id.time_sort);
-            frequency_sort = (TextView) findViewById(R.id.frequency_sort);
+            TextView type_sort = (TextView) findViewById(R.id.type_sort);
+            TextView system_setting = (TextView) findViewById(R.id.system_setting);
+            TextView my_computer = (TextView) findViewById(R.id.my_computer);
+            TextView click_sort = (TextView) findViewById(R.id.click_sort);
+            TextView name_sort = (TextView) findViewById(R.id.name_sort);
+            TextView time_sort = (TextView) findViewById(R.id.time_sort);
             name_sort.setOnClickListener(this);
             time_sort.setOnClickListener(this);
-            frequency_sort.setOnClickListener(this);
+            click_sort.setOnClickListener(this);
+            my_computer.setOnClickListener(this);
+            system_setting.setOnClickListener(this);
+            type_sort.setOnClickListener(this);
         }
 
-        private void timeSort() {
-            Collections.sort(mlistAppInfo, new Comparator<Object>() {
-                public int compare(Object lhs, Object rhs) {
-                    AppInfo p1 = (AppInfo) lhs;
-                    AppInfo p2 = (AppInfo) rhs;
-                    return p2.getDate().compareTo(p1.getDate());
-                };
-            });
-        }
-
-        private void dapterReload() {
-            browseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
-            gv_view.setAdapter(browseAppAdapter);
-        }
-
-        private void concealProgressBar() {
-            mlistAppInfo = new ArrayList<AppInfo>();
-        }
-
-        public static String ConverToString(Date date) {
-            DateFormat df = new SimpleDateFormat("YYYY-MM-dd");
-            return df.format(date);
-        }
-
-        public void appType(PackageManager pm, ResolveInfo reInfo) {
-            String activityName = reInfo.activityInfo.name;
-            String pkgName = reInfo.activityInfo.packageName;
-            String appLabel = (String) reInfo.loadLabel(pm);
-            Drawable icon = reInfo.loadIcon(pm);
-            Intent launchIntent = new Intent();
-            launchIntent.setComponent(new ComponentName(pkgName,activityName));
-            AppInfo appInfo = new AppInfo();
-            appInfo.setAppLabel(appLabel);
-            appInfo.setPkgName(pkgName);
-            appInfo.setDate(sysDate);
-            appInfo.setAppIcon(icon);
-            appInfo.setIntent(launchIntent);
-            mlistAppInfo.add(appInfo);
-        }
-
-        public void queryAppInfo(int a) {
+        public void queryAppInfo() {
             PackageManager pm = this.getPackageManager();
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -199,28 +138,39 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mlistAppInfo.clear();
                 for (ResolveInfo reInfo : resolveInfos) {
                     File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-                    sysDate = new Date(file.lastModified());
+                    Date systemDate = new Date(file.lastModified());
                     ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
-                    if (a == FILTER_ALL_APP ) {
-                        appType(pm, reInfo);
-                    }
-                    if (a == FILTER_SYSYTEM_APP && isSystemApp(applicationInfo)) {
-                        appType(pm, reInfo);
-                    }
-                    if (a == FILTER_THIRD_APP && !isSystemApp(applicationInfo)) {
-                        appType(pm, reInfo);
-                        if (CLICKS == 3) {
-                            CLICKS = 0;
+                    String activityName = reInfo.activityInfo.name;
+                    String pkgName = reInfo.activityInfo.packageName;
+                    String appLabel = (String) reInfo.loadLabel(pm);
+                    Drawable icon = reInfo.loadIcon(pm);
+                    Intent launchIntent = new Intent();
+                    launchIntent.setComponent(new ComponentName(pkgName, activityName));
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setAppLabel(appLabel);
+                    appInfo.setPkgName(pkgName);
+                    appInfo.setDate(systemDate);
+                    appInfo.setAppIcon(icon);
+                    appInfo.setIntent(launchIntent);
+                    mlistAppInfo.add(appInfo);
+                    mIsHasReayDb = false;
+                    Cursor c = mdb.query("perpo", null, null, null, null, null, null);
+                    while (c.moveToNext()) {
+                        String pkname = c.getString(c.getColumnIndex("pkname"));
+                        if (pkgName.equals(pkname)) {
+                            mIsHasReayDb = true;
+                            break;
                         }
+                    }
+
+                    if (!mIsHasReayDb) {
+                        mdb.execSQL("insert into perpo(label,pkname,date,icon,int,intent) "
+                                    + "values (?,?,?,?,?,?)",
+                                    new Object[] { appLabel, pkgName, systemDate, icon,
+                                                   mNumber, launchIntent});
                     }
                 }
             }
-        }
-
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent intent = mlistAppInfo.get(position).getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
         }
 
         @Override
@@ -265,51 +215,182 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
                 break;
             case R.id.sleep:
-                if (popupWindow != null) {
-                    popupWindow.dismiss();
+                if (mPopupWindow != null) {
+                    mPopupWindow.dismiss();
                 }
                 Log.v("This sleep : ", "COMING SOON...");
                 Toast.makeText(this, "This sleep: COMING SOON...", 0).show();
                 break;
             case R.id.lock:
-                if (popupWindow != null) {
-                    popupWindow.dismiss();
+                if (mPopupWindow != null) {
+                    mPopupWindow.dismiss();
                 }
                 Intent intentLock = new Intent("android.intent.action.LOCKNOW");
                 intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 break;
             case R.id.name_sort:
-                mlistAppInfo.clear();
-                browseAppAdapter.notifyDataSetChanged();
-                thread(FILTER_ALL_APP);
+                nameSort();
                 break;
             case R.id.time_sort:
-                mlistAppInfo.clear();
-                browseAppAdapter.notifyDataSetChanged();
-                thread(FILTER_TIME_SORT);
+                timeSort();
                 break;
-            case R.id.frequency_sort:
+            case R.id.type_sort:
                 if (CLICKS == 3) {
                     CLICKS = 0;
                 }
                 CLICKS++;
                 mlistAppInfo.clear();
-                browseAppAdapter.notifyDataSetChanged();
-                thread(CLICKS);
+                mBrowseAppAdapter.notifyDataSetChanged();
+                typeSort(CLICKS);
+                break;
+            case R.id.click_sort:
+                clickSort();
                 break;
             }
         }
 
-        private void thread (final int a) {
-            new Thread () {
-                public void run () {
-                    handler.sendEmptyMessage(a);
-                };
-            }.start();
+        private void nameSort() {
+            mlistAppInfo.clear();
+            mBrowseAppAdapter.notifyDataSetChanged();
+            mlistAppInfo = new ArrayList<AppInfo>();
+            queryAppInfo();
+            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            gv_view.setAdapter(mBrowseAppAdapter);
         }
+
+        private void timeSort() {
+            mlistAppInfo.clear();
+            mBrowseAppAdapter.notifyDataSetChanged();
+            mlistAppInfo = new ArrayList<AppInfo>();
+            queryAppInfo();
+            timeAlgorithm();
+            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            gv_view.setAdapter(mBrowseAppAdapter);
+        }
+
+        private void typeSort(int a) {
+            PackageManager pm = this.getPackageManager();
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
+            Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+            if (mlistAppInfo != null) {
+                mlistAppInfo.clear();
+                for (ResolveInfo reInfo : resolveInfos) {
+                    ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
+                    if (a == FILTER_ALL_APP ) {
+                        appData(pm, reInfo);
+                    } else if (a == FILTER_SYSYTEM_APP && isSystemApp(applicationInfo)) {
+                        appData(pm, reInfo);
+                    } else if (a == FILTER_THIRD_APP && !isSystemApp(applicationInfo)) {
+                        appData(pm, reInfo);
+                        if (CLICKS == 3) {
+                            CLICKS = 0;
+                        }
+                    }
+                }
+            }
+            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            gv_view.setAdapter(mBroAdapter);
+        }
+
+        private void clickSort() {
+            mlistAppInfo.clear();
+            mBrowseAppAdapter.notifyDataSetChanged();
+            mlistAppInfo = new ArrayList<AppInfo>();
+            querySqlAppinfo();
+            Collections.sort(mlistAppInfo, new Comparator<AppInfo>() {
+                public int compare(AppInfo lhs, AppInfo rhs) {
+                    Double rScore = (double) rhs.getNumber();
+                    Double iScore = (double) lhs.getNumber();
+                    return (rScore.compareTo(iScore));
+                }
+            });
+            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            gv_view.setAdapter(mBroAdapter);
+        }
+
+        private void querySqlAppinfo() {
+            Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
+            while (c.moveToNext()) {
+                String label = c.getString(c.getColumnIndex("label"));
+                String  pkgName = c.getString(c.getColumnIndex("pkname"));
+                String stringDate = c.getString(c.getColumnIndex("date"));
+                Drawable icon = null;
+                Date date = null;
+                try {
+                    icon = getPackageManager().getApplicationIcon(pkgName);
+                    date = ConverToDate(stringDate);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                int number = c.getInt(c.getColumnIndex("int"));
+                Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+                AppInfo appInfo = new AppInfo();
+                appInfo.setAppLabel(label);
+                appInfo.setPkgName(pkgName);
+                appInfo.setDate(date);
+                appInfo.setAppIcon(icon);
+                appInfo.setNumber(number);
+                appInfo.setIntent(intent);
+                mlistAppInfo.add(appInfo);
+            }
+        }
+
+        public static Date ConverToDate(String StrDate) throws Exception {
+            DateFormat df = new SimpleDateFormat("YYYY-MM-dd");
+            return df.parse(StrDate);
+        }
+
+        private void timeAlgorithm() {
+            Collections.sort(mlistAppInfo, new Comparator<Object>() {
+                public int compare(Object lhs, Object rhs) {
+                    AppInfo p1 = (AppInfo) lhs;
+                    AppInfo p2 = (AppInfo) rhs;
+                    return p2.getDate().compareTo(p1.getDate());
+                }
+            });
+        }
+
+        public void appData(PackageManager pm, ResolveInfo reInfo) {
+            File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
+            Date systemDate = new Date(file.lastModified());
+            String activityName = reInfo.activityInfo.name;
+            String pkgName = reInfo.activityInfo.packageName;
+            String appLabel = (String) reInfo.loadLabel(pm);
+            Drawable icon = reInfo.loadIcon(pm);
+            Intent launchIntent = new Intent();
+            launchIntent.setComponent(new ComponentName(pkgName, activityName));
+            AppInfo appInfo = new AppInfo();
+            appInfo.setAppLabel(appLabel);
+            appInfo.setPkgName(pkgName);
+            appInfo.setDate(systemDate);
+            appInfo.setAppIcon(icon);
+            appInfo.setIntent(launchIntent);
+            mlistAppInfo.add(appInfo);
+        }
+
         private boolean isSystemApp(ApplicationInfo applicationInfo) {
             return (applicationInfo.flags & applicationInfo.FLAG_SYSTEM) > 0;
+        }
+
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String pkgName = mlistAppInfo.get(position).getPkgName();
+            Intent intent = mlistAppInfo.get(position).getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            doUpdate(pkgName);
+        }
+
+        private void doUpdate(String pkgName) {
+            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?", new String[] { pkgName });
+            c.moveToNext();
+            int numbers = c.getInt(c.getColumnIndex("int"));
+            numbers++;
+            ContentValues values = new ContentValues();
+            values.put("int", numbers);
+            mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
         }
 
         public void powerOff(View v) {
@@ -329,15 +410,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             lock.setOnClickListener(this);
             layout.addView(tv);
 
-            popupWindow = new PopupWindow(layout,100,230);
-            popupWindow.setFocusable(true);
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow = new PopupWindow(layout,100,230);
+            mPopupWindow.setFocusable(true);
+            mPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 
             int[] location = new int[2];
             v.getLocationOnScreen(location);
             //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
-            popupWindow.showAtLocation(v, Gravity.RIGHT, 100, 230);
+            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 100, 230);
 	}
 
         private void killStartupMenu() {
