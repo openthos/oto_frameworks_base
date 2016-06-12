@@ -2196,6 +2196,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private final class DecorView extends FrameLayout implements RootViewSurfaceTaker {
 
+        private final static String ADDVIEW_WHITELIST_WECHAT = "com.tencent.mm.ui.widget.SwipeBackLayout";
+        private final static String RMVIEW_WHITELIST_WECHAT = "com.tencent.mm";
+
         /* package */int mDefaultOpacity = PixelFormat.OPAQUE;
 
         /** The feature ID of the panel, or -1 if this is the application's DecorView */
@@ -2273,13 +2276,21 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         @Override
         public void addView(View child, int index) {
-            /* Single root view for decor, and use mContentParent for child instead of */
-            mContentParent.addView(child, index);
+            if (child.getClass().getName().compareTo(ADDVIEW_WHITELIST_WECHAT) == 0) {
+                super.addView(child, index);
+            } else {
+                /* Single root view for decor, and use mContentParent for child instead of */
+                mContentParent.addView(child, index);
+            }
         }
 
         @Override
         public void removeView(View view) {
-            /* Forbid to remove root view, explicitly */
+            if (getContext().getApplicationInfo().packageName.compareTo(RMVIEW_WHITELIST_WECHAT) == 0) {
+                super.removeView(view);
+            } else {
+                /* Forbid to remove root view, explicitly */
+            }
         }
 
         @Override
