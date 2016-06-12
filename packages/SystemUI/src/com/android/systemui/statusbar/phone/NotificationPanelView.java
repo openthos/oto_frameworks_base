@@ -36,6 +36,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.keyguard.KeyguardStatusView;
@@ -255,14 +256,14 @@ public class NotificationPanelView extends PanelView implements
     public void updateResources() {
         int panelWidth = getResources().getDimensionPixelSize(R.dimen.notification_panel_width);
         int panelGravity = getResources().getInteger(R.integer.notification_panel_layout_gravity);
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mNotificationStackScroller.getLayoutParams();
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mNotificationStackScroller.getLayoutParams();
         if (lp.width != panelWidth) {
             lp.width = panelWidth;
             lp.gravity = panelGravity;
             mNotificationStackScroller.setLayoutParams(lp);
         }
 
-        lp = (FrameLayout.LayoutParams) mScrollView.getLayoutParams();
+        lp = (LinearLayout.LayoutParams) mScrollView.getLayoutParams();
         if (lp.width != panelWidth) {
             lp.width = panelWidth;
             lp.gravity = panelGravity;
