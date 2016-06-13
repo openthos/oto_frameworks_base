@@ -274,13 +274,14 @@ public class AlternateRecentsComponent implements ActivityOptions.OnAnimationSta
     void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         if (mBootCompleted) {
             ActivityManager.RunningTaskInfo topTask = mSystemServicesProxy.getTopMostTask();
-            if (topTask != null && mSystemServicesProxy.isRecentsTopMost(topTask, null)) {
-                // Notify recents to hide itself
-                Intent intent = createLocalBroadcastIntent(mContext, ACTION_HIDE_RECENTS_ACTIVITY);
-                intent.putExtra(EXTRA_TRIGGERED_FROM_ALT_TAB, triggeredFromAltTab);
-                intent.putExtra(EXTRA_TRIGGERED_FROM_HOME_KEY, triggeredFromHomeKey);
-                mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
+            if (topTask == null || !mSystemServicesProxy.isRecentsTopMost(topTask, null)) {
+                triggeredFromHomeKey = true;
             }
+
+            Intent intent = createLocalBroadcastIntent(mContext, ACTION_HIDE_RECENTS_ACTIVITY);
+            intent.putExtra(EXTRA_TRIGGERED_FROM_ALT_TAB, triggeredFromAltTab);
+            intent.putExtra(EXTRA_TRIGGERED_FROM_HOME_KEY, triggeredFromHomeKey);
+            mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
         }
     }
 

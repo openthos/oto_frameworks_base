@@ -133,15 +133,12 @@ public class RecentsActivity extends Activity implements RecentsView.RecentsView
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(AlternateRecentsComponent.ACTION_HIDE_RECENTS_ACTIVITY)) {
-                if (intent.getBooleanExtra(AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_ALT_TAB, false)) {
-                    // If we are hiding from releasing Alt-Tab, dismiss Recents to the focused app
-                    dismissRecentsToFocusedTaskOrHome(false);
-                    quitFromRecents(); // Alway let recents disappear by force.
-                } else if (intent.getBooleanExtra(AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_HOME_KEY, false)) {
-                    // Otherwise, dismiss Recents to Home
-                    dismissRecentsToHome(true);
+                dismissRecentsToFocusedTaskOrHome(false);
+                if (intent.getBooleanExtra(AlternateRecentsComponent.EXTRA_TRIGGERED_FROM_HOME_KEY,
+                                           false)) {
+                    mFinishLaunchHomeRunnable.run();
                 } else {
-                    // Do nothing, another activity is being launched on top of Recents
+                    quitFromRecents();
                 }
             } else if (action.equals(AlternateRecentsComponent.ACTION_TOGGLE_RECENTS_ACTIVITY)) {
                 // If we are toggling Recents, then first unfilter any filtered stacks first
