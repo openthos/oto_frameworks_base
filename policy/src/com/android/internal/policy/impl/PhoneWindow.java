@@ -2279,6 +2279,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         @Override
         public void addView(View child, int index) {
             if (isWhiteList()) {
+                child.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
                 super.addView(child, index);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
