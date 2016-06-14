@@ -159,6 +159,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private static final Transition USE_DEFAULT_TRANSITION = new TransitionSet();
 
+    private final static Rect NO_FRAME = new Rect(-1,-1,-1,-1);
+
     private int mBorderPadding = 0;
 
     /**
@@ -3467,11 +3469,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         private int mLastY = 0;
         private ResizeWindow mResizeWindow;
         private Rect mFullScreen;
+        private Rect mLeftDockFrame;
+        private Rect mRightDockFrame;
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
 
         public TouchListener(ResizeWindow rw, Rect fullScreen) {
             mResizeWindow = rw;
             mFullScreen = fullScreen;
+            mLeftDockFrame = new Rect(0, 0, fullScreen.right/2, fullScreen.bottom);
+            mRightDockFrame = new Rect(fullScreen.right/2, 0, fullScreen.right, fullScreen.bottom);
         }
 
         private boolean fitWindowInScreen(Rect pos) {
@@ -3555,8 +3561,19 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     int dy = rawY - mLastY;
                     Rect r = mResizeWindow.resize(mFrame, dx, dy, mResizeWays);
                     if (fitWindowInScreen(r)) {
-                        mNewFrame = r;
-                        if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
+                        if (rawX <= mFullScreen.left + mBorderPadding) {
+                            mNewFrame = mLeftDockFrame;
+                        } else if (rawX >= mFullScreen.right - mBorderPadding) {
+                            mNewFrame = mRightDockFrame;
+                        } else {
+                            if (mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
+                                mNewFrame = NO_FRAME;
+                                sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                            }
+                            mNewFrame = r;
+                        }
+                        if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
+                                || mNewFrame == mRightDockFrame) {
                             sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                         } else {
                             ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
@@ -3569,10 +3586,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if(MotionEvent.ACTION_UP == event.getAction()) {
                 mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
                 mFrame.set(mNewFrame);
-                if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
+                if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
+                        || mNewFrame == mRightDockFrame) {
                     try {
                         ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
-                        mNewFrame.left = mNewFrame.top = mNewFrame.right = mNewFrame.bottom = -1;
+                        mNewFrame = NO_FRAME;
                         sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                         ActivityManagerNative.getDefault().setFocusedStack(getStackId());
                     } catch (RemoteException e) {
@@ -3616,7 +3634,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
             mBorderPadding = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_outer_border)
                              + root.getPaddingLeft();
-            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels - statusBarHeight);
+            mFullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
 
             mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_decor_header);
             mHeader.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
