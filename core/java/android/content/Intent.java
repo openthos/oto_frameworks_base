@@ -3630,6 +3630,10 @@ public class Intent implements Parcelable, Cloneable {
 
     /**
      * Both full screen and single window.
+     *
+     * If combined with {@link #FLAG_ACTIVITY_NO_ANIMATION}, it will be pure
+     * none animation (e.g. the first start activity will has no animation,
+     * either).
      */
     public static final int FLAG_ACTIVITY_SINGLE_FULLSCREEN = 0x00000400;
 

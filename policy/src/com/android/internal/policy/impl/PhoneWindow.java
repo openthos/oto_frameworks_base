@@ -3551,6 +3551,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 InputManager.getInstance().setPointerIcon(mResizeWays);
                 if (mResizeWays != MW_WINDOW_RESIZE_NONE) {
                     sendNewFrame(Intent.FLAG_ACTIVITY_NEW_TASK
+                                 | Intent.FLAG_ACTIVITY_NO_ANIMATION
                                  | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
                                  | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 }

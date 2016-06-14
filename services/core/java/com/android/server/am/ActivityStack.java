@@ -1491,6 +1491,13 @@ final class ActivityStack {
         return result;
     }
 
+    private int getNoneAnimation(ActivityRecord r) {
+        if ((r.intent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) != 0) {
+            return AppTransition.TRANSIT_UNSET;
+        }
+        return AppTransition.TRANSIT_NONE;
+    }
+
     final boolean resumeTopActivityInnerLocked(ActivityRecord prev, Bundle options) {
         if (ActivityManagerService.DEBUG_LOCKSCREEN) mService.logLockScreen("");
 
@@ -1728,7 +1735,7 @@ final class ActivityStack {
                         "Prepare close transition: prev=" + prev);
                 if (mNoAnimActivities.contains(prev)) {
                     anim = false;
-                    mWindowManager.prepareAppTransition(AppTransition.TRANSIT_NONE, false);
+                    mWindowManager.prepareAppTransition(getNoneAnimation(prev), false);
                 } else {
                     mWindowManager.prepareAppTransition(prev.task == next.task
                             ? AppTransition.TRANSIT_ACTIVITY_CLOSE
@@ -1740,7 +1747,7 @@ final class ActivityStack {
                 if (DEBUG_TRANSITION) Slog.v(TAG, "Prepare open transition: prev=" + prev);
                 if (mNoAnimActivities.contains(next)) {
                     anim = false;
-                    mWindowManager.prepareAppTransition(AppTransition.TRANSIT_NONE, false);
+                    mWindowManager.prepareAppTransition(getNoneAnimation(next), false);
                 } else {
                     mWindowManager.prepareAppTransition(prev.task == next.task
                             ? AppTransition.TRANSIT_ACTIVITY_OPEN
@@ -1757,7 +1764,7 @@ final class ActivityStack {
             if (DEBUG_TRANSITION) Slog.v(TAG, "Prepare open transition: no previous");
             if (mNoAnimActivities.contains(next)) {
                 anim = false;
-                mWindowManager.prepareAppTransition(AppTransition.TRANSIT_NONE, false);
+                mWindowManager.prepareAppTransition(getNoneAnimation(next), false);
             } else {
                 mWindowManager.prepareAppTransition(AppTransition.TRANSIT_ACTIVITY_OPEN, false);
             }
@@ -2048,7 +2055,7 @@ final class ActivityStack {
             if (DEBUG_TRANSITION) Slog.v(TAG,
                     "Prepare open transition: starting " + r);
             if ((r.intent.getFlags()&Intent.FLAG_ACTIVITY_NO_ANIMATION) != 0) {
-                mWindowManager.prepareAppTransition(AppTransition.TRANSIT_NONE, keepCurTransition);
+                mWindowManager.prepareAppTransition(getNoneAnimation(r), keepCurTransition);
                 mNoAnimActivities.add(r);
             } else {
                 mWindowManager.prepareAppTransition(newTask
@@ -3502,7 +3509,7 @@ final class ActivityStack {
         if (DEBUG_TRANSITION) Slog.v(TAG, "Prepare to front transition: task=" + tr);
         if (source != null &&
                 (source.intent.getFlags()&Intent.FLAG_ACTIVITY_NO_ANIMATION) != 0) {
-            mWindowManager.prepareAppTransition(AppTransition.TRANSIT_NONE, false);
+            mWindowManager.prepareAppTransition(getNoneAnimation(source), false);
             ActivityRecord r = topRunningActivityLocked(null);
             if (r != null) {
                 mNoAnimActivities.add(r);
