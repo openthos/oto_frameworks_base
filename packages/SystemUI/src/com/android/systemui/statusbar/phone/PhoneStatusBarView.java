@@ -144,17 +144,6 @@ public class PhoneStatusBarView extends PanelBar {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            if (mNotificationPanel.getVisibility() == View.VISIBLE) {
-                mBar.makeExpandedInvisible();
-                mSkipActionUp = true;
-                return false;
-            }
-            mSkipActionUp = false;
-        } else if ((event.getActionMasked() == MotionEvent.ACTION_UP) && mSkipActionUp) {
-            return false;
-        }
-
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
         }
@@ -206,6 +195,9 @@ public class PhoneStatusBarView extends PanelBar {
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
             ActivityKeyView.dismissRBM();
+            if (mNotificationPanel.getVisibility() == View.VISIBLE) {
+                mBar.makeExpandedInvisible();
+            }
         }
         return mBar.interceptTouchEvent(event) || super.onInterceptTouchEvent(event);
     }
