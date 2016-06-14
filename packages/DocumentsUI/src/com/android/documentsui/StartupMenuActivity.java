@@ -184,6 +184,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                                     new Object[] { appLabel, pkgName, systemDate, icon,
                                                    mNumber, launchIntent});
                     }
+                    if(isEnglish(appLabel)) {
+                        ContentValues contentvalues = new ContentValues();
+                        contentvalues.put("label", appLabel);
+                        mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                    } else {
+                        ContentValues contentvalues = new ContentValues();
+                        contentvalues.put("label", appLabel);
+                        mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                    }
                 }
             }
         }
@@ -413,6 +422,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     mlistAppInfo.add(appInfo);
                 }
             }
+        }
+
+        public static boolean isEnglish(String str) {
+            return str.matches("^[a-zA-Z]*");
         }
 
         public static Date ConverToDate(String StrDate) throws Exception {
