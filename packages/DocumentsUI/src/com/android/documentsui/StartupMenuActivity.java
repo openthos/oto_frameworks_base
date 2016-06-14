@@ -40,8 +40,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.text.TextWatcher;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,6 +61,7 @@ import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -66,16 +71,17 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView.OnEditorActionListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class StartupMenuActivity extends Activity implements OnClickListener,
-                OnItemClickListener {
+                OnItemClickListener, OnEditorActionListener {
 
-        public static final int FILTER_TIME_SORT = 0;
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
@@ -85,13 +91,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private Context mContext;
         private PopupWindow mPopupWindow;
         private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
-        private int CLICKS = 0;
-
         private MySqliteOpenHelper mMsoh;
         private SQLiteDatabase mdb;
+
         private int mNumber;
-        private GridView gv_view;
+        private int CLICKS = 0;
         private boolean mIsHasReayDb;
+        private String mEtext;
+
+        private GridView gv_view;
+        private EditText mEditText;
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +135,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
             type_sort.setOnClickListener(this);
+
+            ImageView imView = (ImageView) findViewById(R.id.iv_view);
+            mEditText = (EditText) findViewById(R.id.et_text);
+            imView.setOnClickListener(this);
+            mEditText.setOnEditorActionListener(this);
+            mEditText.addTextChangedListener(watcher);
         }
 
         public void queryAppInfo() {
@@ -172,6 +187,43 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             }
         }
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if ((actionId == EditorInfo.IME_ACTION_SEND)
+                     || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                mEtext = mEditText.getText().toString().trim();
+                mlistAppInfo.clear();
+                mBrowseAppAdapter.notifyDataSetChanged();
+                mlistAppInfo = new ArrayList<AppInfo>();
+                querySqlAppinfo();
+                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                gv_view.setAdapter(mBrowseAppAdapter);
+                return true;
+            }
+            return false;
+        }
+
+        private TextWatcher watcher = new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                     int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mEtext = mEditText.getText().toString().trim();
+                mlistAppInfo.clear();
+                mBrowseAppAdapter.notifyDataSetChanged();
+                mlistAppInfo = new ArrayList<AppInfo>();
+                querySqlAppinfo();
+                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                gv_view.setAdapter(mBrowseAppAdapter);
+            }
+        };
 
         @Override
         public void onClick(View v) {
@@ -229,10 +281,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 break;
+            case R.id.iv_view:
+                mEtext = mEditText.getText().toString().trim();
+                mlistAppInfo.clear();
+                mBrowseAppAdapter.notifyDataSetChanged();
+                mlistAppInfo = new ArrayList<AppInfo>();
+                querySqlAppinfo();
+                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                gv_view.setAdapter(mBrowseAppAdapter);
+                break;
             case R.id.name_sort:
+                mEditText.setText("");
                 nameSort();
                 break;
             case R.id.time_sort:
+                mEditText.setText("");
                 timeSort();
                 break;
             case R.id.type_sort:
@@ -240,11 +303,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     CLICKS = 0;
                 }
                 CLICKS++;
+                mEditText.setText("");
                 mlistAppInfo.clear();
                 mBrowseAppAdapter.notifyDataSetChanged();
                 typeSort(CLICKS);
                 break;
             case R.id.click_sort:
+                mEditText.setText("");
                 clickSort();
                 break;
             }
@@ -326,15 +391,27 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     e.printStackTrace();
                 }
                 int number = c.getInt(c.getColumnIndex("int"));
-                Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
-                AppInfo appInfo = new AppInfo();
-                appInfo.setAppLabel(label);
-                appInfo.setPkgName(pkgName);
-                appInfo.setDate(date);
-                appInfo.setAppIcon(icon);
-                appInfo.setNumber(number);
-                appInfo.setIntent(intent);
-                mlistAppInfo.add(appInfo);
+                if(label.toLowerCase().indexOf(mEtext.toLowerCase()) != -1) {
+                    Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setAppLabel(label);
+                    appInfo.setPkgName(pkgName);
+                    appInfo.setDate(date);
+                    appInfo.setAppIcon(icon);
+                    appInfo.setNumber(number);
+                    appInfo.setIntent(intent);
+                    mlistAppInfo.add(appInfo);
+                }else if(TextUtils.isEmpty(mEtext)) {
+                    Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setAppLabel(label);
+                    appInfo.setPkgName(pkgName);
+                    appInfo.setDate(date);
+                    appInfo.setAppIcon(icon);
+                    appInfo.setNumber(number);
+                    appInfo.setIntent(intent);
+                    mlistAppInfo.add(appInfo);
+                }
             }
         }
 
