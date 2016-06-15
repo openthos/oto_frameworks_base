@@ -42,6 +42,8 @@ import com.android.systemui.qs.tiles.IntentTile;
 import com.android.systemui.qs.tiles.LocationTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
 import com.android.systemui.qs.tiles.WifiTile;
+import com.android.systemui.qs.tiles.ScreenshotTile;
+import com.android.systemui.qs.tiles.SettingTile;
 import com.android.systemui.settings.CurrentUserTracker;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.CastController;
@@ -54,6 +56,8 @@ import com.android.systemui.statusbar.policy.HotspotController;
 import com.android.systemui.statusbar.policy.SecurityController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
+import com.android.systemui.statusbar.policy.ScreenshotController;
+import com.android.systemui.statusbar.policy.SettingController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,6 +90,8 @@ public class QSTileHost implements QSTile.Host {
     private final UserSwitcherController mUserSwitcherController;
     private final KeyguardMonitor mKeyguard;
     private final SecurityController mSecurity;
+    private final ScreenshotController mScreenshot;
+    private final SettingController mSetting;
 
     private Callback mCallback;
 
@@ -95,7 +101,8 @@ public class QSTileHost implements QSTile.Host {
             ZenModeController zen, HotspotController hotspot,
             CastController cast, FlashlightController flashlight,
             UserSwitcherController userSwitcher, KeyguardMonitor keyguard,
-            SecurityController security) {
+            SecurityController security, ScreenshotController screenshot,
+            SettingController setting) {
         mContext = context;
         mStatusBar = statusBar;
         mBluetooth = bluetooth;
@@ -109,6 +116,8 @@ public class QSTileHost implements QSTile.Host {
         mUserSwitcherController = userSwitcher;
         mKeyguard = keyguard;
         mSecurity = security;
+        mScreenshot = screenshot;
+        mSetting = setting;
 
         final HandlerThread ht = new HandlerThread(QSTileHost.class.getSimpleName(),
                 Process.THREAD_PRIORITY_BACKGROUND);
@@ -221,6 +230,14 @@ public class QSTileHost implements QSTile.Host {
         return mSecurity;
     }
 
+    public ScreenshotController getScreenshotController() {
+        return mScreenshot;
+    }
+
+    public SettingController getSettingController() {
+        return mSetting;
+    }
+
     private void recreateTiles() {
         if (DEBUG) Log.d(TAG, "Recreating tiles");
         final List<String> tileSpecs = loadTileSpecs();
@@ -262,6 +279,8 @@ public class QSTileHost implements QSTile.Host {
         else if (tileSpec.equals("location")) return new LocationTile(this);
         else if (tileSpec.equals("cast")) return new CastTile(this);
         else if (tileSpec.equals("hotspot")) return new HotspotTile(this);
+        else if (tileSpec.equals("screenshot")) return new ScreenshotTile(this);
+        else if (tileSpec.equals("setting")) return new SettingTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }

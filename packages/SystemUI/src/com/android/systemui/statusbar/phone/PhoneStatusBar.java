@@ -176,6 +176,9 @@ import com.android.systemui.statusbar.policy.SecurityControllerImpl;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
+import com.android.systemui.statusbar.policy.ScreenshotControllerImpl;
+import com.android.systemui.statusbar.policy.SettingControllerImpl;
+
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout.OnChildLocationsChangedListener;
 import com.android.systemui.statusbar.stack.StackScrollAlgorithm;
@@ -268,6 +271,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardMonitor mKeyguardMonitor;
     BrightnessMirrorController mBrightnessMirrorController;
     AccessibilityController mAccessibilityController;
+    ScreenshotControllerImpl mScreenshotController;
+    SettingControllerImpl mSettingController;
 
     int mNaturalBarHeight = -1;
     int mIconSize = -1;
@@ -850,7 +855,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mNetworkController, mZenModeController, mHotspotController,
                     mCastController, mFlashlightController,
                     mUserSwitcherController, mKeyguardMonitor,
-                    mSecurityController);
+                    mSecurityController, mScreenshotController, mSettingController);
             mQSPanel.setHost(qsh);
             mQSPanel.setTiles(qsh.getTiles());
             mBrightnessMirrorController = new BrightnessMirrorController(mStatusBarWindow);

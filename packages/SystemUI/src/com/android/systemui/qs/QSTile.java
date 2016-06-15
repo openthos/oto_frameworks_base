@@ -39,6 +39,8 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.RotationLockController;
 import com.android.systemui.statusbar.policy.HotspotController;
 import com.android.systemui.statusbar.policy.ZenModeController;
+import com.android.systemui.statusbar.policy.ScreenshotController;
+import com.android.systemui.statusbar.policy.SettingController;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -307,6 +309,8 @@ public abstract class QSTile<TState extends State> implements Listenable {
         CastController getCastController();
         FlashlightController getFlashlightController();
         KeyguardMonitor getKeyguardMonitor();
+        ScreenshotController getScreenshotController();
+        SettingController getSettingController();
 
         public interface Callback {
             void onTilesChanged();
