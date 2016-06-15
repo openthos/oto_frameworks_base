@@ -121,4 +121,5 @@
     <string name="system_loading">Loading...</string>
     <string name="common_software">Common_software</string>
     <string name="click_sort">Click</string>
+    <string name="common_application">Common Application</string>
 </resources>

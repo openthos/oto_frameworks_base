@@ -87,19 +87,23 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_THIRD_APP = 3;
 
         private List<AppInfo> mlistAppInfo = null;
+        private List<AppInfo> mlistViewAppInfo = null;
 
         private Context mContext;
         private PopupWindow mPopupWindow;
         private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
+        private StartupMenuUsuallyAdapter mUsuallyAdapter;
         private MySqliteOpenHelper mMsoh;
         private SQLiteDatabase mdb;
 
         private int mNumber;
         private int CLICKS = 0;
+        private boolean mListViewOpen = false;
         private boolean mIsHasReayDb;
         private String mEtext;
 
         private GridView gv_view;
+        private ListView mListView;
         private EditText mEditText;
 
         @Override
@@ -141,6 +145,72 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             imView.setOnClickListener(this);
             mEditText.setOnEditorActionListener(this);
             mEditText.addTextChangedListener(watcher);
+
+            mListView = (ListView) findViewById(R.id.lv_view);
+            mlistViewAppInfo = new ArrayList<AppInfo>();
+            Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
+            while (c.moveToNext()) {
+                int number = c.getInt(c.getColumnIndex("int"));
+                if (number != 0) {
+                    mListViewOpen = true;
+                }
+            }
+
+            if (mListViewOpen) {
+                if (mlistViewAppInfo != null) {
+                    mlistViewAppInfo.clear();
+                }
+
+                Cursor cs = mdb.rawQuery("select distinct * from perpo", new String[] {});
+                while (cs.moveToNext()) {
+                    String label = cs.getString(cs.getColumnIndex("label"));
+                    String pkgName = cs.getString(cs.getColumnIndex("pkname"));
+                    String stringDate = cs.getString(cs.getColumnIndex("date"));
+                    Drawable icon = null;
+                    Date date = null;
+                    try {
+                        icon = getPackageManager().getApplicationIcon(pkgName);
+                        date = ConverToDate(stringDate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    int number = cs.getInt(cs.getColumnIndex("int"));
+                    if (number > 0) {
+                        Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+                        AppInfo appInfo = new AppInfo();
+                        appInfo.setAppLabel(label);
+                        appInfo.setPkgName(pkgName);
+                        appInfo.setDate(date);
+                        appInfo.setAppIcon(icon);
+                        appInfo.setNumber(number);
+                        appInfo.setIntent(intent);
+                        mlistViewAppInfo.add(appInfo);
+                    }
+                }
+
+                Collections.sort(mlistViewAppInfo, new Comparator<AppInfo>() {
+                    public int compare(AppInfo lhs, AppInfo rhs) {
+                        Double rScore = (double) rhs.getNumber();
+                        Double iScore = (double) lhs.getNumber();
+                        return (rScore.compareTo(iScore));
+                    }
+                });
+
+                mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
+                                                                mlistViewAppInfo);
+                mListView.setAdapter(mUsuallyAdapter);
+                mListView.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                                            int position, long id) {
+                        String pkgName = mlistAppInfo.get(position).getPkgName();
+                        Intent intent = mlistAppInfo.get(position).getIntent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        doUpdate(pkgName);
+                    }
+                });
+            }
         }
 
         public void queryAppInfo() {
@@ -410,7 +480,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     appInfo.setNumber(number);
                     appInfo.setIntent(intent);
                     mlistAppInfo.add(appInfo);
-                }else if(TextUtils.isEmpty(mEtext)) {
+                } else if(TextUtils.isEmpty(mEtext)) {
                     Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
                     AppInfo appInfo = new AppInfo();
                     appInfo.setAppLabel(label);

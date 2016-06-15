@@ -21,6 +21,23 @@
             android:orientation="vertical" >
 
             <TextView
+                style="@style/Mstyle"
+                android:text="@string/common_application" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"/>
+
+            <ListView
+                android:id="@+id/lv_view"
+                android:layout_width="@dimen/px120"
+                android:layout_height="@dimen/px450"
+                android:layout_marginLeft="10dp"
+                android:divider="#00000000"
+                android:dividerHeight="5dp"
+                android:layout_marginBottom="@dimen/px150"/>
+
+            <TextView
                 android:id="@+id/my_computer"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_computer"
