@@ -11,14 +11,19 @@
     <LinearLayout
         android:layout_width="@dimen/px495"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="@dimen/px150"
             android:layout_height="match_parent"
-            android:gravity="bottom"
-            android:layout_marginBottom="@dimen/px15"
-            android:orientation="vertical" >
+            android:layout_marginBottom="@dimen/px15" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/px15"
+                android:orientation="vertical" >
 
             <TextView
                 style="@style/Mstyle"
@@ -26,7 +31,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="10dp"/>
+                android:layout_height="10dp" />
 
             <ListView
                 android:id="@+id/lv_view"
@@ -34,8 +39,14 @@
                 android:layout_height="@dimen/px450"
                 android:layout_marginLeft="10dp"
                 android:divider="#00000000"
-                android:dividerHeight="5dp"
-                android:layout_marginBottom="@dimen/px150"/>
+                android:dividerHeight="5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/my_computer"
@@ -47,19 +58,20 @@
                 android:id="@+id/system_setting"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_setting"
-                android:text="@string/system_setting"/>
+                android:text="@string/system_setting" />
 
             <TextView
                 android:onClick="powerOff"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_power"
                 android:text="@string/power_off" />
-        </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
 
         <ImageView
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:src="#808080"/>
+            android:src="#808080" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +82,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" >
 
                 <EditText
                     android:id="@+id/et_text"
@@ -83,7 +95,7 @@
                     android:maxLength="10"
                     android:minLines="1"
                     android:textCursorDrawable="@null"
-                    android:textColor="@android:color/white"/>
+                    android:textColor="@android:color/white" />
 
                 <ImageView
                     android:id="@+id/iv_view"
@@ -93,49 +105,49 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/search"/>
+                    android:background="@drawable/search" />
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal" >
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/name_sort"
                     style="@style/Mstyle"
-                    android:text="@string/name_sort"/>
+                    android:text="@string/name_sort" />
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/time_sort"
                     style="@style/Mstyle"
-                    android:text="@string/time_sort"/>
+                    android:text="@string/time_sort" />
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/type_sort"
                     style="@style/Mstyle"
-                    android:text="@string/type_sort"/>
+                    android:text="@string/type_sort" />
 
                 <View
                     android:layout_width="1dp"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/click_sort"
                     style="@style/Mstyle"
-                    android:text="@string/click_sort"/>
+                    android:text="@string/click_sort" />
 
             </LinearLayout>
 

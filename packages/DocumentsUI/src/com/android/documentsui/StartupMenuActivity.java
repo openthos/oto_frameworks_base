@@ -147,7 +147,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mEditText.addTextChangedListener(watcher);
 
             mListView = (ListView) findViewById(R.id.lv_view);
-            mlistViewAppInfo = new ArrayList<AppInfo>();
             Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
             while (c.moveToNext()) {
                 int number = c.getInt(c.getColumnIndex("int"));
@@ -160,7 +159,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 if (mlistViewAppInfo != null) {
                     mlistViewAppInfo.clear();
                 }
-
+                mlistViewAppInfo = new ArrayList<AppInfo>();
                 Cursor cs = mdb.rawQuery("select distinct * from perpo", new String[] {});
                 while (cs.moveToNext()) {
                     String label = cs.getString(cs.getColumnIndex("label"));
@@ -203,8 +202,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
-                        String pkgName = mlistAppInfo.get(position).getPkgName();
-                        Intent intent = mlistAppInfo.get(position).getIntent();
+                        String pkgName = mlistViewAppInfo.get(position).getPkgName();
+                        Intent intent = mlistViewAppInfo.get(position).getIntent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         doUpdate(pkgName);
