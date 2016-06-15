@@ -2371,7 +2371,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mStatusBarActivities.removeView(kbv);
                     continue;
                 }
-                if(kbv.getStatusbarActivity().mPkgName.equals(Pkg)) {
+                if(kbv.getStatusbarActivity().mPkgName.equals(Pkg) &&
+                   !kbv.getStatusbarActivity().mApkRun) {
                     return i;
                 }
             }
@@ -2387,38 +2388,37 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             return;
         }
 
-        int idx = findStatusbarActivityByStackId(stackId);
-        if (idx >= 0 ) {
-            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).resizeStack();
-            return;
-        }
-
-        idx = findStatusbarActivityByPkg(pkg);
+        int idxStack = findStatusbarActivityByStackId(stackId);
+        int idxPkg = findStatusbarActivityByPkg(pkg);
 
         LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (idx == -1) {
-            Drawable pkgicon = null;
-            PackageManager pm = getPackageManagerForUser(-1);
-            try {
-                final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
-                if (ai != null) {
-                    pkgicon = pm.getApplicationIcon(ai);
-                } else {
+        if (idxStack == -1) {
+            if (idxPkg == -1) {
+                Drawable pkgicon = null;
+                PackageManager pm = getPackageManagerForUser(-1);
+                try {
+                    final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+                    if (ai != null) {
+                        pkgicon = pm.getApplicationIcon(ai);
+                    } else {
+                        pkgicon = pm.getDefaultActivityIcon();
+                    }
+                } catch (NameNotFoundException e) {
                     pkgicon = pm.getDefaultActivityIcon();
                 }
-            } catch (NameNotFoundException e) {
-                pkgicon = pm.getDefaultActivityIcon();
+                v = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
+                StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
+                v.setStatusbarActivity(sa);
+                v.setImageDrawable(pkgicon);
+                v.setVisibility(View.VISIBLE);
+                mStatusBarActivities.addView(v);
+            } else {
+                ActivityKeyView akv = (ActivityKeyView) mStatusBarActivities.getChildAt(idxPkg);
+                akv.resizeStack();
+                akv.activityStart(stackId);
             }
-            v = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
-            StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
-            v.setStatusbarActivity(sa);
-            ((ImageView)v).setImageDrawable(pkgicon);
-            v.setVisibility(View.VISIBLE);
-            mStatusBarActivities.addView(v);
         } else {
-            ActivityKeyView akv = (ActivityKeyView) mStatusBarActivities.getChildAt(idx);
-            akv.resizeStack();
-            akv.activityStart(stackId);
+            ((ActivityKeyView) mStatusBarActivities.getChildAt(idxStack)).resizeStack();
         }
     }
 
