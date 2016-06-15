@@ -98,6 +98,7 @@ import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
+import com.android.systemui.statusbar.taskview.TaskViewDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected CommandQueue mCommandQueue;
     protected IStatusBarService mBarService;
     protected H mHandler = createHandler();
+    private TaskViewDialog mTaskViewDialog;
 
     // all notifications
     protected NotificationData mNotificationData;
@@ -608,6 +610,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         mContext.registerReceiver(mBroadcastReceiver, filter);
 
         updateCurrentProfilesCache();
+        mTaskViewDialog = TaskViewDialog.getInstance(mContext);
     }
 
     protected void notifyUserAboutHiddenNotifications() {
@@ -1111,20 +1114,27 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected void showRecents(boolean triggeredFromAltTab) {
         if (mRecents != null) {
             sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
-            mRecents.showRecents(triggeredFromAltTab, getStatusBarView());
+            //mRecents.showRecents(triggeredFromAltTab, getStatusBarView());
+            if(mTaskViewDialog != null) {
+                mTaskViewDialog.showTaskView();
+            }
         }
     }
 
     protected void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         if (mRecents != null) {
-            mRecents.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
+            //mRecents.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
+            if(mTaskViewDialog != null) {
+                 mTaskViewDialog.hideTaskView();
+            }
         }
     }
 
     protected void toggleRecents() {
         if (mRecents != null) {
             sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
-            mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
+            //mRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
+            mTaskViewDialog.triggerTaskView();
         }
     }
 
