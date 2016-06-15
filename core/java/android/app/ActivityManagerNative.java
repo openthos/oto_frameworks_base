@@ -781,6 +781,14 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
+        case FOCUS_RECENT_STACK_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            focusRecentStack(stackId);
+            reply.writeNoException();
+            return true;
+        }
+
         case UNSET_FOCUSED_STACK_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
@@ -3382,6 +3390,18 @@ class ActivityManagerProxy implements IActivityManager
         data.recycle();
         reply.recycle();
         return res;
+    }
+    @Override
+    public void focusRecentStack(int stackId) throws RemoteException
+    {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        mRemote.transact(FOCUS_RECENT_STACK_TRANSACTION, data, reply, IBinder.FLAG_ONEWAY);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
     }
     @Override
     public void setFocusedStack(int stackId) throws RemoteException

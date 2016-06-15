@@ -2461,6 +2461,12 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     @Override
+    public void focusRecentStack(int stackId) {
+        resizeStatusbarActivity(stackId);
+        setFocusedStack(stackId);
+    }
+
+    @Override
     public void setFocusedStack(int stackId) {
         if (DEBUG_FOCUS) Slog.d(TAG, "setFocusedStack: stackId=" + stackId);
         synchronized (ActivityManagerService.this) {

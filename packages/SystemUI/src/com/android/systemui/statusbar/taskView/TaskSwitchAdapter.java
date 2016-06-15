@@ -104,8 +104,12 @@ public class TaskSwitchAdapter extends BaseAdapter {
             TaskInfo taskInfo = this.mTasks.get(this.mCurrentPosition);
             if(taskInfo.info.id >= 0) {
                 try {
-                    this.mam.moveTaskToFront(taskInfo.info.id,
-                                             ActivityManager.MOVE_TASK_WITH_HOME);
+                    int stackId = taskInfo.info.stackId;
+                    if (!ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
+                        if (ActivityManagerNative.getDefault().getFocusedStackId() != stackId) {
+                            ActivityManagerNative.getDefault().focusRecentStack(stackId);
+                        }
+                    }
                 } catch (Exception e) {
                     taskInfo.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|
                                              Intent.FLAG_ACTIVITY_CLEAR_TOP);

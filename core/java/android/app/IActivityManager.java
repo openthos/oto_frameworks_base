@@ -140,6 +140,7 @@ public interface IActivityManager extends IInterface {
     public StackInfo getStackInfo(int stackId) throws RemoteException;
     public boolean isInHomeStack(int taskId) throws RemoteException;
     public void setFocusedStack(int stackId) throws RemoteException;
+    public void focusRecentStack(int stackId) throws RemoteException;
     public void unsetFocusedStack(int stackId) throws RemoteException;
     public int getFocusedStackId() throws RemoteException;
     public void registerTaskStackListener(ITaskStackListener listener) throws RemoteException;
@@ -848,6 +849,7 @@ public interface IActivityManager extends IInterface {
 
     int STARTUP_MENU_ACTIVITY_KILL = IBinder.FIRST_CALL_TRANSACTION+193;
     int UNSET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+194;
+    int FOCUS_RECENT_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+195;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

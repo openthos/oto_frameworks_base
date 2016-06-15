@@ -63,14 +63,7 @@ public class ActivityKeyView extends ImageView {
         mOpen = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    PackageManager manager = mContext.getPackageManager();
-                    Intent lanuch = new Intent();
-                    lanuch = manager.getLaunchIntentForPackage(mActivity.mPkgName);
-                    lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(lanuch);
-                } catch(Exception e) {
-                }
+                runApkByPkg();
                 mRBM.dismiss();
             }
         };
@@ -215,6 +208,19 @@ public class ActivityKeyView extends ImageView {
                                                                   mActivity.mRestoreRect);
             } catch(Exception exc) {
             }
+            mActivity.mHiden = false;
+        }
+    }
+
+    public void runApkByPkg() {
+        //Run APK by PkgName
+        try {
+            PackageManager manager = mContext.getPackageManager();
+            Intent lanuch = new Intent();
+            lanuch = manager.getLaunchIntentForPackage(mActivity.mPkgName);
+            lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(lanuch);
+        } catch(Exception exc) {
         }
     }
 
@@ -258,15 +264,7 @@ public class ActivityKeyView extends ImageView {
         if(action == MotionEvent.ACTION_DOWN) {
             if(mActivity.mIsDocked) {
                 if(!mActivity.mApkRun) {
-                    //Run APK by PkgName
-                    try {
-                        PackageManager manager = mContext.getPackageManager();
-                        Intent lanuch = new Intent();
-                        lanuch = manager.getLaunchIntentForPackage(mActivity.mPkgName);
-                        lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(lanuch);
-                    } catch(Exception exc) {
-                    }
+                    runApkByPkg();
                 } else if(mActivity.mHiden) {
                     resizeStack();
                 }
