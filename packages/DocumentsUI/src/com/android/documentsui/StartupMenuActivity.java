@@ -345,11 +345,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
                 break;
             case R.id.sleep:
-                if (mPopupWindow != null) {
-                    mPopupWindow.dismiss();
+                try {
+                    String cmd = "/system/xbin/echo mem > /sys/power/state";
+                    Runtime.getRuntime().exec(new String[] {"/system/bin/su", "-c", cmd});
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                Log.v("This sleep : ", "COMING SOON...");
-                Toast.makeText(this, "This sleep: COMING SOON...", 0).show();
                 break;
             case R.id.lock:
                 if (mPopupWindow != null) {
