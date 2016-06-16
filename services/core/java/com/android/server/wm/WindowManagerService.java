@@ -5271,15 +5271,6 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
-    public void getStackBounds(int stackId, Rect bounds) {
-        final TaskStack stack = mStackIdToStack.get(stackId);
-        if (stack != null) {
-            stack.getBounds(bounds);
-            return;
-        }
-        bounds.setEmpty();
-    }
-
     public DisplayMetrics getDisplayMetrics(){
         return mContext.getResources().getDisplayMetrics();
     }
@@ -8535,6 +8526,16 @@ public class WindowManagerService extends IWindowManager.Stub
         mDisplaySettings.writeSettingsLocked();
 
         reconfigureDisplayLocked(displayContent);
+    }
+
+    @Override
+    public void getStackBounds(int stackId, Rect bounds) {
+        final TaskStack stack = mStackIdToStack.get(stackId);
+        if (stack != null) {
+            stack.getBounds(bounds);
+            return;
+        }
+        bounds.setEmpty();
     }
 
     // -------------------------------------------------------------

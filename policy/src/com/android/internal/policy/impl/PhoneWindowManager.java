@@ -1213,12 +1213,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     final int id = mRecentTaskInfo.stackId;
                     stackIdList.add(id);
             }
+            Rect actualWindowSize = new Rect();
+            Rect outOfScreen = new Rect();
             for(int id : stackIdList){
-                Rect actualWindowSize = defaultWindowSize;
-                Rect normalRect = actualWindowSize;
                 try{
-                    ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(id, normalRect);
-                    ActivityManagerNative.getDefault().relayoutWindow(id, mini);
+                    mWindowManager.getStackBounds(id, actualWindowSize);
+                    if (actualWindowSize.left < metrics.widthPixels &&
+                        actualWindowSize.top < metrics.heightPixels) {
+                        outOfScreen.left = actualWindowSize.left + metrics.widthPixels;
+                        outOfScreen.top = actualWindowSize.top + metrics.heightPixels;
+                        outOfScreen.right = actualWindowSize.right + metrics.widthPixels;
+                        outOfScreen.bottom = actualWindowSize.bottom + metrics.heightPixels;
+                        ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(id, actualWindowSize);
+                        ActivityManagerNative.getDefault().relayoutWindow(id, outOfScreen);
+                    }
                 }catch(RemoteException e){
                     Log.e("umic","Minimize failed",e);
                 }

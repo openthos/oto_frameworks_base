@@ -71,6 +71,7 @@ interface IWindowManager
     void clearForcedDisplayDensity(int displayId);
 
     void setOverscan(int displayId, int left, int top, int right, int bottom);
+    void getStackBounds(int stackId, in Rect bounds);
 
     // These can only be called when holding the MANAGE_APP_TOKENS permission.
     void pauseKeyDispatching(IBinder token);

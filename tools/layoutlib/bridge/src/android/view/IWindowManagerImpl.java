@@ -101,6 +101,12 @@ public class IWindowManagerImpl implements IWindowManager {
     }
 
     @Override
+    public void getStackBounds(int stackId, Rect bounds)
+            throws RemoteException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public void closeSystemDialogs(String arg0) throws RemoteException {
         // TODO Auto-generated method stub
 
