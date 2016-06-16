@@ -2275,7 +2275,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         private boolean isWhiteList() {
             return getContext().getApplicationInfo()
-                                    .packageName.compareTo("com.tencent.mm") == 0;
+                                    .packageName.compareTo("com.tencent.mobileqq") != 0;
         }
 
         @Override
