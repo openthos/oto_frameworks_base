@@ -1113,10 +1113,10 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected void showRecents(boolean triggeredFromAltTab) {
         if (mRecents != null) {
-            sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
+            //sendCloseSystemWindows(mContext, SYSTEM_DIALOG_REASON_RECENT_APPS);
             //mRecents.showRecents(triggeredFromAltTab, getStatusBarView());
             if(mTaskViewDialog != null) {
-                mTaskViewDialog.showTaskView();
+                mTaskViewDialog.showOrTabTaskView();
             }
         }
     }

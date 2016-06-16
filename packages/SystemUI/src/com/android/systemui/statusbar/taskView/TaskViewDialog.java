@@ -65,9 +65,8 @@ public class TaskViewDialog extends Dialog {
 
     public void create() {
         Window window = getWindow();
-        window.setType(LayoutParams.TYPE_SYSTEM_DIALOG);
+        window.setType(LayoutParams.TYPE_SYSTEM_ALERT);
         window.setFlags(LayoutParams.FLAG_ALT_FOCUSABLE_IM,LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-        window.setTitle("TaskView");
 
         this.setContentView(R.layout.task_dialog);
         this.mTaskContainer = (GridView) findViewById(R.id.gridView);
@@ -101,14 +100,14 @@ public class TaskViewDialog extends Dialog {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode != KeyEvent.KEYCODE_TAB || !event.isAltPressed()) {
+        /*if(keyCode != KeyEvent.KEYCODE_TAB || !event.isAltPressed()) {
             return super.onKeyDown(keyCode, event);
         }
 
         Log.w(TAG, "onKeyDown");
         if(this.isShowing() && this.mTaskAdapter != null) {
             this.mTaskAdapter.stepTask();
-        }
+        }*/
 
         return true;
     }
@@ -140,6 +139,20 @@ public class TaskViewDialog extends Dialog {
         this.show();
         if(this.mTaskAdapter != null) {
             this.mTaskAdapter.stepTask();
+        }
+    }
+
+    public void tabTaskView() {
+        if(isShowing() && mTaskAdapter != null) {
+            mTaskAdapter.stepTask();
+        }
+    }
+
+    public void showOrTabTaskView() {
+        if(!isShowing()) {
+            showTaskView();
+        } else {
+            tabTaskView();
         }
     }
 
