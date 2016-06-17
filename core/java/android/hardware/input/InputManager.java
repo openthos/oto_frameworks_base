@@ -38,6 +38,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.InputDevice;
 import android.view.InputEvent;
+import android.view.KeyEvent;
 
 import java.util.ArrayList;
 
@@ -789,6 +790,22 @@ public final class InputManager {
      */
     public Vibrator getInputDeviceVibrator(int deviceId) {
         return new InputDeviceVibrator(deviceId);
+    }
+
+    /**
+     *  Simulation to send Key Event
+     *
+     *  @param keyCode The code of the event
+     */
+    public void sendKeyEvent(int keyCode) {
+        KeyEvent eventDown = new KeyEvent(KeyEvent.ACTION_DOWN,keyCode);
+        KeyEvent eventUp = new KeyEvent(KeyEvent.ACTION_UP, keyCode);
+
+        eventDown.setSource(InputDevice.SOURCE_ANY);
+        eventUp.setSource(InputDevice.SOURCE_ANY);
+
+        injectInputEvent(eventDown, INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
+        injectInputEvent(eventUp, INJECT_INPUT_EVENT_MODE_WAIT_FOR_FINISH);
     }
 
     /**

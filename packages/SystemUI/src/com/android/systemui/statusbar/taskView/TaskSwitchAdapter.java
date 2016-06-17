@@ -9,8 +9,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.hardware.input.InputManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -105,9 +107,14 @@ public class TaskSwitchAdapter extends BaseAdapter {
             if(taskInfo.info.id >= 0) {
                 try {
                     int stackId = taskInfo.info.stackId;
-                    if (!ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
-                        if (ActivityManagerNative.getDefault().getFocusedStackId() != stackId) {
-                            ActivityManagerNative.getDefault().focusRecentStack(stackId);
+                    if (stackId == 0) {
+                        ((InputManager)mc.getSystemService(Context.INPUT_SERVICE))
+                                              .sendKeyEvent(KeyEvent.KEYCODE_CUSTOMIZE_HOME);
+                    } else {
+                        if (!ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
+                            if (ActivityManagerNative.getDefault().getFocusedStackId() != stackId) {
+                                ActivityManagerNative.getDefault().focusRecentStack(stackId);
+                            }
                         }
                     }
                 } catch (Exception e) {
