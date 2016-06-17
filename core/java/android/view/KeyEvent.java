@@ -756,6 +756,14 @@ public class KeyEvent extends InputEvent implements Parcelable {
     public static final int KEYCODE_CUSTOMIZE_BROWSER = KEYCODE_CUSTOMIZE_START + 1;
     /** Start menu home. */
     public static final int KEYCODE_CUSTOMIZE_HOME = KEYCODE_CUSTOMIZE_START + 3;
+    /** Status bar action center. */
+    public static final int KEYCODE_CUSTOMIZE_ACTION_CENTER = KEYCODE_CUSTOMIZE_START + 4;
+    /** Status bar battery. */
+    public static final int KEYCODE_CUSTOMIZE_BATTERY = KEYCODE_CUSTOMIZE_START + 5;
+    /** Status bar wifi. */
+    public static final int KEYCODE_CUSTOMIZE_WIFI = KEYCODE_CUSTOMIZE_START + 6;
+    /** Start menu sound. */
+    public static final int KEYCODE_CUSTOMIZE_SOUND = KEYCODE_CUSTOMIZE_START + 7;
 
 
     public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_START = 1000000;
@@ -1785,6 +1793,10 @@ public class KeyEvent extends InputEvent implements Parcelable {
             case KeyEvent.KEYCODE_CUSTOMIZE_HOME:
             case KeyEvent.KEYCODE_CUSTOMIZE_BROWSER:
             case KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER:
+            case KeyEvent.KEYCODE_CUSTOMIZE_ACTION_CENTER:
+            case KeyEvent.KEYCODE_CUSTOMIZE_BATTERY:
+            case KeyEvent.KEYCODE_CUSTOMIZE_WIFI:
+            case KeyEvent.KEYCODE_CUSTOMIZE_SOUND:
             case KeyEvent.KEYCODE_MENU:
             case KeyEvent.KEYCODE_SOFT_RIGHT:
             case KeyEvent.KEYCODE_HOME:

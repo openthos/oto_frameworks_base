@@ -594,6 +594,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_FILE_MANAGER = 16;
     private static final int MSG_STARTUP_BROWSER = 17;
     private static final int MSG_STARTUP_HOME = 18;
+    private static final int MSG_STARTUP_ACTION_CENTER = 19;
+    private static final int MSG_STARTUP_BATTERY = 20;
+    private static final int MSG_STARTUP_WIFI = 21;
+    private static final int MSG_STARTUP_SOUND = 22;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -653,6 +657,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_HOME:
                     startHomeManager();
+                    break;
+                case MSG_STARTUP_ACTION_CENTER:
+                    startActionCenterManager();
+                    break;
+                case MSG_STARTUP_BATTERY:
+                    startBatteryManager();
+                    break;
+                case MSG_STARTUP_WIFI:
+                    startWifiManager();
+                    break;
+                case MSG_STARTUP_SOUND:
+                    startSoundManager();
                     break;
             }
         }
@@ -1136,6 +1152,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_FILE_MANAGER);
     }
 
+    public void sendActionCenterManager() {
+        mHandler.removeMessages(MSG_STARTUP_ACTION_CENTER);
+        mHandler.sendEmptyMessage(MSG_STARTUP_ACTION_CENTER);
+    }
+
+    public void sendBatteryManager() {
+        mHandler.removeMessages(MSG_STARTUP_BATTERY);
+        mHandler.sendEmptyMessage(MSG_STARTUP_BATTERY);
+    }
+
+    public void sendWifiManager() {
+        mHandler.removeMessages(MSG_STARTUP_WIFI);
+        mHandler.sendEmptyMessage(MSG_STARTUP_WIFI);
+    }
+
+    public void sendSoundManager() {
+        mHandler.removeMessages(MSG_STARTUP_SOUND);
+        mHandler.sendEmptyMessage(MSG_STARTUP_SOUND);
+    }
+
     public void sendHomeManager() {
         mHandler.removeMessages(MSG_STARTUP_HOME);
         mHandler.sendEmptyMessage(MSG_STARTUP_HOME);
@@ -1234,6 +1270,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } catch (ActivityNotFoundException e) {
             Slog.w(TAG, "No activity to handle assist action.", e);
         }
+    }
+
+    void startActionCenterManager() {
+        Log.e("com", "ActionCenter: COMING SOON.");
+    }
+
+    void startBatteryManager() {
+        Log.e("com", "Battery: COMING SOON");
+    }
+
+    void startWifiManager() {
+        Log.e("com", "Wifi: COMING SOON");
+    }
+
+    void startSoundManager() {
+        Log.e("com", "Sound: COMING SOON");
     }
 
     void startupMenuInternal() {
@@ -2709,11 +2761,27 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (down) {
                 intentExplorer();
             }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_ACTION_CENTER) {
+            if (down) {
+               sendActionCenterManager();
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BATTERY) {
+            if (down) {
+                sendBatteryManager();
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_WIFI) {
+            if (down) {
+                sendWifiManager();
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_SOUND) {
+            if (down) {
+                sendSoundManager();
+            }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_HOME) {
             if (down) {
                 sendHomeManager();
             }
-        }else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
+        } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {
                 if (repeatCount == 0) {
                     mSearchKeyShortcutPending = true;
