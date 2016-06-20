@@ -173,8 +173,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     /* For initializing window position ofsset step */
     static final int WINDOW_OFFSET_STEP = 35;
     static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
-    static final int WINDOW_INIT_PART_WIDTH = 2;
-    static final int WINDOW_INIT_PART_HEIGHT = 2;
+    static final float WINDOW_INIT_PART_WIDTH_THIN = 0.33f;
+    static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
+    static final float WINDOW_INIT_PART_HEIGHT = 0.75f;
 
     /* For initializing startup menu window positon */
     static final int WINDOW_STARTUP_MENU_WIDTH = 330;
@@ -1688,7 +1689,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
                                                    activityDisplay.mDisplayInfo.logicalHeight);
                     mService.relayoutWindow(stackId, rectFullScreen);
                 } else {
-                    mService.relayoutWindow(stackId, getInitializingRect(intentFlags, Display.DEFAULT_DISPLAY));
+                    mService.relayoutWindow(stackId, getInitializingRect(intentFlags,
+                                                                         Display.DEFAULT_DISPLAY,
+                                                                         r.packageName));
                 }
             }
             if (DEBUG_FOCUS || DEBUG_STACK) Slog.d(TAG, "adjustStackFocus: New stack r=" + r +
@@ -1696,15 +1699,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
             setFocusedStack(stackId, "start new stack in adjustStackFocus");
             mFocusedStack.setMultiwindowStack(isMultiwindow);
             mFocusedStack.setStartupMenuStack((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0);
-            if (mFocusedStack.isStartupMenuStack()) {
-                Slog.i(TAG, String.format("======================= gchen_tag: startActivity for startup menu for %d in ActivityStackSupervisor", stackId));
-            }
             return mFocusedStack;
         }
         return mHomeStack;
     }
 
-    Rect getInitializingRect(int intentFlags, int displayId) {
+    private boolean isPhoneStyleWindow(String pkgName) {
+        return (pkgName != null) && ((pkgName.compareTo("com.tencent.mm") == 0)
+                                     || (pkgName.compareTo("com.tencent.mobileqq") == 0));
+    }
+
+    Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
         ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
 
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
@@ -1720,11 +1725,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (mInitPosY > WINDOW_OFFSET_MAX) {
             mInitPosY = WINDOW_OFFSET_STEP;
         }
-        return new Rect(mInitPosX, mInitPosY,
-                        //mInitPosX + activityDisplay.mDisplayInfo.logicalWidth / WINDOW_INIT_PART_WIDTH,
-                        //mInitPosY + activityDisplay.mDisplayInfo.logicalHeight / WINDOW_INIT_PART_HEIGHT);
-                        mInitPosX + activityDisplay.mDisplayInfo.logicalWidth * 2 / 3,
-                        mInitPosY + activityDisplay.mDisplayInfo.logicalHeight * 3 / 4);
+
+        float height = activityDisplay.mDisplayInfo.logicalHeight * WINDOW_INIT_PART_HEIGHT;
+        float width = activityDisplay.mDisplayInfo.logicalWidth;
+        if (isPhoneStyleWindow(pkgName)) {
+            width *= WINDOW_INIT_PART_WIDTH_THIN;
+        } else {
+            width *= WINDOW_INIT_PART_WIDTH_WIDE;
+        }
+        return new Rect(mInitPosX, mInitPosY, mInitPosX + (int)width, mInitPosY + (int)height);
     }
 
     boolean isHomeActivity(ActivityRecord r) {
