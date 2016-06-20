@@ -667,6 +667,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return true if any activity was paused as a result of this call.
      */
     boolean pauseBackStacks(boolean userLeaving, boolean resuming, boolean dontWait) {
+        if (multiwindowEnabled()) {
+            return false;
+        }
+
         boolean someActivityPaused = false;
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
@@ -1575,6 +1579,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
         return err;
     }
 
+    boolean multiwindowEnabled() {
+        return Settings.System.getInt(mService.mContext.getContentResolver(),
+                                      Settings.System.TIETO_MULTIWINDOW_DISABLED, 0) == 0;
+    }
+
     ActivityStack adjustStackFocus(ActivityRecord r, boolean newTask) {
         final TaskRecord task = r.task;
 
@@ -1625,9 +1634,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             int intentFlags = 0;
 
             // FIXME: mContext is not merged into 5.1 originally.
-            boolean multiwindowEnabled = Settings.System.getInt(mService.mContext.getContentResolver(),
-                    Settings.System.TIETO_MULTIWINDOW_DISABLED, 0) == 0;
-            if (multiwindowEnabled && (r.intent != null)) {
+            if (multiwindowEnabled() && (r.intent != null)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             }
 
