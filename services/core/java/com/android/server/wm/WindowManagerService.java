@@ -8069,6 +8069,9 @@ public class WindowManagerService extends IWindowManager.Stub
                     break;
 
                 case TAP_OUTSIDE_STACK: {
+                    if (mPolicy.willSkipFocus()) {
+                        break;
+                    }
                     int stackId;
                     synchronized (mWindowMap) {
                         stackId = ((DisplayContent)msg.obj).stackIdFromPoint(msg.arg1, msg.arg2);

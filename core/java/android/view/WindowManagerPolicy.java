@@ -1263,4 +1263,10 @@ public interface WindowManagerPolicy {
      * @param fadeoutDuration the duration of the exit animation, in milliseconds
      */
     public void startKeyguardExitAnimation(long startTime, long fadeoutDuration);
+
+    /**
+     * Return whether or not to skip the focus window.
+     * @return true if skip focus windows
+     */
+    public boolean willSkipFocus();
 }

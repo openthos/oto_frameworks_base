@@ -2962,6 +2962,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 final int shiftlessModifiers = event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
                 if (KeyEvent.metaStateHasModifiers(shiftlessModifiers, KeyEvent.META_ALT_ON)) {
                     mRecentAppsHeldModifiers = shiftlessModifiers;
+                    mSkipFocus = true;
                     showRecentApps(true);
                     return -1;
                 }
@@ -2969,6 +2970,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } else if (!down && mRecentAppsHeldModifiers != 0
                 && (metaState & mRecentAppsHeldModifiers) == 0) {
             mRecentAppsHeldModifiers = 0;
+            mSkipFocus = false;
             hideRecentApps(true, false);
         }
 
@@ -5937,6 +5939,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     ScreenLockTimeout mScreenLockTimeout = new ScreenLockTimeout();
 
+    private boolean mSkipFocus = false;
+
     @Override
     public void lockNow(Bundle options) {
         mContext.enforceCallingOrSelfPermission(android.Manifest.permission.DEVICE_POWER, null);
@@ -6638,5 +6642,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (mOrientationListener != null) {
             mOrientationListener.dump(pw, prefix);
         }
+    }
+
+    @Override
+    public boolean willSkipFocus() {
+        return mSkipFocus;
     }
 }
