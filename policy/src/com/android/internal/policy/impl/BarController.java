@@ -115,7 +115,7 @@ public class BarController {
                     vis &= ~mTranslucentFlag;
                 }
                 if ((fl & WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) != 0) {
-                    vis |= View.SYSTEM_UI_TRANSPARENT;
+                    //vis |= View.SYSTEM_UI_TRANSPARENT;
                 } else {
                     vis &= ~View.SYSTEM_UI_TRANSPARENT;
                 }

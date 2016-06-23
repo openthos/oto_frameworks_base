@@ -2378,7 +2378,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 //    }
                 //}
                 //mStatusBar = win;
-                //mStatusBarController.setWindow(win);
+                mStatusBarController.setWindow(win);
                 break;
             case TYPE_NAVIGATION_BAR:
                 mContext.enforceCallingOrSelfPermission(
@@ -4393,6 +4393,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // while the dream is showing.
         if (!mShowingDream) {
             mDreamingLockscreen = mShowingLockscreen;
+        }
+        if ((mLastSystemUiFlags & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+            if (mStatusBarController.setBarShowingLw(false)) {
+                changes |= FINISH_LAYOUT_REDO_LAYOUT;
+            }
+        } else {
+            if (mStatusBarController.setBarShowingLw(true)) {
+                changes |= FINISH_LAYOUT_REDO_LAYOUT;
+            }
         }
 
         if (mStatusBar != null) {
