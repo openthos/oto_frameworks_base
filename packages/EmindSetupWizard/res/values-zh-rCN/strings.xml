@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="str_next">下一步</string>
+    <string name="str_prev">上一步</string>
+    <string name="str_finish">完成</string>
+    <string name="str_username">请输入您的名称</string>
+    <string name="str_language">语言</string>
+    <string name="title_openthos_id">验证 Openthos ID</string>
+    <string name="openthos_id_name">Openthos ID</string>
+    <string name="openthos_id_password">密码</string>
+    <string name="str_verify">验证</string>
+    <string name="str_skip">跳过</string>
+    <string name="str_register">注册openthos ID</string>
+    <string name="title_username_password">本机设置</string>
+    <string name="str_computer">本机名称</string>
+    <string name="str_screen_password">锁屏密码</string>
+    <string name="str_screen_password_confirm">确认密码</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button_text_color">#ff333333</color>
+    <color name="spinner_item_selected">#ff007dff</color>
+    <color name="spinner_item_normal">#fffefefe</color>
+</resources>

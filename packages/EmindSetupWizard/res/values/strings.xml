@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SetupWizard</string>
+    <string name="str_next">Next</string>
+    <string name="str_prev">Back</string>
+    <string name="str_finish">Finish</string>
+    <string name="str_username">Input Your Username</string>
+    <string name="str_language">Language</string>
+    <string name="title_openthos_id">Confirm Openthos ID</string>
+    <string name="openthos_id_name">Openthos ID</string>
+    <string name="openthos_id_password">Password</string>
+    <string name="str_verify">Verify</string>
+    <string name="str_skip">Skip</string>
+    <string name="str_register">register openthosID</string>
+    <string name="title_username_password">About this device</string>
+    <string name="str_computer">Computer Name</string>
+    <string name="str_screen_password">Screen Password</string>
+    <string name="str_screen_password_confirm">Screen Password confirm</string>
+</resources>
