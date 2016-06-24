@@ -8655,6 +8655,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 task.setTaskToReturnTo(ActivityRecord.RECENTS_ACTIVITY_TYPE);
             }
             mStackSupervisor.findTaskToMoveToFrontLocked(task, flags, options, "moveTaskToFront");
+            addRecentTaskLocked(task);
         } finally {
             Binder.restoreCallingIdentity(origId);
         }

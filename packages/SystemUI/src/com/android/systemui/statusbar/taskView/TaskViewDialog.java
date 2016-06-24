@@ -100,14 +100,14 @@ public class TaskViewDialog extends Dialog {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        /*if(keyCode != KeyEvent.KEYCODE_TAB || !event.isAltPressed()) {
-            return super.onKeyDown(keyCode, event);
+
+        if(!isShowing() || mTaskAdapter == null) {
+            return true;
         }
 
-        Log.w(TAG, "onKeyDown");
-        if(this.isShowing() && this.mTaskAdapter != null) {
-            this.mTaskAdapter.stepTask();
-        }*/
+        if(keyCode == KeyEvent.KEYCODE_TAB && event.isAltPressed() && event.isShiftPressed()) {
+            mTaskAdapter.stepTaskForward();
+        }
 
         return true;
     }

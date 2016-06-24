@@ -37,6 +37,8 @@ public class TaskSwitchAdapter extends BaseAdapter {
     private PackageManager mPm;
     private int mCurrentPosition = 0;
     private GridView mParent;
+    private static final int DISPLAY_TASKS = 100;
+    private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
 
     class TaskInfo {
         public RecentTaskInfo info;
@@ -63,7 +65,7 @@ public class TaskSwitchAdapter extends BaseAdapter {
     {
         ArrayList<RecentTaskInfo> recentTasks = new ArrayList();
         try {
-            recentTasks = (ArrayList) mam.getRecentTasks(100,
+            recentTasks = (ArrayList) mam.getRecentTasks(MAX_TASKS,
                                                          ActivityManager.RECENT_WITH_EXCLUDED);
         } catch(Exception e) {
         }
@@ -96,8 +98,20 @@ public class TaskSwitchAdapter extends BaseAdapter {
         this.notifyDataSetChanged();
     }
 
-    public void switchTask(int position)
-    {
+    public void stepTaskForward() {
+        if (!mTasks.isEmpty()) {
+            int cp = mCurrentPosition - 1;
+            if (cp < 0) {
+                mCurrentPosition = mTasks.size() - 1;
+            } else {
+                mCurrentPosition = cp;
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public void switchTask(int position) {
         if(position == -1) {
             position = this.mCurrentPosition;
         }

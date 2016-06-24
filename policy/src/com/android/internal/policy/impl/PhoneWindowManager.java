@@ -2976,7 +2976,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
 
         // Display task switcher for ALT-TAB.
-        if (down && repeatCount == 0 && keyCode == KeyEvent.KEYCODE_TAB) {
+        if (down && repeatCount == 0 && keyCode == KeyEvent.KEYCODE_TAB
+                && !event.isShiftPressed()) {
             //if (mRecentAppsHeldModifiers == 0 && !keyguardOn) {
             if (!keyguardOn) {
                 final int shiftlessModifiers = event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
