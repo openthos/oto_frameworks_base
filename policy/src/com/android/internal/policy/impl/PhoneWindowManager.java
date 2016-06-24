@@ -1132,7 +1132,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private final Runnable mScreenshotRunnable = new Runnable() {
         @Override
         public void run() {
-            takeScreenshot();
+            try {
+                Thread.sleep(1000);
+                takeScreenshot();
+            } catch (Exception e) {
+            }
         }
     };
 

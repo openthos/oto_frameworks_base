@@ -74,7 +74,7 @@ public class QSTileHost implements QSTile.Host {
     private static final String TILES_SETTING = "sysui_qs_tiles";
 
     private final Context mContext;
-    private final PhoneStatusBar mStatusBar;
+    public final PhoneStatusBar mStatusBar;
     private final LinkedHashMap<String, QSTile<?>> mTiles = new LinkedHashMap<>();
     private final Observer mObserver = new Observer();
     private final BluetoothController mBluetooth;

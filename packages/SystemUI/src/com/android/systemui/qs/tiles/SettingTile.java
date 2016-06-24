@@ -1,30 +1,28 @@
 package com.android.systemui.qs.tiles;
 
+import android.hardware.input.InputManager;
+import android.view.KeyEvent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.RemoteException;
 import android.content.Intent;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
-import android.net.ConnectivityManager;
 import android.provider.Settings;
-import android.telephony.SubscriptionManager;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnAttachStateChangeListener;
-import com.android.internal.telephony.TelephonyIntents;
-import com.android.systemui.R;
+import android.util.Log;
 import com.android.systemui.qs.QSTile;
-import com.android.systemui.statusbar.policy.SettingController;
+import com.android.systemui.qs.QSTile.BooleanState;
+import com.android.systemui.qs.QSTile.Host;
+import com.android.systemui.statusbar.phone.QSTileHost;
 
 public class SettingTile extends QSTile<QSTile.BooleanState> {
     private static final String TAG = "SettingTile";
-
-    //private static final boolean DEBUG = true;
-    //private final SettingController mController=null;
-    //private boolean mListening;
-    //private int mDataState = R.drawable.ic_qs_inversion_off;
+    private QSTileHost mHost;
 
     public SettingTile(Host host) {
         super(host);
+        mHost = (QSTileHost) host;
     }
 
     @Override
@@ -37,26 +35,24 @@ public class SettingTile extends QSTile<QSTile.BooleanState> {
 
     }
 
-    //boolean enabled =false;
     @Override
     protected void handleClick() {
-        //enabled =!enabled;
-        //if (enabled) {
-            //mDataState = R.drawable.ic_qs_inversion_on;
-        //} else {
-            //mDataState = R.drawable.ic_qs_inversion_off;
-        //}
-        //refreshState();
-
-        //ActivityStarter mActivityStarter = new ActivityStarter();
-        //mActivityStarter.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS), true);
-
+        //mHost.mStatusBar.mStatusBarView.collapseAllPanels(true);
+        //mHost.mStatusBar.makeExpandedInvisible();
+        if (android.os.Build.VERSION.SDK_INT > 13) {
+            mContext.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        } else {
+            mContext.startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        }
+        //mHost.mStatusBar.makeExpandedInvisible();
     }
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         state.label ="Setting";
         state.visible = true;
-        //state.iconId = mDataState;
+        state.value = true;
     }
 }
