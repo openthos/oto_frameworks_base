@@ -19,6 +19,7 @@ package com.android.systemui.statusbar;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.Notification;
@@ -99,6 +100,8 @@ import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.taskview.TaskViewDialog;
+import com.android.systemui.statusbar.notificationbars.VolumeDialog;
+import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +132,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected static final int MSG_HIDE_HEADS_UP = 1029;
     protected static final int MSG_ESCALATE_HEADS_UP = 1030;
     protected static final int MSG_DECAY_HEADS_UP = 1031;
-
+    protected static final int MSG_SHOW_VOLUME_PANEL = 1032;
+    protected static final int MSG_SHOW_WIFI_PANEL = 1033;
     protected static final boolean ENABLE_HEADS_UP = true;
     // scores above this threshold should be displayed in heads up mode.
     protected static final int INTERRUPTION_THRESHOLD = 10;
@@ -151,7 +155,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected IStatusBarService mBarService;
     protected H mHandler = createHandler();
     private TaskViewDialog mTaskViewDialog;
-
+    protected BaseSettingDialog wifiPopupWindow;
+    protected BaseSettingDialog volumePopupWindow;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
@@ -981,6 +986,25 @@ public abstract class BaseStatusBar extends SystemUI implements
     public void onHeadsUpDismissed() {
     }
 
+    protected void showWifiPanelWork(){
+        Log.d("umic","start show wifi panel");
+    }
+    protected void showVolumePanelWork(){
+        Log.d("umic","start show panel of Volume");
+    }
+
+    @Override
+    public void showVolumePanel(){
+        int msg = MSG_SHOW_VOLUME_PANEL;
+        mHandler.removeMessages(msg);
+        mHandler.sendEmptyMessage(msg);
+    }
+    @Override
+    public void showWifiPanel(){
+        int msg = MSG_SHOW_WIFI_PANEL;
+        mHandler.removeMessages(msg);
+        mHandler.sendEmptyMessage(msg);
+    }
     @Override
     public void showRecentApps(boolean triggeredFromAltTab) {
         int msg = MSG_SHOW_RECENT_APPS;
@@ -1235,6 +1259,12 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected class H extends Handler {
         public void handleMessage(Message m) {
             switch (m.what) {
+             case MSG_SHOW_VOLUME_PANEL:
+                 showVolumePanelWork();
+                 break;
+             case MSG_SHOW_WIFI_PANEL:
+                 showWifiPanelWork();
+                 break;
              case MSG_SHOW_RECENT_APPS:
                  showRecents(m.arg1 > 0);
                  break;

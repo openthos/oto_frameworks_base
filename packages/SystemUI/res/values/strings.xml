@@ -926,4 +926,12 @@
     <!-- LockActivity settings  2016/5/11-->
     <string name="app_name">LocknActivity</string>
     <string name="action_settings">Settings</string>
+
+    <!--media_volume-->
+
+    <!--wifi-->
+    <string name="wifi_cnt">Net Connected</string>
+    <string name="wifi_not_cnt">Net not Connected</string>
+    <string name="wifi_cancel">Cancel</string>
+    <string name="wifi_ok">OK</string>
 </resources>

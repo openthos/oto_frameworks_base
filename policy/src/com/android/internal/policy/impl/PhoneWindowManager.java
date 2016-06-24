@@ -1281,10 +1281,30 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startWifiManager() {
+        try {
+            IStatusBarService statusbar = getStatusBarService();
+            if (statusbar != null) {
+                  statusbar.showWifiPanel();
+            }
+        } catch (RemoteException e) {
+             Slog.e(TAG, "RemoteException when showing recent apps", e);
+             // re-acquire status bar service next time it is needed.
+             mStatusBarService = null;
+        }
         Log.e("com", "Wifi: COMING SOON");
     }
 
     void startSoundManager() {
+        try {
+            IStatusBarService statusbar = getStatusBarService();
+            if (statusbar != null) {
+                  statusbar.showVolumePanel();
+            }
+        } catch (RemoteException e) {
+             Slog.e(TAG, "RemoteException when showing recent apps", e);
+             // re-acquire status bar service next time it is needed.
+             mStatusBarService = null;
+        }
         Log.e("com", "Sound: COMING SOON");
     }
 

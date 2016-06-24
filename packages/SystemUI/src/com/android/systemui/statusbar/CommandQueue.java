@@ -61,6 +61,8 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SHOW_STATUSBAR_ACTIVITY    = 19 << MSG_SHIFT;
     private static final int MSG_SAVEINFO_STATUSBAR_ACTIVITY    = 20 << MSG_SHIFT;
     private static final int MSG_REMOVE_STATUSBAR_ACTIVITY  = 21 << MSG_SHIFT;
+    private static final int MSG_SHOW_VOLUME_PANEL          = 22 << MSG_SHIFT;
+    private static final int MSG_SHOW_WIFI_PANEL            = 23 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -92,6 +94,8 @@ public class CommandQueue extends IStatusBar.Stub {
         public void setImeWindowStatus(IBinder token, int vis, int backDisposition,
                 boolean showImeSwitcher);
         public void showRecentApps(boolean triggeredFromAltTab);
+        public void showVolumePanel();
+        public void showWifiPanel();
         public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey);
         public void toggleRecentApps();
         public void preloadRecentApps();
@@ -190,6 +194,19 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void showVolumePanel() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_VOLUME_PANEL);
+            mHandler.sendEmptyMessage(MSG_SHOW_VOLUME_PANEL);
+        }
+    }
+
+    public void showWifiPanel() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_WIFI_PANEL);
+            mHandler.sendEmptyMessage(MSG_SHOW_WIFI_PANEL);
+        }
+    }
     public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         synchronized (mList) {
             mHandler.removeMessages(MSG_HIDE_RECENT_APPS);
@@ -364,6 +381,12 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_REMOVE_STATUSBAR_ACTIVITY:
                     mCallbacks.removeStatusbarActivity((int)msg.obj);
+                    break;
+                case MSG_SHOW_VOLUME_PANEL:
+                    mCallbacks.showVolumePanel();
+                    break;
+                case MSG_SHOW_WIFI_PANEL:
+                    mCallbacks.showWifiPanel();
                     break;
             }
         }

@@ -44,7 +44,8 @@ oneway interface IStatusBar
     void preloadRecentApps();
     void cancelPreloadRecentApps();
     void showScreenPinningRequest();
-
+    void showVolumePanel();
+    void showWifiPanel();
     void showStatusbarActivity(int stackId, String pkg);
     void saveInfoInStatusbarActivity(int stackId, in Rect rect);
     void removeStatusbarActivity(int stackId);

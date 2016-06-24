@@ -185,6 +185,8 @@ import com.android.systemui.statusbar.stack.StackScrollAlgorithm;
 import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
 import com.android.systemui.volume.VolumeComponent;
 import com.android.systemui.statusbar.phone.NavigationBarView;
+import com.android.systemui.statusbar.notificationbars.VolumeDialog;
+import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -288,7 +290,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
     private PointF mScreenOnTouchLocation;
-
+    private KeyButtonView mVolumeButton;
     int mPixelFormat;
     Object mQueueLock = new Object();
 
@@ -895,6 +897,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
+        mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
+        volumePopupWindow = new VolumeDialog(mContext);
+     //   wifiPopupWindow = new NetPopupWindow(mContext);
         return mStatusBarView;
     }
 
@@ -1032,6 +1037,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         lp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_UNCHANGED
         | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
         return lp;
+    }
+
+    @Override
+    protected void  showVolumePanelWork(){
+        if (mVolumeButton == null){
+            return;
+        }
+        volumePopupWindow.show(mVolumeButton);
     }
 
     @Override
