@@ -148,13 +148,14 @@
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_battery"
-                   android:layout_width="wrap_content"
-                   android:layout_height="match_parent"
-                   android:layout_gravity="right"
+                   android:layout_width="25dp"
+                   android:layout_height="25dp"
+                   android:layout_gravity="center_vertical"
                    android:layout_marginRight="2dp"
                    android:src="@drawable/statusbar_battery"
                    systemui:keyCode="100005"
                    systemui:keyRepeat="true" />
+
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_wifi"

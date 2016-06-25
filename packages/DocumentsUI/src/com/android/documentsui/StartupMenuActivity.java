@@ -146,6 +146,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mEditText.setOnEditorActionListener(this);
             mEditText.addTextChangedListener(watcher);
 
+            new mThread().start();
             mListView = (ListView) findViewById(R.id.lv_view);
             Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
             while (c.moveToNext()) {
@@ -154,11 +155,54 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     mListViewOpen = true;
                 }
             }
-
             if (mListViewOpen) {
-                if (mlistViewAppInfo != null) {
-                    mlistViewAppInfo.clear();
+                queryCommonlyUsedSoftware();
+            }
+        }
+        class mThread extends Thread {
+            public void run(){
+                BackstageRenewalData();
+            }
+        };
+
+        public void queryAppInfo() {
+            PackageManager pm = this.getPackageManager();
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
+            Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+            if (mlistAppInfo != null) {
+                mlistAppInfo.clear();
+                for (ResolveInfo reInfo : resolveInfos) {
+                    File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
+                    Date systemDate = new Date(file.lastModified());
+                    ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
+                    String activityName = reInfo.activityInfo.name;
+                    String pkgName = reInfo.activityInfo.packageName;
+                    String appLabel = (String) reInfo.loadLabel(pm);
+                    Drawable icon = reInfo.loadIcon(pm);
+                    Intent launchIntent = new Intent();
+                    launchIntent.setComponent(new ComponentName(pkgName, activityName));
+                    AppInfo appInfo = new AppInfo();
+                    appInfo.setAppLabel(appLabel);
+                    appInfo.setPkgName(pkgName);
+                    appInfo.setDate(systemDate);
+                    appInfo.setAppIcon(icon);
+                    appInfo.setIntent(launchIntent);
+                    mlistAppInfo.add(appInfo);
                 }
+            }
+        }
+
+        public void queryCommonlyUsedSoftware() {
+            Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
+            while (c.moveToNext()) {
+                int number = c.getInt(c.getColumnIndex("int"));
+                if (number != 0) {
+                    mListViewOpen = true;
+                }
+            }
+            if (mListViewOpen) {
                 mlistViewAppInfo = new ArrayList<AppInfo>();
                 Cursor cs = mdb.rawQuery("select distinct * from perpo", new String[] {});
                 while (cs.moveToNext()) {
@@ -212,56 +256,45 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
         }
 
-        public void queryAppInfo() {
+        public void BackstageRenewalData() {
             PackageManager pm = this.getPackageManager();
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
             Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
-            if (mlistAppInfo != null) {
-                mlistAppInfo.clear();
-                for (ResolveInfo reInfo : resolveInfos) {
-                    File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-                    Date systemDate = new Date(file.lastModified());
-                    ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
-                    String activityName = reInfo.activityInfo.name;
-                    String pkgName = reInfo.activityInfo.packageName;
-                    String appLabel = (String) reInfo.loadLabel(pm);
-                    Drawable icon = reInfo.loadIcon(pm);
-                    Intent launchIntent = new Intent();
-                    launchIntent.setComponent(new ComponentName(pkgName, activityName));
-                    AppInfo appInfo = new AppInfo();
-                    appInfo.setAppLabel(appLabel);
-                    appInfo.setPkgName(pkgName);
-                    appInfo.setDate(systemDate);
-                    appInfo.setAppIcon(icon);
-                    appInfo.setIntent(launchIntent);
-                    mlistAppInfo.add(appInfo);
-                    mIsHasReayDb = false;
-                    Cursor c = mdb.query("perpo", null, null, null, null, null, null);
-                    while (c.moveToNext()) {
-                        String pkname = c.getString(c.getColumnIndex("pkname"));
-                        if (pkgName.equals(pkname)) {
-                            mIsHasReayDb = true;
-                            break;
-                        }
+            for (ResolveInfo reInfo : resolveInfos) {
+                File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
+                Date systemDate = new Date(file.lastModified());
+                ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
+                String activityName = reInfo.activityInfo.name;
+                String pkgName = reInfo.activityInfo.packageName;
+                String appLabel = (String) reInfo.loadLabel(pm);
+                Drawable icon = reInfo.loadIcon(pm);
+                mIsHasReayDb = false;
+                Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
+                                        new String[] { pkgName });
+                while (c.moveToNext()) {
+                    String pkname = c.getString(c.getColumnIndex("pkname"));
+                    if (pkgName.equals(pkname)) {
+                        mIsHasReayDb = true;
+                        break;
                     }
+                }
 
-                    if (!mIsHasReayDb) {
-                        mdb.execSQL("insert into perpo(label,pkname,date,icon,int,intent) "
-                                    + "values (?,?,?,?,?,?)",
-                                    new Object[] { appLabel, pkgName, systemDate, icon,
-                                                   mNumber, launchIntent});
-                    }
-                    if(isEnglish(appLabel)) {
-                        ContentValues contentvalues = new ContentValues();
-                        contentvalues.put("label", appLabel);
-                        mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
-                    } else {
-                        ContentValues contentvalues = new ContentValues();
-                        contentvalues.put("label", appLabel);
-                        mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
-                    }
+                if (!mIsHasReayDb) {
+                    mdb.execSQL("insert into perpo(label,pkname,date,int) "
+                                + "values (?,?,?,?)",
+                                new Object[] { appLabel, pkgName, systemDate,
+                                              mNumber});
+                }
+                if(isEnglish(appLabel)) {
+                    ContentValues contentvalues = new ContentValues();
+                    contentvalues.put("label", appLabel);
+                    mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                } else {
+                    ContentValues contentvalues = new ContentValues();
+                    contentvalues.put("label", appLabel);
+                    mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
                 }
             }
         }
