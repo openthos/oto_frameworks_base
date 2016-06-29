@@ -1229,6 +1229,8 @@ public final class Settings {
             MOVED_TO_SECURE.add(Secure.WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY);
             MOVED_TO_SECURE.add(Secure.WIFI_NUM_OPEN_NETWORKS_KEPT);
             MOVED_TO_SECURE.add(Secure.WIFI_ON);
+            //add ethernet
+            MOVED_TO_SECURE.add(Secure.ETHERNET_ON);
             MOVED_TO_SECURE.add(Secure.WIFI_WATCHDOG_ACCEPTABLE_PACKET_LOSS_PERCENTAGE);
             MOVED_TO_SECURE.add(Secure.WIFI_WATCHDOG_AP_COUNT);
             MOVED_TO_SECURE.add(Secure.WIFI_WATCHDOG_BACKGROUND_CHECK_DELAY_MS);
@@ -2889,6 +2891,12 @@ public final class Settings {
         public static final String WIFI_ON = Global.WIFI_ON;
 
         /**
+         * @deprecated Use {@link android.provider.Settings.Global#ETHERNET_ON} instead
+         */
+        @Deprecated
+        public static final String ETHERNET_ON = Global.ETHERNET_ON;
+
+        /**
          * @deprecated Use
          * {@link android.provider.Settings.Secure#WIFI_WATCHDOG_ACCEPTABLE_PACKET_LOSS_PERCENTAGE}
          * instead
@@ -3068,6 +3076,8 @@ public final class Settings {
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_NUM_OPEN_NETWORKS_KEPT);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_ON);
+            //add ethernet
+            MOVED_TO_GLOBAL.add(Settings.Global.ETHERNET_ON);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_P2P_DEVICE_NAME);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SAVED_STATE);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SUPPLICANT_SCAN_INTERVAL_MS);
@@ -4252,6 +4262,14 @@ public final class Settings {
          */
         @Deprecated
         public static final String WIFI_ON = Global.WIFI_ON;
+
+        /**
+         * @deprecated Use {@link android.provider.Settings.Global#ETHERNET_ON}
+         * instead.
+         */
+        @Deprecated
+        public static final String ETHERNET_ON = Global.ETHERNET_ON;
+
 
         /**
          * The acceptable packet loss percentage (range 0 - 100) before trying
@@ -5838,6 +5856,11 @@ public final class Settings {
         * Whether the Wi-Fi should be on.  Only the Wi-Fi service should touch this.
         */
        public static final String WIFI_ON = "wifi_on";
+
+       /**
+        * Whether the ethernet should be on.
+        */
+       public static final String ETHERNET_ON = "ethernet_on";
 
        /**
         * Setting to allow scans to be enabled even wifi is turned off for connectivity.

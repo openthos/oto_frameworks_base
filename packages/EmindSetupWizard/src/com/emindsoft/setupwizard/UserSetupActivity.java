@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.os.SystemProperties;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.text.Editable;
@@ -20,6 +21,9 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.content.Context;
 
+import java.io.IOException;
+import java.io.DataOutputStream;
+
 public class UserSetupActivity extends BaseActivity {
     private Button mButtonFinish;
     private Button mButtonPrev;
@@ -30,6 +34,8 @@ public class UserSetupActivity extends BaseActivity {
     private String screenPassword;
     private DevicePolicyManager devicePolicyManager;
     private TextView mSkip;
+    private String defaultComputerName;
+    private String computerName;
 
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
@@ -42,6 +48,7 @@ public class UserSetupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_setup);
+        upgradeRootPermission(getPackageCodePath());
         this.mButtonPrev = (Button) findViewById(R.id.button_prev);
         this.mButtonFinish = (Button) findViewById(R.id.button_finish);
         this.mEditTextUsername = (EditText) findViewById(R.id.edittext_username);
@@ -50,11 +57,13 @@ public class UserSetupActivity extends BaseActivity {
         this.mNewPassword = (EditText) findViewById(R.id.edittext_screen_password_confirm);
         this.mSkip = (TextView) findViewById(R.id.text_skip);
 
+        defaultComputerName = SystemProperties.get("ro.build.host");
+        this.mComputername.setText(defaultComputerName);
         String userName = UserManager.get(this).getUserName();
         if (!TextUtils.equals(userName, "\u673a\u4e3b")) {
             this.mEditTextUsername.setText(userName);
         }
-        String computerName = this.mComputername.getText().toString().trim();
+        computerName = this.mComputername.getText().toString().trim();
         final String oldPassword = this.mOldPassword.getText().toString().trim();
         final String newPassword = this.mNewPassword.getText().toString().trim();
         devicePolicyManager = (DevicePolicyManager) this.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -90,6 +99,9 @@ public class UserSetupActivity extends BaseActivity {
         });
         this.mButtonFinish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                //save computer name
+                //FIXME: it did not work well
+                SystemProperties.set("ro.build.host",computerName);
                 String oldUserName = UserManager.get(UserSetupActivity.this).getUserName();
                 String newUserName = UserSetupActivity.this.mEditTextUsername.getText().toString();
                 if (!(TextUtils.isEmpty(newUserName) || newUserName.equals(oldUserName))) {
@@ -97,6 +109,7 @@ public class UserSetupActivity extends BaseActivity {
                 }
                 if (!TextUtils.isEmpty(oldPassword) && !TextUtils.isEmpty(newPassword) && oldPassword.equals(newPassword)) {
                     //reset password
+                    //FIXME: it did not work well
                     devicePolicyManager.resetPassword(oldPassword, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
                 }
                 else{
@@ -121,5 +134,31 @@ public class UserSetupActivity extends BaseActivity {
         super.onResume();
         this.mRequestFocus.run();
         new Handler().postDelayed(this.mRequestFocus, 500);
+    }
+
+    //get the permission of root
+    public static boolean upgradeRootPermission(String pkgCodePath) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            String cmd="chmod 777 " + pkgCodePath;
+            process = Runtime.getRuntime().exec("su");
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+            }
+        }
+        return true;
     }
 }

@@ -34,6 +34,9 @@ import java.util.ArrayList;
 public class EthernetManager {
     private static final String TAG = "EthernetManager";
     private static final int MSG_AVAILABILITY_CHANGED = 1000;
+    public static final int ETH_STATE_UNKNOWN = 0;
+    public static final int ETH_STATE_DISABLED = 1;
+    public static final int ETH_STATE_ENABLED = 2;
 
     private final Context mContext;
     private final IEthernetManager mService;
@@ -147,6 +150,21 @@ public class EthernetManager {
                 mService.removeListener(mServiceListener);
             } catch (NullPointerException | RemoteException e) {
             }
+        }
+    }
+
+    //add ethernet functions
+    public void start() {
+        try {
+            mService.Trackstart();
+        } catch (NullPointerException | RemoteException e) {
+        }
+    }
+
+    public void stop() {
+        try {
+            mService.Trackstop();
+        } catch (NullPointerException | RemoteException e) {
         }
     }
 }
