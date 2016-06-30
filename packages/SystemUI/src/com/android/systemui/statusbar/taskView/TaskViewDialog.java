@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -29,6 +30,7 @@ public class TaskViewDialog extends Dialog {
     private Context mcontext;
     private TaskSwitchAdapter mTaskAdapter;
     private GridView mTaskContainer;
+    private DisplayMetrics mDm;
 
     IntentFilter mBroadcastIntentFilter
                      = new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS");
@@ -64,6 +66,7 @@ public class TaskViewDialog extends Dialog {
     }
 
     public void create() {
+        mDm = mcontext.getResources().getDisplayMetrics();
         Window window = getWindow();
         window.setType(LayoutParams.TYPE_SYSTEM_ALERT);
         window.setFlags(LayoutParams.FLAG_ALT_FOCUSABLE_IM,LayoutParams.FLAG_ALT_FOCUSABLE_IM);
@@ -136,6 +139,12 @@ public class TaskViewDialog extends Dialog {
 
     public void showTaskView() {
         gridViewReloadTask();
+
+        Window window = getWindow();
+        LayoutParams params = window.getAttributes();
+        params.width = getDialogWidth();
+        window.setAttributes(params);
+
         this.show();
         if(this.mTaskAdapter != null) {
             this.mTaskAdapter.stepTask();
@@ -170,5 +179,45 @@ public class TaskViewDialog extends Dialog {
 
     private void dissmissAndSwitchForATask() {
         dissmissAndSwitchForATask(-1);
+    }
+
+    private int getDialogWidth() {
+        int taskSize = mTaskAdapter.getTaskSize();
+        int itemInterval_dp = 16;
+        int itemWidth_dp = 80;
+
+        int itemWidth = dip2px(mcontext, itemWidth_dp);
+        int itemInterval = dip2px(mcontext, itemInterval_dp);
+
+        int dialogWidth = 0;
+        int rowItemSize = getTaskItemSize(mDm.widthPixels , itemInterval, itemWidth);
+
+        if(taskSize <= 0) {
+            return 0;
+        }
+
+        mTaskContainer.setColumnWidth(itemWidth);
+        if (taskSize <= rowItemSize) {
+            dialogWidth = taskSize * itemWidth + (taskSize + 1) * itemInterval;
+        } else {
+            dialogWidth = rowItemSize * itemWidth + (rowItemSize + 1) * itemInterval;
+        }
+
+        return dialogWidth;
+    }
+
+    private int getTaskItemSize(int windowWidth, int itemInterval, int itemWidth) {
+        int itemSize = 0;
+        itemSize = windowWidth / (itemWidth + itemInterval);
+        if (itemSize > 4) {
+            itemSize -= 4;
+        }
+
+        return itemSize;
+    }
+
+    private int dip2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 }

@@ -35,7 +35,7 @@ public class TaskSwitchAdapter extends BaseAdapter {
     private ActivityManager mam;
     private Context mc;
     private PackageManager mPm;
-    private int mCurrentPosition = 0;
+    private int mCurrentPosition = 1;
     private GridView mParent;
     private static final int DISPLAY_TASKS = 100;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
@@ -71,7 +71,7 @@ public class TaskSwitchAdapter extends BaseAdapter {
         }
 
         this.mTasks.clear();
-        this.mCurrentPosition = 0;
+        this.mCurrentPosition = 1;
         for(int i = 0; i < recentTasks.size();i++) {
             RecentTaskInfo ri = (RecentTaskInfo) recentTasks.get(i);
             if(ri.id < 0) {
@@ -81,7 +81,13 @@ public class TaskSwitchAdapter extends BaseAdapter {
             if(ri.origActivity != null) {
                 intent.setComponent(ri.origActivity);
             }
-            this.mTasks.add(new TaskInfo(ri, intent));
+
+            int stackId = ri.stackId;
+            if (stackId != 0 || mTasks.isEmpty()) {
+                this.mTasks.add(new TaskInfo(ri, intent));
+            } else {
+                this.mTasks.add(0, new TaskInfo(ri, intent));
+            }
         }
         this.notifyDataSetChanged();
     }
@@ -121,14 +127,12 @@ public class TaskSwitchAdapter extends BaseAdapter {
             if(taskInfo.info.id >= 0) {
                 try {
                     int stackId = taskInfo.info.stackId;
-                    if (stackId == 0) {
+                    if (ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
                         ((InputManager)mc.getSystemService(Context.INPUT_SERVICE))
                                               .sendKeyEvent(KeyEvent.KEYCODE_CUSTOMIZE_HOME);
                     } else {
-                        if (!ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
-                            if (ActivityManagerNative.getDefault().getFocusedStackId() != stackId) {
-                                ActivityManagerNative.getDefault().focusRecentStack(stackId);
-                            }
+                        if (ActivityManagerNative.getDefault().getFocusedStackId() != stackId) {
+                            ActivityManagerNative.getDefault().focusRecentStack(stackId);
                         }
                     }
                 } catch (Exception e) {
@@ -177,13 +181,15 @@ public class TaskSwitchAdapter extends BaseAdapter {
         viewHolder = (View)inflater.inflate(R.layout.task_item, null);
 
         viewHolder.setOnHoverListener(new ItemHoverListener());
-        viewHolder.setLayoutParams(new GridView.LayoutParams(90, 90));
+        //viewHolder.setLayoutParams(new GridView.LayoutParams(90, 90));
 
         TaskInfo taskInfo = (TaskInfo) this.mTasks.get(position);
         ResolveInfo resolveInfo = this.mPm.resolveActivity(taskInfo.intent, 0);
+        int stackId = taskInfo.info.stackId;
 
         TextView title = (TextView)viewHolder.findViewById(R.id.title);
         CharSequence cTitle = taskInfo.info.description;
+
         if(TextUtils.isEmpty(cTitle)) {
             cTitle = resolveInfo.activityInfo.loadLabel(this.mPm);
         }
@@ -228,16 +234,30 @@ public class TaskSwitchAdapter extends BaseAdapter {
 
     public void setItemFocus(View v)
     {
-        v.setBackgroundColor(Color.parseColor("#00BAE6")); // FIXME: move to res file
+        LinearLayout l = (LinearLayout) v.findViewById(R.id.linearLayoutItem);
+        l.setBackground(mc.getResources().getDrawable(R.drawable.taskviewitembg_focus));
+        TextView title = (TextView)v.findViewById(R.id.title);
+        title.setVisibility(View.VISIBLE);
     }
 
     public void setItemNormal(View v)
     {
-        v.setBackgroundColor(Color.parseColor("#FFFFFF")); // FIXME: move to res file
+        LinearLayout l = (LinearLayout) v.findViewById(R.id.linearLayoutItem);
+        l.setBackground(mc.getResources().getDrawable(R.drawable.taskviewitembg_normal));
+        TextView title = (TextView)v.findViewById(R.id.title);
+        title.setVisibility(View.INVISIBLE);
     }
 
     public void setCurPositionByView(View v)
     {
         this.mCurrentPosition = this.mParent.getPositionForView(v);
+    }
+
+    public int getTaskSize() {
+        int size = 0;
+        if(mTasks != null) {
+            size = mTasks.size();
+        }
+        return size;
     }
 }
