@@ -63,6 +63,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_REMOVE_STATUSBAR_ACTIVITY  = 21 << MSG_SHIFT;
     private static final int MSG_SHOW_VOLUME_PANEL          = 22 << MSG_SHIFT;
     private static final int MSG_SHOW_WIFI_PANEL            = 23 << MSG_SHIFT;
+    private static final int MSG_SHOW_STATUSBAR_VIEW        = 24 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -87,6 +88,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void removeIcon(String slot, int index, int viewIndex);
         public void disable(int state, boolean animate);
         public void animateExpandNotificationsPanel();
+        public void showStatusBarView();
         public void animateCollapsePanels(int flags);
         public void animateExpandSettingsPanel();
         public void setSystemUiVisibility(int vis, int mask);
@@ -144,6 +146,13 @@ public class CommandQueue extends IStatusBar.Stub {
         synchronized (mList) {
             mHandler.removeMessages(MSG_EXPAND_NOTIFICATIONS);
             mHandler.sendEmptyMessage(MSG_EXPAND_NOTIFICATIONS);
+        }
+    }
+
+    public void showStatusBarView() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_STATUSBAR_VIEW);
+            mHandler.sendEmptyMessage(MSG_SHOW_STATUSBAR_VIEW);
         }
     }
 
@@ -354,6 +363,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_PRELOAD_RECENT_APPS:
                     mCallbacks.preloadRecentApps();
+                    break;
+                case MSG_SHOW_STATUSBAR_VIEW:
+                    mCallbacks.showStatusBarView();
                     break;
                 case MSG_CANCEL_PRELOAD_RECENT_APPS:
                     mCallbacks.cancelPreloadRecentApps();

@@ -2858,8 +2858,8 @@ public class DevicePolicyManagerService extends IDevicePolicyManager.Stub {
         long ident = Binder.clearCallingIdentity();
         try {
             // Power off the display
-            mPowerManager.goToSleep(SystemClock.uptimeMillis(),
-                    PowerManager.GO_TO_SLEEP_REASON_DEVICE_ADMIN, 0);
+            //mPowerManager.goToSleep(SystemClock.uptimeMillis(),
+            //        PowerManager.GO_TO_SLEEP_REASON_DEVICE_ADMIN, 0);
             // Ensure the device is locked
             new LockPatternUtils(mContext).requireCredentialEntry(UserHandle.USER_ALL);
             getWindowManager().lockNow(null);

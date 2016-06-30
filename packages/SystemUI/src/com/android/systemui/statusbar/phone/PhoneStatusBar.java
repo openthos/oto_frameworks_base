@@ -2238,6 +2238,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
+    public void showStatusBarView() {
+        mStatusBarView.setVisibility(View.VISIBLE);
+        mNotificationPanel.setPanelShow();
+    }
+
+    @Override
     public void animateExpandSettingsPanel() {
         if (SPEW) Log.d(TAG, "animateExpand: mExpandedVisible=" + mExpandedVisible);
         if (!panelsEnabled()) {
@@ -3759,6 +3765,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Make our window larger and the panel expanded.
         makeExpandedVisible(true);
         mNotificationPanel.instantExpand();
+        mStatusBarView.setVisibility(View.GONE);
     }
 
     private void instantCollapseNotificationPanel() {

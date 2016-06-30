@@ -1364,6 +1364,7 @@ public class KeyguardViewMediator extends SystemUI {
                         mHideAnimation.getDuration());
             }
         }
+        mStatusBarManager.showStatusBar();
     }
 
     private void handleOnActivityDrawn() {

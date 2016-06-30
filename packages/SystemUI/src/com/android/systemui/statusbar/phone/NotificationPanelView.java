@@ -1534,9 +1534,14 @@ public class NotificationPanelView extends PanelView implements
         mQsPanel.setListening(listening);
     }
 
+    public void setPanelShow(){
+        mNotificationContainerParent.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void instantExpand() {
         super.instantExpand();
+        mNotificationContainerParent.setVisibility(View.GONE);
         setListening(true);
     }
 

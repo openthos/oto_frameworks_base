@@ -38,11 +38,11 @@ public class EmergencyCarrierArea extends AlphaOptimizedLinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         mCarrierText = (CarrierText) findViewById(R.id.carrier_text);
-        mEmergencyButton = (EmergencyButton) findViewById(R.id.emergency_call_button);
+        //mEmergencyButton = (EmergencyButton) findViewById(R.id.emergency_call_button);
 
         // The emergency button overlaps the carrier text, only noticeable when highlighted.
         // So temporarily hide the carrier text while the emergency button is pressed.
-        mEmergencyButton.setOnTouchListener(new OnTouchListener(){
+        /*mEmergencyButton.setOnTouchListener(new OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (mCarrierText.getVisibility() != View.VISIBLE) return false;
@@ -55,7 +55,7 @@ public class EmergencyCarrierArea extends AlphaOptimizedLinearLayout {
                         break;
                 }
                 return false;
-            }});
+            }});*/
     }
 
     public void setCarrierTextVisible(boolean visible) {

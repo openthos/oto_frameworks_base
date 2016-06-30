@@ -25,6 +25,7 @@ import android.service.notification.StatusBarNotification;
 interface IStatusBarService
 {
     void expandNotificationsPanel();
+    void showStatusBar();
     void collapsePanels();
     void disable(int what, IBinder token, String pkg);
     void setIcon(String slot, String iconPackage, int iconId, int iconLevel, String contentDescription);

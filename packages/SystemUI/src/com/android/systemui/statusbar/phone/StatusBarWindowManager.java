@@ -170,6 +170,7 @@ public class StatusBarWindowManager {
         applyInputFeatures(state);
         applyFitsSystemWindows(state);
         if (mLp.copyFrom(mLpChanged) != 0) {
+            mLp.privateFlags |= WindowManager.LayoutParams.PRIVATE_FLAG_NO_MOVE_ANIMATION;
             mWindowManager.updateViewLayout(mStatusBarView, mLp);
         }
     }

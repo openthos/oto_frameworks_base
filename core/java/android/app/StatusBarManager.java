@@ -103,6 +103,18 @@ public class StatusBarManager {
             throw new RuntimeException(ex);
         }
     }
+
+    public void showStatusBar() {
+        try {
+            final IStatusBarService svc = getService();
+            if (svc != null) {
+                svc.showStatusBar();
+            }
+        } catch (RemoteException ex) {
+            // system process is dead anyway.
+            throw new RuntimeException(ex);
+        }
+    }
     
     /**
      * Expand the notifications panel.
