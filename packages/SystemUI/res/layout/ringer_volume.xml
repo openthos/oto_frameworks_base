@@ -17,6 +17,8 @@
     <SeekBar
         android:id="@+id/media_volume_seekbar"
         android:thumbOffset="0dp"
+        android:minHeight="40dp"
+        android:maxHeight="40dp"
         android:layout_gravity="center"
         android:layout_width="220dp"
         android:layout_height="40dp" />

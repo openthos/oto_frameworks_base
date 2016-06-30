@@ -934,4 +934,10 @@
     <string name="wifi_not_cnt">Net not Connected</string>
     <string name="wifi_cancel">Cancel</string>
     <string name="wifi_ok">OK</string>
+    <string name="wifi_test">Wifi_testsadsfadfdsdghjkassdfghjklsdfghjkl;</string>
+    <string name="wifi_try_cnt">Connect</string>
+    <string name="wifi_discnt">Disconnect</string>
+    <string name="wifi_cnting">Connecting</string>
+    <string name="wifi_enable">Enable</string>
+    <string name="wifi_unable">Unable</string>
 </resources>

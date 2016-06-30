@@ -32,7 +32,11 @@ public class BaseSettingDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setCanceledOnTouchOutside(true);
         initViews();
-        ViewTreeObserver viewObserver = mContentView.getViewTreeObserver();
+        updatePosition();
+    }
+
+    private void updatePosition() {
+        final ViewTreeObserver viewObserver = mContentView.getViewTreeObserver();
         if (viewObserver.isAlive()) {
             viewObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
@@ -43,26 +47,38 @@ public class BaseSettingDialog extends Dialog {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        Log.d("umic","has focus"+hasFocus);
+        if (!hasFocus) {
+            dismiss();
+        }
+    }
+
     private void setPosition(View v) {
         int[] location = new int[2];
         v.getLocationOnScreen(location);
         Window window = getWindow();
         window.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager.LayoutParams attr = getWindow().getAttributes();
-        attr.x = location[0] - mContentView.getMeasuredWidth();
-        attr.y = location[1] - mContentView.getMeasuredHeight()- v.getMeasuredHeight();
+        attr.x = location[0] - mContentView.getMeasuredWidth() / 2;
+        attr.y = location[1] - mContentView.getMeasuredHeight() - v.getMeasuredHeight() / 4;
         window.setAttributes(attr);
+    }
+
+    protected void setPosition() {
+        setPosition(targetView);
     }
 
     protected void initViews() {
     }
 
     public void show(View v) {
-        if (isShowing()) {
+        if (isShowing())
             dismiss();
-        }
         if (mContentView != null) {
             setPosition(v);
+            updatePosition();
         } else {
             targetView = v;
         }

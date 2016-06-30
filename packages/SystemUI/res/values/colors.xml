@@ -129,4 +129,6 @@
     <color name="segmented_button_selected">#FFFFFFFF</color>
     <color name="segmented_button_unselected">#B3B0BEC5</color><!-- 70% blue grey 200 -->
     <color name="volume_panel_divider">#1FFFFFFF</color><!-- 12% white -->
+    <color name="transparent_black">#60000000</color>
+    <color name="transparent_white">#30FFFFFF</color>
 </resources>

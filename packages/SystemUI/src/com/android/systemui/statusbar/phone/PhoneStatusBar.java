@@ -187,6 +187,7 @@ import com.android.systemui.volume.VolumeComponent;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
+import com.android.systemui.statusbar.notificationbars.WifiDialog;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -291,6 +292,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mScreenOnComingFromTouch;
     private PointF mScreenOnTouchLocation;
     private KeyButtonView mVolumeButton;
+    private KeyButtonView mWifiButton;
     int mPixelFormat;
     Object mQueueLock = new Object();
 
@@ -340,7 +342,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mStatusBarHeaderHeight;
 
     private boolean mShowCarrierInPanel = false;
-
+    //notification dialog
+    private BaseSettingDialog targetDialog;
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
@@ -898,8 +901,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         startGlyphRasterizeHack();
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
+        mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         volumePopupWindow = new VolumeDialog(mContext);
-     //   wifiPopupWindow = new NetPopupWindow(mContext);
+        wifiPopupWindow = new WifiDialog(mContext);
         return mStatusBarView;
     }
 
@@ -1039,12 +1043,31 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return lp;
     }
 
+    private void dismisTargetDialog(BaseSettingDialog newDialog){
+        if(targetDialog != null) {
+            targetDialog.dismiss();
+        }
+        targetDialog = newDialog;
+    }
+
     @Override
     protected void  showVolumePanelWork(){
+        super.showVolumePanelWork();
         if (mVolumeButton == null){
             return;
         }
+        dismisTargetDialog(volumePopupWindow);
         volumePopupWindow.show(mVolumeButton);
+    }
+
+    @Override
+    protected void  showWifiPanelWork(){
+        super.showWifiPanelWork();
+        if (mWifiButton == null) {
+            return;
+        }
+        dismisTargetDialog(wifiPopupWindow);
+        wifiPopupWindow.show(mWifiButton);
     }
 
     @Override

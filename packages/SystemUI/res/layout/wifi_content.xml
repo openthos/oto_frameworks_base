@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:padding="10dp"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/wifi_content_main"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/wifi_content_is_cnted"
+            android:src="@android:drawable/checkbox_off_background"
+            android:layout_width="30dp"
+            android:layout_gravity="center"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/wifi_content_name"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:focusable="false"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:text="@string/wifi_test"
+            android:textAlignment="center"
+            android:textSize="10pt" />
+        <ImageView
+            android:id="@+id/wifi_has_psw"
+            android:layout_width="35dp"
+            android:layout_gravity="center"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:id="@+id/wifi_content_level"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:focusable="false" />
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/wifi_content_sub"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/wifi_psw_dialog_panel"/>
+        <Button
+            android:id="@+id/wifi_content_cnt_btn"
+            android:layout_gravity="right"
+            style="@android:style/Holo.SegmentedButton"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="5pt"
+            android:textColor="@android:color/white"
+            android:text="@string/wifi_try_cnt"
+            />
+        <TextView
+            android:clickable="false"
+            android:gravity="center"
+            android:id="@+id/wifi_connecting"
+            android:visibility="gone"
+            android:text="@string/wifi_cnting"
+            android:textSize="5pt"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+</LinearLayout>
