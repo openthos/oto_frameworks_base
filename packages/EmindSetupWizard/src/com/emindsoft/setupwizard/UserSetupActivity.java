@@ -24,6 +24,8 @@ import android.content.Context;
 import java.io.IOException;
 import java.io.DataOutputStream;
 
+import com.emindsoft.tools.ChangeBuildPropTools;
+
 public class UserSetupActivity extends BaseActivity {
     private Button mButtonFinish;
     private Button mButtonPrev;
@@ -36,6 +38,9 @@ public class UserSetupActivity extends BaseActivity {
     private TextView mSkip;
     private String defaultComputerName;
     private String computerName;
+    private String userName;
+    private static final String RO_PROPERTY_HOST = "ro.build.host";
+    private static final String RO_PROPERTY_USER = "ro.build.user";
 
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
@@ -48,7 +53,6 @@ public class UserSetupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_setup);
-        upgradeRootPermission(getPackageCodePath());
         this.mButtonPrev = (Button) findViewById(R.id.button_prev);
         this.mButtonFinish = (Button) findViewById(R.id.button_finish);
         this.mEditTextUsername = (EditText) findViewById(R.id.edittext_username);
@@ -59,11 +63,14 @@ public class UserSetupActivity extends BaseActivity {
 
         defaultComputerName = SystemProperties.get("ro.build.host");
         this.mComputername.setText(defaultComputerName);
-        String userName = UserManager.get(this).getUserName();
-        if (!TextUtils.equals(userName, "\u673a\u4e3b")) {
-            this.mEditTextUsername.setText(userName);
+        userName = SystemProperties.get(RO_PROPERTY_USER);
+        if (TextUtils.isEmpty(userName)) {
+            this.mEditTextUsername.setText("Owner");
         }
-        computerName = this.mComputername.getText().toString().trim();
+//        String userName = UserManager.get(this).getUserName();
+//        if (!TextUtils.equals(userName, "\u673a\u4e3b")) {
+//            this.mEditTextUsername.setText(userName);
+//        }
         final String oldPassword = this.mOldPassword.getText().toString().trim();
         final String newPassword = this.mNewPassword.getText().toString().trim();
         devicePolicyManager = (DevicePolicyManager) this.getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -99,9 +106,18 @@ public class UserSetupActivity extends BaseActivity {
         });
         this.mButtonFinish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                computerName = mComputername.getText().toString().trim();
+                userName = mEditTextUsername.getText().toString().trim();
+                //grant permission
+                ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
+
                 //save computer name
-                //FIXME: it did not work well
-                SystemProperties.set("ro.build.host",computerName);
+                ChangeBuildPropTools.setPropertyName(
+                              ChangeBuildPropTools.getPropertyName(RO_PROPERTY_HOST,computerName));
+                //save user name
+                ChangeBuildPropTools.setPropertyName(
+                                  ChangeBuildPropTools.getPropertyName(RO_PROPERTY_USER,userName));
+
                 String oldUserName = UserManager.get(UserSetupActivity.this).getUserName();
                 String newUserName = UserSetupActivity.this.mEditTextUsername.getText().toString();
                 if (!(TextUtils.isEmpty(newUserName) || newUserName.equals(oldUserName))) {
@@ -115,6 +131,7 @@ public class UserSetupActivity extends BaseActivity {
                 else{
                     Toast.makeText(UserSetupActivity.this, "you have null input or the twice password was not the same", Toast.LENGTH_SHORT).show();
                 }
+                ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
                 ((SetupWizardApplication) UserSetupActivity.this.getApplication()).onSetupFinished(UserSetupActivity.this);
             }
         });
@@ -136,29 +153,4 @@ public class UserSetupActivity extends BaseActivity {
         new Handler().postDelayed(this.mRequestFocus, 500);
     }
 
-    //get the permission of root
-    public static boolean upgradeRootPermission(String pkgCodePath) {
-        Process process = null;
-        DataOutputStream os = null;
-        try {
-            String cmd="chmod 777 " + pkgCodePath;
-            process = Runtime.getRuntime().exec("su");
-            os = new DataOutputStream(process.getOutputStream());
-            os.writeBytes(cmd + "\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            process.waitFor();
-        } catch (Exception e) {
-            return false;
-        } finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
-                process.destroy();
-            } catch (Exception e) {
-            }
-        }
-        return true;
-    }
 }

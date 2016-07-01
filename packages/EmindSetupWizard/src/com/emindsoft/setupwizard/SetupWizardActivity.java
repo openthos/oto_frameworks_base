@@ -3,6 +3,7 @@ package com.emindsoft.setupwizard;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,12 +31,15 @@ public class SetupWizardActivity extends BaseActivity {
         }
     };
     private TextView mTextViewLanguage;
+    private static final String PROPERTY_NATIVEBRIDGE = "persist.sys.nativebridge";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mLocales.add(Locale.CHINA);
         this.mLocales.add(Locale.US);
         this.mCurrentLocale = Locale.getDefault();
+        //make the app compatability available
+        SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         if (!this.mLocales.contains(this.mCurrentLocale)) {
             this.mCurrentLocale = Locale.CHINA;
             updateLocale(this.mCurrentLocale);
