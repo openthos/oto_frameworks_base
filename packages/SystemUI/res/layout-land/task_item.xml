@@ -36,7 +36,9 @@
             android:layout_gravity="center_horizontal"
             android:textSize="14sp"
             android:textColor="#ffffff"
-            android:textAlignment="center"/>
+            android:ellipsize="end"
+            android:lines="2"
+            android:textAlignment="center" />
     </LinearLayout>
 
 </LinearLayout>
