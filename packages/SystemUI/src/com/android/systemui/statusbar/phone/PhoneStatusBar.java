@@ -1093,7 +1093,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mNaturalBarHeight < 0) {
             final Resources res = mContext.getResources();
             mNaturalBarHeight =
-                    res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+                    res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
         }
         return mNaturalBarHeight;
     }
@@ -3207,7 +3207,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         final Resources res = mContext.getResources();
 
         mNaturalBarHeight = res.getDimensionPixelSize(
-                com.android.internal.R.dimen.status_bar_height);
+                com.android.internal.R.dimen.status_bar_height_real);
 
         int newIconSize = res.getDimensionPixelSize(
             com.android.internal.R.dimen.status_bar_icon_size);

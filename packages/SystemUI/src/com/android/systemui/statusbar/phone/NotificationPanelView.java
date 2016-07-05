@@ -241,7 +241,7 @@ public class NotificationPanelView extends PanelView implements
                 R.dimen.notifications_top_padding);
         mFlingAnimationUtils = new FlingAnimationUtils(getContext(), 0.4f);
         mStatusBarMinHeight = getResources().getDimensionPixelSize(
-                com.android.internal.R.dimen.status_bar_height);
+                com.android.internal.R.dimen.status_bar_height_real);
         mQsPeekHeight = getResources().getDimensionPixelSize(R.dimen.qs_peek_height);
         mNotificationsHeaderCollideDistance =
                 getResources().getDimensionPixelSize(R.dimen.header_notifications_collide_distance);

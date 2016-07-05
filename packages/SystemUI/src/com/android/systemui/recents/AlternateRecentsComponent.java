@@ -430,7 +430,8 @@ public class AlternateRecentsComponent implements ActivityOptions.OnAnimationSta
     void reloadHeaderBarLayout(boolean reloadWidget) {
         Resources res = mContext.getResources();
         mWindowRect = mSystemServicesProxy.getWindowRect();
-        mStatusBarHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        mStatusBarHeight = res.getDimensionPixelSize(
+                                   com.android.internal.R.dimen.status_bar_height_real);
         mNavBarHeight = res.getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
         mNavBarWidth = res.getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_width);
         mConfig = RecentsConfiguration.reinitialize(mContext, mSystemServicesProxy);

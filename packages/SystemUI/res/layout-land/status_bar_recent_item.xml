@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:paddingTop="@*android:dimen/status_bar_height"
+        android:paddingTop="@*android:dimen/status_bar_height_real"
         android:clipChildren="false"
         android:clipToPadding="false">
 

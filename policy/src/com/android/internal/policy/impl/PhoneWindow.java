@@ -3632,7 +3632,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         public DecorMW(ViewGroup root) {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-            int statusBarHeight = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
 
             mBorderPadding = getContext().getResources().getDimensionPixelSize(com.android.internal.R.dimen.mw_outer_border)
                              + root.getPaddingLeft();

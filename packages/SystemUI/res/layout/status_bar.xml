@@ -27,14 +27,14 @@
     android:orientation="vertical"
     android:focusable="true"
     android:descendantFocusability="afterDescendants"
-    android:layout_height="@dimen/status_bar_height"
+    android:layout_height="@dimen/status_bar_height_real"
     android:layout_gravity="bottom"
     >
 
     <ImageView
         android:id="@+id/notification_lights_out"
         android:layout_width="@dimen/status_bar_icon_size"
-        android:layout_height="@dimen/status_bar_height"
+        android:layout_height="@dimen/status_bar_height_real"
         android:paddingStart="6dip"
         android:paddingBottom="2dip"
         android:src="@drawable/ic_sysbar_lights_out_dot_small"
@@ -197,7 +197,7 @@
         android:inflatedId="@+id/ticker"
         android:layout="@layout/status_bar_ticker"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/status_bar_height"
+        android:layout_height="@dimen/status_bar_height_real"
         android:layout_gravity="bottom"
         />
 

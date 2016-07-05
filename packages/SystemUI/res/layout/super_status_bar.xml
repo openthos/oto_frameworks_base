@@ -83,6 +83,6 @@
     <include layout="@layout/status_bar"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/status_bar_height" />
+        android:layout_height="@dimen/status_bar_height_real" />
 
 </com.android.systemui.statusbar.phone.StatusBarWindowView>

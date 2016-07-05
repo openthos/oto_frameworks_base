@@ -1069,10 +1069,10 @@ public class RenderSessionImpl extends RenderAction<SessionParams> {
 
             // get the real value
             ResourceValue value = resources.getFrameworkResource(ResourceType.DIMEN,
-                    "status_bar_height");
+                    "status_bar_height_real");
 
             if (value != null) {
-                TypedValue typedValue = ResourceHelper.getValue("status_bar_height",
+                TypedValue typedValue = ResourceHelper.getValue("status_bar_height_real",
                         value.getValue(), true /*requireUnit*/);
                 if (typedValue != null) {
                     // compute the pixel value based on the display metrics

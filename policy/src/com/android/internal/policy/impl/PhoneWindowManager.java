@@ -284,7 +284,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     boolean mSafeMode;
     WindowState mStatusBar = null;
-    int mStatusBarHeight;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
     boolean mCanHideNavigationBar = false;
@@ -1631,9 +1630,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
-        mStatusBarHeight =
-                res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-
         // Height of the navigation bar when presented horizontally at bottom
         mNavigationBarHeightForRotation[mPortraitRotation] =
         mNavigationBarHeightForRotation[mUpsideDownRotation] =
@@ -2206,7 +2202,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // of the fixed decor, since it can hide; however, for purposes of configurations,
         // we do want to exclude it since applications can't generally use that part
         // of the screen.
-        return getNonDecorDisplayHeight(fullWidth, fullHeight, rotation) - mStatusBarHeight;
+        return getNonDecorDisplayHeight(fullWidth, fullHeight, rotation);
     }
 
     @Override
@@ -3634,7 +3630,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mStatusBar.computeFrameLw(pf, df, vf, vf, vf, dcf, vf);
 
                 // For layout, the status bar is always at the top with our fixed height.
-                mStableTop = mUnrestrictedScreenTop + mStatusBarHeight;
+                mStableTop = mUnrestrictedScreenTop;
 
                 boolean statusBarTransient = (sysui & View.STATUS_BAR_TRANSIENT) != 0;
                 boolean statusBarTranslucent = (sysui
@@ -3649,7 +3645,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // Status bar may go away, so the screen area it occupies
                     // is available to apps but just covering them when the
                     // status bar is visible.
-                    mDockTop = mUnrestrictedScreenTop + mStatusBarHeight;
+                    mDockTop = mUnrestrictedScreenTop;
 
                     mContentTop = mVoiceContentTop = mCurTop = mDockTop;
                     mContentBottom = mVoiceContentBottom = mCurBottom = mDockBottom;
@@ -3669,7 +3665,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // If the opaque status bar is currently requested to be visible,
                     // and not in the process of animating on or off, then
                     // we can tell the app that it is covered by it.
-                    mSystemTop = mUnrestrictedScreenTop + mStatusBarHeight;
+                    mSystemTop = mUnrestrictedScreenTop;
                 }
                 if (mStatusBarController.checkHiddenLw()) {
                     updateSysUiVisibility = true;
