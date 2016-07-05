@@ -3594,6 +3594,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         mNewFrame = NO_FRAME;
                         sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                         ActivityManagerNative.getDefault().setFocusedStack(getStackId());
+                        mDecor.invalidate();
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
