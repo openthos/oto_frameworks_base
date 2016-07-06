@@ -623,6 +623,8 @@ LOCAL_PROTOC_OPTIMIZE_TYPE := stream
 LOCAL_PROTOC_FLAGS := \
     -Iexternal/protobuf/src
 
+LOCAL_STATIC_JAVA_LIBRARIES += analytics-utils
+
 LOCAL_MODULE := framework
 
 LOCAL_DX_FLAGS := --core-library --multi-dex
