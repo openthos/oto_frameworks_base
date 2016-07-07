@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">‏‮SetupWizard‬‏</string>
+    <string name="str_next">‏‮Next‬‏</string>
+    <string name="str_prev">‏‮Back‬‏</string>
+    <string name="str_finish">‏‮Finish‬‏</string>
+    <string name="str_username">‏‮Input‬‏ ‏‮Your‬‏ ‏‮Username‬‏</string>
+    <string name="str_language">‏‮Language‬‏</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="relativelayout_root">false</item>
+    <item type="id" name="view_header">false</item>
+    <item type="id" name="textview_language">false</item>
+    <item type="id" name="linearlayout_language">false</item>
+    <item type="id" name="button_next">false</item>
+    <item type="id" name="linearlayout_user">false</item>
+    <item type="id" name="textview_username">false</item>
+    <item type="id" name="edittext_username">false</item>
+    <item type="id" name="button_prev">false</item>
+    <item type="id" name="button_finish">false</item>
+</resources>
