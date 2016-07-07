@@ -316,6 +316,11 @@ public class ActionBarOverlayLayout extends ViewGroup implements DecorContentPar
         final boolean stable = (vis & SYSTEM_UI_FLAG_LAYOUT_STABLE) != 0;
         final Rect systemInsets = insets.getSystemWindowInsets();
 
+        if ((getContext().getApplicationInfo().packageName.compareTo("com.tencent.mm") == 0)
+                && (systemInsets.top != 0)) {
+            return WindowInsets.CONSUMED;
+        }
+
         // The top and bottom action bars are always within the content area.
         boolean changed = applyInsets(mActionBarTop, systemInsets, true, true, false, true);
         if (mActionBarBottom != null) {
