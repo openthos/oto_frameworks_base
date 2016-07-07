@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:selectAllOnFocus="true"
-            android:inputType="textNoSuggestions"
+            android:inputType="textPassword"
             android:imeOptions="actionDone" />
     </LinearLayout>
     <LinearLayout
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:selectAllOnFocus="true"
-            android:inputType="textNoSuggestions"
+            android:inputType="textPassword"
             android:imeOptions="actionDone" />
     </LinearLayout>
     <LinearLayout

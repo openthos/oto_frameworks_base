@@ -15,4 +15,7 @@
     <string name="str_computer">本机名称</string>
     <string name="str_screen_password">锁屏密码</string>
     <string name="str_screen_password_confirm">确认密码</string>
+    <string name="str_cancel">取消</string>
+    <string name="title_openthos_finish">Openthos所有设置已完成</string>
+    <string name="str_start_use">开始使用</string>
 </resources>

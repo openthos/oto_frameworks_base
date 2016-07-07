@@ -16,4 +16,6 @@
     <string name="str_computer">Computer Name</string>
     <string name="str_screen_password">Screen Password</string>
     <string name="str_screen_password_confirm">Screen Password confirm</string>
+    <string name="title_openthos_finish">Openthos complete all configuration</string>
+    <string name="str_start_use">start to use</string>
 </resources>

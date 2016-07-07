@@ -1,5 +1,6 @@
 package com.emindsoft.setupwizard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserHandle;
@@ -88,7 +89,6 @@ public class UserSetupActivity extends BaseActivity {
                     if (!newUserName.equals(oldUserName)) {
                         UserManager.get(UserSetupActivity.this).setUserName(UserHandle.myUserId(), newUserName);
                     }
-                    ((SetupWizardApplication) UserSetupActivity.this.getApplication()).onSetupFinished(UserSetupActivity.this);
                 }
                 return true;
             }
@@ -132,7 +132,9 @@ public class UserSetupActivity extends BaseActivity {
                     Toast.makeText(UserSetupActivity.this, "you have null input or the twice password was not the same", Toast.LENGTH_SHORT).show();
                 }
                 ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
-                ((SetupWizardApplication) UserSetupActivity.this.getApplication()).onSetupFinished(UserSetupActivity.this);
+                Intent intent = new Intent();
+                intent.setAction("com.android.wizard.STARTUSE");
+                startActivity(intent);
             }
         });
         this.mButtonPrev.setOnClickListener(new OnClickListener() {
@@ -142,7 +144,9 @@ public class UserSetupActivity extends BaseActivity {
         });
         this.mSkip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((SetupWizardApplication) UserSetupActivity.this.getApplication()).onSetupFinished(UserSetupActivity.this);
+                Intent intent = new Intent();
+                intent.setAction("com.android.wizard.STARTUSE");
+                startActivity(intent);
             }
         });
     }

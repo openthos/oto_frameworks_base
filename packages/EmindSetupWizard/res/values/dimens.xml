@@ -3,4 +3,5 @@
     <dimen name="button_width">170.0dip</dimen>
     <dimen name="button_text_size">24.0sp</dimen>
     <dimen name="title_text_size">24.0sp</dimen>
+    <dimen name="title_finish_size">40.0sp</dimen>
 </resources>

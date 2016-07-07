@@ -21,7 +21,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 public class HttpUtils {
-    public static HttpsURLConnection getHttpsURLConnection(String path) throws IOException {
+    public static Object getHttpsURLConnection(String path) throws IOException {
 
         URL url = new URL(path);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -36,11 +36,11 @@ public class HttpUtils {
                 ((HttpsURLConnection) urlConnection).setHostnameVerifier(
                                                          HttpUtils.hostnameVerifier);
 
-                return (HttpsURLConnection) urlConnection;
+                return urlConnection;
             }
         }
         else{
-            return (HttpsURLConnection) urlConnection;
+            return urlConnection;
         }
 
         return null;

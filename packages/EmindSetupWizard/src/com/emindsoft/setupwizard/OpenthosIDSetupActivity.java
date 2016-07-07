@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.text.Editable;
@@ -39,6 +40,13 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private String openthosID;
     private String password;
     private int result;
+    private Handler mHandler;
+    private final Map<String,String> params = new HashMap<String,String>();
+    private final String encode = "utf-8";
+    static final int RG_REQUEST = 0;
+    private static String CODE_WRONG_USERNAME ="1002";
+    private static String CODE_WRONG_PASSWORD ="1001";
+    private static String CODE_SUCCESS ="1000";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,27 +59,42 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mSkip = (TextView) findViewById(R.id.text_skip);
         this.mRegister = (TextView) findViewById(R.id.text_register);
 
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case HttpURLConnection.HTTP_OK:
+                        Bundle b = msg.getData();
+                        String result = b.getString("result");
+                        String code = result.split(":")[1].split("\"")[1].trim();
+                        if(CODE_WRONG_USERNAME.equals(code)) {
+                            Toast.makeText(OpenthosIDSetupActivity.this,
+                                    "openthos Id is not invalid!",Toast.LENGTH_SHORT).show();
+                        } else if (CODE_WRONG_PASSWORD.equals(code)) {
+                            Toast.makeText(OpenthosIDSetupActivity.this,
+                                    "passowrd is wrong!",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Intent intent = new Intent();
+                            intent.setAction("com.android.wizard.FINISH");
+                            startActivity(intent);
+                        }
+                        break;
+                    default:
+                        Toast.makeText(OpenthosIDSetupActivity.this,
+                                "you can not connect the openthos web!",Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        };
+
         this.mButtonVerify.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 openthosID = mEditTextOpenthosID.getText().toString().trim();
                 password = mEditTextPassword.getText().toString().trim();
                 //verify openthos id and password
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("openthosID", openthosID);
+                params.put("username", openthosID);
                 params.put("password", password);
-
-                result = submitPostData(params, "utf-8");
-
-                if(result == HttpURLConnection.HTTP_OK) {
-                    Intent intent = new Intent();
-                    intent.setAction("com.android.wizard.FINISH");
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(OpenthosIDSetupActivity.this,
-                                   "you did not register or you have put wrong password",
-                                   Toast.LENGTH_SHORT).show();
-                }
-
+                submitPostData(params, encode);
             }
         });
         this.mButtonPrev.setOnClickListener(new OnClickListener() {
@@ -90,10 +113,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setAction("android.intent.action.VIEW");
-                Uri content_url = Uri.parse("http://www.baidu.com");
-                intent.setData(content_url);
-                startActivity(intent);
+                intent.setAction("com.android.wizard.REGISTER");
+                startActivityForResult(intent,RG_REQUEST);
             }
         });
     }
@@ -102,35 +123,94 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         super.onResume();
     }
 
-    public static int submitPostData(Map<String, String> params, String encode) {
+    public void submitPostData(final Map<String, String> params, final String encode) {
 
-        byte[] data = HttpUtils.getRequestData(params, encode).toString().getBytes();
+       final  byte[] data = getRequestData(params, encode).toString().getBytes();
+       new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    HttpURLConnection httpURLConnection =
+                                     (HttpURLConnection) HttpUtils.getHttpsURLConnection(
+                                              "http://dev.openthos.org/?q=check/userinfo");
+                    httpURLConnection.setConnectTimeout(3000);
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setDoOutput(true);
+                    httpURLConnection.setRequestMethod("POST");
+                    httpURLConnection.setUseCaches(false);
+                    //set the request body type is text
+                    httpURLConnection.setRequestProperty("Content-Type",
+                                                      "application/x-www-form-urlencoded");
+                    //set the request body length
+                    httpURLConnection.setRequestProperty("Content-Length",
+                                                         String.valueOf(data.length));
+                    //get the ouput stream and write to the service
+                    OutputStream outputStream = httpURLConnection.getOutputStream();
+                    outputStream.write(data);
+
+                    int response = httpURLConnection.getResponseCode();
+                    //get the service response
+                    String data = new String();
+                    if(response == HttpURLConnection.HTTP_OK) {
+                        InputStream inptStream = httpURLConnection.getInputStream();
+                        data = dealResponseResult(inptStream);
+                    }
+                    Message msg = Message.obtain();
+                    msg.what = response;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result",data);
+                    msg.setData(bundle);
+                    mHandler.sendMessage(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public static StringBuffer getRequestData(Map<String, String> params, String encode) {
+        StringBuffer stringBuffer = new StringBuffer();
         try {
-            HttpURLConnection httpURLConnection =
-                        (HttpURLConnection)HttpUtils.getHttpsURLConnection("http://www.baidu.com");
-            httpURLConnection.setConnectTimeout(3000);
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setUseCaches(false);
-            //set the request body type is text
-            httpURLConnection.setRequestProperty("Content-Type",
-                                                  "application/x-www-form-urlencoded");
-            //set the request body length
-            httpURLConnection.setRequestProperty("Content-Length", String.valueOf(data.length));
-            //get the ouput stream and write to the service
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            outputStream.write(data);
+            for(Map.Entry<String, String> entry : params.entrySet()) {
+                stringBuffer.append(entry.getKey())
+                        .append("=")
+                        .append(URLEncoder.encode(entry.getValue(), encode))
+                        .append("&");
+            }
+            stringBuffer.deleteCharAt(stringBuffer.length() - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return stringBuffer;
+    }
 
-            int response = httpURLConnection.getResponseCode();
-//            if(response == HttpURLConnection.HTTP_OK) {
-//                InputStream inptStream = httpURLConnection.getInputStream();
-//                return dealResponseResult(inptStream);
-//            }
-            return response;
+    public static String dealResponseResult(InputStream inputStream) {
+        String resultData = null;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] data = new byte[1024];
+        int len = 0;
+        try {
+            while((len = inputStream.read(data)) != -1) {
+                byteArrayOutputStream.write(data, 0, len);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return 0;
+        resultData = new String(byteArrayOutputStream.toByteArray());
+        return resultData;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RG_REQUEST) {
+            if (resultCode == RESULT_CANCELED)
+                Toast.makeText(OpenthosIDSetupActivity.this, "you have canceled.",
+                               Toast.LENGTH_SHORT).show();
+            else if(resultCode == RESULT_OK) {
+                Toast.makeText(OpenthosIDSetupActivity.this,
+                               "you have register successfully!",
+                               Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
