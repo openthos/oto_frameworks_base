@@ -119,6 +119,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusbarActivity;
@@ -186,6 +187,7 @@ import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
 import com.android.systemui.volume.VolumeComponent;
 import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.notificationbars.VolumeDialog;
+import com.android.systemui.statusbar.notificationbars.CalendarDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
 
@@ -293,6 +295,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private PointF mScreenOnTouchLocation;
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
+    private View mClock;
     int mPixelFormat;
     Object mQueueLock = new Object();
 
@@ -665,6 +668,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         loadDockedApk("com.android.browser");
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
+        mClock = mStatusBarView.findViewById(R.id.clock);
+        mClock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCalendarDialog = new CalendarDialog(context);
+                dismisTargetDialog(mCalendarDialog);
+                mCalendarDialog.show(mClock);
+            }
+        });
 
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);

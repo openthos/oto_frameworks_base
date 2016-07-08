@@ -959,4 +959,7 @@
     <string name="wifi_cnting">Connecting</string>
     <string name="wifi_enable">Enable</string>
     <string name="wifi_unable">Unable</string>
+
+    <!--calendar-->
+    <string name="set_date_and_time">Set date and time</string>
 </resources>

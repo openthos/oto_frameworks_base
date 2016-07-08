@@ -562,4 +562,6 @@
     <!-- Screen pinning inner nav bar outer circle size -->
     <dimen name="screen_pinning_nav_highlight_outer_size">84dp</dimen>
 
+    <!--Linear length unit over the weekend in the calendar -->
+    <dimen name="linear_length_unit_over_the_weekend_padding">10dp</dimen>
 </resources>

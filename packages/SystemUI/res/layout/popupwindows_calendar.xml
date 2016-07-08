@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#342464" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/calendar_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textSize="32dp" />
+
+        <TextView
+            android:id="@+id/calendar_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:textSize="24dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="95dp"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#3f2d76" >
+
+            <RelativeLayout
+                android:id="@+id/popupwindow_calendar_last_month"
+                android:layout_width="70dp"
+                android:layout_height="55dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/popupwindow_calendar_month" >
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/calendar_left" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/popupwindow_calendar_month"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:background="#3f2d76"
+                android:textSize="24sp" />
+
+            <RelativeLayout
+                android:id="@+id/popupwindow_calendar_next_month"
+                android:layout_width="70dp"
+                android:layout_height="55dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/popupwindow_calendar_month" >
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/calendar_right" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <com.android.systemui.statusbar.notificationbars.CalendarView
+            android:id="@+id/popupwindow_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:background="#3f2d76" >
+        </com.android.systemui.statusbar.notificationbars.CalendarView>
+
+        <TextView
+            android:id="@+id/popupwindow_calendar_bt_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:text="@string/set_date_and_time"
+            android:textColor="#ffffff"
+            android:layout_marginBottom="10dp"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+</RelativeLayout>

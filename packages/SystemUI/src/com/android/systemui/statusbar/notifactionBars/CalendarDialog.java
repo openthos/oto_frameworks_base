@@ -1,0 +1,170 @@
+package com.android.systemui.statusbar.notificationbars;
+
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import com.android.systemui.R;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.text.SimpleDateFormat;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.graphics.Color;
+
+import android.app.Activity;
+import android.content.Context;
+import android.provider.Settings;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.WindowManager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarClickListener;
+import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarDateChangedListener;
+
+
+public class CalendarDialog extends BaseSettingDialog implements OnClickListener , Runnable{
+
+    public static final int COLOR_VIEW_FOCUS = Color.parseColor("#2b1f52");
+    String mDate;
+    String mStr;
+    private CalendarView mCalendar;
+    private Handler mHandler;
+    public CalendarDialog(Context context) {
+        super(context);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initViews() {
+        final AudioManager audioManager = (AudioManager) mContext.getSystemService(
+                                                                      Context.AUDIO_SERVICE);
+        View mediaView = LayoutInflater.from(mContext)
+                                            .inflate(R.layout.popupwindows_calendar, null);
+        setContentView(mediaView);
+        final TextView calendarTime = (TextView) mediaView.findViewById(R.id.calendar_time);
+        TextView calendarDate = (TextView) mediaView.findViewById(R.id.calendar_date);
+        final TextView popupwindow_calendar_month = (TextView)
+                                         mediaView.findViewById(R.id.popupwindow_calendar_month);
+        mCalendar = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
+        TextView popupwindow_calendar_bt_enter = (TextView)
+                                               mediaView.findViewById(R.id.popupwindow_calendar_bt_enter);
+        popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + "/"
+                                           + mCalendar.getCalendarMonth() + "/");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss EE");
+        mStr = formatter.format(new Date());
+        mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                calendarTime.setText((String)msg.obj);
+            }
+        };
+        new Thread(this).start();
+        calendarDate.setText(showMonth(mStr));
+
+        if (null != mDate) {
+            int years = Integer.parseInt(mDate.substring(0, mDate.indexOf("-")));
+            int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + 1,
+                                                         mDate.lastIndexOf("-")));
+            popupwindow_calendar_month.setText(years + "/" + month +"/");
+            mCalendar.showCalendar(years, month);
+            mCalendar.setCalendarDayBgColor(mDate, R.drawable.statusbar_sound);
+        }
+
+        List<String> list = new ArrayList<String>();
+        list.add("2014-04-01");
+        list.add("2014-04-02");
+        mCalendar.addMarks(list, 0);
+
+        mCalendar.setOnCalendarClickListener(new OnCalendarClickListener() {
+            public void onCalendarClick(int row, int col, String dateFormat) {
+                int month = Integer.parseInt(dateFormat.substring(
+                                             dateFormat.indexOf("-") + 1,
+                                             dateFormat.lastIndexOf("-")));
+                if (mCalendar.getCalendarMonth() - month == 1
+                    || mCalendar.getCalendarMonth() - month == -11) {
+                    mCalendar.lastMonth();
+                } else if (month - mCalendar.getCalendarMonth() == 1
+                           || month - mCalendar.getCalendarMonth() == -11) {
+                    mCalendar.nextMonth();
+                } else {
+                    mCalendar.removeAllBgColor();
+                    mCalendar.setCalendarDayBgColor(dateFormat,
+                    R.drawable.statusbar_sound);
+                    mDate = dateFormat;
+                }
+            }
+        });
+
+        mCalendar.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
+            public void onCalendarDateChanged(int year, int month) {
+                popupwindow_calendar_month.setText(year + "/" + month +"/");
+            }
+        });
+
+        RelativeLayout popupwindow_calendar_last_month = (RelativeLayout)
+                       mediaView.findViewById(R.id.popupwindow_calendar_last_month);
+        RelativeLayout popupwindow_calendar_next_month = (RelativeLayout)
+                       mediaView.findViewById(R.id.popupwindow_calendar_next_month);
+        popupwindow_calendar_bt_enter.setOnClickListener(this);
+        popupwindow_calendar_next_month.setOnClickListener(this);
+        popupwindow_calendar_last_month.setOnClickListener(this);
+        mContentView = mediaView;
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.popupwindow_calendar_bt_enter:
+            mContext.startActivity(new Intent(Settings.ACTION_DATE_SETTINGS)
+             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            break;
+        case R.id.popupwindow_calendar_next_month:
+            mCalendar.nextMonth();
+            break;
+        case R.id.popupwindow_calendar_last_month:
+            mCalendar.lastMonth();
+            break;
+        }
+    }
+
+    public String showMonth(String str) {
+        return str.substring(0, 11);
+    }
+
+    public String showTime(String str) {
+        String hh = str.substring(8, 10);
+        String mm = str.substring(10, 12);
+        return hh + ":" + mm;
+    }
+
+    @Override
+    public void run() {
+        try {
+            while(true) {
+                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+                String str = formatter.format(new Date());
+                mHandler.sendMessage(mHandler.obtainMessage(100, str));
+                Thread.sleep(1000);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}

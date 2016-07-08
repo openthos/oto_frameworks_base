@@ -157,6 +157,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     private TaskViewDialog mTaskViewDialog;
     protected BaseSettingDialog wifiPopupWindow;
     protected BaseSettingDialog volumePopupWindow;
+    protected BaseSettingDialog mCalendarDialog;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
