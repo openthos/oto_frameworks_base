@@ -46,9 +46,11 @@ public class PhoneStatusBarView extends PanelBar {
 
     private boolean mSkipActionUp = false;
 
+    private int mStartupMenuSize;
+
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+        mStartupMenuSize = (int) (40 * (context.getResources().getDisplayMetrics().density) + 0.5f);
         Resources res = getContext().getResources();
         mBarTransitions = new PhoneStatusBarTransitions(this);
     }
@@ -141,6 +143,10 @@ public class PhoneStatusBarView extends PanelBar {
                && (x < mBar.mCurrentDisplaySize.x - mBar.mIconSize); // also skip home button
     }
 
+    private boolean checkIsStartupButton(int x) {
+        return (x <= mStartupMenuSize);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -148,10 +154,6 @@ public class PhoneStatusBarView extends PanelBar {
             return false;
         }
 
-        try {
-            ActivityManagerNative.getDefault().killStartupMenu();
-        } catch (Exception e) {
-        }
 
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
@@ -194,6 +196,12 @@ public class PhoneStatusBarView extends PanelBar {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!checkIsStartupButton((int)event.getX())) {
+                try {
+                    ActivityManagerNative.getDefault().killStartupMenu();
+                } catch (Exception e) {
+                }
+            }
             ActivityKeyView.dismissRBM();
             if (mNotificationPanel.getVisibility() == View.VISIBLE) {
                 mBar.makeExpandedInvisible();

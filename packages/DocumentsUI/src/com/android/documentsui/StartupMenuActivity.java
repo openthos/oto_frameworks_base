@@ -107,6 +107,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private EditText mEditText;
 
         @Override
+        protected void onNewIntent(Intent intent) {
+            super.onNewIntent(intent);
+            System.exit(0);
+        }
+
+        @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
