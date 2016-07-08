@@ -53,6 +53,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.Slog;
+import android.util.DisplayMetrics;
 import android.view.DisplayInfo;
 import android.view.Gravity;
 import android.view.IApplicationToken;
@@ -1451,6 +1452,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             final Rect stableInsets = mLastStableInsets;
             final boolean reportDraw = mWinAnimator.mDrawState == WindowStateAnimator.DRAW_PENDING;
             final Configuration newConfig = configChanged ? mConfiguration : null;
+            final DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
             if (mAttrs.type != WindowManager.LayoutParams.TYPE_APPLICATION_STARTING
                     && mClient instanceof IWindow.Stub) {
                 // To prevent deadlock simulate one-way call if win.mClient is a local object.
@@ -1458,16 +1460,22 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                     @Override
                     public void run() {
                         try {
-                            mClient.resized(frame, overscanInsets, contentInsets,
-                                    visibleInsets, stableInsets,  reportDraw, newConfig);
+                            if (frame.left < metrics.widthPixels &&
+                                frame.top < metrics.heightPixels) {
+                                mClient.resized(frame, overscanInsets, contentInsets,
+                                        visibleInsets, stableInsets,  reportDraw, newConfig);
+                            }
                         } catch (RemoteException e) {
                             // Not a remote call, RemoteException won't be raised.
                         }
                     }
                 });
             } else {
-                mClient.resized(frame, overscanInsets, contentInsets, visibleInsets, stableInsets,
-                        reportDraw, newConfig);
+                if (frame.left < metrics.widthPixels &&
+                    frame.top < metrics.heightPixels) {
+                    mClient.resized(frame, overscanInsets, contentInsets,
+                            visibleInsets, stableInsets,  reportDraw, newConfig);
+                }
             }
 
             //TODO (multidisplay): Accessibility supported only for the default display.
