@@ -175,7 +175,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
     static final float WINDOW_INIT_PART_WIDTH_THIN = 0.33f;
     static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
-    static final float WINDOW_INIT_PART_HEIGHT = 0.75f;
+    static final float WINDOW_INIT_PART_HEIGHT_THIN = 0.82f;
+    static final float WINDOW_INIT_PART_HEIGHT_WIDE = 0.75f;
 
     /* For initializing startup menu window positon */
     static final int WINDOW_STARTUP_MENU_WIDTH = 330;
@@ -1712,8 +1713,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     private boolean isPhoneStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo("com.tencent.mm") == 0)
-                                     || (pkgName.compareTo("com.tencent.mobileqq") == 0));
+        return (pkgName != null)
+               && ((pkgName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)
+                   || (pkgName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0));
     }
 
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
@@ -1733,12 +1735,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mInitPosY = WINDOW_OFFSET_STEP;
         }
 
-        float height = activityDisplay.mDisplayInfo.logicalHeight * WINDOW_INIT_PART_HEIGHT;
+        float height = activityDisplay.mDisplayInfo.logicalHeight;
         float width = activityDisplay.mDisplayInfo.logicalWidth;
         if (isPhoneStyleWindow(pkgName)) {
             width *= WINDOW_INIT_PART_WIDTH_THIN;
+            height *= WINDOW_INIT_PART_HEIGHT_THIN;
         } else {
             width *= WINDOW_INIT_PART_WIDTH_WIDE;
+            height *= WINDOW_INIT_PART_HEIGHT_WIDE;
         }
         return new Rect(mInitPosX, mInitPosY, mInitPosX + (int)width, mInitPosY + (int)height);
     }

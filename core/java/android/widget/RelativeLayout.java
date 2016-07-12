@@ -1232,6 +1232,34 @@ public class RelativeLayout extends ViewGroup {
         private boolean mRulesChanged = false;
         private boolean mIsRtlCompatibilityMode = false;
 
+        public String toString() {
+            StringBuilder out = new StringBuilder(256);
+            out.append("rect [");
+            out.append(mLeft);
+            out.append(", ");
+            out.append(mTop);
+            out.append(" - ");
+            out.append(mRight);
+            out.append(", ");
+            out.append(mBottom);
+            out.append("]      ");
+            out.append("left margin: ");
+            out.append(leftMargin);
+            out.append("    right margin: ");
+            out.append(rightMargin);
+            out.append("    width: ");
+            out.append(width);
+            out.append("    aligh parent left: ");
+            out.append(mRules[ALIGN_PARENT_LEFT]);
+            out.append("    init aligh parent left: ");
+            out.append(mInitialRules[ALIGN_PARENT_LEFT]);
+            out.append("    aligh parent right: ");
+            out.append(mRules[ALIGN_PARENT_RIGHT]);
+            out.append("    init aligh parent right: ");
+            out.append(mInitialRules[ALIGN_PARENT_RIGHT]);
+            return out.toString();
+        }
+
         /**
          * When true, uses the parent as the anchor if the anchor doesn't exist or if
          * the anchor's visibility is GONE.

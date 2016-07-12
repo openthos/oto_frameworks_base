@@ -36,6 +36,9 @@ import java.util.Objects;
  * &lt;application&gt; tag.
  */
 public class ApplicationInfo extends PackageItemInfo implements Parcelable {
+
+    public static final String APPNAME_TENCENT_QQ = "com.tencent.mobileqq";
+    public static final String APPNAME_TENCENT_WECHAT = "com.tencent.mm";
     
     /**
      * Default task affinity of all activities in this application. See 

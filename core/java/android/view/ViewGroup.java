@@ -18,6 +18,7 @@ package android.view;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -45,6 +46,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.Transformation;
+
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.android.internal.R;
 import com.android.internal.util.Predicate;
@@ -3770,6 +3774,36 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
      * @param params the layout parameters to set on the child
      */
     public void addView(View child, int index, LayoutParams params) {
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: ");
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: addView: ");
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: this: " + this);
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: child: " + child);
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: index: " + index);
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: params: " + params);
+        //Log.i(VIEW_LOG_TAG, "======= gchen_tag: ");
+
+        if (getContext().getApplicationInfo()
+                             .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0) {
+            if ((child instanceof Button) && (this instanceof RelativeLayout)
+                && (params instanceof RelativeLayout.LayoutParams)) {
+
+                final int WECHAT_BUTTON_MAX_MARGIN = 20;
+                final int WECHAT_BUTTON_MAX_WIDTH = 100;
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) params;
+
+                //Log.i(VIEW_LOG_TAG, "======= parames details: " + lp);
+                if (lp.leftMargin > WECHAT_BUTTON_MAX_MARGIN) {
+                    lp.leftMargin = WECHAT_BUTTON_MAX_MARGIN;
+                }
+                if (lp.rightMargin > WECHAT_BUTTON_MAX_MARGIN) {
+                    lp.rightMargin = WECHAT_BUTTON_MAX_MARGIN;
+                }
+                if (lp.width > WECHAT_BUTTON_MAX_WIDTH) {
+                    lp.width = WECHAT_BUTTON_MAX_WIDTH;
+                }
+            }
+        }
+
         if (DBG) {
             System.out.println(this + " addView");
         }

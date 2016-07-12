@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -316,8 +317,9 @@ public class ActionBarOverlayLayout extends ViewGroup implements DecorContentPar
         final boolean stable = (vis & SYSTEM_UI_FLAG_LAYOUT_STABLE) != 0;
         final Rect systemInsets = insets.getSystemWindowInsets();
 
-        if ((getContext().getApplicationInfo().packageName.compareTo("com.tencent.mm") == 0)
-                && (systemInsets.top != 0)) {
+        if ((getContext().getApplicationInfo()
+                              .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)
+            && (systemInsets.top != 0)) {
             return WindowInsets.CONSUMED;
         }
 
