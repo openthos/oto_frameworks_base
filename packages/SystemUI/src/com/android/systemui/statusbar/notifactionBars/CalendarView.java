@@ -36,6 +36,7 @@ public class CalendarView extends ViewFlipper implements
     public static final int COLOR_BK_TRANSPARENT = Color.parseColor("#2b1f52");
     public static final int COLOR_BK_DAGE_GRAY = Color.parseColor("#786C9f");
     public static final int COLOR_BK_DAGE_WHITE = Color.parseColor("#FFFFFF");
+    public static final int COLOR_TX_WEEK_RED = Color.parseColor("#ffcc3333");
 
     private GestureDetector mGD;
     private Animation mPushLeftIn;
@@ -107,8 +108,6 @@ public class CalendarView extends ViewFlipper implements
     private void drawFrame(LinearLayout oneCalendar) {
         String[] weekday = new String[] { "日", "一", "二", "三", "四", "五", "六" };
         LinearLayout title = new LinearLayout(getContext());
-        //title.setBackgroundColor(COLOR_TX_WEEK_TITLE);
-        title.setBackgroundColor(COLOR_BK_DAGE_WHITE);
         title.setBackgroundColor(COLOR_TX_WEEK_TITLE);
         title.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1,  0, 0.5f);
@@ -122,9 +121,8 @@ public class CalendarView extends ViewFlipper implements
             TextView view = new TextView(getContext());
             view.setGravity(Gravity.CENTER);
             view.setText(weekday[i]);
-            //view.setTextColor(COLOR_BK_DAGE_GRAY);
             view.setTextColor(COLOR_BK_DAGE_GRAY);
-            view.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 0.5f));
+            view.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1));
             title.addView(view);
         }
 
@@ -241,8 +239,9 @@ public class CalendarView extends ViewFlipper implements
                     if (mThisday.getDate() == day
                         && mThisday.getMonth() == mCalendarday.getMonth()
                         && mThisday.getYear() == mCalendarday.getYear()) {
-                        view.setText("Tday");
-                        view.setTextColor(COLOR_BK_TRANSPARENT);
+                        view.setText("Today");
+                        //view.setTextColor(COLOR_BK_TRANSPARENT);
+                        view.setTextColor(COLOR_TX_WEEK_RED);
                         view.setBackgroundColor(Color.TRANSPARENT);
                     } else {
                          //COLOR_BK_DAGE_GRAY
