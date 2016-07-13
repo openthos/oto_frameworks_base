@@ -173,10 +173,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     /* For initializing window position ofsset step */
     static final int WINDOW_OFFSET_STEP = 35;
     static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
-    static final float WINDOW_INIT_PART_WIDTH_THIN = 0.33f;
-    static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
-    static final float WINDOW_INIT_PART_HEIGHT_THIN = 0.82f;
-    static final float WINDOW_INIT_PART_HEIGHT_WIDE = 0.75f;
 
     /* For initializing startup menu window positon */
     static final int WINDOW_STARTUP_MENU_WIDTH = 330;
@@ -1735,16 +1731,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mInitPosY = WINDOW_OFFSET_STEP;
         }
 
-        float height = activityDisplay.mDisplayInfo.logicalHeight;
-        float width = activityDisplay.mDisplayInfo.logicalWidth;
+        DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
+        int width;
+        int height;
         if (isPhoneStyleWindow(pkgName)) {
-            width *= WINDOW_INIT_PART_WIDTH_THIN;
-            height *= WINDOW_INIT_PART_HEIGHT_THIN;
+            width = metrics.getInitWindowWidthPhone();
+            height = metrics.getInitWindowHeightPhone();
         } else {
-            width *= WINDOW_INIT_PART_WIDTH_WIDE;
-            height *= WINDOW_INIT_PART_HEIGHT_WIDE;
+            width = metrics.getInitWindowWidthNormal();
+            height = metrics.getInitWindowHeightNormal();
         }
-        return new Rect(mInitPosX, mInitPosY, mInitPosX + (int)width, mInitPosY + (int)height);
+        return new Rect(mInitPosX, mInitPosY, mInitPosX + width, mInitPosY + height);
     }
 
     boolean isHomeActivity(ActivityRecord r) {

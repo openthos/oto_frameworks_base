@@ -3787,19 +3787,23 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
             if ((child instanceof Button) && (this instanceof RelativeLayout)
                 && (params instanceof RelativeLayout.LayoutParams)) {
 
-                final int WECHAT_BUTTON_MAX_MARGIN = 20;
-                final int WECHAT_BUTTON_MAX_WIDTH = 100;
+                final float WECHAT_BUTTON_MAX_PART_MARGIN = 19.0f;
+                final float WECHAT_BUTTON_MAX_TIMES_WIDTH = 8.0f;
+                float maxMargin = (float) getContext().getResources().getDisplayMetrics()
+                                                                         .getInitWindowWidthPhone()
+                                          / WECHAT_BUTTON_MAX_PART_MARGIN;
+                float maxWidth = maxMargin * WECHAT_BUTTON_MAX_TIMES_WIDTH;
                 RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) params;
 
                 //Log.i(VIEW_LOG_TAG, "======= parames details: " + lp);
-                if (lp.leftMargin > WECHAT_BUTTON_MAX_MARGIN) {
-                    lp.leftMargin = WECHAT_BUTTON_MAX_MARGIN;
+                if (lp.leftMargin > (int) maxMargin) {
+                    lp.leftMargin = (int) maxMargin;
                 }
-                if (lp.rightMargin > WECHAT_BUTTON_MAX_MARGIN) {
-                    lp.rightMargin = WECHAT_BUTTON_MAX_MARGIN;
+                if (lp.rightMargin > (int) maxMargin) {
+                    lp.rightMargin = (int) maxMargin;
                 }
-                if (lp.width > WECHAT_BUTTON_MAX_WIDTH) {
-                    lp.width = WECHAT_BUTTON_MAX_WIDTH;
+                if (lp.width > (int) maxWidth) {
+                    lp.width = (int) maxWidth;
                 }
             }
         }

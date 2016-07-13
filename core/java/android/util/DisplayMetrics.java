@@ -27,6 +27,15 @@ import android.os.SystemProperties;
  * getWindowManager().getDefaultDisplay().getMetrics(metrics);</pre>
  */
 public class DisplayMetrics {
+
+    private static final float WINDOW_INIT_PART_CHECK_4_3_16_9 = 1.50f;   // 4/3 < 1.5, 16/9 > 1.5
+    private static final float WINDOW_INIT_PART_WIDTH_THIN_4_3 = 0.33f;
+    private static final float WINDOW_INIT_PART_HEIGHT_THIN_4_3 = 0.88f;
+    private static final float WINDOW_INIT_PART_WIDTH_THIN_16_9 = 0.25f;
+    private static final float WINDOW_INIT_PART_HEIGHT_THIN_16_9 = 0.90f;
+    private static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
+    private static final float WINDOW_INIT_PART_HEIGHT_WIDE = 0.75f;
+
     /**
      * Standard quantized DPI for low-density screens.
      */
@@ -311,5 +320,33 @@ public class DisplayMetrics {
         // set by the init process when it parses build.prop before anything else.
         return SystemProperties.getInt("qemu.sf.lcd_density",
                 SystemProperties.getInt("ro.sf.lcd_density", DENSITY_DEFAULT));
+    }
+
+    private boolean is_16_9() {
+        return (float) widthPixels / (float) heightPixels > WINDOW_INIT_PART_CHECK_4_3_16_9;
+    }
+
+    public int getInitWindowWidthPhone() {
+        if (is_16_9()) {
+            return (int)((float) widthPixels * WINDOW_INIT_PART_WIDTH_THIN_16_9);
+        } else {
+            return (int)((float) widthPixels * WINDOW_INIT_PART_WIDTH_THIN_4_3);
+        }
+    }
+
+    public int getInitWindowWidthNormal() {
+        return (int)((float)widthPixels * WINDOW_INIT_PART_WIDTH_WIDE);
+    }
+
+    public int getInitWindowHeightPhone() {
+        if (is_16_9()) {
+            return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_THIN_16_9);
+        } else {
+            return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_THIN_4_3);
+        }
+    }
+
+    public int getInitWindowHeightNormal() {
+        return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_WIDE);
     }
 }
