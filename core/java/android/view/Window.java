@@ -865,6 +865,10 @@ public abstract class Window {
      */
     public void setAttributes(WindowManager.LayoutParams a) {
         mWindowAttributes.copyFrom(a);
+        if (isMWPanel()
+            && (mWindowAttributes.width != WindowManager.LayoutParams.MATCH_PARENT)) {
+            mWindowAttributes.width = WindowManager.LayoutParams.MATCH_PARENT;
+        }
         dispatchWindowAttributesChanged(mWindowAttributes);
     }
 
@@ -1923,6 +1927,6 @@ public abstract class Window {
      * @hide
      */
     public boolean isMWPanel() {
-        return mStackId != -1;
+        return mStackId > 0;
     }
 }
