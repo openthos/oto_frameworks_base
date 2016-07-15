@@ -55,7 +55,6 @@ public class QSPanel extends ViewGroup {
     private final ViewGroup mDetailContent;
     private final TextView mDetailSettingsButton;
     private final TextView mDetailDoneButton;
-    private final View mBrightnessView;
     private final QSDetailClipper mClipper;
     private final H mHandler = new H();
 
@@ -66,7 +65,6 @@ public class QSPanel extends ViewGroup {
     private int mLargeCellHeight;
     private int mPanelPaddingBottom;
     private int mDualTileUnderlap;
-    private int mBrightnessPaddingTop;
     private int mGridHeight;
     private boolean mExpanded;
     private boolean mListening;
@@ -95,11 +93,8 @@ public class QSPanel extends ViewGroup {
         updateDetailText();
         mDetail.setVisibility(GONE);
         mDetail.setClickable(true);
-        mBrightnessView = LayoutInflater.from(context).inflate(
-                R.layout.quick_settings_brightness_dialog, this, false);
         mFooter = new QSFooter(this, context);
         addView(mDetail);
-        addView(mBrightnessView);
         addView(mFooter.getView());
         mClipper = new QSDetailClipper(mDetail);
         updateResources();
@@ -123,10 +118,6 @@ public class QSPanel extends ViewGroup {
 
     public void setBrightnessMirror(BrightnessMirrorController c) {
         super.onFinishInflate();
-        ToggleSlider brightnessSlider = (ToggleSlider) findViewById(R.id.brightness_slider);
-        ToggleSlider mirror = (ToggleSlider) c.getMirror().findViewById(R.id.brightness_slider);
-        brightnessSlider.setMirror(mirror);
-        brightnessSlider.setMirrorController(c);
     }
 
     public void setCallback(Callback callback) {
@@ -151,7 +142,6 @@ public class QSPanel extends ViewGroup {
         mLargeCellWidth = (int)(mLargeCellHeight * TILE_ASPECT);
         mPanelPaddingBottom = res.getDimensionPixelSize(R.dimen.qs_panel_padding_bottom);
         mDualTileUnderlap = res.getDimensionPixelSize(R.dimen.qs_dual_tile_padding_vertical);
-        mBrightnessPaddingTop = res.getDimensionPixelSize(R.dimen.qs_brightness_padding_top);
         if (mColumns != columns) {
             mColumns = columns;
             postInvalidate();
@@ -392,15 +382,12 @@ public class QSPanel extends ViewGroup {
                 tileRecord.tileView.setVisibility(newVis);
             }
         }
-        mBrightnessView.setVisibility(newVis);
         mGridContentVisible = visible;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int width = MeasureSpec.getSize(widthMeasureSpec);
-        mBrightnessView.measure(exactly(width), MeasureSpec.UNSPECIFIED);
-        final int brightnessHeight = mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop;
         mFooter.getView().measure(exactly(width), MeasureSpec.UNSPECIFIED);
         int r = -1;
         int c = -1;
@@ -431,7 +418,7 @@ public class QSPanel extends ViewGroup {
             final int ch = record.row == 0 ? mLargeCellHeight : mCellHeight;
             record.tileView.measure(exactly(cw), exactly(ch));
         }
-        int h = rows == 0 ? brightnessHeight : (getRowTop(rows) + mPanelPaddingBottom);
+        int h = rows == 0 ? 0 : (getRowTop(rows) + mPanelPaddingBottom);
         if (mFooter.hasFooter()) {
             h += mFooter.getView().getMeasuredHeight();
         }
@@ -450,9 +437,6 @@ public class QSPanel extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int w = getWidth();
-        mBrightnessView.layout(0, mBrightnessPaddingTop,
-                mBrightnessView.getMeasuredWidth(),
-                mBrightnessPaddingTop + mBrightnessView.getMeasuredHeight());
         boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
         for (TileRecord record : mRecords) {
             if (record.tileView.getVisibility() == GONE) continue;
@@ -481,9 +465,8 @@ public class QSPanel extends ViewGroup {
     }
 
     private int getRowTop(int row) {
-        if (row <= 0) return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop;
-        return mBrightnessView.getMeasuredHeight() + mBrightnessPaddingTop
-                + mLargeCellHeight - mDualTileUnderlap + (row - 1) * mCellHeight;
+        if (row <= 0) return 0;
+        return mLargeCellHeight - mDualTileUnderlap + (row - 1) * mCellHeight;
     }
 
     private int getColumnCount(int row) {
