@@ -108,29 +108,36 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="3dp"
-                    android:paddingTop="11dp"
-                    android:text="@string/print_message"
-                    android:textSize="17dp" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/print_message" />
+
                 <Button
                     android:id="@+id/printManager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/print_manager"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentRight="true"
+                    android:paddingRight="8dp"
+                    android:text="@string/print_manager" />
             </RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="140dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/print_area"
-                android:textSize="15dp" />
+            <!-- printer job layout -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_margin="8dp"
+                android:layout_height="140dp" >
+                <LinearLayout
+                    android:id="@+id/printer_job_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
 
         </LinearLayout>
         <!-- end of print panel -->

@@ -75,6 +75,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.RemoteException;
@@ -114,6 +115,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.PathInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -897,6 +899,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBroadcastReceiver.onReceive(mContext,
                 new Intent(pm.isScreenOn() ? Intent.ACTION_SCREEN_ON : Intent.ACTION_SCREEN_OFF));
 
+        // printer job layout
+        makePrinterLayout();
+
         // receive broadcasts
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
@@ -917,6 +922,118 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         volumePopupWindow = new VolumeDialog(mContext);
         wifiPopupWindow = new WifiDialog(mContext);
         return mStatusBarView;
+    }
+
+    private BroadcastReceiver mPrinterBroadcastReceiver = null;
+
+    /**
+     * create printer content
+     * including printer jobs
+     */
+    private void makePrinterLayout() {
+
+        String BROADCAST_REFRESH_JOBS
+                = "com.github.openthos.printer.openthosprintservice.broadcast_refresh_jobs";
+
+        Button buttonPrinterManager = (Button) mStatusBarWindow.findViewById(R.id.printManager);
+        buttonPrinterManager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.github.openthos.printer.localprint.jobmanager");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            }
+        });
+
+        final LinearLayout printerJobLayout
+                = (LinearLayout) mStatusBarWindow.findViewById(R.id.printer_job_layout);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BROADCAST_REFRESH_JOBS);
+
+        mPrinterBroadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Bundle bundle = intent.getBundleExtra("jobs");
+                if (bundle == null) {
+                    return;
+                }
+                bundle.setClassLoader(PrinterJobStatus.class.getClassLoader());
+                ArrayList<PrinterJobStatus> remoteList = bundle.getParcelableArrayList("jobs");
+
+                Log.d(TAG, "Receive printer jobs -> "
+                        + (remoteList == null ? "null" : remoteList.toString()));
+
+                printerJobLayout.removeAllViews();
+
+                if (remoteList == null) {
+                    return;
+                }
+
+                printerJobLayout.removeAllViews();
+
+                String lastPrinterName = "";
+
+                for (PrinterJobStatus item : remoteList) {
+
+                    if(!lastPrinterName.equals(item.getPrinter())){
+                        TextView textViewPrinterName = new TextView(mContext);
+                        textViewPrinterName.setText(item.getPrinter());
+                        printerJobLayout.addView(textViewPrinterName);
+                        lastPrinterName = item.getPrinter();
+                    }
+
+                    RelativeLayout itemLayout = new RelativeLayout(mContext);
+                    printerJobLayout.addView(itemLayout);
+                    LinearLayout.LayoutParams params
+                        = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
+                                                        , LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(8, 8, 8, 8);
+                    itemLayout.setLayoutParams(params);
+                    TextView textViewFileName = new TextView(mContext);
+                    textViewFileName.setText(item.getFileName());
+                    TextView textViewStatus = new TextView(mContext);
+                    RelativeLayout.LayoutParams textParams
+                        = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT
+                                                , RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    textParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    textViewStatus.setLayoutParams(textParams);
+                    itemLayout.addView(textViewFileName);
+                    itemLayout.addView(textViewStatus);
+
+                    int status = item.getStatus();
+                    switch (status) {
+                        case PrinterJobStatus.STATUS_ERROR:
+                            textViewStatus
+                                    .setText(R.string.print_error);
+                            break;
+                        case PrinterJobStatus.STATUS_HOLDING:
+                            textViewStatus.setText(R.string.print_pause);
+                            break;
+                        case PrinterJobStatus.STATUS_PRINTING:
+                            textViewStatus.setText(R.string.printing);
+                            break;
+                        case PrinterJobStatus.STATUS_READY:
+                            textViewStatus.setText(R.string.print_ready);
+                            break;
+                        case PrinterJobStatus.STATUS_WAITING_FOR_PRINTER:
+                            textViewStatus.setText(R.string.waiting_for_printer);
+                            break;
+                        default:
+                            textViewStatus.setText(R.string.print_unknown);
+                            break;
+                    }
+
+                }
+
+
+            }
+        };
+
+        mContext.registerReceiverAsUser(mPrinterBroadcastReceiver
+                , UserHandle.ALL, filter, null, null);
+
     }
 
     private void clearAllNotifications() {
@@ -3453,6 +3570,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mHandlerThread = null;
         }
         mContext.unregisterReceiver(mBroadcastReceiver);
+        if(mPrinterBroadcastReceiver != null){
+            mContext.unregisterReceiver(mPrinterBroadcastReceiver);
+        }
     }
 
     private boolean mDemoModeAllowed;

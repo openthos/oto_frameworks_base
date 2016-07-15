@@ -374,4 +374,10 @@
     <string name="startup_menu_system_settings">"System settings"</string>
     <string name="startup_menu_to_pad">"To pad"</string>
     <string name="set_date_and_time">"设置日期与时间"</string>
+    <string name="print_error">出错</string>
+    <string name="print_pause">暂停</string>
+    <string name="printing">打印中</string>
+    <string name="print_ready">就绪</string>
+    <string name="waiting_for_printer">等待打印机就绪</string>
+    <string name="print_unknown">未知</string>
 </resources>

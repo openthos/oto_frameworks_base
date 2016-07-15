@@ -960,6 +960,14 @@
     <string name="wifi_enable">Enable</string>
     <string name="wifi_unable">Unable</string>
 
+    <!--printer-->
+    <string name="print_error">Error</string>
+    <string name="print_pause">Pause</string>
+    <string name="printing">Printing</string>
+    <string name="print_ready">Ready</string>
+    <string name="waiting_for_printer">Waiting for printer to be ready.</string>
+    <string name="print_unknown">Unknown</string>
+
     <!--calendar-->
     <string name="set_date_and_time">Set date and time</string>
 </resources>
