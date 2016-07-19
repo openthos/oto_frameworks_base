@@ -9,12 +9,12 @@
 
 
     <LinearLayout
-        android:layout_width="@dimen/px495"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:layout_width="@dimen/px150"
+            android:layout_width="@dimen/px240"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/px15" >
 
@@ -35,7 +35,7 @@
 
             <ListView
                 android:id="@+id/lv_view"
-                android:layout_width="@dimen/px120"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/px450"
                 android:layout_marginLeft="10dp"
                 android:divider="#00000000"
@@ -87,8 +87,8 @@
                 <EditText
                     android:id="@+id/et_text"
                     android:imeOptions="actionSend"
-                    android:layout_width="@dimen/px280"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/px500"
+                    android:layout_height="@dimen/px60"
                     android:background="@drawable/search_background"
                     android:paddingLeft="10dp"
                     android:hint="please input"
@@ -103,6 +103,7 @@
                     android:focusableInTouchMode="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:background="@drawable/search" />
@@ -154,11 +155,11 @@
             <GridView
                 android:layout_marginTop="10dp"
                 android:id="@+id/gv_view"
-                android:layout_width="@dimen/px340"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:numColumns="4"
-                android:verticalSpacing="3dip"
-                android:horizontalSpacing="3dip" />
+                android:numColumns="6"
+                android:verticalSpacing="10dip"
+                android:horizontalSpacing="10dip" />
         </LinearLayout>
     </LinearLayout>
 

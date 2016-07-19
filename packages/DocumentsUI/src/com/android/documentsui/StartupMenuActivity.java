@@ -609,7 +609,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             lock.setOnClickListener(this);
             layout.addView(tv);
 
-            mPopupWindow = new PopupWindow(layout,100,230);
+            mPopupWindow = new PopupWindow(layout, 100, 200);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -617,7 +617,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             int[] location = new int[2];
             v.getLocationOnScreen(location);
             //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
-            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 100, 230);
+            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 330, 400);
 	}
 
         private void killStartupMenu() {

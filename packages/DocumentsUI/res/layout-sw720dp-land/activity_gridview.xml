@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/package_image"
-        android:layout_width="@dimen/px60"
-        android:layout_height="@dimen/px60"
+        android:layout_width="@dimen/px80"
+        android:layout_height="@dimen/px80"
         android:layout_gravity="center"
         android:src="@drawable/ic_launcher"/>
     <TextView
@@ -17,7 +17,7 @@
         android:layout_gravity="center"
 	android:singleLine="true"
 	android:ellipsize="end"
-        android:textSize="@dimen/px18"
+        android:textSize="@dimen/px24"
         android:textColor="@android:color/white"
         android:text="@string/startup_menu_app"/>
 

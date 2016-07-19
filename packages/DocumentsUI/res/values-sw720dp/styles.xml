@@ -24,7 +24,7 @@
         <item name="android:layout_marginTop">@dimen/px22</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">@dimen/px18</item>
+        <item name="android:textSize">@dimen/px24</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
