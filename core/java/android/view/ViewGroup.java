@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -5563,6 +5564,15 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
             int parentWidthMeasureSpec, int widthUsed,
             int parentHeightMeasureSpec, int heightUsed) {
         final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+
+        if (getClass().getName().compareTo("com.tencent.mm.ui.tools.TestTimeForChatting") == 0) {
+            Resources res = getContext().getResources();
+            mPaddingLeft = res.getDimensionPixelSize(com.android.internal.R.dimen.mw_outer_border);
+            mPaddingRight = mPaddingLeft;
+            mPaddingBottom = mPaddingLeft;
+            mPaddingTop = res.getDimensionPixelSize(com.android.internal.R.dimen.mw_header_border)
+                          + mPaddingLeft;
+        }
 
         final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
                 mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin
