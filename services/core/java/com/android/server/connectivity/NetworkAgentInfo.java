@@ -122,6 +122,11 @@ public class NetworkAgentInfo {
 
         int score = currentScore;
 
+        //add by libing, set ethernet priority highest.
+        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+            return score;
+        }
+
         if (!everValidated && !pretendValidated) score -= UNVALIDATED_SCORE_PENALTY;
         if (score < 0) score = 0;
 
