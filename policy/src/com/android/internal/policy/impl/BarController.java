@@ -110,7 +110,7 @@ public class BarController {
                     & WindowManager.LayoutParams.PRIVATE_FLAG_INHERIT_TRANSLUCENT_DECOR) == 0) {
                 int fl = PolicyControl.getWindowFlags(win, null);
                 if ((fl & mTranslucentWmFlag) != 0) {
-                    vis |= mTranslucentFlag;
+                    //vis |= mTranslucentFlag;
                 } else {
                     vis &= ~mTranslucentFlag;
                 }
