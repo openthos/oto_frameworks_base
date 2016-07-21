@@ -863,11 +863,19 @@ final class WindowState implements WindowManagerPolicy.WindowState {
     }
 
     public void setRequestedSize(int width, int height) {
+        TaskStack stack = mAppToken != null ? getStack() : null;
+
         if (mAppToken != null) {
             refreshContainingFrame(getStack(), null);
         }
-        setRequestedWidth(width);
-        setRequestedHeight(height);
+
+        if ((stack != null) && stack.isFloating()) {
+            setRequestedWidth(width);
+            setRequestedHeight(height);
+        } else {
+            mRequestedWidth = width;
+            mRequestedHeight = height;
+        }
     }
 
     public long getInputDispatchingTimeoutNanos() {
