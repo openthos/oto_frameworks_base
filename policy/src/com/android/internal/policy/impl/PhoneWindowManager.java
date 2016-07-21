@@ -212,6 +212,29 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mKeyguardHidden;
     private boolean mKeyguardDrawnOnce;
 
+    /**
+     * Broadcast for app to set visibility of statusbar
+     */
+    private boolean mAppChangeStatusBar = false;
+    private IntentFilter mAppChangeStatusBarStartFilter
+                     = new IntentFilter("com.android.control.statusbar.start");
+    private IntentFilter mAppChangeStatusBarFinishFilter
+                     = new IntentFilter("com.android.control.statusbar.finish");
+    private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if ("com.android.control.statusbar.start".equals(intent.getAction())) {
+               mAppChangeStatusBar = true;
+            }
+        }
+    };
+    private BroadcastReceiver mAppChangeStatusBarFinishReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if ("com.android.control.statusbar.finish".equals(intent.getAction())) {
+               mAppChangeStatusBar = false;
+            }
+        }
+    };
+
     /* Table of Application Launch keys.  Maps from key codes to intent categories.
      *
      * These are special keys that are used to launch particular kinds of applications,
@@ -1398,6 +1421,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void init(Context context, IWindowManager windowManager,
             WindowManagerFuncs windowManagerFuncs) {
         mContext = context;
+        mContext.registerReceiver(this.mAppChangeStatusBarStartReceiver,
+                                  this.mAppChangeStatusBarStartFilter);
+        mContext.registerReceiver(this.mAppChangeStatusBarFinishReceiver,
+                                  this.mAppChangeStatusBarFinishFilter);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
         mWindowManagerInternal = LocalServices.getService(WindowManagerInternal.class);
@@ -4416,7 +4443,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (!mShowingDream) {
             mDreamingLockscreen = mShowingLockscreen;
         }
-        if ((mLastSystemUiFlags & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+        if (mAppChangeStatusBar) {
             if (mStatusBarController.setBarShowingLw(false)) {
                 changes |= FINISH_LAYOUT_REDO_LAYOUT;
             }

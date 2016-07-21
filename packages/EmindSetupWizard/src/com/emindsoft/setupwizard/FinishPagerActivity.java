@@ -30,6 +30,10 @@ public class FinishPagerActivity extends BaseActivity {
             public void onClick(View v) {
                 ((SetupWizardApplication) FinishPagerActivity.this.getApplication())
                         .onSetupFinished(FinishPagerActivity.this);
+                //send broadcast to control status bar finish
+                Intent intent = new Intent();
+                intent.setAction("com.android.control.statusbar.finish");
+                FinishPagerActivity.this.sendBroadcast(intent);
             }
         });
     }

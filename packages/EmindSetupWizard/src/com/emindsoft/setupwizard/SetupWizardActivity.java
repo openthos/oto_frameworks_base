@@ -53,6 +53,10 @@ public class SetupWizardActivity extends BaseActivity {
                 return false;
             }
         });
+        //send broadcast to control status bar
+        Intent intent1 = new Intent();
+        intent1.setAction("com.android.control.statusbar.start");
+        SetupWizardActivity.this.sendBroadcast(intent1);
         this.mTextViewLanguage = (TextView) findViewById(R.id.textview_language);
         this.mLanguageContainer = (LinearLayout) findViewById(R.id.linearlayout_language);
         this.mTextViewLanguage.setText(this.mCurrentLocale.getDisplayName(this.mCurrentLocale));
