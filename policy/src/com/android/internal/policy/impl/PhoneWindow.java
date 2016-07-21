@@ -3569,13 +3569,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         } else {
                             if (mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
                                 mNewFrame = NO_FRAME;
-                                sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                                sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
+                                             | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             }
                             mNewFrame = r;
                         }
                         if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
                                 || mNewFrame == mRightDockFrame) {
-                            sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                            sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
+                                         | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         } else {
                             ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
                         }
@@ -3592,7 +3594,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     try {
                         ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mNewFrame);
                         mNewFrame = NO_FRAME;
-                        sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                        sendNewFrame(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
+                                     | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         ActivityManagerNative.getDefault().setFocusedStack(getStackId());
                         mDecor.invalidate();
                     } catch (RemoteException e) {
