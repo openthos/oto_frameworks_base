@@ -1,6 +1,5 @@
 package com.android.systemui.statusbar.notificationbars;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import com.android.systemui.statusbar.notifactionBars.WifiContentView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +55,8 @@ public final class WifiDialog extends BaseSettingDialog {
     private final int CONNECT_WIFI_AUTO = 18 << 1;
     private final int CONNECT_WIFI_PSW = 18 << 2;
 
+    private PhoneStatusBar mPhoneStatusBar;
+
     private WifiInfo currentNet;
     private WifiManager netManager;
     private WifiCheckEnableReceiver mWifiCheckEnableReceiver;
@@ -66,7 +69,7 @@ public final class WifiDialog extends BaseSettingDialog {
 
     private List<ScanResult> netList;
     private List<WifiConfiguration> wifiCfgList;
-    private ArrayAdapter<ScanResult> netInfoAdapter;
+    private NetInfoAdapter mNetInfoAdapter;
 
     private String waitConnectWifi;
     private String waitInputPswWifi;
@@ -128,6 +131,10 @@ public final class WifiDialog extends BaseSettingDialog {
         initWifiInfo();
     }
 
+    public void setPhoneStatusBar(PhoneStatusBar phoneStatusBar) {
+        mPhoneStatusBar = phoneStatusBar;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,8 +181,8 @@ public final class WifiDialog extends BaseSettingDialog {
             }
         });
         netList = new ArrayList<>();
-        netInfoAdapter = new NetInfoAdapter(netList);
-        netListView.setAdapter(netInfoAdapter);
+        mNetInfoAdapter = new NetInfoAdapter(netList);
+        netListView.setAdapter(mNetInfoAdapter);
         container.addView(netListView);
         setContentView(wifiRootView);
         mContentView = wifiRootView;
@@ -253,8 +260,8 @@ public final class WifiDialog extends BaseSettingDialog {
     }
 
     private synchronized void createNetListView() {
-        if (netInfoAdapter != null){
-            netInfoAdapter.notifyDataSetChanged();
+        if (mNetInfoAdapter != null){
+            mNetInfoAdapter.notifyDataSetChanged();
         }
     }
     private void listViewMove2Top(){
@@ -359,6 +366,7 @@ public final class WifiDialog extends BaseSettingDialog {
             final ScanResult scanResult = getItem(position);
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.wifi_content, null);
+                ((WifiContentView) convertView).setPhoneStatusBar(mPhoneStatusBar);
             }
             convertView.setBackgroundColor(mContext.getResources()
                                                         .getColor(android.R.color.transparent));
@@ -377,79 +385,79 @@ public final class WifiDialog extends BaseSettingDialog {
             subConnectBtn.setVisibility(View.GONE);
             wifiInputPanel.setVisibility(View.GONE);
             startCnting.setVisibility(View.GONE);
-            if (waitConnectWifi != null && waitConnectWifi.equals(scanResult.SSID)) {
-                convertView.setBackgroundColor(mContext.getResources()
-                                                            .getColor(R.color.transparent_white));
-                content_sub.setVisibility(View.VISIBLE);
-                subConnectBtn.setVisibility(View.VISIBLE);
-                if (extendEquals(currentNet.getSSID(), scanResult.SSID)) {
-                    subConnectBtn.setText(mContext.getText(R.string.wifi_discnt));
-                    subConnectBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mHandler.sendEmptyMessage(WIFI_DISCONNECT);
-                            mHandler.sendEmptyMessage(UPDATE_LIST);
-                        }
-                    });
-                } else {
-                    subConnectBtn.setText(mContext.getText(R.string.wifi_try_cnt));
-                    subConnectBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            WifiConfiguration cfg = cfgsContained(scanResult);
-                            waitConnectWifi = null;
-                            waitInputPswWifi = null;
-                            if (cfg != null) {
-                                startCntWifi = scanResult.SSID;
-                                mHandler.sendEmptyMessage(UPDATE_LIST);
-                                tryCntNetAuto(cfg);
-                            } else if (hasPassword(scanResult)) {
-                                waitInputPswWifi = scanResult.SSID;
-                                startCntWifi = null;
-                                mHandler.sendEmptyMessage(UPDATE_LIST);
-                            } else {
-                                startCntWifi = scanResult.SSID;
-                                mHandler.sendEmptyMessage(UPDATE_LIST);
-                                tryCntNet(scanResult, null);
-                            }
-                        }
-                    });
-                }
-            } else if (waitInputPswWifi != null && waitInputPswWifi.equals(scanResult.SSID)) {
-                convertView.setBackgroundColor(mContext.getResources()
-                                                           .getColor(R.color.transparent_white));
-                content_sub.setVisibility(View.VISIBLE);
-                wifiInputPanel.setVisibility(View.VISIBLE);
-                Button cancel = (Button) wifiInputPanel.findViewById(R.id.wifi_dialog_cancel);
-                Button connect = (Button) wifiInputPanel.findViewById(R.id.wifi_dialog_ok);
-                final EditText psw = (EditText) wifiInputPanel.findViewById(
-                                                                   R.id.wifi_dialog_input);
-                psw.setFocusable(true);
-                psw.requestFocusFromTouch();
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        waitConnectWifi = null;
-                        waitInputPswWifi = null;
-                        mHandler.sendEmptyMessage(UPDATE_LIST);
-                    }
-                });
-                connect.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        waitConnectWifi = null;
-                        waitInputPswWifi = null;
-                        startCntWifi = scanResult.SSID;
-                        mHandler.sendEmptyMessage(UPDATE_LIST);
-                        tryCntNet(scanResult, psw.getText().toString());
-                    }
-                });
-            } else if (startCntWifi != null && startCntWifi.equals(scanResult.SSID)) {
-                convertView.setBackgroundColor(mContext.getResources()
-                                                            .getColor(R.color.transparent_white));
-                content_sub.setVisibility(View.VISIBLE);
-                startCnting.setVisibility(View.VISIBLE);
-            }
+            //if (waitConnectWifi != null && waitConnectWifi.equals(scanResult.SSID)) {
+            //    convertView.setBackgroundColor(mContext.getResources()
+            //                                                .getColor(R.color.transparent_white));
+            //    content_sub.setVisibility(View.VISIBLE);
+            //    subConnectBtn.setVisibility(View.VISIBLE);
+            //    if (extendEquals(currentNet.getSSID(), scanResult.SSID)) {
+            //        subConnectBtn.setText(mContext.getText(R.string.wifi_discnt));
+            //        subConnectBtn.setOnClickListener(new View.OnClickListener() {
+            //            @Override
+            //            public void onClick(View v) {
+            //                mHandler.sendEmptyMessage(WIFI_DISCONNECT);
+            //                mHandler.sendEmptyMessage(UPDATE_LIST);
+            //            }
+            //        });
+            //    } else {
+            //        subConnectBtn.setText(mContext.getText(R.string.wifi_try_cnt));
+            //        subConnectBtn.setOnClickListener(new View.OnClickListener() {
+            //            @Override
+            //            public void onClick(View v) {
+            //                WifiConfiguration cfg = cfgsContained(scanResult);
+            //                waitConnectWifi = null;
+            //                waitInputPswWifi = null;
+            //                if (cfg != null) {
+            //                    startCntWifi = scanResult.SSID;
+            //                    mHandler.sendEmptyMessage(UPDATE_LIST);
+            //                    tryCntNetAuto(cfg);
+            //                } else if (hasPassword(scanResult)) {
+            //                    waitInputPswWifi = scanResult.SSID;
+            //                    startCntWifi = null;
+            //                    mHandler.sendEmptyMessage(UPDATE_LIST);
+            //                } else {
+            //                    startCntWifi = scanResult.SSID;
+            //                    mHandler.sendEmptyMessage(UPDATE_LIST);
+            //                    tryCntNet(scanResult, null);
+            //                }
+            //            }
+            //        });
+            //    }
+            //} else if (waitInputPswWifi != null && waitInputPswWifi.equals(scanResult.SSID)) {
+            //    convertView.setBackgroundColor(mContext.getResources()
+            //                                               .getColor(R.color.transparent_white));
+            //    content_sub.setVisibility(View.VISIBLE);
+            //    wifiInputPanel.setVisibility(View.VISIBLE);
+            //    Button cancel = (Button) wifiInputPanel.findViewById(R.id.wifi_dialog_cancel);
+            //    Button connect = (Button) wifiInputPanel.findViewById(R.id.wifi_dialog_ok);
+            //    final EditText psw = (EditText) wifiInputPanel.findViewById(
+            //                                                       R.id.wifi_dialog_input);
+            //    psw.setFocusable(true);
+            //    psw.requestFocusFromTouch();
+            //    cancel.setOnClickListener(new View.OnClickListener() {
+            //        @Override
+            //        public void onClick(View v) {
+            //            waitConnectWifi = null;
+            //            waitInputPswWifi = null;
+            //            mHandler.sendEmptyMessage(UPDATE_LIST);
+            //        }
+            //    });
+            //    connect.setOnClickListener(new View.OnClickListener() {
+            //        @Override
+            //        public void onClick(View v) {
+            //            waitConnectWifi = null;
+            //            waitInputPswWifi = null;
+            //            startCntWifi = scanResult.SSID;
+            //            mHandler.sendEmptyMessage(UPDATE_LIST);
+            //            tryCntNet(scanResult, psw.getText().toString());
+            //        }
+            //    });
+            //} else if (startCntWifi != null && startCntWifi.equals(scanResult.SSID)) {
+            //    convertView.setBackgroundColor(mContext.getResources()
+            //                                                .getColor(R.color.transparent_white));
+            //    content_sub.setVisibility(View.VISIBLE);
+            //    startCnting.setVisibility(View.VISIBLE);
+            //}
             ImageView imageView = (ImageView) linearLayout
                                                   .findViewById(R.id.wifi_content_is_cnted);
             imageView.setImageDrawable(null);

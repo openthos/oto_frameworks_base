@@ -919,8 +919,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         startGlyphRasterizeHack();
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
-        volumePopupWindow = new VolumeDialog(mContext);
-        wifiPopupWindow = new WifiDialog(mContext);
+        mVolumePopupWindow = new VolumeDialog(mContext);
+        mWifiPopupWindow = new WifiDialog(mContext);
+        ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
         return mStatusBarView;
     }
 
@@ -1185,8 +1186,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mVolumeButton == null){
             return;
         }
-        dismisTargetDialog(volumePopupWindow);
-        volumePopupWindow.show(mVolumeButton);
+        dismisTargetDialog(mVolumePopupWindow);
+        mVolumePopupWindow.show(mVolumeButton);
     }
 
     @Override
@@ -1195,8 +1196,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mWifiButton == null) {
             return;
         }
-        dismisTargetDialog(wifiPopupWindow);
-        wifiPopupWindow.show(mWifiButton);
+        dismisTargetDialog(mWifiPopupWindow);
+        mWifiPopupWindow.show(mWifiButton);
     }
 
     @Override
