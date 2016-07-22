@@ -133,18 +133,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             gv_view.setAdapter(mBrowseAppAdapter);
             gv_view.setOnItemClickListener(this);
 
-            TextView type_sort = (TextView) findViewById(R.id.type_sort);
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
             TextView my_computer = (TextView) findViewById(R.id.my_computer);
-            TextView click_sort = (TextView) findViewById(R.id.click_sort);
-            TextView name_sort = (TextView) findViewById(R.id.name_sort);
-            TextView time_sort = (TextView) findViewById(R.id.time_sort);
-            name_sort.setOnClickListener(this);
-            time_sort.setOnClickListener(this);
-            click_sort.setOnClickListener(this);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
-            type_sort.setOnClickListener(this);
 
             ImageView imView = (ImageView) findViewById(R.id.iv_view);
             mEditText = (EditText) findViewById(R.id.et_text);
@@ -409,14 +401,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 gv_view.setAdapter(mBrowseAppAdapter);
                 break;
             case R.id.name_sort:
+                mPopupWindow.dismiss();
                 mEditText.setText("");
                 nameSort();
                 break;
             case R.id.time_sort:
+                mPopupWindow.dismiss();
                 mEditText.setText("");
                 timeSort();
                 break;
-            case R.id.type_sort:
+            /*case R.id.type_sort:
+                mPopupWindow.dismiss();
                 if (CLICKS == 3) {
                     CLICKS = 0;
                 }
@@ -425,8 +420,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mlistAppInfo.clear();
                 mBrowseAppAdapter.notifyDataSetChanged();
                 typeSort(CLICKS);
-                break;
+                break;*/
             case R.id.click_sort:
+                mPopupWindow.dismiss();
                 mEditText.setText("");
                 clickSort();
                 break;
@@ -617,8 +613,36 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             int[] location = new int[2];
             v.getLocationOnScreen(location);
             //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
-            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 330, 400);
+            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 360, 200);
 	}
+
+        public void SortShow(View v) {
+            LinearLayout layout = new LinearLayout(StartupMenuActivity.this);
+            layout.setBackgroundColor(Color.WHITE);
+            View tv = LayoutInflater.from(StartupMenuActivity.this).inflate(
+                                                              R.layout.showsort_activity, null);
+            tv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                               LayoutParams.WRAP_CONTENT));
+            TextView click_sort = (TextView) tv.findViewById(R.id.click_sort);
+            TextView time_sort = (TextView) tv.findViewById(R.id.time_sort);
+            TextView name_sort = (TextView) tv.findViewById(R.id.name_sort);
+            //TextView type_sort = (TextView) tv.findViewById(R.id.type_sort);
+            click_sort.setOnClickListener(this);
+            time_sort.setOnClickListener(this);
+            name_sort.setOnClickListener(this);
+            //type_sort.setOnClickListener(this);
+            layout.addView(tv);
+
+            mPopupWindow = new PopupWindow(layout, 130, 65);
+            mPopupWindow.setFocusable(true);
+            mPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
+            mPopupWindow.showAtLocation(v, Gravity.BOTTOM, 190, 907);
+        }
 
         private void killStartupMenu() {
             try {

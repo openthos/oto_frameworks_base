@@ -19,14 +19,27 @@
     <style name="DialogWhenReallyLarge" parent="@*android:style/Theme.DeviceDefault.Light.Dialog.FixedSize" />
 
     <style name="Mstyle">
-        <item name="android:layout_marginLeft">@dimen/px8</item>
-        <item name="android:paddingLeft">@dimen/px8</item>
-        <item name="android:layout_marginTop">@dimen/px22</item>
+        <item name="android:layout_marginLeft">@dimen/px16</item>
+        <item name="android:paddingLeft">@dimen/px16</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">@dimen/px24</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:drawablePadding">@dimen/px12</item>
+        <item name="android:textSize">@dimen/px16</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/px48</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="SortMstyle">
+        <item name="android:layout_marginLeft">@dimen/px16</item>
+        <item name="android:paddingLeft">@dimen/px16</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">#939aa3</item>
+        <item name="android:drawablePadding">@dimen/px12</item>
+        <item name="android:textSize">@dimen/px16</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/px32</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>

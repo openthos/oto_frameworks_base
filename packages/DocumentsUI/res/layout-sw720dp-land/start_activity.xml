@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/ll_layout"
-    android:background="#99000000"
+    android:background="#e9edf0"
     android:orientation="vertical" >
 
 
@@ -14,19 +14,22 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:layout_width="@dimen/px240"
+            android:layout_width="@dimen/px180"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/px15" >
+            android:background="#5a41a2" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="@dimen/px15"
+                android:layout_marginTop="@dimen/px16"
+                android:paddingLeft="@dimen/px24"
                 android:orientation="vertical" >
 
             <TextView
-                style="@style/Mstyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/px40"
+                android:textSize="@dimen/px16"
                 android:text="@string/common_application" />
 
             <View
@@ -37,7 +40,6 @@
                 android:id="@+id/lv_view"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/px450"
-                android:layout_marginLeft="10dp"
                 android:divider="#00000000"
                 android:dividerHeight="5dp" />
             </LinearLayout>
@@ -54,11 +56,19 @@
                 android:drawableLeft="@drawable/startup_menuicon_computer"
                 android:text="@string/my_computer" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/px16" />
+
             <TextView
                 android:id="@+id/system_setting"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_setting"
                 android:text="@string/system_setting" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/px16" />
 
             <TextView
                 android:onClick="powerOff"
@@ -78,88 +88,94 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <!--
+               android:background="@drawable/search_background"
+            -->
             <RelativeLayout
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginTop="@dimen/px16"
+                android:layout_marginLeft="@dimen/px32"
+                android:layout_marginRight="@dimen/px32"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="@dimen/px58"
+                android:background="#ffffff" >
 
                 <EditText
+                    style="?android:attr/textViewStyle"
                     android:id="@+id/et_text"
                     android:imeOptions="actionSend"
-                    android:layout_width="@dimen/px500"
-                    android:layout_height="@dimen/px60"
-                    android:background="@drawable/search_background"
-                    android:paddingLeft="10dp"
-                    android:hint="please input"
+                    android:layout_width="@dimen/px336"
+                    android:layout_height="@dimen/px58"
+                    android:paddingLeft="16dp"
+                    android:hint="Software search "
+                    android:textSize="@dimen/px16"
                     android:maxLength="10"
                     android:minLines="1"
                     android:textCursorDrawable="@null"
-                    android:textColor="@android:color/white" />
+                    android:background="#ffffff"
+                    android:textColor="#939aa3" />
 
                 <ImageView
                     android:id="@+id/iv_view"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_width="@dimen/px34"
+                    android:layout_height="@dimen/px34"
+                    android:layout_marginRight="8dp"
+                    android:layout_toRightOf="@id/et_text"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/search" />
+                    android:src="@drawable/ic_starter_search" />
+
+                <View
+                    android:id="@+id/line_view"
+                    android:layout_toRightOf="@id/iv_view"
+                    android:layout_width="@dimen/px12"
+                    android:layout_height="match_parent"
+                    android:background="#e9edf0" />
+
+               <ImageView
+                    android:id="@+id/iv_arrow_gray"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="@dimen/px34"
+                    android:layout_height="@dimen/px34"
+                    android:layout_marginLeft="12dp"
+                    android:layout_toRightOf="@id/line_view"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_starter_rank_arrow_gray" />
+
+               <TextView
+                    android:onClick="SortShow"
+                    android:layout_width="@dimen/px100"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/iv_arrow_gray"
+                    android:layout_centerVertical="true"
+                    android:text="@string/click_sort"
+                    android:background="#e9edf0"
+                    android:textSize="@dimen/px24"  />
+
+                <ImageView
+                    android:id="@+id/iv_arrow_white"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="@dimen/px58"
+                    android:layout_height="@dimen/px58"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_starter_rank_arrow_white"
+                    android:background="#e9edf0" />
+
+
             </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/name_sort"
-                    style="@style/Mstyle"
-                    android:text="@string/name_sort" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/time_sort"
-                    style="@style/Mstyle"
-                    android:text="@string/time_sort" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/type_sort"
-                    style="@style/Mstyle"
-                    android:text="@string/type_sort" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/click_sort"
-                    style="@style/Mstyle"
-                    android:text="@string/click_sort" />
-
-            </LinearLayout>
-
+            <!-- android:verticalSpacing="10dip"
+                android:horizontalSpacing="10dip"  -->
             <GridView
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/px16"
                 android:id="@+id/gv_view"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:numColumns="6"
-                android:verticalSpacing="10dip"
-                android:horizontalSpacing="10dip" />
+                android:layout_height="match_parent"
+                android:numColumns="4" />
         </LinearLayout>
     </LinearLayout>
 
