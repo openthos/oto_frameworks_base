@@ -117,6 +117,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.WindowDecorView;
 
 import java.io.IOException;
 import java.lang.Runtime;
@@ -2196,7 +2197,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
     }
 
-    private final class DecorView extends FrameLayout implements RootViewSurfaceTaker {
+    private final class DecorView extends WindowDecorView implements RootViewSurfaceTaker {
 
         /* package */int mDefaultOpacity = PixelFormat.OPAQUE;
 
@@ -4260,6 +4261,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private void installDecor() {
         if (mDecor == null) {
             mDecor = generateDecor();
+            mDecor.setWindow((Window)this);
             mDecor.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
             mDecor.setIsRootNamespace(true);
             if (!mInvalidatePanelMenuPosted && mInvalidatePanelMenuFeatures != 0) {

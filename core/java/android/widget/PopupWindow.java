@@ -896,9 +896,11 @@ public class PopupWindow {
      * @param y the popup's y location offset
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
-        Rect frame = parent.getViewRootImpl().mWinFrame;
-        x = x - frame.left;
-        y = y - frame.top;
+        if (parent.getViewRootImpl().isMWWindow()) {
+            Rect frame = parent.getViewRootImpl().mWinFrame;
+            x = x - frame.left;
+            y = y - frame.top;
+        }
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
 
@@ -1250,7 +1252,9 @@ public class PopupWindow {
     private boolean findDropDownPosition(View anchor, WindowManager.LayoutParams p, int xoff,
             int yoff, int gravity) {
 
-        xoff = boundXoff(anchor, xoff, mPopupWidth);
+        if (anchor.getViewRootImpl().isMWWindow()) {
+            xoff = boundXoff(anchor, xoff, mPopupWidth);
+        }
 
         final int anchorHeight = anchor.getHeight();
         final int anchorWidth = anchor.getWidth();
