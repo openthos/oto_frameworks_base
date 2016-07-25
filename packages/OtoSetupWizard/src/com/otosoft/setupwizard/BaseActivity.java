@@ -1,4 +1,4 @@
-package com.emindsoft.setupwizard;
+package com.otosoft.setupwizard;
 
 import android.app.Activity;
 import android.view.View;

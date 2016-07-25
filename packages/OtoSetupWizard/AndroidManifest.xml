@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:sharedUserId="android.uid.system" package="com.emindsoft.setupwizard" platformBuildVersionCode="22" platformBuildVersionName="5.1.1-33">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:sharedUserId="android.uid.system" package="com.otosoft.setupwizard" platformBuildVersionCode="22" platformBuildVersionName="5.1.1-33">
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
@@ -8,29 +8,29 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <application android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name="com.emindsoft.setupwizard.SetupWizardApplication">
-        <activity android:enabled="true" android:excludeFromRecents="true" android:launchMode="singleTask" android:name="com.emindsoft.setupwizard.SetupWizardActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+    <application android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name="com.otosoft.setupwizard.SetupWizardApplication">
+        <activity android:enabled="true" android:excludeFromRecents="true" android:launchMode="singleTask" android:name="com.otosoft.setupwizard.SetupWizardActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter android:priority="9">
                 <action android:name="android.intent.action.MAIN"/>
-                <action android:name="com.emindsoft.setupwizard.MAIN"/>
+                <action android:name="com.otosoft.setupwizard.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.HOME"/>
             </intent-filter>
         </activity>
-        <activity android:excludeFromRecents="true" android:name="com.emindsoft.setupwizard.UserSetupActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="adjustPan|stateHidden">
+        <activity android:excludeFromRecents="true" android:name="com.otosoft.setupwizard.UserSetupActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="com.android.wizard.FINISH"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:excludeFromRecents="true" android:name="com.emindsoft.setupwizard.TestActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:excludeFromRecents="true" android:name="com.otosoft.setupwizard.TestActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:excludeFromRecents="true" android:name="com.emindsoft.setupwizard.OpenthosIDSetupActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="adjustPan|stateHidden">
+        <activity android:excludeFromRecents="true" android:name="com.otosoft.setupwizard.OpenthosIDSetupActivity" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="com.android.wizard.NEXT"/>
@@ -38,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity android:excludeFromRecents="true"
-                  android:name="com.emindsoft.setupwizard.FinishPagerActivity"
+                  android:name="com.otosoft.setupwizard.FinishPagerActivity"
                   android:theme="@android:style/Theme.Material.Light.NoActionBar"
                   android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>

@@ -1,4 +1,4 @@
-package com.emindsoft.setupwizard;
+package com.otosoft.setupwizard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import android.content.Context;
 import java.io.IOException;
 import java.io.DataOutputStream;
 
-import com.emindsoft.tools.ChangeBuildPropTools;
+import com.otosoft.tools.ChangeBuildPropTools;
 
 public class UserSetupActivity extends BaseActivity {
     private Button mButtonFinish;

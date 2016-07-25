@@ -7,7 +7,7 @@ LOCAL_SRC_FILES := $(call all-subdir-java-files)
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4
 
-LOCAL_PACKAGE_NAME := EmindUserAppWizard
+LOCAL_PACKAGE_NAME := OtoUserAppWizard
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
 

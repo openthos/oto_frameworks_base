@@ -1,4 +1,4 @@
-package com.emindsoft.setupwizard;
+package com.otosoft.setupwizard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,7 +89,7 @@ public class SetupWizardActivity extends BaseActivity {
     }
 
     private Intent buildWifiSetupIntent() {
-        //Intent intent = new Intent("com.emindsoft.setupwizard.SETUP_WIFI_NETWORK");
+        //Intent intent = new Intent("com.otosoft.setupwizard.SETUP_WIFI_NETWORK");
         Intent intent = new Intent("com.android.net.wifi.SETUP_WIFI_NETWORK");
         intent.putExtra("firstRun", true);
         intent.putExtra("allowSkip", true);

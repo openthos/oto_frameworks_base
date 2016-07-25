@@ -1,4 +1,4 @@
-package com.emindsoft.setupwizard;
+package com.otosoft.setupwizard;
 
 import android.content.Intent;
 import android.net.Uri;

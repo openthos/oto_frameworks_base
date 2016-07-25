@@ -1,4 +1,4 @@
-package com.emindsoft.setupwizard;
+package com.otosoft.setupwizard;
 
 import android.app.Activity;
 import android.app.Application;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class SetupWizardApplication extends Application {
-    private final ComponentName REAL_HOME = new ComponentName("com.emindsoft.filemanager", "com.emindsoft.launcher.Launcher");
+    private final ComponentName REAL_HOME = new ComponentName("com.otosoft.filemanager", "com.otosoft.launcher.Launcher");
     private final Runnable mDisableSetupRunnable = new Runnable() {
         public void run() {
             SetupWizardApplication.this.getPackageManager().setComponentEnabledSetting(new ComponentName(SetupWizardApplication.this, SetupWizardActivity.class), 2, 0);

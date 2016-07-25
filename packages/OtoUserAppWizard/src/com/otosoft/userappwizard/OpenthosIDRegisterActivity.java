@@ -1,4 +1,4 @@
-package com.emindsoft.userappwizard;
+package com.otosoft.userappwizard;
 
 import android.content.Intent;
 import android.os.Bundle;

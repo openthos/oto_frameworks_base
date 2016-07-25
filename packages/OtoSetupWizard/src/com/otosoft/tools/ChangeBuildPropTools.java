@@ -1,4 +1,4 @@
-package com.emindsoft.tools;
+package com.otosoft.tools;
 
 import android.util.Log;
 import java.io.BufferedReader;

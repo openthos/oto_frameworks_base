@@ -1,4 +1,4 @@
-package com.emindsoft.userappwizard;
+package com.otosoft.userappwizard;
 
 import android.app.Activity;
 import android.view.View;
