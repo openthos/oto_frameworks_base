@@ -74,19 +74,23 @@
                     android:paddingLeft="3dp"
                     android:paddingTop="10dp"
                     android:text="@string/notification_center"
-                    android:textSize="16dp" />
+                    android:textSize="12sp" />
                 <Button
                     android:id="@+id/clearAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/clear_all"
-                    android:layout_alignParentRight="true" />
+                    android:layout_alignParentRight="true"
+                    android:textSize="12sp" />
+
                 <Button
                     android:id="@+id/notificationManager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/notification_manager"
-                    android:layout_toLeftOf="@id/clearAll" />
+                    android:layout_toLeftOf="@id/clearAll"
+                    android:textSize="12sp" />
+
             </RelativeLayout>
 
             <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
@@ -116,7 +120,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/print_message" />
+                    android:text="@string/print_message"
+                    android:textSize="12sp" />
 
                 <Button
                     android:id="@+id/printManager"
@@ -124,7 +129,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:paddingRight="8dp"
-                    android:text="@string/print_manager" />
+                    android:text="@string/print_manager"
+                    android:textSize="12sp" />
+
             </RelativeLayout>
 
             <!-- printer job layout -->
