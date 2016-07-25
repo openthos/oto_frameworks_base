@@ -371,6 +371,7 @@ public class AlertDialog extends Dialog implements DialogInterface {
     public static class Builder {
         private final AlertController.AlertParams P;
         private int mTheme;
+        private Activity mContextActivity;
         
         /**
          * Constructor using a context for this builder and the {@link AlertDialog} it creates.
@@ -394,6 +395,9 @@ public class AlertDialog extends Dialog implements DialogInterface {
             P = new AlertController.AlertParams(new ContextThemeWrapper(
                     context, resolveDialogTheme(context, theme)));
             mTheme = theme;
+            if (context instanceof Activity) {
+                mContextActivity = (Activity) context;
+            }
         }
         
         /**
@@ -980,6 +984,9 @@ public class AlertDialog extends Dialog implements DialogInterface {
             dialog.setOnDismissListener(P.mOnDismissListener);
             if (P.mOnKeyListener != null) {
                 dialog.setOnKeyListener(P.mOnKeyListener);
+            }
+            if (mContextActivity != null) {
+                dialog.setOwnerActivity(mContextActivity);
             }
             return dialog;
         }

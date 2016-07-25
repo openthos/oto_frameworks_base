@@ -18,10 +18,16 @@ package android.widget;
 
 import android.content.Context;
 import android.view.Window;
+import android.view.View;
+import android.util.Log;
 
 public class WindowDecorView extends FrameLayout {
 
+    private static final String TAG = "WindowDecorView";
+
     Window mWindow;
+    View mDialogView = null;
+    Window mDialogParentWindow = null;
 
     public WindowDecorView(Context context) {
         super(context);
@@ -33,5 +39,23 @@ public class WindowDecorView extends FrameLayout {
 
     public boolean isMWWindow() {
         return mWindow.isMWPanel();
+    }
+
+    public void setFromDialog(View dialogView, Window dialogParentWindow) {
+        mDialogView = dialogView;
+        mDialogParentWindow = dialogParentWindow;
+    }
+
+    public boolean isDialogFromMWParent() {
+        return (mDialogView != null) && (mDialogParentWindow != null)
+               && mDialogParentWindow.isMWPanel();
+    }
+
+    public int getDialogLeftOffset() {
+        return (mDialogParentWindow.getDecorView().getWidth() - mDialogView.getWidth()) / 2;
+    }
+
+    public int getDialogTopOffset() {
+        return (mDialogParentWindow.getDecorView().getHeight() - mDialogView.getHeight()) / 2;
     }
 }

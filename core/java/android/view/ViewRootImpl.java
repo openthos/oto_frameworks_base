@@ -73,7 +73,6 @@ import android.view.animation.Interpolator;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
-import android.widget.WindowDecorView;
 
 import com.android.internal.R;
 import com.android.internal.os.SomeArgs;
@@ -441,13 +440,6 @@ public final class ViewRootImpl implements ViewParent,
                 return windowSession.getInTouchMode();
             } catch (RemoteException e) {
             }
-        }
-        return false;
-    }
-
-    public boolean isMWWindow() {
-        if (mView instanceof WindowDecorView) {
-            return ((WindowDecorView) mView).isMWWindow();
         }
         return false;
     }

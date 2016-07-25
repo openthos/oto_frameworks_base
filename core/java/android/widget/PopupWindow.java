@@ -36,9 +36,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewRootImpl;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.view.WindowManager;
+import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
 
@@ -77,7 +79,8 @@ public class PopupWindow {
 
     private static final int DEFAULT_ANCHORED_GRAVITY = Gravity.TOP | Gravity.START;
 
-    private static final int DEFAULT_POPUP_WINDOW_WIDTH = 130;
+    private static final int DEFAULT_POPUP_WINDOW_WIDTH_4_3 = 130;
+    private static final int DEFAULT_POPUP_WINDOW_WIDTH_16_9 = 300;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -896,11 +899,22 @@ public class PopupWindow {
      * @param y the popup's y location offset
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
-        if (parent.getViewRootImpl().isMWWindow()) {
-            Rect frame = parent.getViewRootImpl().mWinFrame;
-            x = x - frame.left;
-            y = y - frame.top;
+
+        ViewRootImpl root = parent.getViewRootImpl();
+        View view = root.getView();
+
+        if (view instanceof WindowDecorView) {
+            WindowDecorView decor = (WindowDecorView) view;
+            if (decor.isMWWindow() && (parent.getContext().getApplicationInfo().packageName
+                                          .compareTo("com.chaozhuo.filemanager") == 0)) {
+                x = x - root.mWinFrame.left;
+                y = y - root.mWinFrame.top;
+            } else if (decor.isDialogFromMWParent()) {
+                x = x + decor.getDialogLeftOffset();
+                y = y + decor.getDialogTopOffset();
+            }
         }
+
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
 
@@ -1015,24 +1029,30 @@ public class PopupWindow {
         invokePopup(p);
     }
 
-    private int boundXoff(View anchor, int xoff, int width) {
-        Rect frame = anchor.getViewRootImpl().mWinFrame;
-        int left = frame.left + anchor.getLeft();
-        int right = frame.left + anchor.getRight();
+    private int boundXoff(View anchor, int xoff, int width, int gravity) {
 
-        if (width == -1) {
+        Rect frame = anchor.getViewRootImpl().mWinFrame;
+        Rect rect = new Rect();
+
+        anchor.getBoundsOnScreen(rect);
+        rect.left -= frame.left;
+
+        if ((gravity & Gravity.RIGHT) == Gravity.RIGHT) {
+            width = 0;
+        } else if (width == -1) {
             width = anchor.getWidth();
         } else if (width == -2) {
             // For wrap_content, don't know the real size, so use default width instead of.
-            width = DEFAULT_POPUP_WINDOW_WIDTH;
+            width = anchor.getContext().getResources().getDisplayMetrics().is_16_9()
+                    ? DEFAULT_POPUP_WINDOW_WIDTH_16_9 : DEFAULT_POPUP_WINDOW_WIDTH_4_3;
         } else if (width < 0) {
             width = 0;
         }
 
-        if (right + xoff + width > frame.right) {
-            xoff = frame.right - width - right;
-        } else if (left + xoff < frame.left) {
-            xoff = frame.left - left;
+        if (rect.left + xoff + width > frame.width()) {
+            xoff = frame.width() - width - rect.left;
+        } else if (rect.left + xoff < 0) {
+            xoff = 0 - rect.left;
         }
         return xoff;
     }
@@ -1252,8 +1272,11 @@ public class PopupWindow {
     private boolean findDropDownPosition(View anchor, WindowManager.LayoutParams p, int xoff,
             int yoff, int gravity) {
 
-        if (anchor.getViewRootImpl().isMWWindow()) {
-            xoff = boundXoff(anchor, xoff, mPopupWidth);
+        View view = anchor.getViewRootImpl().getView();
+        if (view instanceof WindowDecorView) {
+            if (((WindowDecorView) view).isMWWindow()) {
+                xoff = boundXoff(anchor, xoff, mPopupWidth, gravity);
+            }
         }
 
         final int anchorHeight = anchor.getHeight();

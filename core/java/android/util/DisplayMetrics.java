@@ -322,7 +322,7 @@ public class DisplayMetrics {
                 SystemProperties.getInt("ro.sf.lcd_density", DENSITY_DEFAULT));
     }
 
-    private boolean is_16_9() {
+    public boolean is_16_9() {
         return (float) widthPixels / (float) heightPixels > WINDOW_INIT_PART_CHECK_4_3_16_9;
     }
 

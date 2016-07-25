@@ -49,6 +49,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
 
@@ -82,11 +83,12 @@ public class Dialog implements DialogInterface, Window.Callback,
         KeyEvent.Callback, OnCreateContextMenuListener, Window.OnWindowDismissedCallback {
     private static final String TAG = "Dialog";
     private Activity mOwnerActivity;
+    private Activity mContextActivity;
     
     final Context mContext;
     final WindowManager mWindowManager;
     Window mWindow;
-    View mDecor;
+    WindowDecorView mDecor;
     private ActionBar mActionBar;
     /**
      * This field should be made private, so it is hidden from the SDK.
@@ -161,6 +163,9 @@ public class Dialog implements DialogInterface, Window.Callback,
             mContext = context;
         }
 
+        if (context instanceof Activity) {
+            mContextActivity = (Activity) context;
+        }
         mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Window w = PolicyManager.makeNewWindow(mContext);
         mWindow = w;
@@ -275,7 +280,7 @@ public class Dialog implements DialogInterface, Window.Callback,
         }
 
         onStart();
-        mDecor = mWindow.getDecorView();
+        mDecor = (WindowDecorView) mWindow.getDecorView();
 
         if (mActionBar == null && mWindow.hasFeature(Window.FEATURE_ACTION_BAR)) {
             final ApplicationInfo info = mContext.getApplicationInfo();
@@ -295,6 +300,8 @@ public class Dialog implements DialogInterface, Window.Callback,
         }
 
         try {
+            Activity activity = (mOwnerActivity != null) ? mOwnerActivity : mContextActivity;
+            mDecor.setFromDialog(mDecor, (activity != null) ? activity.getWindow() : null);
             mWindowManager.addView(mDecor, l);
             mShowing = true;
     
@@ -337,6 +344,7 @@ public class Dialog implements DialogInterface, Window.Callback,
             return;
         }
 
+        mDecor.setFromDialog(null, null);
         try {
             mWindowManager.removeViewImmediate(mDecor);
         } finally {
