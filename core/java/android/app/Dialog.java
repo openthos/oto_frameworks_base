@@ -17,6 +17,7 @@
 package android.app;
 
 import android.content.pm.ApplicationInfo;
+import com.android.internal.R;
 import com.android.internal.app.WindowDecorActionBar;
 import com.android.internal.policy.PolicyManager;
 
@@ -24,6 +25,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -169,6 +171,11 @@ public class Dialog implements DialogInterface, Window.Callback,
         mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Window w = PolicyManager.makeNewWindow(mContext);
         mWindow = w;
+        if ((mContextActivity != null) &&
+            !mWindow.getWindowStyle().getBoolean(R.styleable.Window_windowIsFloating, false)) {
+            mWindow.setTaskId(mContextActivity.getTaskId());
+            mWindow.setStackId(mContextActivity.getStackId());
+        }
         w.setCallback(this);
         w.setOnWindowDismissedCallback(this);
         w.setWindowManager(mWindowManager, null, null);

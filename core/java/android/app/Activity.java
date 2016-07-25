@@ -5922,7 +5922,7 @@ public class Activity extends ContextThemeWrapper
         mParent = parent;
     }
 
-    private int getStackId() {
+    public int getStackId() {
         if ((mIntent != null) &&
                 (((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) ||
                  ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) ||
