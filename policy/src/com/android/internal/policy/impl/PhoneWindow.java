@@ -2702,6 +2702,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if (measure) {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
+
+            if ((mDecorWM != null) && (mContentRoot.getHeight() > 0)
+                && (mContentRoot.getHeight() <= mDecorWM.getDecorMWPureHeight())) {
+                mDecorWM.hide();
+            }
         }
 
         @Override
@@ -3633,6 +3638,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         private Rect mFullScreen;
         private Rect mOldSize;
+
+        public void hide() {
+            mHeader.setVisibility(View.INVISIBLE);
+        }
+
+        public int getDecorMWPureHeight() {
+            return mHeader.getHeight() + 2 * mBorderPadding;
+        }
 
         public DecorMW(ViewGroup root) {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
