@@ -180,7 +180,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     // This is the top-level view of the window, containing the window decor.
     private DecorView mDecor;
-    private DecorMW mDecorWM;
+    private DecorMW mDecorMW;
 
     // This is the view in which the window contents are placed. It is either
     // mDecor itself, or a child of mDecor where the contents go.
@@ -2256,6 +2256,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         private int mRootScrollY = 0;
 
+        private boolean mHeaderChecked = false;
+
         public DecorView(Context context, int featureId) {
             super(context);
             mFeatureId = featureId;
@@ -2703,9 +2705,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
 
-            if ((mDecorWM != null) && (mContentRoot.getHeight() > 0)
-                && (mContentRoot.getHeight() <= mDecorWM.getDecorMWPureHeight())) {
-                mDecorWM.hide();
+            if (!mHeaderChecked && (mDecorMW != null) && (getWidth() > 0) && (getHeight() > 0)) {
+                if ((mContentRoot.getHeight() <= mDecorMW.getDecorMWPureHeight())
+                    || !needHeader()) {
+                    mDecorMW.hide();
+                }
+                mHeaderChecked = true;
             }
         }
 
@@ -4210,7 +4215,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mContentRoot = (ViewGroup) in;
         if(isMWPanel()) {
-            mDecorWM = new DecorMW(mContentRoot);
+            mDecorMW = new DecorMW(mContentRoot);
         }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);

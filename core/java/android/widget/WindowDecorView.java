@@ -46,6 +46,12 @@ public class WindowDecorView extends FrameLayout {
         mDialogParentWindow = dialogParentWindow;
     }
 
+    public boolean needHeader() {
+        return (mDialogView == null) || (mDialogParentWindow == null)
+               || ((mDialogParentWindow.getDecorView().getWidth() <= mDialogView.getWidth())
+                   && (mDialogParentWindow.getDecorView().getHeight() <= mDialogView.getHeight()));
+    }
+
     public boolean isDialogFromMWParent() {
         return (mDialogView != null) && (mDialogParentWindow != null)
                && mDialogParentWindow.isMWPanel();

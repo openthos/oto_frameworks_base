@@ -171,8 +171,7 @@ public class Dialog implements DialogInterface, Window.Callback,
         mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Window w = PolicyManager.makeNewWindow(mContext);
         mWindow = w;
-        if ((mContextActivity != null) &&
-            !mWindow.getWindowStyle().getBoolean(R.styleable.Window_windowIsFloating, false)) {
+        if (mContextActivity != null) {
             mWindow.setTaskId(mContextActivity.getTaskId());
             mWindow.setStackId(mContextActivity.getStackId());
         }
