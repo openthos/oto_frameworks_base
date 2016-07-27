@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 
 import com.android.documentsui.util.AppInfo;
 import com.android.documentsui.util.MySqliteOpenHelper;
+import com.android.documentsui.util.BaseSettingDialog;
+import com.android.documentsui.util.PowerSourceDialog;
 
 import android.content.ActivityNotFoundException;
 import android.util.Slog;
@@ -85,6 +87,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
+        public static final int FILTER_THIRD_APP_TYPE_X = 190;
+        public static final int FILTER_THIRD_APP_TYPE_Y = 907;
 
         private List<AppInfo> mlistAppInfo = null;
         private List<AppInfo> mlistViewAppInfo = null;
@@ -95,6 +99,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private StartupMenuUsuallyAdapter mUsuallyAdapter;
         private MySqliteOpenHelper mMsoh;
         private SQLiteDatabase mdb;
+        BaseSettingDialog mPowerSourceDialog;
+        BaseSettingDialog targetDialog;
 
         private int mNumber;
         private int CLICKS = 0;
@@ -105,6 +111,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private GridView gv_view;
         private ListView mListView;
         private EditText mEditText;
+        private View  my_computer;
+        private ImageView mIvArrowGray;
+        private TextView mTvSortShow;
 
         @Override
         protected void onNewIntent(Intent intent) {
@@ -134,16 +143,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             gv_view.setOnItemClickListener(this);
 
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
-            TextView my_computer = (TextView) findViewById(R.id.my_computer);
+            my_computer = (TextView) findViewById(R.id.my_computer);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
 
             ImageView imView = (ImageView) findViewById(R.id.iv_view);
+            mIvArrowGray = (ImageView) findViewById(R.id.iv_arrow_gray);
+            mTvSortShow = (TextView) findViewById(R.id.tv_sort_show);
             mEditText = (EditText) findViewById(R.id.et_text);
+            mTvSortShow.setOnClickListener(this);
             imView.setOnClickListener(this);
             mEditText.setOnEditorActionListener(this);
             mEditText.addTextChangedListener(watcher);
 
+            mTvSortShow.setText("");
+            mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
             new mThread().start();
             mListView = (ListView) findViewById(R.id.lv_view);
             Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
@@ -359,38 +373,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 }
                 break;
-            case R.id.shut_power_off:
-                Log.v("LADEHUNTER", "broadcast->shutdown");
-                Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
-                intent.putExtra(Intent.EXTRA_KEY_CONFIRM, true);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
-                startActivity(intent);
-                killStartupMenu();
-                break;
-	    case R.id.restart:
-                try {
-                    Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.sleep:
-                try {
-                    String cmd = "/system/xbin/echo mem > /sys/power/state";
-                    Runtime.getRuntime().exec(new String[] {"/system/bin/su", "-c", cmd});
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.lock:
-                if (mPopupWindow != null) {
-                    mPopupWindow.dismiss();
-                }
-                Intent intentLock = new Intent("android.intent.action.LOCKNOW");
-                intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intentLock);
-                break;
             case R.id.iv_view:
                 mEtext = mEditText.getText().toString().trim();
                 mlistAppInfo.clear();
@@ -400,14 +382,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
                 gv_view.setAdapter(mBrowseAppAdapter);
                 break;
+            case R.id.tv_sort_show:
+                sortShow();
+                break;
             case R.id.name_sort:
-                mPopupWindow.dismiss();
                 mEditText.setText("");
+                mTvSortShow.setText(R.string.name_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mPopupWindow.dismiss();
                 nameSort();
                 break;
             case R.id.time_sort:
-                mPopupWindow.dismiss();
                 mEditText.setText("");
+                mTvSortShow.setText(R.string.time_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mPopupWindow.dismiss();
                 timeSort();
                 break;
             /*case R.id.type_sort:
@@ -422,6 +411,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 typeSort(CLICKS);
                 break;*/
             case R.id.click_sort:
+                mTvSortShow.setText(R.string.click_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 mPopupWindow.dismiss();
                 mEditText.setText("");
                 clickSort();
@@ -589,34 +580,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         public void powerOff(View v) {
-            LinearLayout layout = new LinearLayout(StartupMenuActivity.this);
-            layout.setBackgroundColor(Color.WHITE);
-            View tv = LayoutInflater.from(StartupMenuActivity.this).inflate(R.layout.shutdown_activity,
-                                                                            null);
-            tv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-                               LayoutParams.WRAP_CONTENT));
-            TextView shut_power_off = (TextView) tv.findViewById(R.id.shut_power_off);
-            TextView restart = (TextView) tv.findViewById(R.id.restart);
-            TextView sleep = (TextView) tv.findViewById(R.id.sleep);
-            TextView lock = (TextView) tv.findViewById(R.id.lock);
-            shut_power_off.setOnClickListener(this);
-            restart.setOnClickListener(this);
-            sleep.setOnClickListener(this);
-            lock.setOnClickListener(this);
-            layout.addView(tv);
-
-            mPopupWindow = new PopupWindow(layout, 100, 200);
-            mPopupWindow.setFocusable(true);
-            mPopupWindow.setOutsideTouchable(true);
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-
-            int[] location = new int[2];
-            v.getLocationOnScreen(location);
-            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
-            mPopupWindow.showAtLocation(v, Gravity.RIGHT, 360, 200);
+            mPowerSourceDialog = new PowerSourceDialog(mContext);
+            dismisTargetDialog(mPowerSourceDialog);
+            mPowerSourceDialog.show(v);
+            StartupMenuActivity.this.finish();
 	}
 
-        public void SortShow(View v) {
+        public void sortShow() {
+            mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
             LinearLayout layout = new LinearLayout(StartupMenuActivity.this);
             layout.setBackgroundColor(Color.WHITE);
             View tv = LayoutInflater.from(StartupMenuActivity.this).inflate(
@@ -639,9 +610,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 
             int[] location = new int[2];
-            v.getLocationOnScreen(location);
+            mTvSortShow.getLocationOnScreen(location);
             //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
-            mPopupWindow.showAtLocation(v, Gravity.BOTTOM, 190, 907);
+            mPopupWindow.showAtLocation(mTvSortShow, Gravity.BOTTOM, FILTER_THIRD_APP_TYPE_X,
+                                        FILTER_THIRD_APP_TYPE_Y);
+        }
+
+        private void dismisTargetDialog(BaseSettingDialog newDialog){
+            if(targetDialog != null) {
+                targetDialog.dismiss();
+            }
+            targetDialog = newDialog;
         }
 
         private void killStartupMenu() {

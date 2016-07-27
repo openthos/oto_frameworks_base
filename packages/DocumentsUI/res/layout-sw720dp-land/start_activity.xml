@@ -74,6 +74,7 @@
                 android:onClick="powerOff"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_power"
+                android:layout_marginBottom="10dp"
                 android:text="@string/power_off" />
             </LinearLayout>
         </RelativeLayout>
@@ -141,16 +142,17 @@
                     android:layout_marginLeft="12dp"
                     android:layout_toRightOf="@id/line_view"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_starter_rank_arrow_gray" />
+                    android:src="@drawable/ic_starter_down_arrow_gray" />
 
                <TextView
+                    android:id="@+id/tv_sort_show"
                     android:onClick="SortShow"
                     android:layout_width="@dimen/px100"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/iv_arrow_gray"
                     android:layout_centerVertical="true"
                     android:text="@string/click_sort"
-                    android:background="#e9edf0"
+                    android:textColor="#939aa3"
                     android:textSize="@dimen/px24"  />
 
                 <ImageView
@@ -160,7 +162,7 @@
                     android:layout_width="@dimen/px58"
                     android:layout_height="@dimen/px58"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_starter_rank_arrow_white"
+                    android:src="@drawable/ic_starter_top_arrow_white"
                     android:background="#e9edf0" />
 
 
