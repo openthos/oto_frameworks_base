@@ -79,6 +79,7 @@
                     android:id="@+id/clearAll"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     android:text="@string/clear_all"
                     android:layout_alignParentRight="true"
                     android:textSize="12sp" />
@@ -87,6 +88,7 @@
                     android:id="@+id/notificationManager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     android:text="@string/notification_manager"
                     android:layout_toLeftOf="@id/clearAll"
                     android:textSize="12sp" />

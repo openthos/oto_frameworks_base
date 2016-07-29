@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- 
 /**
  * Copyright (c) 2009, The Android Open Source Project
@@ -380,4 +380,9 @@
     <string name="print_ready">就绪</string>
     <string name="waiting_for_printer">等待打印机就绪</string>
     <string name="print_unknown">未知</string>
+    <string name="notification_center">通知中心</string>
+    <string name="notification_manager">通知管理</string>
+    <string name="clear_all">清除所有</string>
+    <string name="print_messager">打印信息</string>
+    <string name="print_manager">打印任务管理器</string>
 </resources>
