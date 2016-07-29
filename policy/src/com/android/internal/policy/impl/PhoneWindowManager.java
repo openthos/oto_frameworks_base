@@ -223,14 +223,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if ("com.android.control.statusbar.start".equals(intent.getAction())) {
-               mAppChangeStatusBar = true;
+                try {
+                    mStatusBarService.hideStatusBar();
+                } catch(Exception e) {
+                }
             }
         }
     };
     private BroadcastReceiver mAppChangeStatusBarFinishReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if ("com.android.control.statusbar.finish".equals(intent.getAction())) {
-               mAppChangeStatusBar = false;
+                try {
+                    mStatusBarService.showStatusBar();
+                } catch(Exception e) {
+                }
             }
         }
     };

@@ -1538,6 +1538,10 @@ public class NotificationPanelView extends PanelView implements
         mNotificationContainerParent.setVisibility(View.VISIBLE);
     }
 
+    public void setPanelHide(){
+        mNotificationContainerParent.setVisibility(View.GONE);
+    }
+
     @Override
     public void instantExpand() {
         super.instantExpand();

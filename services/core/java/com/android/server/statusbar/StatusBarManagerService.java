@@ -224,6 +224,17 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void hideStatusBar() {
+
+        if (mBar != null) {
+            try {
+                mBar.hideStatusBarView();
+            } catch (RemoteException ex) {
+            }
+        }
+    }
+
+    @Override
     public void expandSettingsPanel() {
         enforceExpandStatusBar();
 

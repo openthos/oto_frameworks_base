@@ -2392,8 +2392,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void showStatusBarView() {
+        mStatusBarWindow.setVisibility(View.VISIBLE);
         mStatusBarView.setVisibility(View.VISIBLE);
         mNotificationPanel.setPanelShow();
+    }
+
+    @Override
+    public void hideStatusBarView() {
+        mStatusBarWindow.setVisibility(View.GONE);
+        mNotificationPanel.setPanelHide();
     }
 
     @Override
