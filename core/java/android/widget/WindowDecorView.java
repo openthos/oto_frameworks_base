@@ -24,10 +24,13 @@ import android.util.Log;
 public class WindowDecorView extends FrameLayout {
 
     private static final String TAG = "WindowDecorView";
+    private static final int HEADER_FACTOR = 2;
 
     Window mWindow;
+
     View mDialogView = null;
     Window mDialogParentWindow = null;
+    View mDialogParentDecor = null;
 
     public WindowDecorView(Context context) {
         super(context);
@@ -38,30 +41,41 @@ public class WindowDecorView extends FrameLayout {
     }
 
     public boolean isMWWindow() {
-        return mWindow.isMWPanel();
+        return mWindow.isMWWindow();
     }
 
     public void setFromDialog(View dialogView, Window dialogParentWindow) {
         mDialogView = dialogView;
         mDialogParentWindow = dialogParentWindow;
+        mDialogParentDecor = (mDialogParentWindow != null) ? mDialogParentWindow.getDecorView()
+                             : null;
     }
 
-    public boolean needHeader() {
-        return (mDialogView == null) || (mDialogParentWindow == null)
-               || ((mDialogParentWindow.getDecorView().getWidth() <= mDialogView.getWidth())
-                   && (mDialogParentWindow.getDecorView().getHeight() <= mDialogView.getHeight()));
+    public boolean needDialogHeader() {
+        if ((mDialogView == null) || (mDialogParentWindow == null)) {
+            return false;
+        }
+        return mDialogParentDecor.getHeight() <= HEADER_FACTOR * mDialogView.getHeight();
+    }
+
+    public boolean canMoveDialog() {
+        if ((mDialogView == null) || (mDialogParentWindow == null)) {
+            return false;
+        }
+        return (mDialogParentDecor.getWidth() <= mDialogView.getWidth())
+               && (mDialogParentDecor.getHeight() <= mDialogView.getHeight());
     }
 
     public boolean isDialogFromMWParent() {
         return (mDialogView != null) && (mDialogParentWindow != null)
-               && mDialogParentWindow.isMWPanel();
+               && mDialogParentWindow.isMWWindow();
     }
 
     public int getDialogLeftOffset() {
-        return (mDialogParentWindow.getDecorView().getWidth() - mDialogView.getWidth()) / 2;
+        return (mDialogParentDecor.getWidth() - mDialogView.getWidth()) / 2;
     }
 
     public int getDialogTopOffset() {
-        return (mDialogParentWindow.getDecorView().getHeight() - mDialogView.getHeight()) / 2;
+        return (mDialogParentDecor.getHeight() - mDialogView.getHeight()) / 2;
     }
 }

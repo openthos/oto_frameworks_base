@@ -537,6 +537,7 @@
         <!-- Internal layout used internally for window decor -->
         <attr name="windowActionBarFullscreenDecorLayout" format="reference" />
         <attr name="windowActionBarFullscreenDecorLayoutMW" format="reference" />
+        <attr name="windowActionBarFullscreenDecorLayoutDialog" format="reference" />
 
         <!-- The duration, in milliseconds, of the window background fade duration
              when transitioning into or away from an Activity when called with an
@@ -1818,6 +1819,7 @@
         <attr name="windowContentTransitionManager" />
         <attr name="windowActionBarFullscreenDecorLayout" />
         <attr name="windowActionBarFullscreenDecorLayoutMW" />
+        <attr name="windowActionBarFullscreenDecorLayoutDialog" />
 
         <!-- The minimum width the window is allowed to be, along the major
              axis of the screen.  That is, when in landscape.  Can be either

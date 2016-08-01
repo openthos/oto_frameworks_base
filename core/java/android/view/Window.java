@@ -17,6 +17,7 @@
 
 package android.view;
 
+import android.app.Dialog;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.annotation.SystemApi;
@@ -865,7 +866,7 @@ public abstract class Window {
      */
     public void setAttributes(WindowManager.LayoutParams a) {
         mWindowAttributes.copyFrom(a);
-        if (isMWPanel()
+        if (isMWWindow()
             && (mWindowAttributes.width != WindowManager.LayoutParams.MATCH_PARENT)) {
             mWindowAttributes.width = WindowManager.LayoutParams.MATCH_PARENT;
         }
@@ -1888,6 +1889,21 @@ public abstract class Window {
      */
     private int mStackId = -1;
     private int mTaskId = -1;
+    private Dialog mDialog = null;
+
+    /**
+     * @hide
+     */
+    public void setDialog(Dialog dialog) {
+        mDialog = dialog;
+    }
+
+    /**
+     * @hide
+     */
+    public Dialog getDialog() {
+        return mDialog;
+    }
 
     /**
      * @hide
@@ -1926,7 +1942,11 @@ public abstract class Window {
      * as decor
      * @hide
      */
-    public boolean isMWPanel() {
-        return mStackId > 0;
+    public boolean isMWWindow() {
+        return (mStackId > 0) && (mDialog == null);
+    }
+
+    public boolean isMWDialog() {
+        return (mStackId > 0) && (mDialog != null);
     }
 }

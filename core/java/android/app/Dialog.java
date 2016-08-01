@@ -171,6 +171,7 @@ public class Dialog implements DialogInterface, Window.Callback,
         mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         Window w = PolicyManager.makeNewWindow(mContext);
         mWindow = w;
+        mWindow.setDialog(this);
         if (mContextActivity != null) {
             mWindow.setTaskId(mContextActivity.getTaskId());
             mWindow.setStackId(mContextActivity.getStackId());

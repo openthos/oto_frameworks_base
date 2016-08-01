@@ -17659,6 +17659,24 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * {@link #MEASURED_STATE_TOO_SMALL}.
      */
     private void setMeasuredDimensionRaw(int measuredWidth, int measuredHeight) {
+        int id = getId();
+
+        if ((id != NO_ID) && Resources.resourceHasPackage(id) && (mResources != null)) {
+            String entry = mResources.getResourceEntryName(id);
+            if ((entry.compareTo("mw_dialog_header") == 0) || (entry.compareTo("mwLaunchBtn") == 0)
+                || (entry.compareTo("mwCloseBtn") == 0)) {
+                // Dialog border height is the maximized height of mw header
+                int maxHeight = mResources.getDimensionPixelSize(
+                                                com.android.internal.R.dimen.mw_dialog_border);
+                if (measuredHeight > maxHeight) {
+                    measuredHeight = maxHeight;
+                }
+                if (entry.compareTo("mw_dialog_header") != 0) {
+                    measuredWidth = measuredHeight;
+                }
+            }
+        }
+
         mMeasuredWidth = measuredWidth;
         mMeasuredHeight = measuredHeight;
 

@@ -181,6 +181,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     // This is the top-level view of the window, containing the window decor.
     private DecorView mDecor;
     private DecorMW mDecorMW;
+    private DialogMW mDialogMW;
 
     // This is the view in which the window contents are placed. It is either
     // mDecor itself, or a child of mDecor where the contents go.
@@ -2705,10 +2706,19 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
 
-            if (!mHeaderChecked && (mDecorMW != null) && (getWidth() > 0) && (getHeight() > 0)) {
-                if ((mContentRoot.getHeight() <= mDecorMW.getDecorMWPureHeight())
-                    || !needHeader()) {
+            if (!mHeaderChecked && (getWidth() > 0) && (getHeight() > 0)) {
+                if ((mDecorMW != null)
+                    && (mContentRoot.getHeight() <= mDecorMW.getDecorMWPureHeight())) {
                     mDecorMW.hide();
+                } else if ((mDialogMW != null) && mDialogMW.haveHeader()) {
+                    if (needDialogHeader()) {
+                        mDialogMW.enableButton();
+                        if (canMoveDialog()) {
+                            mDialogMW.enableMove();
+                        }
+                    } else {
+                        mDialogMW.hide();
+                    }
                 }
                 mHeaderChecked = true;
             }
@@ -3626,6 +3636,79 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         public abstract Rect resize(Rect frame, int diffX, int diffY, int ways);
     }
 
+    public class MoveWindow extends ResizeWindow  {
+        @Override
+        public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+            mTmpFrame.left = frame.left + diffX;
+            mTmpFrame.top = frame.top + diffY;
+            mTmpFrame.right = frame.right + diffX;
+            mTmpFrame.bottom = frame.bottom + diffY;
+            return mTmpFrame;
+        }
+    }
+
+    class DialogMW {
+        private ImageButton mCloseBtn;
+        private ImageButton mLaunchBtn;
+        private LinearLayout mHeader;
+
+        public boolean haveHeader() {
+            return mHeader != null;
+        }
+
+        public void hide() {
+            if (mHeader != null) {
+                mHeader.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        public void hideButtons() {
+            if (mCloseBtn != null) {
+                mCloseBtn.setVisibility(View.INVISIBLE);
+            }
+            if (mLaunchBtn != null) {
+                mLaunchBtn.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        public void enableMove() {
+            final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+            Rect fullScreen = new Rect(0, 0, metrics.widthPixels, metrics.heightPixels);
+            mHeader.setOnTouchListener(new TouchListener(new MoveWindow(), fullScreen));
+        }
+
+        public void enableButton() {
+            mCloseBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getDialog().dismiss();
+                }
+            });
+            mLaunchBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendKeyEventBack();
+                }
+            });
+        }
+
+        public DialogMW(ViewGroup root) {
+            mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_dialog_header);
+            if (mHeader != null) {
+                mCloseBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwCloseBtn);
+                mLaunchBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwLaunchBtn);
+            }
+        }
+    }
+
+    private void sendKeyEventBack() {
+        try {
+            Runtime.getRuntime().exec("input keyevent " + KeyEvent.KEYCODE_BACK);
+        } catch (IOException e) {
+            Log.e(TAG, "Back button failes", e);
+        }
+    }
+
     class DecorMW {
 
         private final static String LINERECT_LOCATION = "com.android.linerect";
@@ -3804,16 +3887,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }, mFullScreen));
 
-            mHeader.setOnTouchListener(new TouchListener(new ResizeWindow() {
-                @Override
-                public Rect resize(Rect frame, int diffX, int diffY, int ways) {
-                    mTmpFrame.left = frame.left + diffX;
-                    mTmpFrame.top = frame.top + diffY;
-                    mTmpFrame.right = frame.right + diffX;
-                    mTmpFrame.bottom = frame.bottom + diffY;
-                    return mTmpFrame;
-                }
-            }, mFullScreen));
+            mHeader.setOnTouchListener(new TouchListener(new MoveWindow(), mFullScreen));
 
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
@@ -3829,11 +3903,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mLaunchBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        Runtime.getRuntime().exec("input keyevent " + KeyEvent.KEYCODE_BACK);
-                    } catch (IOException e) {
-                        Log.e(TAG, "Back button failes", e);
-                    }
+                    sendKeyEventBack();
                 }
             });
 
@@ -4139,10 +4209,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         int features = getLocalFeatures();
         // System.out.println("Features: 0x" + Integer.toHexString(features));
         if ((features & (1 << FEATURE_SWIPE_TO_DISMISS)) != 0) {
-            layoutResource = isMWPanel() ? R.layout.screen_swipe_dismiss_mw
-                                         : R.layout.screen_swipe_dismiss;
+            layoutResource = isMWWindow() ? R.layout.screen_swipe_dismiss_mw
+                                          : R.layout.screen_swipe_dismiss;
         } else if ((features & ((1 << FEATURE_LEFT_ICON) | (1 << FEATURE_RIGHT_ICON))) != 0) {
-            if (isMWPanel()) {
+            if (isMWWindow()) {
                 layoutResource = R.layout.screen_title_icons_mw;
             } else if (mIsFloating) {
                 TypedValue res = new TypedValue();
@@ -4159,12 +4229,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 && (features & (1 << FEATURE_ACTION_BAR)) == 0) {
             // Special case for a window with only a progress bar (and title).
             // XXX Need to have a no-title version of embedded windows.
-            layoutResource = isMWPanel() ? R.layout.screen_progress_mw : R.layout.screen_progress;
+            layoutResource = isMWWindow() ? R.layout.screen_progress_mw : R.layout.screen_progress;
             // System.out.println("Progress!");
         } else if ((features & (1 << FEATURE_CUSTOM_TITLE)) != 0) {
             // Special case for a window with a custom title.
             // If the window is floating, we need a dialog layout
-            if (isMWPanel()) {
+            if (isMWWindow()) {
                 layoutResource = R.layout.screen_custom_title_mw;
             } else if (mIsFloating) {
                 TypedValue res = new TypedValue();
@@ -4172,14 +4242,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                         R.attr.dialogCustomTitleDecorLayout, res, true);
                 layoutResource = res.resourceId;
             } else {
-                layoutResource = R.layout.screen_custom_title;
+                layoutResource = isMWDialog() ? R.layout.screen_custom_title_dialog
+                                              : R.layout.screen_custom_title;
             }
             // XXX Remove this once action bar supports these features.
             removeFeature(FEATURE_ACTION_BAR);
         } else if ((features & (1 << FEATURE_NO_TITLE)) == 0) {
             // If no other features and not embedded, only need a title.
             // If the window is floating, we need a dialog layout
-            if (isMWPanel()) {
+            if (isMWWindow()) {
                 if ((features & (1 << FEATURE_ACTION_BAR)) != 0) {
                     layoutResource = a.getResourceId(
                             R.styleable.Window_windowActionBarFullscreenDecorLayoutMW,
@@ -4194,18 +4265,24 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 layoutResource = res.resourceId;
             } else if ((features & (1 << FEATURE_ACTION_BAR)) != 0) {
                 layoutResource = a.getResourceId(
-                        R.styleable.Window_windowActionBarFullscreenDecorLayout,
-                        R.layout.screen_action_bar);
+                        isMWDialog() ? R.styleable.Window_windowActionBarFullscreenDecorLayoutDialog
+                                     : R.styleable.Window_windowActionBarFullscreenDecorLayout,
+                        isMWDialog() ? R.layout.screen_action_bar_dialog
+                                     : R.layout.screen_action_bar);
             } else {
-                layoutResource = R.layout.screen_title;
+                layoutResource = isMWDialog() ? R.layout.screen_title_dialog
+                                              : R.layout.screen_title;
             }
             // System.out.println("Title!");
         } else if ((features & (1 << FEATURE_ACTION_MODE_OVERLAY)) != 0) {
-            layoutResource = isMWPanel() ? R.layout.screen_simple_overlay_action_mode_mw
-                                         : R.layout.screen_simple_overlay_action_mode;
+            layoutResource = isMWWindow() ? R.layout.screen_simple_overlay_action_mode_mw
+                                  : isMWDialog() ? R.layout.screen_simple_overlay_action_mode_dialog
+                                                 : R.layout.screen_simple_overlay_action_mode;
         } else {
             // Embedded, so no decoration is needed.
-            layoutResource = isMWPanel() ? R.layout.screen_simple_mw : R.layout.screen_simple;
+            layoutResource = isMWWindow() ? R.layout.screen_simple_mw
+                                          : isMWDialog() ? R.layout.screen_simple_dialog
+                                                         : R.layout.screen_simple;
             // System.out.println("Simple!");
         }
 
@@ -4214,8 +4291,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         View in = mLayoutInflater.inflate(layoutResource, null);
         decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mContentRoot = (ViewGroup) in;
-        if(isMWPanel()) {
+        if(isMWWindow()) {
             mDecorMW = new DecorMW(mContentRoot);
+        } else if (isMWDialog()) {
+            mDialogMW = new DialogMW(mContentRoot);
         }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);

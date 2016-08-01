@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright Tieto 2014 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mw_dialog_header"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mw_dialog_border"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentRight="true"
+    android:layout_gravity="top|center"
+    android:orientation="horizontal"
+    android:background="@color/transparent" >
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <ImageButton
+        android:id="@+id/mwLaunchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:layout_gravity="center|right"
+        android:padding="4dp"
+        android:src="@drawable/mw_btn_add_content" />
+    <ImageButton
+        android:id="@+id/mwCloseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:layout_gravity="center|right"
+        android:padding="4dp"
+        android:src="@drawable/mw_btn_close" />
+</LinearLayout>
