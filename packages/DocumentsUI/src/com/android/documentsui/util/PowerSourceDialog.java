@@ -86,12 +86,6 @@ public class PowerSourceDialog extends BaseSettingDialog implements OnClickListe
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
                 mContext.startActivity(intent);
-                //killStartupMenu();
-                try {
-                    Runtime.getRuntime().exec("su -c \"/system/bin/shutdown\"");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 break;
             case R.id.power_sleep:
                 try {

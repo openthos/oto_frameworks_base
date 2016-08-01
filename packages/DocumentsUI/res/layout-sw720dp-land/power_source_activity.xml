@@ -10,7 +10,7 @@
         android:layout_width="536dp"
         android:layout_height="179dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:background="#979797"
+        android:background="@drawable/ic_power_background"
         android:orientation="vertical" >
 
         <ImageView
