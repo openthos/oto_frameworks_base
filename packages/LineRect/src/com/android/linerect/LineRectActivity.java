@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import com.android.internal.os.BackgroundThread;
 import android.view.View;
 import android.view.MotionEvent;
 import android.view.View.OnHoverListener;
@@ -17,12 +18,34 @@ public class LineRectActivity extends Activity {
 
     private LineRectView mView;
 
+    private static final long WAITING_INTERVAL = 100; // 0.1 second
+    private static final long WAITING_TIMEOUT = 20;   // 2 second totally
+    private int mInterval = 0;
+    private Thread mThread;
+
     @Override
     protected void onCreate(Bundle context) {
         super.onCreate(context);
         setContentView(R.layout.line_rect_activity);
         mView = (LineRectView)findViewById(R.id.line_rect);
         invalidateRect();
+        mThread = new Thread("Line Rect Monitor Thread") {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        sleep(WAITING_INTERVAL);
+                        mInterval++;
+                        if (mInterval >= WAITING_TIMEOUT) {
+                            System.exit(0);
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, "Unexpected exception for Line Rect Monitor Thread");
+                    }
+                }
+            }
+        };
+        mThread.start();
     }
 
     @Override
@@ -30,6 +53,7 @@ public class LineRectActivity extends Activity {
         super.onNewIntent(intent);
         setIntent(intent);
         invalidateRect();
+        mInterval = 0;
     }
 
     private void invalidateRect() {
