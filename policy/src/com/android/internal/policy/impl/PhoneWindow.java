@@ -3680,7 +3680,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sendKeyEventBack();
+                    if (mDecor.isMSOfficeFirstSkipView()) {
+                        System.exit(0);
+                    } else {
+                        sendKeyEventBack();
+                    }
                 }
             });
         }

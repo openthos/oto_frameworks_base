@@ -25,14 +25,24 @@ public class WindowDecorView extends FrameLayout {
 
     private static final String TAG = "WindowDecorView";
 
-    Window mWindow;
+    private Window mWindow;
 
-    View mDialogView = null;
-    Window mDialogParentWindow = null;
-    View mDialogParentDecor = null;
+    private View mDialogView = null;
+    private Window mDialogParentWindow = null;
+    private View mDialogParentDecor = null;
+
+    private boolean mMayMSOfficeFirstSkipView = false;
 
     public WindowDecorView(Context context) {
         super(context);
+    }
+
+    public void setMayMSOfficeFirstSkipViewDecor(boolean mayMSOfficeFirstSkipView) {
+        mMayMSOfficeFirstSkipView = mayMSOfficeFirstSkipView;
+    }
+
+    public boolean isMSOfficeFirstSkipView() {
+        return mMayMSOfficeFirstSkipView && canMoveDialog();
     }
 
     public void setWindow(Window window) {

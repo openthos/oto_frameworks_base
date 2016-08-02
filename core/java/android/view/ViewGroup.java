@@ -3809,6 +3809,20 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
             }
         }
 
+        if ((child.getClass().getName().compareTo(
+                                  "com.microsoft.office.docsui.common.DrillInDialog$View") == 0)
+            && (getClass().getName().compareTo("android.widget.ViewAnimator") == 0)) {
+
+            View parent = (View) getParent();
+            int id = parent.getId();
+            if ((parent.getClass().getName().compareTo("android.widget.FrameLayout") == 0)
+                && (id != NO_ID) && Resources.resourceHasPackage(id)
+                && (parent.getResources() != null)
+                && (parent.getResources().getResourceEntryName(id).compareTo("content") == 0)) {
+                setMayMSOfficeFirstSkipView(true);
+            }
+        }
+
         if (DBG) {
             System.out.println(this + " addView");
         }

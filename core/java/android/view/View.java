@@ -85,6 +85,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollBarDrawable;
+import android.widget.WindowDecorView;
 
 import static android.os.Build.VERSION_CODES.*;
 import static java.lang.Math.max;
@@ -3564,6 +3565,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * Maps a Resource id to its name.
      */
     private static SparseArray<String> mAttributeMap;
+
+    private boolean mMayMSOfficeFirstSkipView = false;
 
     /**
      * Simple constructor to use when creating a view from code.
@@ -17677,10 +17680,21 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             }
         }
 
+        if (mMayMSOfficeFirstSkipView) {
+            View decor = getViewRootImpl().getView();
+            if (decor instanceof WindowDecorView) {
+                ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
+            }
+        }
+
         mMeasuredWidth = measuredWidth;
         mMeasuredHeight = measuredHeight;
 
         mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;
+    }
+
+    protected void setMayMSOfficeFirstSkipView(boolean mayMSOfficeFirstSkipView) {
+        mMayMSOfficeFirstSkipView = mayMSOfficeFirstSkipView;
     }
 
     /**
