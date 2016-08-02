@@ -24,7 +24,6 @@ import android.util.Log;
 public class WindowDecorView extends FrameLayout {
 
     private static final String TAG = "WindowDecorView";
-    private static final int HEADER_FACTOR = 2;
 
     Window mWindow;
 
@@ -55,7 +54,7 @@ public class WindowDecorView extends FrameLayout {
         if ((mDialogView == null) || (mDialogParentWindow == null)) {
             return false;
         }
-        return mDialogParentDecor.getHeight() <= HEADER_FACTOR * mDialogView.getHeight();
+        return mDialogParentDecor.getHeight() <= mDialogView.getHeight();
     }
 
     public boolean canMoveDialog() {
@@ -69,6 +68,10 @@ public class WindowDecorView extends FrameLayout {
     public boolean isDialogFromMWParent() {
         return (mDialogView != null) && (mDialogParentWindow != null)
                && mDialogParentWindow.isMWWindow();
+    }
+
+    public View getParentDecor() {
+        return mDialogParentDecor;
     }
 
     public int getDialogLeftOffset() {

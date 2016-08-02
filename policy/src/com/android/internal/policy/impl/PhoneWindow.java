@@ -3609,6 +3609,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             }
             if(MotionEvent.ACTION_UP == event.getAction()) {
                 mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
+                if (mDecor.getParentDecor() != null) {
+                    mDecor.getParentDecor().getViewRootImpl().mWinFrame.set(mNewFrame);
+                }
                 mFrame.set(mNewFrame);
                 if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
                         || mNewFrame == mRightDockFrame) {
@@ -3649,7 +3652,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     class DialogMW {
         private ImageButton mCloseBtn;
-        private ImageButton mLaunchBtn;
         private LinearLayout mHeader;
 
         public boolean haveHeader() {
@@ -3666,9 +3668,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             if (mCloseBtn != null) {
                 mCloseBtn.setVisibility(View.INVISIBLE);
             }
-            if (mLaunchBtn != null) {
-                mLaunchBtn.setVisibility(View.INVISIBLE);
-            }
         }
 
         public void enableMove() {
@@ -3681,12 +3680,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getDialog().dismiss();
-                }
-            });
-            mLaunchBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
                     sendKeyEventBack();
                 }
             });
@@ -3696,7 +3689,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_dialog_header);
             if (mHeader != null) {
                 mCloseBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwCloseBtn);
-                mLaunchBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwLaunchBtn);
             }
         }
     }
