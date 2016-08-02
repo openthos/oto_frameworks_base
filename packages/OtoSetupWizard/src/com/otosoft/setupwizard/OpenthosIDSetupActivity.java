@@ -35,8 +35,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private Button mButtonPrev;
     private EditText mEditTextOpenthosID;
     private EditText mEditTextPassword;
-    private TextView mSkip;
-    private TextView mRegister;
+    private Button mSkip;
+    private Button mRegister;
     private String openthosID;
     private String password;
     private int result;
@@ -56,8 +56,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mButtonVerify = (Button) findViewById(R.id.button_verify);
         this.mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
         this.mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
-        this.mSkip = (TextView) findViewById(R.id.text_skip);
-        this.mRegister = (TextView) findViewById(R.id.text_register);
+        this.mSkip = (Button) findViewById(R.id.button_skip);
+        this.mRegister = (Button) findViewById(R.id.button_register);
 
         mHandler = new Handler() {
             @Override

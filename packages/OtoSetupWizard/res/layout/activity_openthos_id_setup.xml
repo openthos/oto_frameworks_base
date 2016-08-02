@@ -1,117 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@android:color/white"
+<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/firstboot_bg"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <ImageView
-        android:id="@+id/view_header"
-        android:background="@drawable/header3_portait"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/text_title_openthos"
-        android:textSize="@dimen/title_text_size"
-        android:textColor="#ffaaaaaa"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title_openthos_id"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/view_header"/>
-    <TextView
-        android:id="@+id/controls_space"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_below="@id/text_title_openthos"/>
+    android:layout_height="fill_parent" >
+
     <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/linearlayout_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="10.0dip"
-        android:layout_below="@+id/controls_space">
+        android:layout_width="800dp"
+        android:layout_height="550dp"
+        android:layout_gravity="center"
+        android:gravity ="center_vertical"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/title"
+            layout="@layout/common_title"/>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="104dp"
+           android:background="#259b24"
+           android:orientation="vertical">
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="70dp"
+               android:textColor="#ffffff"
+               android:textSize="28sp"
+               android:paddingLeft="76dp"
+               android:paddingTop="20dp"
+               android:text="@string/verify_openthos_title"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="5dp"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="32dp"
+               android:textColor="#ffffff"
+               android:textSize="12sp"
+               android:paddingLeft="72dp"
+               android:paddingBottom="13dp"
+               android:text="@string/verify_openthos_summary"/>
+
+       </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="361dp"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/common_textview_style"
+                    android:text="@string/openthos_id_name"/>
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/edittext_openthos_id"
+                    style="@style/common_editview_style"
+                    android:inputType="textNoSuggestions" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/common_textview_style"
+                    android:text="@string/openthos_id_password"/>
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/edittext_openthos_password"
+                    style="@style/common_editview_style"
+                    android:inputType="textPassword"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
         <TextView
-            android:textSize="@dimen/button_text_size"
-            android:textColor="#ffaaaaaa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/openthos_id_name" />
-        <EditText
-            android:textSize="22.0sp"
-            android:id="@+id/edittext_openthos_id"
-            android:background="@drawable/spinner_popup_bg"
-            android:layout_width="270.0dip"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:selectAllOnFocus="true"
-            android:inputType="textNoSuggestions"
-            android:imeOptions="actionDone" />
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#888888"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#FFFFFF"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_prev"
+                style="@style/common_button_style"
+                android:textColor="#888888"
+                android:text="@string/str_prev"
+                android:layout_marginLeft="16dp"/>
+            <Button
+                android:id="@+id/button_register"
+                android:text="@string/str_register"
+                android:textColor="#259b24"
+                style="@style/common_button_style"
+                android:layout_toRightOf="@+id/button_prev"/>
+            <Button
+                android:id="@+id/button_skip"
+                android:text="@string/str_skip"
+                android:textColor="#444444"
+                android:layout_marginRight="16dp"
+                style="@style/common_button_style"
+                android:layout_alignParentRight="true"/>
+            <Button
+                android:id="@+id/button_verify"
+                android:text="@string/str_verify"
+                android:textColor="#259b24"
+                style="@style/common_button_style"
+                android:layout_toLeftOf="@+id/button_skip"/>
+
+        </RelativeLayout>
     </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/linearlayout_one"
-        >
-        <TextView
-            android:textSize="@dimen/button_text_size"
-            android:textColor="#ffaaaaaa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/openthos_id_password" />
-        <EditText
-            android:textSize="22.0sp"
-            android:id="@+id/edittext_openthos_password"
-            android:background="@drawable/spinner_popup_bg"
-            android:layout_width="270.0dip"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:selectAllOnFocus="true"
-            android:inputType="textPassword"
-            android:imeOptions="actionDone" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30.0dip"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-        <TextView
-            android:id="@+id/text_register"
-            android:textSize="@dimen/button_text_size"
-            android:textColor="#ffaaaaaa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30.0dip"
-            android:text="@string/str_register" />
-        <Button
-            android:textSize="@dimen/button_text_size"
-            android:textColor="@color/button_text_color"
-            android:gravity="center"
-            android:id="@+id/button_prev"
-            android:background="@drawable/selector_button_bg1"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="120.0dip"
-            android:text="@string/str_prev" />
-        <Button
-            android:textSize="@dimen/button_text_size"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:id="@+id/button_verify"
-            android:background="@drawable/selector_button_bg2"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="wrap_content"
-            android:text="@string/str_verify" />
-        <TextView
-            android:id="@+id/text_skip"
-            android:textSize="@dimen/button_text_size"
-            android:textColor="#ffaaaaaa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30.0dip"
-            android:text="@string/str_skip" />
-    </LinearLayout>
-</RelativeLayout>
+</FrameLayout>

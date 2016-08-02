@@ -18,4 +18,12 @@
     <string name="str_cancel">取消</string>
     <string name="title_openthos_finish">Openthos所有设置已完成</string>
     <string name="str_start_use">开始使用</string>
+    <string name="common_title">请设置您的openthos</string>
+    <string name="language_chinese">中文简体</string>
+    <string name="language_english">英文</string>
+    <string name="setup_next">下一步</string>
+    <string name="setup_device_setting">本机设置</string>
+    <string name="verify_openthos_title">验证　Openthos ID</string>
+    <string name="verify_openthos_summary">如果您已经有openthosID,请在此输入相应的的信息并与此台计算机绑定.</string>
+    <string name="setup_language_title">选择语言</string>
 </resources>

@@ -3,4 +3,6 @@
     <color name="button_text_color">#ff333333</color>
     <color name="spinner_item_selected">#ff007dff</color>
     <color name="spinner_item_normal">#fffefefe</color>
+    <color name="no_secleted_bg">#FFFFFF</color>
+    <color name="selected_bg">#f2f2f2</color>
 </resources>

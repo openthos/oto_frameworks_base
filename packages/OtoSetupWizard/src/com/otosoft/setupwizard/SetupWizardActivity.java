@@ -1,6 +1,7 @@
 package com.otosoft.setupwizard;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemProperties;
@@ -23,6 +24,10 @@ public class SetupWizardActivity extends BaseActivity {
     private Locale mCurrentLocale;
     private LinearLayout mLanguageContainer;
     private ArrayList<Locale> mLocales = new ArrayList();
+    private static final int CHOOSE_CHINA_ITEM = 1;
+    private static final int CHOOSE_ENGLISH_ITEM = 2;
+    private int noSelectedBg;
+    private int selectedBg;
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
             if (SetupWizardActivity.this.mButtonNext != null) {
@@ -30,7 +35,9 @@ public class SetupWizardActivity extends BaseActivity {
             }
         }
     };
-    private TextView mTextViewLanguage;
+    private  TextView mChinese;
+    private  TextView mEnglish;
+    private int chooseItem = CHOOSE_CHINA_ITEM;
     private static final String PROPERTY_NATIVEBRIDGE = "persist.sys.nativebridge";
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,36 +47,57 @@ public class SetupWizardActivity extends BaseActivity {
         this.mCurrentLocale = Locale.getDefault();
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
-        if (!this.mLocales.contains(this.mCurrentLocale)) {
+        if (this.mLocales.contains(this.mCurrentLocale)) {
             this.mCurrentLocale = Locale.CHINA;
             updateLocale(this.mCurrentLocale);
         }
         setContentView(R.layout.activity_setupwizard);
-        findViewById(R.id.relativelayout_root).setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == 0 && SetupWizardActivity.this.mLanguageContainer != null) {
-                    SetupWizardActivity.this.mLanguageContainer.setVisibility(8);
-                }
-                return false;
-            }
-        });
         //send broadcast to control status bar
         Intent intent1 = new Intent();
         intent1.setAction("com.android.control.statusbar.start");
         SetupWizardActivity.this.sendBroadcast(intent1);
-        this.mTextViewLanguage = (TextView) findViewById(R.id.textview_language);
-        this.mLanguageContainer = (LinearLayout) findViewById(R.id.linearlayout_language);
-        this.mTextViewLanguage.setText(this.mCurrentLocale.getDisplayName(this.mCurrentLocale));
-        this.mTextViewLanguage.setOnClickListener(new OnClickListener() {
+        this.mChinese = (TextView) findViewById(R.id.tv_chinese);
+        this.mEnglish = (TextView) findViewById(R.id.tv_english);
+        Resources res = getBaseContext().getResources();
+        noSelectedBg = res.getColor(R.color.no_secleted_bg);
+        selectedBg = res.getColor(R.color.selected_bg);
+        this.mChinese.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                SetupWizardActivity.this.toggleContainerVisibility();
+                mChinese.setBackgroundColor(selectedBg);
+                mEnglish.setBackgroundColor(noSelectedBg);
+                chooseItem = CHOOSE_CHINA_ITEM;
+            }
+        });
+
+        this.mEnglish.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                mChinese.setBackgroundColor(noSelectedBg);
+                mEnglish.setBackgroundColor(selectedBg);
+                chooseItem = CHOOSE_ENGLISH_ITEM;
             }
         });
         this.mButtonNext = (Button) findViewById(R.id.button_next);
         this.mButtonNext.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (SetupWizardActivity.this.mLanguageContainer != null) {
-                    SetupWizardActivity.this.mLanguageContainer.setVisibility(8);
+                switch(chooseItem){
+                    case CHOOSE_CHINA_ITEM:
+                        mCurrentLocale = Locale.CHINA;
+                        new Handler().post(new Runnable() {
+                            public void run() {
+                                updateLocale(mCurrentLocale);
+                            }
+                        });
+                        break;
+                    case CHOOSE_ENGLISH_ITEM:
+                        mCurrentLocale = Locale.US;
+                        new Handler().post(new Runnable() {
+                            public void run() {
+                                updateLocale(mCurrentLocale);
+                            }
+                        });
+                        break;
+                    default:
+                        break;
                 }
                 SetupWizardActivity.this.startActivity(SetupWizardActivity.this.buildWifiSetupIntent());
             }
@@ -102,45 +130,5 @@ public class SetupWizardActivity extends BaseActivity {
 
     private void updateLocale(Locale locale) {
         LocalePicker.updateLocale(locale);
-    }
-
-    private void toggleContainerVisibility() {
-        int i = 0;
-        if (this.mLanguageContainer.getChildCount() == 0) {
-            Iterator i$ = this.mLocales.iterator();
-            while (i$.hasNext()) {
-                Locale locale = (Locale) i$.next();
-                TextView item = (TextView) LayoutInflater.from(this).inflate(R.layout.language_spinner_item, this.mLanguageContainer, false);
-                item.setText(locale.getDisplayName(locale));
-                item.setOnClickListener(new OnClickListener() {
-                    public void onClick(View v) {
-                        SetupWizardActivity.this.mLanguageContainer.setVisibility(8);
-                        SetupWizardActivity.this.mCurrentLocale = (Locale) SetupWizardActivity.this.mLocales.get(SetupWizardActivity.this.mLanguageContainer.indexOfChild(v));
-                        new Handler().post(new Runnable() {
-                            public void run() {
-                                SetupWizardActivity.this.updateLocale(SetupWizardActivity.this.mCurrentLocale);
-                                SetupWizardActivity.this.mTextViewLanguage.setText(SetupWizardActivity.this.mCurrentLocale.getDisplayName(SetupWizardActivity.this.mCurrentLocale));
-                            }
-                        });
-                    }
-                });
-                this.mLanguageContainer.addView(item);
-            }
-        }
-        for (int i2 = 0; i2 < this.mLanguageContainer.getChildCount(); i2++) {
-            boolean z;
-            View child = this.mLanguageContainer.getChildAt(i2);
-            if (i2 == this.mLocales.indexOf(this.mCurrentLocale)) {
-                z = true;
-            } else {
-                z = false;
-            }
-            child.setSelected(z);
-        }
-        LinearLayout linearLayout = this.mLanguageContainer;
-        if (this.mLanguageContainer.getVisibility() == 0) {
-            i = 8;
-        }
-        linearLayout.setVisibility(i);
     }
 }

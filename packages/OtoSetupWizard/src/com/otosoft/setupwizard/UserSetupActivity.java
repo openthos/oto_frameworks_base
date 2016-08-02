@@ -36,7 +36,7 @@ public class UserSetupActivity extends BaseActivity {
     private EditText mNewPassword;
     private String screenPassword;
     private DevicePolicyManager devicePolicyManager;
-    private TextView mSkip;
+    private Button mSkip;
     private String defaultComputerName;
     private String computerName;
     private String userName;
@@ -60,7 +60,7 @@ public class UserSetupActivity extends BaseActivity {
         this.mComputername = (EditText) findViewById(R.id.edittext_computer_name);
         this.mOldPassword = (EditText) findViewById(R.id.edittext_screen_password);
         this.mNewPassword = (EditText) findViewById(R.id.edittext_screen_password_confirm);
-        this.mSkip = (TextView) findViewById(R.id.text_skip);
+        mSkip = (Button) findViewById(R.id.button_skip);
 
         defaultComputerName = SystemProperties.get("ro.build.host");
         this.mComputername.setText(defaultComputerName);

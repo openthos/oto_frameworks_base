@@ -18,4 +18,12 @@
     <string name="str_screen_password_confirm">Screen Password confirm</string>
     <string name="title_openthos_finish">Openthos complete all configuration</string>
     <string name="str_start_use">start to use</string>
+    <string name="common_title">setting your openthos</string>
+    <string name="language_chinese">Chinese</string>
+    <string name="language_english">English</string>
+    <string name="setup_next">Next</string>
+    <string name="setup_device_setting">Setting Device</string>
+    <string name="verify_openthos_title">Verify Openthos ID</string>
+    <string name="verify_openthos_summary">If you have had openthos ID,please input related info to bind computer</string>
+    <string name="setup_language_title">setting language</string>
 </resources>
