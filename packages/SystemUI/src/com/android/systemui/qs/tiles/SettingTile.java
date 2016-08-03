@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.provider.Settings;
 import android.util.Log;
+
+import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.QSTile.BooleanState;
 import com.android.systemui.qs.QSTile.Host;
@@ -54,5 +56,6 @@ public class SettingTile extends QSTile<QSTile.BooleanState> {
         state.label ="Setting";
         state.visible = true;
         state.value = true;
+        state.icon = ResourceIcon.get(R.drawable.ic_notification_setting);
     }
 }

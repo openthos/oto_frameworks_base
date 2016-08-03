@@ -131,6 +131,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:paddingRight="8dp"
+                    android:background="@null"
                     android:text="@string/print_manager"
                     android:textSize="12sp" />
 
