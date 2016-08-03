@@ -13,6 +13,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.provider.Settings;
 import com.android.internal.app.LocalePicker;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class SetupWizardActivity extends BaseActivity {
     private ArrayList<Locale> mLocales = new ArrayList();
     private static final int CHOOSE_CHINA_ITEM = 1;
     private static final int CHOOSE_ENGLISH_ITEM = 2;
+    private static final int DEFAULT_SLEEP_TIME = 1800000; // 30 min -- 1800 seconds
     private int noSelectedBg;
     private int selectedBg;
     private final Runnable mRequestFocus = new Runnable() {
@@ -56,6 +58,8 @@ public class SetupWizardActivity extends BaseActivity {
         Intent intent1 = new Intent();
         intent1.setAction("com.android.control.statusbar.start");
         SetupWizardActivity.this.sendBroadcast(intent1);
+        Settings.System.putInt(getContentResolver(),
+                android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);
         this.mChinese = (TextView) findViewById(R.id.tv_chinese);
         this.mEnglish = (TextView) findViewById(R.id.tv_english);
         Resources res = getBaseContext().getResources();
