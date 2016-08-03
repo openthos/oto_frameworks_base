@@ -31,12 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OpenthosIDSetupActivity extends BaseActivity {
-    private Button mButtonVerify;
-    private Button mButtonPrev;
+    private TextView mVerify;
+    private TextView mPrev;
     private EditText mEditTextOpenthosID;
     private EditText mEditTextPassword;
-    private Button mSkip;
-    private Button mRegister;
+    private TextView mSkip;
+    private TextView mRegister;
     private String openthosID;
     private String password;
     private int result;
@@ -52,12 +52,12 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_openthos_id_setup);
 
-        this.mButtonPrev = (Button) findViewById(R.id.button_prev);
-        this.mButtonVerify = (Button) findViewById(R.id.button_verify);
+        mPrev = (TextView) findViewById(R.id.tv_prev);
+        mVerify = (TextView) findViewById(R.id.tv_verify);
         this.mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
         this.mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
-        this.mSkip = (Button) findViewById(R.id.button_skip);
-        this.mRegister = (Button) findViewById(R.id.button_register);
+        mSkip = (TextView) findViewById(R.id.tv_skip);
+        mRegister = (TextView) findViewById(R.id.tv_register);
 
         mHandler = new Handler() {
             @Override
@@ -87,7 +87,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             }
         };
 
-        this.mButtonVerify.setOnClickListener(new OnClickListener() {
+        mVerify.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 openthosID = mEditTextOpenthosID.getText().toString().trim();
                 password = mEditTextPassword.getText().toString().trim();
@@ -97,7 +97,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                 submitPostData(params, encode);
             }
         });
-        this.mButtonPrev.setOnClickListener(new OnClickListener() {
+        mPrev.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 OpenthosIDSetupActivity.this.onBackPressed();
             }

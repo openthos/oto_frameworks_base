@@ -28,15 +28,15 @@ import java.io.DataOutputStream;
 import com.otosoft.tools.ChangeBuildPropTools;
 
 public class UserSetupActivity extends BaseActivity {
-    private Button mButtonFinish;
-    private Button mButtonPrev;
+    private TextView mFinish;
+    private TextView mPrev;
     private EditText mEditTextUsername;
     private EditText mComputername;
     private EditText mOldPassword;
     private EditText mNewPassword;
     private String screenPassword;
     private DevicePolicyManager devicePolicyManager;
-    private Button mSkip;
+    private TextView mSkip;
     private String defaultComputerName;
     private String computerName;
     private String userName;
@@ -45,8 +45,9 @@ public class UserSetupActivity extends BaseActivity {
 
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
-            if (UserSetupActivity.this.mButtonFinish != null && UserSetupActivity.this.mButtonFinish.isEnabled()) {
-                UserSetupActivity.this.mButtonFinish.requestFocusFromTouch();
+            if ((UserSetupActivity.this.mFinish != null)
+                && UserSetupActivity.this.mFinish.isEnabled()) {
+                UserSetupActivity.this.mFinish.requestFocusFromTouch();
             }
         }
     };
@@ -54,13 +55,13 @@ public class UserSetupActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_setup);
-        this.mButtonPrev = (Button) findViewById(R.id.button_prev);
-        this.mButtonFinish = (Button) findViewById(R.id.button_finish);
+        mPrev = (TextView) findViewById(R.id.tv_prev);
+        mFinish = (TextView) findViewById(R.id.tv_finish);
         this.mEditTextUsername = (EditText) findViewById(R.id.edittext_username);
         this.mComputername = (EditText) findViewById(R.id.edittext_computer_name);
         this.mOldPassword = (EditText) findViewById(R.id.edittext_screen_password);
         this.mNewPassword = (EditText) findViewById(R.id.edittext_screen_password_confirm);
-        mSkip = (Button) findViewById(R.id.button_skip);
+        mSkip = (TextView) findViewById(R.id.tv_skip);
 
         defaultComputerName = SystemProperties.get("ro.build.host");
         this.mComputername.setText(defaultComputerName);
@@ -76,7 +77,7 @@ public class UserSetupActivity extends BaseActivity {
         final String newPassword = this.mNewPassword.getText().toString().trim();
         devicePolicyManager = (DevicePolicyManager) this.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-        this.mButtonFinish.setEnabled(!TextUtils.isEmpty(this.mEditTextUsername.getText().toString().trim()));
+        mFinish.setEnabled(!TextUtils.isEmpty(this.mEditTextUsername.getText().toString().trim()));
         this.mEditTextUsername.setOnEditorActionListener(new OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId != 0 && actionId != 6) {
@@ -101,10 +102,10 @@ public class UserSetupActivity extends BaseActivity {
             }
 
             public void afterTextChanged(Editable s) {
-                UserSetupActivity.this.mButtonFinish.setEnabled(!TextUtils.isEmpty(s.toString().trim()));
+                UserSetupActivity.this.mFinish.setEnabled(!TextUtils.isEmpty(s.toString().trim()));
             }
         });
-        this.mButtonFinish.setOnClickListener(new OnClickListener() {
+        mFinish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 computerName = mComputername.getText().toString().trim();
                 userName = mEditTextUsername.getText().toString().trim();
@@ -137,7 +138,7 @@ public class UserSetupActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        this.mButtonPrev.setOnClickListener(new OnClickListener() {
+        mPrev.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 UserSetupActivity.this.onBackPressed();
             }

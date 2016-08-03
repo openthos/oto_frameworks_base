@@ -26,6 +26,7 @@ public class FinishPagerActivity extends BaseActivity {
         setContentView(R.layout.activity_finish_pager);
 
         this.mButtonStart = (Button) findViewById(R.id.button_start_use);
+        mButtonStart.getBackground().setAlpha(25);
         this.mButtonStart.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 ((SetupWizardApplication) FinishPagerActivity.this.getApplication())

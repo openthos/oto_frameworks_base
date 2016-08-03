@@ -3,7 +3,7 @@
     <string name="str_next">下一步</string>
     <string name="str_prev">上一步</string>
     <string name="str_finish">完成</string>
-    <string name="str_username">请输入您的名称</string>
+    <string name="str_username">给自己取一个昵称</string>
     <string name="str_language">语言</string>
     <string name="title_openthos_id">验证 Openthos ID</string>
     <string name="openthos_id_name">Openthos ID</string>
@@ -14,7 +14,7 @@
     <string name="title_username_password">本机设置</string>
     <string name="str_computer">本机名称</string>
     <string name="str_screen_password">锁屏密码</string>
-    <string name="str_screen_password_confirm">确认密码</string>
+    <string name="str_screen_password_confirm">确认锁屏密码</string>
     <string name="str_cancel">取消</string>
     <string name="title_openthos_finish">Openthos所有设置已完成</string>
     <string name="str_start_use">开始使用</string>

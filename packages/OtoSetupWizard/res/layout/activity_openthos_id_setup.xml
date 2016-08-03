@@ -83,7 +83,7 @@
         </LinearLayout>
         <TextView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0.5dp"
                 android:background="#888888"/>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -91,31 +91,31 @@
             android:background="#FFFFFF"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/button_prev"
+            <TextView
+                android:id="@+id/tv_prev"
                 style="@style/common_button_style"
                 android:textColor="#888888"
                 android:text="@string/str_prev"
                 android:layout_marginLeft="16dp"/>
-            <Button
-                android:id="@+id/button_register"
+            <TextView
+                android:id="@+id/tv_register"
                 android:text="@string/str_register"
                 android:textColor="#259b24"
                 style="@style/common_button_style"
-                android:layout_toRightOf="@+id/button_prev"/>
-            <Button
-                android:id="@+id/button_skip"
+                android:layout_toRightOf="@+id/tv_prev"/>
+            <TextView
+                android:id="@+id/tv_skip"
                 android:text="@string/str_skip"
                 android:textColor="#444444"
                 android:layout_marginRight="16dp"
                 style="@style/common_button_style"
                 android:layout_alignParentRight="true"/>
-            <Button
-                android:id="@+id/button_verify"
+            <TextView
+                android:id="@+id/tv_verify"
                 android:text="@string/str_verify"
                 android:textColor="#259b24"
                 style="@style/common_button_style"
-                android:layout_toLeftOf="@+id/button_skip"/>
+                android:layout_toLeftOf="@+id/tv_skip"/>
 
         </RelativeLayout>
     </LinearLayout>

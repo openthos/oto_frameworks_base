@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 public class SetupWizardActivity extends BaseActivity {
-    private Button mButtonNext;
+    private TextView mNext;
     private Locale mCurrentLocale;
     private LinearLayout mLanguageContainer;
     private ArrayList<Locale> mLocales = new ArrayList();
@@ -32,8 +32,8 @@ public class SetupWizardActivity extends BaseActivity {
     private int selectedBg;
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
-            if (SetupWizardActivity.this.mButtonNext != null) {
-                SetupWizardActivity.this.mButtonNext.requestFocusFromTouch();
+            if (SetupWizardActivity.this.mNext != null) {
+                SetupWizardActivity.this.mNext.requestFocusFromTouch();
             }
         }
     };
@@ -65,6 +65,7 @@ public class SetupWizardActivity extends BaseActivity {
         Resources res = getBaseContext().getResources();
         noSelectedBg = res.getColor(R.color.no_secleted_bg);
         selectedBg = res.getColor(R.color.selected_bg);
+        mChinese.setBackgroundColor(selectedBg);
         this.mChinese.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 mChinese.setBackgroundColor(selectedBg);
@@ -80,8 +81,8 @@ public class SetupWizardActivity extends BaseActivity {
                 chooseItem = CHOOSE_ENGLISH_ITEM;
             }
         });
-        this.mButtonNext = (Button) findViewById(R.id.button_next);
-        this.mButtonNext.setOnClickListener(new OnClickListener() {
+        mNext = (TextView) findViewById(R.id.tv_next);
+        mNext.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 switch(chooseItem){
                     case CHOOSE_CHINA_ITEM:
