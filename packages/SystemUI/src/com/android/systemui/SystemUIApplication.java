@@ -24,6 +24,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.SystemProperties;
 import android.util.Log;
+import android.util.DisplayMetrics;
+import java.util.Locale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,6 +62,13 @@ public class SystemUIApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        String languageToLoad  = "zh";
+        Locale locale = new Locale(languageToLoad);
+        Locale.setDefault(locale);
+        Configuration config = getResources().getConfiguration();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        config.locale = Locale.SIMPLIFIED_CHINESE;
+        getResources().updateConfiguration(config, metrics);
         // Set the application theme that is inherited by all services. Note that setting the
         // application theme in the manifest does only work for activities. Keep this in sync with
         // the theme set there.

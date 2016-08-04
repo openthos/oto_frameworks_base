@@ -970,4 +970,7 @@
 
     <!--calendar-->
     <string name="set_date_and_time">Set date and time</string>
+
+    <!--quick setting Screenshot-->
+    <string name="quick_settings_screenshot_label">"Screenshot"</string>
 </resources>

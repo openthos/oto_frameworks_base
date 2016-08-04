@@ -53,7 +53,7 @@ public class SettingTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.label ="Setting";
+        state.label = mContext.getResources().getString(R.string.quick_settings_settings_label);
         state.visible = true;
         state.value = true;
         state.icon = ResourceIcon.get(R.drawable.ic_notification_setting);
