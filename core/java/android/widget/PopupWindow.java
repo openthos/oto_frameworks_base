@@ -44,6 +44,8 @@ import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
 
+import android.util.Log;
+
 /**
  * <p>A popup window that can be used to display an arbitrary view. The popup
  * window is a floating container that appears on top of the current
@@ -53,6 +55,18 @@ import java.lang.ref.WeakReference;
  * @see android.widget.Spinner
  */
 public class PopupWindow {
+
+    private static final String TAG = "PopupWindow";
+
+    private static final String WPS_NAME = "com.kingsoft";
+    private static final String CZ_NAME = "com.chaozhuo";
+    private static final String WPS_EMAIL_NAME = "com.kingsoft.email";
+    private static final String CZ_FILEMANAGER_NAME = "com.chaozhuo.filemanager";
+
+    private static final int COMPARE_NAME_LEN = 12;
+
+    private static final int OFFSET_DIFF = 5;
+
     /**
      * Mode for {@link #setInputMethodMode(int)}: the requirements for the
      * input method should be based on the focusability of the popup.  That is
@@ -138,6 +152,9 @@ public class PopupWindow {
     private boolean mIgnoreCheekPress = false;
 
     private int mAnimationStyle = -1;
+
+    private int mXOffsetAdjust = 0;
+    private int mYOffsetAdjust = 0;
     
     private static final int[] ABOVE_ANCHOR_STATE_SET = new int[] {
         com.android.internal.R.attr.state_above_anchor
@@ -903,15 +920,42 @@ public class PopupWindow {
         ViewRootImpl root = parent.getViewRootImpl();
         View view = root.getView();
 
+        mXOffsetAdjust = x;
+        mYOffsetAdjust = y;
         if (view instanceof WindowDecorView) {
             WindowDecorView decor = (WindowDecorView) view;
-            if (decor.isMWWindow() && (parent.getContext().getApplicationInfo().packageName
-                                          .compareTo("com.chaozhuo.filemanager") == 0)) {
-                x = x - root.mWinFrame.left;
-                y = y - root.mWinFrame.top;
+            String name = parent.getContext().getApplicationInfo().packageName;
+            if (decor.isMWWindow() && ((name.compareTo(CZ_FILEMANAGER_NAME) == 0)
+                                       || (name.compareTo(WPS_EMAIL_NAME) == 0))) {
+                String cmpName = ((new Throwable()).getStackTrace())[1].getClassName()
+                                                                    .substring(0, COMPARE_NAME_LEN);
+                Rect rect = root.getWinFrame();
+
+                if (name.compareTo(CZ_FILEMANAGER_NAME) == 0) {
+                    if (cmpName.compareTo(CZ_NAME) == 0) {
+                        x = x - rect.left;
+                        y = y - rect.top;
+                        mXOffsetAdjust = x;
+                        mYOffsetAdjust = y;
+                    }
+                } else {
+                    if (cmpName.compareTo(WPS_NAME) == 0) {
+                        Rect orig = root.getWinFrameOrigOnce();
+                        if (x > 0) {
+                            mXOffsetAdjust = x - rect.left;
+                            x = x - orig.left;
+                        }
+                        if (y > 0) {
+                            mYOffsetAdjust = y - rect.top;
+                            y = y - orig.top;
+                        }
+                    }
+                }
             } else if (decor.isDialogFromMWParent()) {
                 x = x + decor.getDialogLeftOffset();
                 y = y + decor.getDialogTopOffset();
+                mXOffsetAdjust = x;
+                mYOffsetAdjust = y;
             }
         }
 
@@ -1031,7 +1075,7 @@ public class PopupWindow {
 
     private int boundXoff(View anchor, int xoff, int width, int gravity) {
 
-        Rect frame = anchor.getViewRootImpl().mWinFrame;
+        Rect frame = anchor.getViewRootImpl().getWinFrame();
         Rect rect = new Rect();
 
         anchor.getBoundsOnScreen(rect);
@@ -1560,6 +1604,16 @@ public class PopupWindow {
      *              already seems to correspond to the LayoutParams
      */
     public void update(int x, int y, int width, int height, boolean force) {
+
+        if (((x - mXOffsetAdjust) > OFFSET_DIFF) || ((mXOffsetAdjust - x) > OFFSET_DIFF)) {
+            x = mXOffsetAdjust;
+        }
+        if (((y - mYOffsetAdjust) > OFFSET_DIFF) || ((mYOffsetAdjust - y) > OFFSET_DIFF)) {
+            y = mYOffsetAdjust;
+        }
+        mXOffsetAdjust = x;
+        mYOffsetAdjust = y;
+
         if (width != -1) {
             mLastWidth = width;
             setWidth(width);

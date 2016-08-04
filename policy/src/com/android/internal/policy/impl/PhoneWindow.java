@@ -3467,7 +3467,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             int what = event.getAction();
             switch(what){
             case MotionEvent.ACTION_HOVER_ENTER:
-                 mFrame.set(mDecor.getViewRootImpl().mWinFrame);
+                 mFrame.set(mDecor.getViewRootImpl().getWinFrame());
                  getResizeWays(rawX, rawY);
                  InputManager.getInstance().setPointerIcon(mResizeWays);
                  break;
@@ -3566,7 +3566,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mLastY = (int) event.getRawY();
                 mResizeWindow.mLastDx = 0;
                 mResizeWindow.mLastDy = 0;
-                mFrame.set(mDecor.getViewRootImpl().mWinFrame);
+                mFrame.set(mDecor.getViewRootImpl().getWinFrame());
                 mNewFrame = mFrame;
                 getResizeWays(rawX, rawY);
                 InputManager.getInstance().setPointerIcon(mResizeWays);
@@ -3608,9 +3608,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }
             if(MotionEvent.ACTION_UP == event.getAction()) {
-                mDecor.getViewRootImpl().mWinFrame.set(mNewFrame);
+                mDecor.getViewRootImpl().setWinFrame(mNewFrame);
                 if (mDecor.getParentDecor() != null) {
-                    mDecor.getParentDecor().getViewRootImpl().mWinFrame.set(mNewFrame);
+                    mDecor.getParentDecor().getViewRootImpl().setWinFrame(mNewFrame);
                 }
                 mFrame.set(mNewFrame);
                 if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
@@ -3906,7 +3906,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMaximizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
                     try {
                         Rect customMaximizedWindowSize = ActivityManagerNative.getDefault().getMaximizedWindowSize();
                         if (!customMaximizedWindowSize.equals(new Rect())) {
@@ -3920,7 +3920,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                             actualWindowSize = mFullScreen;
                         } else {
                             if (mOldSize == null) {
-                                mOldSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                                mOldSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
                             }
                             actualWindowSize = mOldSize;
                             ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mOldSize);
@@ -3934,7 +3934,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMinimizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().mWinFrame);
+                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
                     Rect outOfScreen = new Rect(actualWindowSize.left + metrics.widthPixels,
                                                 actualWindowSize.top + metrics.heightPixels,
                                                 actualWindowSize.right + metrics.widthPixels,
