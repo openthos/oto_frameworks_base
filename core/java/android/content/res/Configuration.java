@@ -784,11 +784,14 @@ public final class Configuration implements Parcelable, Comparable<Configuration
         return sb.toString();
     }
 
+    /** Set the default fontsize small */
+    public static final float DEFAULT_FONTSIZE_SMALL = 0.85f;
+
     /**
      * Set this object to the system defaults.
      */
     public void setToDefaults() {
-        fontScale = 1;
+        fontScale = DEFAULT_FONTSIZE_SMALL;
         mcc = mnc = 0;
         locale = null;
         userSetLocale = false;
