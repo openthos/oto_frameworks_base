@@ -22,9 +22,8 @@ import java.util.Locale;
 
 public class SetupWizardActivity extends BaseActivity {
     private TextView mNext;
-    private Locale mCurrentLocale;
+    private static Locale mCurrentLocale = null;
     private LinearLayout mLanguageContainer;
-    private ArrayList<Locale> mLocales = new ArrayList();
     private static final int CHOOSE_CHINA_ITEM = 1;
     private static final int CHOOSE_ENGLISH_ITEM = 2;
     private static final int DEFAULT_SLEEP_TIME = 1800000; // 30 min -- 1800 seconds
@@ -44,14 +43,11 @@ public class SetupWizardActivity extends BaseActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mLocales.add(Locale.CHINA);
-        this.mLocales.add(Locale.US);
-        this.mCurrentLocale = Locale.getDefault();
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
-        if (this.mLocales.contains(this.mCurrentLocale)) {
-            this.mCurrentLocale = Locale.CHINA;
-            updateLocale(this.mCurrentLocale);
+        if (mCurrentLocale == null) {
+            mCurrentLocale = Locale.CHINA;
+            updateLocale(mCurrentLocale);
         }
         setContentView(R.layout.activity_setupwizard);
         //send broadcast to control status bar
