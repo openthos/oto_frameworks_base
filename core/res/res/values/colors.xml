@@ -179,5 +179,6 @@
     <color name="mw_blue_decor">#76ceea</color>
     <color name="mw_gray_decor">#f1f1f1</color>
     <color name="mw_white_border">#ffffff</color>
+    <color name="mw_standard_border">#D1F1F1</color>
     <color name="mw_transparent_white">#B3FFFFFF</color>
 </resources>
