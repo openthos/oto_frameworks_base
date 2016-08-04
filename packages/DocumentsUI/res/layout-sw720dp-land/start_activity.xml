@@ -107,7 +107,7 @@
                     android:layout_width="@dimen/px336"
                     android:layout_height="@dimen/px58"
                     android:paddingLeft="16dp"
-                    android:hint="Software search "
+                    android:hint="Software search"
                     android:textSize="@dimen/px16"
                     android:maxLength="10"
                     android:minLines="1"

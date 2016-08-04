@@ -122,4 +122,5 @@
     <string name="common_software">Common_software</string>
     <string name="click_sort">Click</string>
     <string name="common_application">Common Application</string>
+    <string name="software_search">Software search</string>
 </resources>
