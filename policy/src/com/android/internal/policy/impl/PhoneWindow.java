@@ -2714,9 +2714,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     if (needDialogHeader()) {
                         mDialogMW.show();
                         mDialogMW.enableButton();
-                        if (canMoveDialog()) {
+                        //if (canMoveDialog()) {
                             mDialogMW.enableMove();
-                        }
+                        //}
                     }
                 }
                 mHeaderChecked = true;
@@ -3466,7 +3466,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             int what = event.getAction();
             switch(what){
             case MotionEvent.ACTION_HOVER_ENTER:
-                 mFrame.set(mDecor.getViewRootImpl().getWinFrame());
+                 mFrame.set(getActivityFrame());
                  getResizeWays(rawX, rawY);
                  InputManager.getInstance().setPointerIcon(mResizeWays);
                  break;
@@ -3565,7 +3565,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 mLastY = (int) event.getRawY();
                 mResizeWindow.mLastDx = 0;
                 mResizeWindow.mLastDy = 0;
-                mFrame.set(mDecor.getViewRootImpl().getWinFrame());
+                mFrame.set(getActivityFrame());
                 mNewFrame = mFrame;
                 getResizeWays(rawX, rawY);
                 InputManager.getInstance().setPointerIcon(mResizeWays);
@@ -3582,9 +3582,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     int dy = rawY - mLastY;
                     Rect r = mResizeWindow.resize(mFrame, dx, dy, mResizeWays);
                     if (fitWindowInScreen(r)) {
-                        if (rawX <= mFullScreen.left + mBorderPadding) {
+                        if ((mDialogMW == null) && (rawX <= mFullScreen.left + mBorderPadding)) {
                             mNewFrame = mLeftDockFrame;
-                        } else if (rawX >= mFullScreen.right - mBorderPadding) {
+                        } else if ((mDialogMW == null)
+                                   && (rawX >= mFullScreen.right - mBorderPadding)) {
                             mNewFrame = mRightDockFrame;
                         } else {
                             if (mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
@@ -3607,10 +3608,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                 }
             }
             if(MotionEvent.ACTION_UP == event.getAction()) {
-                mDecor.getViewRootImpl().setWinFrame(mNewFrame);
-                if (mDecor.getParentDecor() != null) {
-                    mDecor.getParentDecor().getViewRootImpl().setWinFrame(mNewFrame);
-                }
+                setActivityFrame(mNewFrame);
                 mFrame.set(mNewFrame);
                 if (mResizeWays != MW_WINDOW_RESIZE_NONE || mNewFrame == mLeftDockFrame
                         || mNewFrame == mRightDockFrame) {
@@ -3649,6 +3647,31 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         }
     }
 
+    private Rect getActivityFrame() {
+        WindowDecorView decor = (WindowDecorView) mDecor.getParentDecor();
+
+        while (decor != null) {
+            if (decor.isMWWindow()) {
+                return decor.getViewRootImpl().getWinFrame();
+            }
+            decor = (WindowDecorView) decor.getParentDecor();
+        }
+        return mDecor.getViewRootImpl().getWinFrame();
+    }
+
+    private void setActivityFrame(Rect rect) {
+        WindowDecorView decor = (WindowDecorView) mDecor.getParentDecor();
+
+        while (decor != null) {
+            if (decor.isMWWindow()) {
+                decor.getViewRootImpl().setWinFrame(rect);
+                return;
+            }
+            decor = (WindowDecorView) decor.getParentDecor();
+        }
+        mDecor.getViewRootImpl().setWinFrame(rect);
+    }
+
     class DialogMW {
         private ImageButton mCloseBtn;
         private LinearLayout mHeader;
@@ -3659,7 +3682,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         public void show() {
             if (mHeader != null) {
+                Rect rect = getActivityFrame();
+
+                // Resizing will force view relayout again, which will show header.
+                rect.left = rect.left - 1;
                 mHeader.setVisibility(View.VISIBLE);
+                try {
+                    ActivityManagerNative.getDefault().relayoutWindow(getStackId(), rect);
+                } catch (RemoteException e) {
+                }
             }
         }
 
@@ -3905,7 +3936,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMaximizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
+                    Rect actualWindowSize = new Rect(getActivityFrame());
                     try {
                         Rect customMaximizedWindowSize = ActivityManagerNative.getDefault().getMaximizedWindowSize();
                         if (!customMaximizedWindowSize.equals(new Rect())) {
@@ -3919,7 +3950,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                             actualWindowSize = mFullScreen;
                         } else {
                             if (mOldSize == null) {
-                                mOldSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
+                                mOldSize = new Rect(getActivityFrame());
                             }
                             actualWindowSize = mOldSize;
                             ActivityManagerNative.getDefault().relayoutWindow(getStackId(), mOldSize);
@@ -3933,7 +3964,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             mMinimizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Rect actualWindowSize = new Rect(mDecor.getViewRootImpl().getWinFrame());
+                    Rect actualWindowSize = new Rect(getActivityFrame());
                     Rect outOfScreen = new Rect(actualWindowSize.left + metrics.widthPixels,
                                                 actualWindowSize.top + metrics.heightPixels,
                                                 actualWindowSize.right + metrics.widthPixels,
