@@ -75,4 +75,9 @@
     <string name="system_restart">重新启动</string>
     <string name="system_sleep">睡眠</string>
     <string name="system_lock">锁定</string>
+    <string name="my_open">"打开"</string>
+    <string name="my_mobile_phone_mode_run">"以手机模式运行"</string>
+    <string name="my_desktop_run">"以桌面模式运行"</string>
+    <string name="fixed_the_taskbar">"固定到任务栏"</string>
+    <string name="my_uninstall">"卸载"</string>
 </resources>

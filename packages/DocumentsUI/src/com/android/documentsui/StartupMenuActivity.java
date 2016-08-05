@@ -10,11 +10,14 @@ import java.util.HashSet;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.android.documentsui.util.AppInfo;
 import com.android.documentsui.util.MySqliteOpenHelper;
 import com.android.documentsui.util.BaseSettingDialog;
 import com.android.documentsui.util.PowerSourceDialog;
+import com.android.documentsui.util.StartMenuDialog;
 
 import android.content.ActivityNotFoundException;
 import android.util.Slog;
@@ -22,6 +25,7 @@ import android.R.layout;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.app.Dialog;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
@@ -45,6 +49,8 @@ import android.util.Log;
 import android.text.TextWatcher;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.KeyEvent;
@@ -64,6 +70,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.inputmethod.EditorInfo;
+import android.view.MotionEvent;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -82,16 +89,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class StartupMenuActivity extends Activity implements OnClickListener,
-                OnItemClickListener, OnEditorActionListener {
+                 OnEditorActionListener {
 
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
-        public static final int FILTER_THIRD_APP_TYPE_X = 190;
-        public static final int FILTER_THIRD_APP_TYPE_Y = 907;
+        public static final int FILTER_THIRD_APP_TYPE_X = 192;
+        public static final int FILTER_THIRD_APP_TYPE_Y = 840;
+        public static final int FILTER_THIRD_APP_TYPE_UI_X = 130;
+        public static final int FILTER_THIRD_APP_TYPE_UI_Y = 130;
 
-        private List<AppInfo> mlistAppInfo = null;
+        public static StartMenuDialog mStartMenuDialog;
+        public static List<AppInfo> mlistAppInfo = null;
+        public static StartupMenuActivity StartupMenuActivity;
         private List<AppInfo> mlistViewAppInfo = null;
+        private Map<Integer, Boolean> isCheckedMap = null;
 
         private Context mContext;
         private PopupWindow mPopupWindow;
@@ -138,12 +150,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
-            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            isCheckedMap = new HashMap<Integer, Boolean>();
+            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBrowseAppAdapter);
-            gv_view.setOnItemClickListener(this);
+            //gv_view.setOnItemClickListener(this);
 
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
             my_computer = (TextView) findViewById(R.id.my_computer);
+            mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
+            //mStartMenuDialog = new MenuDialog1(this, R.style.dialog);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
 
@@ -320,7 +335,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
-                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                isCheckedMap = new HashMap<Integer, Boolean>();
+                mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
+                //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
+                //                                            mlistAppInfo);
                 gv_view.setAdapter(mBrowseAppAdapter);
                 return true;
             }
@@ -343,7 +361,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
-                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
+                //                                           mlistAppInfo);
+                isCheckedMap = new HashMap<Integer, Boolean>();
+                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
+                                                           mlistAppInfo ,isCheckedMap);
                 gv_view.setAdapter(mBrowseAppAdapter);
             }
         };
@@ -379,7 +401,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
-                mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+                //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
+                //                                           mlistAppInfo);
+                isCheckedMap = new HashMap<Integer, Boolean>();
+                mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
                 gv_view.setAdapter(mBrowseAppAdapter);
                 break;
             case R.id.tv_sort_show:
@@ -425,7 +450,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mBrowseAppAdapter.notifyDataSetChanged();
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
-            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            isCheckedMap = new HashMap<Integer, Boolean>();
+            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBrowseAppAdapter);
         }
 
@@ -435,7 +462,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
             timeAlgorithm();
-            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
+            isCheckedMap = new HashMap<Integer, Boolean>();
+            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBrowseAppAdapter);
         }
 
@@ -461,7 +490,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     }
                 }
             }
-            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            //mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            isCheckedMap = new HashMap<Integer, Boolean>();
+            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBroAdapter);
         }
 
@@ -477,7 +508,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     return (rScore.compareTo(iScore));
                 }
             });
-            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            //mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
+            isCheckedMap = new HashMap<Integer, Boolean>();
+            mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBroAdapter);
         }
 
@@ -561,15 +594,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             return (applicationInfo.flags & applicationInfo.FLAG_SYSTEM) > 0;
         }
 
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        /*public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             String pkgName = mlistAppInfo.get(position).getPkgName();
             Intent intent = mlistAppInfo.get(position).getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             doUpdate(pkgName);
-        }
+        }*/
 
-        private void doUpdate(String pkgName) {
+        public void doUpdate(String pkgName) {
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?", new String[] { pkgName });
             c.moveToNext();
             int numbers = c.getInt(c.getColumnIndex("int"));
@@ -604,14 +637,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             //type_sort.setOnClickListener(this);
             layout.addView(tv);
 
-            mPopupWindow = new PopupWindow(layout, 130, 65);
+            mPopupWindow = new PopupWindow(layout, FILTER_THIRD_APP_TYPE_UI_X,
+                                           FILTER_THIRD_APP_TYPE_UI_X);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 
             int[] location = new int[2];
             mTvSortShow.getLocationOnScreen(location);
-            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(), location[1]);
+            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(),
+            //                           location[1]);
             mPopupWindow.showAtLocation(mTvSortShow, Gravity.BOTTOM, FILTER_THIRD_APP_TYPE_X,
                                         FILTER_THIRD_APP_TYPE_Y);
         }

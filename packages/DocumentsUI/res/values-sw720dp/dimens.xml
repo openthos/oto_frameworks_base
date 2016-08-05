@@ -24,6 +24,18 @@
     <dimen name="grid_padding_vert">16dp</dimen>
 
     <dimen name="grid_item_padding">8dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_navigation_margin">16dp</dimen>
+    <dimen name="list_button">100dp</dimen>
+    <dimen name="list_button01">400dp</dimen>
+    <dimen name="img_btn">40dp</dimen>
+    <dimen name="navigation">60dp</dimen>
+    <dimen name="edit_font_size">20sp</dimen>
+    <dimen name="left_textview">40dp</dimen>
+    <dimen name="left_margrin_text">10dp</dimen>
+    <dimen name="left_margrin_icon">30dp</dimen>
+    <dimen name="right_menu_left_margin">20dp</dimen>
 
     <dimen name="px1">0.0px</dimen>
     <dimen name="px2">1.0px</dimen>
