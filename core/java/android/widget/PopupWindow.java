@@ -920,8 +920,8 @@ public class PopupWindow {
         ViewRootImpl root = parent.getViewRootImpl();
         View view = root.getView();
 
-        mXOffsetAdjust = x;
-        mYOffsetAdjust = y;
+        mXOffsetAdjust = 0;
+        mYOffsetAdjust = 0;
         if (view instanceof WindowDecorView) {
             WindowDecorView decor = (WindowDecorView) view;
             String name = parent.getContext().getApplicationInfo().packageName;
@@ -1322,6 +1322,8 @@ public class PopupWindow {
                 xoff = boundXoff(anchor, xoff, mPopupWidth, gravity);
             }
         }
+        mXOffsetAdjust = 0;
+        mYOffsetAdjust = 0;
 
         final int anchorHeight = anchor.getHeight();
         final int anchorWidth = anchor.getWidth();
@@ -1605,10 +1607,12 @@ public class PopupWindow {
      */
     public void update(int x, int y, int width, int height, boolean force) {
 
-        if (((x - mXOffsetAdjust) > OFFSET_DIFF) || ((mXOffsetAdjust - x) > OFFSET_DIFF)) {
+        if ((mXOffsetAdjust != 0)
+            && (((x - mXOffsetAdjust) > OFFSET_DIFF) || ((mXOffsetAdjust - x) > OFFSET_DIFF))) {
             x = mXOffsetAdjust;
         }
-        if (((y - mYOffsetAdjust) > OFFSET_DIFF) || ((mYOffsetAdjust - y) > OFFSET_DIFF)) {
+        if ((mYOffsetAdjust != 0)
+            && (((y - mYOffsetAdjust) > OFFSET_DIFF) || ((mYOffsetAdjust - y) > OFFSET_DIFF))) {
             y = mYOffsetAdjust;
         }
         mXOffsetAdjust = x;
