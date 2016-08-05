@@ -44,7 +44,7 @@ public class ScreenshotTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.label = mContext.getString(R.string.quick_settings_settings_label);
+        state.label = mContext.getString(R.string.quick_settings_screenshot_label);
         state.visible = true;
         state.icon = ResourceIcon.get(R.drawable.ic_notification_screenshot);
     }

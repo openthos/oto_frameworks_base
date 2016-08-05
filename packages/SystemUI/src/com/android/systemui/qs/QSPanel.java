@@ -47,7 +47,7 @@ import java.util.Collection;
 
 /** View that represents the quick settings tile panel. **/
 public class QSPanel extends ViewGroup {
-    private static final float TILE_ASPECT = 1.2f;
+    private static final float TILE_ASPECT = 0.75f;
 
     private final Context mContext;
     private final ArrayList<TileRecord> mRecords = new ArrayList<TileRecord>();
