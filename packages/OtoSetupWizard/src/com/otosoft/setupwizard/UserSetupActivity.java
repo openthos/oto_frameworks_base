@@ -128,14 +128,15 @@ public class UserSetupActivity extends BaseActivity {
                     //reset password
                     //FIXME: it did not work well
                     devicePolicyManager.resetPassword(oldPassword, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+
+                    ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
+                    Intent intent = new Intent();
+                    intent.setAction("com.android.wizard.STARTUSE");
+                    startActivity(intent);
                 }
                 else{
                     Toast.makeText(UserSetupActivity.this, "you have null input or the twice password was not the same", Toast.LENGTH_SHORT).show();
                 }
-                ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
-                Intent intent = new Intent();
-                intent.setAction("com.android.wizard.STARTUSE");
-                startActivity(intent);
             }
         });
         mPrev.setOnClickListener(new OnClickListener() {
