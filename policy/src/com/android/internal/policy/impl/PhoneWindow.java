@@ -2712,12 +2712,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     mDecorMW.hide();
                 } else if ((mDialogMW != null) && mDialogMW.haveHeader()) {
                     if (needDialogHeader()) {
+                        mDialogMW.show();
                         mDialogMW.enableButton();
                         if (canMoveDialog()) {
                             mDialogMW.enableMove();
                         }
-                    } else {
-                        mDialogMW.hide();
                     }
                 }
                 mHeaderChecked = true;
@@ -3658,9 +3657,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
             return mHeader != null;
         }
 
-        public void hide() {
+        public void show() {
             if (mHeader != null) {
-                mHeader.setVisibility(View.INVISIBLE);
+                mHeader.setVisibility(View.VISIBLE);
             }
         }
 

@@ -8,6 +8,7 @@
     android:layout_alignParentRight="true"
     android:layout_gravity="top|center"
     android:orientation="horizontal"
+    android:visibility="gone"
     android:background="@color/transparent" >
     <View
         android:layout_width="0dp"
