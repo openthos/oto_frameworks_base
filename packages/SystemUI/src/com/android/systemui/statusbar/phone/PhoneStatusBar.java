@@ -2541,12 +2541,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             PackageManager pm = getPackageManagerForUser(-1);
             ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
             Drawable pkgicon = pm.getApplicationIcon(ai);
-            ActivityKeyView akv = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
+            LinearLayout ll = (LinearLayout) li.inflate(R.layout.statusbar_activity_button, null);
             StatusbarActivity sa = new StatusbarActivity(ActivityManager.NOT_RUNNING_STACK_ID, pkg, true, false);
+            ActivityKeyView akv = (ActivityKeyView) ll.getChildAt(0);
             akv.setStatusbarActivity(sa);
             ((ImageView)akv).setImageDrawable(pkgicon);
-            akv.setVisibility(View.VISIBLE);
-            mStatusBarActivities.addView(akv);
+            ll.setVisibility(View.VISIBLE);
+            mStatusBarActivities.addView(ll);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2568,8 +2569,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public int findStatusbarActivityByPkg(String Pkg) {
         for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
-           if (mStatusBarActivities.getChildAt(i) instanceof ActivityKeyView) {
-                ActivityKeyView kbv = (ActivityKeyView) mStatusBarActivities.getChildAt(i);
+           if (mStatusBarActivities.getChildAt(i) instanceof LinearLayout) {
+                ActivityKeyView kbv = getActivityKeyView(i);
                 if(kbv.getVisibility() == View.GONE) {
                     mStatusBarActivities.removeView(kbv);
                     continue;
@@ -2585,8 +2586,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override // CommandQueue
     public void showStatusbarActivity(int stackId, String pkg) {
-        final ActivityKeyView v;
-
         if (mStatusBarWindow == null) {
             return;
         }
@@ -2609,27 +2608,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } catch (NameNotFoundException e) {
                     pkgicon = pm.getDefaultActivityIcon();
                 }
-                v = (ActivityKeyView) li.inflate(R.layout.statusbar_activity_button, null);
+                LinearLayout ll = (LinearLayout) li.inflate(R.layout.statusbar_activity_button,
+                                                            null);
+                ActivityKeyView v = (ActivityKeyView) ll.getChildAt(0);
                 StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
                 v.setStatusbarActivity(sa);
                 v.setImageDrawable(pkgicon);
-                v.setVisibility(View.VISIBLE);
-                mStatusBarActivities.addView(v);
+                ll.setVisibility(View.VISIBLE);
+                mStatusBarActivities.addView(ll);
             } else {
-                ActivityKeyView akv = (ActivityKeyView) mStatusBarActivities.getChildAt(idxPkg);
+                ActivityKeyView akv = getActivityKeyView(idxPkg);
                 akv.resizeStack();
                 akv.activityStart(stackId);
             }
         } else {
-            ((ActivityKeyView) mStatusBarActivities.getChildAt(idxStack)).resizeStack();
+            getActivityKeyView(idxStack).resizeStack();
         }
     }
 
     public int findStatusbarActivityByStackId(int stackId) {
         for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
-           if (mStatusBarActivities.getChildAt(i) instanceof ActivityKeyView) {
-                ActivityKeyView kbv = (ActivityKeyView) mStatusBarActivities.getChildAt(i);
-                if(kbv.getStatusbarActivity().mStackId == stackId) {
+           if (mStatusBarActivities.getChildAt(i) instanceof LinearLayout) {
+                if(getActivityKeyView(i).getStatusbarActivity().mStackId == stackId) {
                     return i;
                 }
             }
@@ -2641,7 +2641,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
         int idx = findStatusbarActivityByStackId(stackId);
         if(idx >= 0) {
-            ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).saveStackInfo(rect);
+            getActivityKeyView(idx).saveStackInfo(rect);
         }
     }
 
@@ -2649,12 +2649,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void removeStatusbarActivity(int stackId) {
         int idx = findStatusbarActivityByStackId(stackId);
         if(idx >= 0) {
-            if(!((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).getStatusbarActivity().mIsDocked) {
-                mStatusBarActivities.removeView((ActivityKeyView) mStatusBarActivities.getChildAt(idx));
+            ActivityKeyView akv = getActivityKeyView(idx);
+            if(!akv.getStatusbarActivity().mIsDocked) {
+                mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(idx));
             } else {
-                ((ActivityKeyView) mStatusBarActivities.getChildAt(idx)).activityClosed();
+                akv.activityClosed();
             }
         }
+    }
+
+    private ActivityKeyView getActivityKeyView(int idx) {
+        return (ActivityKeyView) ((ViewGroup) mStatusBarActivities.getChildAt(idx)).getChildAt(0);
     }
 
     @Override // CommandQueue
