@@ -224,11 +224,34 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void showStatusBarSuggest() {
+        enforceExpandStatusBar();
+
+        if (mBar != null) {
+            try {
+                mBar.showStatusBarViewSuggest();
+            } catch (RemoteException ex) {
+            }
+        }
+    }
+
+    @Override
     public void hideStatusBar() {
 
         if (mBar != null) {
             try {
                 mBar.hideStatusBarView();
+            } catch (RemoteException ex) {
+            }
+        }
+    }
+
+    @Override
+    public void hideStatusBarMarkless() {
+
+        if (mBar != null) {
+            try {
+                mBar.hideStatusBarViewMarkless();
             } catch (RemoteException ex) {
             }
         }

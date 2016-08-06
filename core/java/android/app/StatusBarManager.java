@@ -116,11 +116,35 @@ public class StatusBarManager {
         }
     }
     
+    public void showStatusBarSuggest() {
+        try {
+            final IStatusBarService svc = getService();
+            if (svc != null) {
+                svc.showStatusBarSuggest();
+            }
+        } catch (RemoteException ex) {
+            // system process is dead anyway.
+            throw new RuntimeException(ex);
+        }
+    }
+
     public void hideStatusBar() {
         try {
             final IStatusBarService svc = getService();
             if (svc != null) {
                 svc.hideStatusBar();
+            }
+        } catch (RemoteException ex) {
+            // system process is dead anyway.
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void hideStatusBarMarkless() {
+        try {
+            final IStatusBarService svc = getService();
+            if (svc != null) {
+                svc.hideStatusBarMarkless();
             }
         } catch (RemoteException ex) {
             // system process is dead anyway.

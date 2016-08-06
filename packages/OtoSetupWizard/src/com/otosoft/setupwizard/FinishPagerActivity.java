@@ -33,7 +33,7 @@ public class FinishPagerActivity extends BaseActivity {
                         .onSetupFinished(FinishPagerActivity.this);
                 //send broadcast to control status bar finish
                 Intent intent = new Intent();
-                intent.setAction("com.android.control.statusbar.finish");
+                intent.setAction(Intent.STATUS_BAR_SHOW);
                 FinishPagerActivity.this.sendBroadcast(intent);
             }
         });

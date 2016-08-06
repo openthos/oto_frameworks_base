@@ -45,13 +45,13 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
 
     private void showStatusBar() {
         Intent intent = new Intent();
-        intent.setAction("com.android.control.statusbar.finish");
+        intent.setAction(Intent.STATUS_BAR_SHOW_SUGGEST);
         sendBroadcast(intent);
     }
 
     private void hideStatusBar() {
         Intent intent = new Intent();
-        intent.setAction("com.android.control.statusbar.start");
+        intent.setAction(Intent.STATUS_BAR_HIDE_MARKLESS);
         sendBroadcast(intent);
     }
 

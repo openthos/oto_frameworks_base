@@ -3516,6 +3516,14 @@ public class Intent implements Parcelable, Cloneable {
     public static final String EXTRA_RECT_RIGHT = "android.intent.extra.rect_right";
     public static final String EXTRA_RECT_BOTTOM = "android.intent.extra.rect_bottom";
 
+    /**
+     * For status bar
+     */
+    public static final String STATUS_BAR_SHOW = "android.intent.statusbar.show";
+    public static final String STATUS_BAR_SHOW_SUGGEST = "android.intent.statusbar.show.suggest";
+    public static final String STATUS_BAR_HIDE = "android.intent.statusbar.hide";
+    public static final String STATUS_BAR_HIDE_MARKLESS = "android.intent.statusbar.hide.markless";
+
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).

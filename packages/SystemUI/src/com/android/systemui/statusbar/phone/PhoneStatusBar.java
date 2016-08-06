@@ -289,6 +289,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     StatusBarWindowView mStatusBarWindow;
     public PhoneStatusBarView mStatusBarView;
+    private boolean mForceStatusBarHide = false;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     private StatusBarWindowManager mStatusBarWindowManager;
     private UnlockMethodCache mUnlockMethodCache;
@@ -2390,15 +2391,33 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (false) postStartTracing();
     }
 
-    @Override
-    public void showStatusBarView() {
+    private void showStatusBarViewMarkless() {
         mStatusBarWindow.setVisibility(View.VISIBLE);
         mStatusBarView.setVisibility(View.VISIBLE);
         mNotificationPanel.setPanelShow();
     }
 
     @Override
+    public void showStatusBarView() {
+        showStatusBarViewMarkless();
+        mForceStatusBarHide = false;
+    }
+
+    @Override
+    public void showStatusBarViewSuggest() {
+        if (mForceStatusBarHide == false) {
+            showStatusBarViewMarkless();
+        }
+    }
+
+    @Override
     public void hideStatusBarView() {
+        hideStatusBarViewMarkless();
+        mForceStatusBarHide = true;
+    }
+
+    @Override
+    public void hideStatusBarViewMarkless() {
         mStatusBarWindow.setVisibility(View.GONE);
         mNotificationPanel.setPanelHide();
     }

@@ -30,7 +30,9 @@ oneway interface IStatusBar
     void animateExpandSettingsPanel();
     void animateCollapsePanels();
     void showStatusBarView();
+    void showStatusBarViewSuggest();
     void hideStatusBarView();
+    void hideStatusBarViewMarkless();
     void setSystemUiVisibility(int vis, int mask);
     void topAppWindowChanged(boolean menuVisible);
     void setImeWindowStatus(in IBinder token, int vis, int backDisposition,

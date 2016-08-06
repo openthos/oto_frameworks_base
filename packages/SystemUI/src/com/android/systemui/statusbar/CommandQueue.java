@@ -65,6 +65,8 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SHOW_WIFI_PANEL            = 23 << MSG_SHIFT;
     private static final int MSG_SHOW_STATUSBAR_VIEW        = 24 << MSG_SHIFT;
     private static final int MSG_HIDE_STATUSBAR_VIEW        = 25 << MSG_SHIFT;
+    private static final int MSG_SHOW_STATUSBAR_VIEW_SUGGEST    = 26 << MSG_SHIFT;
+    private static final int MSG_HIDE_STATUSBAR_VIEW_MARKLESS   = 27 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -90,7 +92,9 @@ public class CommandQueue extends IStatusBar.Stub {
         public void disable(int state, boolean animate);
         public void animateExpandNotificationsPanel();
         public void showStatusBarView();
+        public void showStatusBarViewSuggest();
         public void hideStatusBarView();
+        public void hideStatusBarViewMarkless();
         public void animateCollapsePanels(int flags);
         public void animateExpandSettingsPanel();
         public void setSystemUiVisibility(int vis, int mask);
@@ -158,10 +162,24 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void showStatusBarViewSuggest() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_STATUSBAR_VIEW_SUGGEST);
+            mHandler.sendEmptyMessage(MSG_SHOW_STATUSBAR_VIEW_SUGGEST);
+        }
+    }
+
     public void hideStatusBarView() {
         synchronized (mList) {
             mHandler.removeMessages(MSG_HIDE_STATUSBAR_VIEW);
             mHandler.sendEmptyMessage(MSG_HIDE_STATUSBAR_VIEW);
+        }
+    }
+
+    public void hideStatusBarViewMarkless() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_HIDE_STATUSBAR_VIEW_MARKLESS);
+            mHandler.sendEmptyMessage(MSG_HIDE_STATUSBAR_VIEW_MARKLESS);
         }
     }
 
@@ -376,8 +394,14 @@ public class CommandQueue extends IStatusBar.Stub {
                 case MSG_SHOW_STATUSBAR_VIEW:
                     mCallbacks.showStatusBarView();
                     break;
+                case MSG_SHOW_STATUSBAR_VIEW_SUGGEST:
+                    mCallbacks.showStatusBarViewSuggest();
+                    break;
                 case MSG_HIDE_STATUSBAR_VIEW:
                     mCallbacks.hideStatusBarView();
+                    break;
+                case MSG_HIDE_STATUSBAR_VIEW_MARKLESS:
+                    mCallbacks.hideStatusBarViewMarkless();
                     break;
                 case MSG_CANCEL_PRELOAD_RECENT_APPS:
                     mCallbacks.cancelPreloadRecentApps();
