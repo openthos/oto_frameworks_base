@@ -613,10 +613,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         public void powerOff(View v) {
-            mPowerSourceDialog = new PowerSourceDialog(mContext);
-            dismisTargetDialog(mPowerSourceDialog);
-            mPowerSourceDialog.show(v);
-            StartupMenuActivity.this.finish();
+            ActivityManagerNative.callPowerSource(mContext);
+            finish();
 	}
 
         public void sortShow() {

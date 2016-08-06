@@ -20,6 +20,7 @@ import android.app.ActivityManager.StackInfo;
 import android.content.ComponentName;
 import android.content.IIntentReceiver;
 import android.content.IIntentSender;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
@@ -91,6 +92,19 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
         return sSystemReady;
     }
     static boolean sSystemReady = false;
+
+    /**
+     * Manager power off, sleep, lock, or reboot. For internal use only.
+     */
+    static public void  callPowerSource(Context context) {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.powersource",
+                                              "com.android.powersource.PowerSourceActivity"));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_NO_ANIMATION
+                        | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+        context.startActivity(intent);
+    }
 
     /**
      * Convenience for sending a sticky broadcast.  For internal use only.

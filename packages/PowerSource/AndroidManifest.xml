@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.android.powersource"
+        android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.REMOVE_TASKS" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.INJECT_EVENTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SHUTDOWN" />
+
+    <application
+        android:name=".PowerSourceApplication"
+        android:label="@string/app_label"
+        android:supportsRtl="true">
+        <activity
+            android:name=".PowerSourceActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"/>
+    </application>
+</manifest>
