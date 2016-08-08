@@ -154,6 +154,16 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
 
         @Override
+        public void setFocusedStatusbarActivity(int stackId) {
+            if (mBar != null) {
+                try {
+                    mBar.setFocusedStatusbarActivity(stackId);
+                } catch (RemoteException e) {
+                }
+            }
+        }
+
+        @Override
         public void showStatusbarActivity(int stackId, String pkg) {
             if (mBar != null) {
                 try {

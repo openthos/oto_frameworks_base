@@ -1,5 +1,5 @@
 
-<LinearLayout
+<FrameLayout
     android:id="@+id/statusbar_activity_button"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/status_bar_icon_size_big"
@@ -12,4 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerInside" />
-</LinearLayout>
+    <View
+        android:id="@+id/activity_focused"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66ffffff"
+        android:visibility="gone"
+        />
+</FrameLayout>

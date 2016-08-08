@@ -25,6 +25,7 @@ public interface StatusBarManagerInternal {
     void notificationLightPulse(int argb, int onMillis, int offMillis);
     void notificationLightOff();
     void showScreenPinningRequest();
+    void setFocusedStatusbarActivity(int stackId);
     void showStatusbarActivity(int stackId, String pkg);
     void removeStatusbarActivity(int stackId);
     void saveInfoInStatusbarActivity(int stackId, Rect rect);

@@ -105,6 +105,10 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override // CommandQueue
+    public void setFocusedStatusbarActivity(int stackId) {
+    }
+
+    @Override // CommandQueue
     public void showStatusbarActivity(int stackId, String pkg) {
     }
 

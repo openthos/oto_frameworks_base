@@ -1743,24 +1743,22 @@ public final class ActivityStackSupervisor implements DisplayListener {
         boolean findMenu = false;
         boolean findStack = false;
 
-        Slog.i(TAG, String.format("Call setFocusedStack(stackId) for %d in ActivityStackSupervisor", stackId));
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             if ((stacks != null) && (stacks.size() > 0)) {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
                     if ((stack.mStackId == stackId) && (findStack == false)) {
-                        Slog.i(TAG, String.format("set stackId: %d, origin: %d in displayId: %d", stackId, mFocusedStack.mStackId, displayNdx));
                         stacks.remove(stack);
                         stacks.add(stack);
                         mLastFocusedStack = mFocusedStack;
                         mFocusedStack = stack;
+                        mService.setFocusedStatusbarActivity(stack.mStackId);
                         if (findMenu == true) {
                             return;
                         }
                         findStack = true;
                     } else if (stack.isStartupMenuStack() && (findMenu == false)) {
-                        Slog.i(TAG, String.format("======================= gchen_tag: closeActivity in checkStartupMenu for %d in ActivityStackSupervisor", stack.mStackId));
                         stacks.remove(stack);
                         mService.closeActivity(stack.mStackId);
                         if (findStack == true) {

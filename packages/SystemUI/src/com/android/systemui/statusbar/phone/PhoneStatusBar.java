@@ -315,6 +315,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // status_bar_activity
     LinearLayout mStatusBarActivities;
+    ActivityKeyView mFocusedAKV = null;
 
     // expanded notifications
     NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
@@ -2537,14 +2538,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void loadDockedApk(String pkg) {
         try {
-            LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater li =
+                        (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             PackageManager pm = getPackageManagerForUser(-1);
             ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
             Drawable pkgicon = pm.getApplicationIcon(ai);
-            LinearLayout ll = (LinearLayout) li.inflate(R.layout.statusbar_activity_button, null);
-            StatusbarActivity sa = new StatusbarActivity(ActivityManager.NOT_RUNNING_STACK_ID, pkg, true, false);
+            FrameLayout ll = (FrameLayout) li.inflate(R.layout.statusbar_activity_button, null);
+            StatusbarActivity sa = new StatusbarActivity(ActivityManager.NOT_RUNNING_STACK_ID, pkg,
+                                                         true, false);
             ActivityKeyView akv = (ActivityKeyView) ll.getChildAt(0);
             akv.setStatusbarActivity(sa);
+            akv.setFocusedView(ll.findViewById(R.id.activity_focused));
             ((ImageView)akv).setImageDrawable(pkgicon);
             ll.setVisibility(View.VISIBLE);
             mStatusBarActivities.addView(ll);
@@ -2569,7 +2573,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     public int findStatusbarActivityByPkg(String Pkg) {
         for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
-           if (mStatusBarActivities.getChildAt(i) instanceof LinearLayout) {
+           if (mStatusBarActivities.getChildAt(i) instanceof FrameLayout) {
                 ActivityKeyView kbv = getActivityKeyView(i);
                 if(kbv.getVisibility() == View.GONE) {
                     mStatusBarActivities.removeView(kbv);
@@ -2584,6 +2588,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return -1;
     }
 
+    private void setFocusedStatusbarActivity(ActivityKeyView akv) {
+        if (mFocusedAKV != null) {
+            mFocusedAKV.setFocused(false);
+        }
+        mFocusedAKV = akv;
+        if (mFocusedAKV != null) {
+            mFocusedAKV.setFocused(true);
+        }
+    }
+
+    @Override // CommandQueue
+    public void setFocusedStatusbarActivity(int stackId) {
+        int idx = findStatusbarActivityByStackId(stackId);
+        if(idx >= 0) {
+            setFocusedStatusbarActivity(getActivityKeyView(idx));
+        }
+    }
+
     @Override // CommandQueue
     public void showStatusbarActivity(int stackId, String pkg) {
         if (mStatusBarWindow == null) {
@@ -2592,8 +2614,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         int idxStack = findStatusbarActivityByStackId(stackId);
         int idxPkg = findStatusbarActivityByPkg(pkg);
+        ActivityKeyView akv = null;
 
-        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li =
+                        (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (idxStack == -1) {
             if (idxPkg == -1) {
                 Drawable pkgicon = null;
@@ -2608,27 +2632,30 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } catch (NameNotFoundException e) {
                     pkgicon = pm.getDefaultActivityIcon();
                 }
-                LinearLayout ll = (LinearLayout) li.inflate(R.layout.statusbar_activity_button,
+                FrameLayout ll = (FrameLayout) li.inflate(R.layout.statusbar_activity_button,
                                                             null);
-                ActivityKeyView v = (ActivityKeyView) ll.getChildAt(0);
+                akv = (ActivityKeyView) ll.getChildAt(0);
                 StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
-                v.setStatusbarActivity(sa);
-                v.setImageDrawable(pkgicon);
+                akv.setStatusbarActivity(sa);
+                akv.setFocusedView(ll.findViewById(R.id.activity_focused));
+                akv.setImageDrawable(pkgicon);
                 ll.setVisibility(View.VISIBLE);
                 mStatusBarActivities.addView(ll);
             } else {
-                ActivityKeyView akv = getActivityKeyView(idxPkg);
+                akv = getActivityKeyView(idxPkg);
                 akv.resizeStack();
                 akv.activityStart(stackId);
             }
         } else {
-            getActivityKeyView(idxStack).resizeStack();
+            akv = getActivityKeyView(idxStack);
+            akv.resizeStack();
         }
+        setFocusedStatusbarActivity(akv);
     }
 
     public int findStatusbarActivityByStackId(int stackId) {
         for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
-           if (mStatusBarActivities.getChildAt(i) instanceof LinearLayout) {
+           if (mStatusBarActivities.getChildAt(i) instanceof FrameLayout) {
                 if(getActivityKeyView(i).getStatusbarActivity().mStackId == stackId) {
                     return i;
                 }
@@ -2650,6 +2677,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         int idx = findStatusbarActivityByStackId(stackId);
         if(idx >= 0) {
             ActivityKeyView akv = getActivityKeyView(idx);
+            if (akv == mFocusedAKV) {
+                setFocusedStatusbarActivity(null);
+            }
             if(!akv.getStatusbarActivity().mIsDocked) {
                 mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(idx));
             } else {

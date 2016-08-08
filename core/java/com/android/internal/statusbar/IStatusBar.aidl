@@ -50,6 +50,7 @@ oneway interface IStatusBar
     void showScreenPinningRequest();
     void showVolumePanel();
     void showWifiPanel();
+    void setFocusedStatusbarActivity(int stackId);
     void showStatusbarActivity(int stackId, String pkg);
     void saveInfoInStatusbarActivity(int stackId, in Rect rect);
     void removeStatusbarActivity(int stackId);

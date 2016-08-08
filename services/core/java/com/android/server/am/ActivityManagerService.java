@@ -19863,7 +19863,6 @@ public final class ActivityManagerService extends ActivityManagerNative
             /* The stack id is always increating, so need not care about reusing sync */
             if (mStackSupervisor.isStackDisappear(stackId)) {
                 removeStatusbarActivity(stackId);
-                Slog.i(TAG, String.format("============== gchen_tag: remove stack: %d", stackId));
                 return true;
             }
         }
@@ -19871,7 +19870,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     private void removeStatusbarActivity(int stackId) {
-        StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+        StatusBarManagerInternal statusBarManager =
+                                     LocalServices.getService(StatusBarManagerInternal.class);
         statusBarManager.removeStatusbarActivity(stackId);
         mStatusbarActivities.remove((Integer)stackId);
     }
@@ -19886,10 +19886,19 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
+    public void setFocusedStatusbarActivity(int stackId) {
+        synchronized (mSBAThread) {
+            StatusBarManagerInternal statusBarManager =
+                                         LocalServices.getService(StatusBarManagerInternal.class);
+            statusBarManager.setFocusedStatusbarActivity(stackId);
+        }
+    }
+
     @Override
     public void createStatusbarActivity(int stackId, String pkg) {
         synchronized (mSBAThread) {
-            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+            StatusBarManagerInternal statusBarManager =
+                                         LocalServices.getService(StatusBarManagerInternal.class);
             statusBarManager.showStatusbarActivity(stackId, pkg);
             mStatusbarActivities.add((Integer)stackId);
         }
@@ -19898,7 +19907,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     @Override
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
         synchronized (mSBAThread) {
-            StatusBarManagerInternal statusBarManager = LocalServices.getService(StatusBarManagerInternal.class);
+            StatusBarManagerInternal statusBarManager =
+                                         LocalServices.getService(StatusBarManagerInternal.class);
             statusBarManager.saveInfoInStatusbarActivity(stackId, rect);
         }
     }
@@ -19915,7 +19925,6 @@ public final class ActivityManagerService extends ActivityManagerNative
     public boolean relayoutWindow(int stackId, Rect r) {
         long ident = Binder.clearCallingIdentity();
         try {
-            Slog.v(TAG, "RelayoutWindow: " + stackId + " pos:" + r);
             mWindowManager.relayoutWindow(stackId, r);
         } finally {
             Binder.restoreCallingIdentity(ident);

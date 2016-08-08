@@ -34,12 +34,13 @@ import android.view.MotionEvent;
 import android.content.pm.PackageManager;
 
 public class ActivityKeyView extends ImageView {
-
     OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
     OnClickListener mDock;      /* Use to dock related StatusbarActivity in status bar. */
     OnClickListener mUnDock;    /* Use to undock related StatusbarAcitivity from status bar. */
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
+    View mFocusedView;
+
     String TAG = "ActivityKeyView"; /* Log Tag. */
     public static Dialog mRBM = null;   /* Define right button menu as a Singleton dialog. */
 
@@ -190,6 +191,10 @@ public class ActivityKeyView extends ImageView {
         mActivity = sa;
     }
 
+    public void setFocusedView(View view) {
+        mFocusedView = view;
+    }
+
     private void setFocusedStack() {
         try {
             if (ActivityManagerNative.getDefault().getFocusedStackId() != mActivity.mStackId) {
@@ -241,8 +246,10 @@ public class ActivityKeyView extends ImageView {
             WindowManager.LayoutParams lp = dw.getAttributes();
 
             /* Measure rbm by force to get real width and height. */
-            int dpx = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getWidth();
-            int dpy = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getHeight();
+            int dpx = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                                                      .getDefaultDisplay().getWidth();
+            int dpy = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                                                     .getDefaultDisplay().getHeight();
             int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
             int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
             rbm.measure(w, h);
@@ -274,5 +281,9 @@ public class ActivityKeyView extends ImageView {
             setFocusedStack();
         }
         return super.onTouchEvent(e);
+    }
+
+    public void setFocused(boolean focused) {
+        mFocusedView.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
     }
 }
