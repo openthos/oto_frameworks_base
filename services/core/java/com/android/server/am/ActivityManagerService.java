@@ -19961,6 +19961,8 @@ public final class ActivityManagerService extends ActivityManagerNative
         int stackId = getFocusedStackId();
         if (stackId != HOME_STACK_ID) {
             closeActivity(stackId);
+        } else {
+            ActivityManagerNative.callPowerSource(mContext);
         }
     }
 
