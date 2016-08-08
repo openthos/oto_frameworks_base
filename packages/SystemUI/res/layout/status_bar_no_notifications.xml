@@ -28,6 +28,6 @@
             android:paddingTop="12dp"
             android:gravity="top|center_horizontal"
             android:textColor="#ffffff"
-            android:textSize="20sp"
+            android:textSize="12sp"
             android:text="@string/empty_shade_text"/>
 </com.android.systemui.statusbar.EmptyShadeView>

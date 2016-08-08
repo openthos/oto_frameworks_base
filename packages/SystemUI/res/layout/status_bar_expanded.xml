@@ -69,12 +69,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
                 <TextView
+                    android:id="@+id/notification_center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="3dp"
                     android:paddingTop="10dp"
                     android:text="@string/notification_center"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                 <Button
+                    android:id="@+id/notificationManager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:text="@string/notification_manager"
+                    android:layout_toRightOf="@id/notification_center"
                     android:textSize="12sp" />
+
                 <Button
                     android:id="@+id/clearAll"
                     android:layout_width="wrap_content"
@@ -82,15 +94,6 @@
                     android:background="@null"
                     android:text="@string/clear_all"
                     android:layout_alignParentRight="true"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/notificationManager"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:text="@string/notification_manager"
-                    android:layout_toLeftOf="@id/clearAll"
                     android:textSize="12sp" />
 
             </RelativeLayout>
@@ -123,7 +126,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/print_message"
-                    android:textSize="12sp" />
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
 
                 <Button
                     android:id="@+id/printManager"
