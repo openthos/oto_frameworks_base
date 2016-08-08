@@ -590,6 +590,15 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
      */
     public int installLocation = PackageInfo.INSTALL_LOCATION_UNSPECIFIED;
 
+    public boolean isPhoneStyleWindow() {
+        return isPhoneStyleWindow(packageName);
+    }
+
+    public static boolean isPhoneStyleWindow(String pkgName) {
+        return (pkgName != null) && ((pkgName.compareTo(APPNAME_TENCENT_WECHAT) == 0)
+                                     || (pkgName.compareTo(APPNAME_TENCENT_QQ) == 0));
+    }
+
     public void dump(Printer pw, String prefix) {
         super.dumpFront(pw, prefix);
         if (className != null) {

@@ -170,14 +170,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final int CONTAINER_TASK_LIST_EMPTY_TIMEOUT = FIRST_SUPERVISOR_STACK_MSG + 12;
     static final int LAUNCH_TASK_BEHIND_COMPLETE = FIRST_SUPERVISOR_STACK_MSG + 13;
 
-    /* For initializing window position ofsset step */
-    static final int WINDOW_OFFSET_STEP = 35;
-    static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
-
-    /* For initializing startup menu window positon */
-    static final int WINDOW_STARTUP_MENU_WIDTH = 564;
-    static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3;
-
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
     private final static String HOME_FRONT_ACTIVITY_RECENTS = "com.android.systemui/.recents.RecentsActivity";
@@ -196,10 +188,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     final ActivityManagerService mService;
 
     final ActivityStackSupervisorHandler mHandler;
-
-    /* Initializing window position */
-    private int mInitPosX = WINDOW_OFFSET_STEP;
-    private int mInitPosY = WINDOW_OFFSET_STEP;
 
     /** Short cut */
     WindowManagerService mWindowManager;
@@ -1708,40 +1696,14 @@ public final class ActivityStackSupervisor implements DisplayListener {
         return mHomeStack;
     }
 
-    private boolean isPhoneStyleWindow(String pkgName) {
-        return (pkgName != null)
-               && ((pkgName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)
-                   || (pkgName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0));
-    }
-
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
-        ActivityDisplay activityDisplay = mActivityDisplays.get(displayId);
-
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
-             int bottom = activityDisplay.mDisplayInfo.logicalHeight - mWindowManager.getStatusbarHeight();
-             return new Rect(0, 0, WINDOW_STARTUP_MENU_WIDTH, bottom);
+            return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH,
+                            mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
+                                - mWindowManager.getStatusbarHeight());
         }
-
-        mInitPosX += WINDOW_OFFSET_STEP;
-        if (mInitPosX > WINDOW_OFFSET_MAX) {
-            mInitPosX = WINDOW_OFFSET_STEP;
-        }
-        mInitPosY += WINDOW_OFFSET_STEP;
-        if (mInitPosY > WINDOW_OFFSET_MAX) {
-            mInitPosY = WINDOW_OFFSET_STEP;
-        }
-
-        DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
-        int width;
-        int height;
-        if (isPhoneStyleWindow(pkgName)) {
-            width = metrics.getInitWindowWidthPhone();
-            height = metrics.getInitWindowHeightPhone();
-        } else {
-            width = metrics.getInitWindowWidthNormal();
-            height = metrics.getInitWindowHeightNormal();
-        }
-        return new Rect(mInitPosX, mInitPosY, mInitPosX + width, mInitPosY + height);
+        return  mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+                                                       ApplicationInfo.isPhoneStyleWindow(pkgName));
     }
 
     boolean isHomeActivity(ActivityRecord r) {
@@ -1758,10 +1720,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void setFocusedStack(ActivityRecord r, String reason) {
-        Slog.i(TAG, "============= gchen_tag: call setFocusedStack(), reason: " + reason + " activity record: " + r);
         if (r != null) {
             if (isHomeActivity(r)) {
-                Slog.i(TAG, String.format("Call moveHomeStack() for %d in ActivityStackSupervisor", r.task.stack.mStackId));
                 moveHomeStack(false, reason);
             } else {
                 setFocusedStack(r.task.stack.mStackId);
@@ -1771,7 +1731,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     void setFocusedStack(int stackId, String reason) {
         mService.setFocusJustChanged();
-        Slog.i(TAG, "============= gchen_tag: call setFocusedStack(), reason: " + reason + " stackId: " + stackId);
         setFocusedStack(stackId);
     }
 

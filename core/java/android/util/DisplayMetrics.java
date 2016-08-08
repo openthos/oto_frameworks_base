@@ -17,6 +17,7 @@
 package android.util;
 
 import android.os.SystemProperties;
+import android.graphics.Rect;
 
 
 /**
@@ -35,6 +36,14 @@ public class DisplayMetrics {
     private static final float WINDOW_INIT_PART_HEIGHT_THIN_16_9 = 0.90f;
     private static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
     private static final float WINDOW_INIT_PART_HEIGHT_WIDE = 0.75f;
+
+    /* For initializing window position ofsset step */
+    private static final int WINDOW_OFFSET_STEP = 35;
+    private static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
+
+    /* For initializing startup menu window positon */
+    public static final int WINDOW_STARTUP_MENU_WIDTH = 564;
+    public static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3;
 
     /**
      * Standard quantized DPI for low-density screens.
@@ -222,6 +231,10 @@ public class DisplayMetrics {
      */
     public float noncompatYdpi;
 
+    /* Initializing window position */
+    private int initPosX = WINDOW_OFFSET_STEP;
+    private int initPosY = WINDOW_OFFSET_STEP;
+
     public DisplayMetrics() {
     }
     
@@ -348,5 +361,29 @@ public class DisplayMetrics {
 
     public int getInitWindowHeightNormal() {
         return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_WIDE);
+    }
+
+    private int getDefaultPosX() {
+        initPosX += WINDOW_OFFSET_STEP;
+        if (initPosX > WINDOW_OFFSET_MAX) {
+            initPosX = WINDOW_OFFSET_STEP;
+        }
+        return initPosX;
+    }
+
+    private int getDefaultPosY() {
+        initPosY += WINDOW_OFFSET_STEP;
+        if (initPosY > WINDOW_OFFSET_MAX) {
+            initPosY = WINDOW_OFFSET_STEP;
+        }
+        return initPosY;
+    }
+
+    public Rect getDefaultFrameRect(boolean phoneStyle) {
+        int posX = getDefaultPosX();
+        int posY = getDefaultPosY();
+        int width = phoneStyle ? getInitWindowWidthPhone() : getInitWindowWidthNormal();
+        int height = phoneStyle ? getInitWindowHeightPhone() : getInitWindowHeightNormal();
+        return new Rect(posX, posY, posX + width, posY + height);
     }
 }
