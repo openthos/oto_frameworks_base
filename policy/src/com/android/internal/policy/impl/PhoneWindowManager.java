@@ -3037,17 +3037,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
 
-        // Display task switcher for ALT-TAB.
-        if (down && repeatCount == 0 && keyCode == KeyEvent.KEYCODE_TAB
-                && !event.isShiftPressed()) {
-            //if (mRecentAppsHeldModifiers == 0 && !keyguardOn) {
+        if (down && repeatCount == 0 && !event.isShiftPressed()) {
             if (!keyguardOn) {
                 final int shiftlessModifiers = event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
                 if (KeyEvent.metaStateHasModifiers(shiftlessModifiers, KeyEvent.META_ALT_ON)) {
-                    mRecentAppsHeldModifiers = shiftlessModifiers;
-                    mSkipFocus = true;
-                    showRecentApps(true);
-                    return -1;
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_TAB:
+                            mRecentAppsHeldModifiers = shiftlessModifiers;
+                            mSkipFocus = true;
+                            showRecentApps(true);
+                            return -1;
+                        case KeyEvent.KEYCODE_F4:
+                            mSkipFocus = true;
+                            try {
+                                ActivityManagerNative.getDefault().closeActivityFocused();
+                            } catch (RemoteException e) {
+                            }
+                            return -1;
+                        default:
+                            break;
+                    }
                 }
             }
         } else if (!down && mRecentAppsHeldModifiers != 0

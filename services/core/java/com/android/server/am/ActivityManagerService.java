@@ -19913,14 +19913,6 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean relayoutWindow(int stackId, Rect r) {
-        /**
-         * Date: Feb 25, 2014
-         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-         *
-         * TietoTODO: add posibility to relayout only own window
-         */
-//        enforceCallingPermission(android.Manifest.permission.MANAGE_ACTIVITY_STACKS,
-//                "resizeStackInfo()");
         long ident = Binder.clearCallingIdentity();
         try {
             Slog.v(TAG, "RelayoutWindow: " + stackId + " pos:" + r);
@@ -19959,34 +19951,24 @@ public final class ActivityManagerService extends ActivityManagerNative
         return succeed;
     }
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Method for closing application by stackbox id and closing their tasks.
-     */
     @Override
     public boolean closeActivity(int stackId) {
         return closeActivity(stackId, true, 0);
     }
 
-    /**
-     * Date: Aug 29, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Setter for custom maximized window size of maximize button on window
-     */
+    @Override
+    public void closeActivityFocused() {
+        int stackId = getFocusedStackId();
+        if (stackId != HOME_STACK_ID) {
+            closeActivity(stackId);
+        }
+    }
+
     @Override
     public void setMaximizedWindowSize(Rect screen) {
         mMaximizedWindowSize = screen;
     }
 
-    /**
-     * Date: Aug 29, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Getter for custom maximized window size of maximize button on window
-     */
     @Override
     public Rect getMaximizedWindowSize() {
         return mMaximizedWindowSize;

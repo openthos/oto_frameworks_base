@@ -582,48 +582,14 @@ public interface IActivityManager extends IInterface {
 
     public boolean killStartupMenu() throws RemoteException;
 
-    /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Change window position
-     * @param stackId identifies stack (stackbox id
-     * @param r new window position
-     * @return true on success
-     * @throws RemoteException
-     */
     public boolean relayoutWindow(int stackId, Rect r) throws RemoteException;
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Close application in window.
-     *
-     * @param stackId identifies stack (stackbox id)
-     * @return true on success
-     * @throws RemoteException
-     */
     public boolean closeActivity(int stackId) throws RemoteException;
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Setter for custow maximized window size size of application.
-     *
-     * @param rect Takes a parameters of window (in Rect) of application
-     */
+    public void closeActivityFocused() throws RemoteException;
+
     public void setMaximizedWindowSize(Rect rect) throws RemoteException;
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Getter for custom maximized window size of application.
-     *
-     * @return Rect of window
-     */
     public Rect getMaximizedWindowSize() throws RemoteException;
 
     String descriptor = "android.app.IActivityManager";
@@ -810,36 +776,9 @@ public interface IActivityManager extends IInterface {
     int GET_ACTIVITY_DISPLAY_ID_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+184;
     int DELETE_ACTIVITY_CONTAINER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+185;
 
-    /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Transaction for changing window position
-     */
     int RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+186;
-
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Transaction for closing application in window
-     */
     int CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+187;
-
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Transaction for setting custom maximized window size.
-     */
     int SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
-
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Transaction for getting maximized window size.
-     */
     int GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
 
     int GET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+190;
@@ -850,6 +789,8 @@ public interface IActivityManager extends IInterface {
     int STARTUP_MENU_ACTIVITY_KILL = IBinder.FIRST_CALL_TRANSACTION+193;
     int UNSET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+194;
     int FOCUS_RECENT_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+195;
+
+    int CLOSE_ACTIVITY_FOCUSED_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+196;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

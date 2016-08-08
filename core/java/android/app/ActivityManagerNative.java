@@ -2431,12 +2431,6 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-        /**
-         * Date: Feb 25, 2014
-         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-         *
-         * Change window position
-         */
         case RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
@@ -2449,12 +2443,6 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-        /**
-         * Date: Aug 28, 2014
-         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-         *
-         * Close activity in window
-         */
         case CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
@@ -2465,12 +2453,13 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-        /**
-         * Date: Aug 28, 2014
-         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-         *
-         * Set maximized size of application in window
-         */
+        case CLOSE_ACTIVITY_FOCUSED_WITH_WINDOW_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            closeActivityFocused();
+            reply.writeNoException();
+            return true;
+        }
+
         case SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             Rect r = new Rect();
@@ -2480,12 +2469,6 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-        /**
-         * Date: Aug 28, 2014
-         * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-         *
-         * Get maximized size of application in window
-         */
         case GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             Rect r = getMaximizedWindowSize();
@@ -5669,12 +5652,6 @@ class ActivityManagerProxy implements IActivityManager
         return ret[0];
     }
 
-    /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Change window position
-     */
     public boolean relayoutWindow(int stackId, Rect r) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
@@ -5691,12 +5668,6 @@ class ActivityManagerProxy implements IActivityManager
         return ret[0];
     }
 
-    /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Close activity in window
-     */
     public boolean closeActivity(int stackId) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
@@ -5711,12 +5682,16 @@ class ActivityManagerProxy implements IActivityManager
         return ret[0];
     }
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Setter for custom maximized window size.
-     */
+    public void closeActivityFocused() throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        mRemote.transact(CLOSE_ACTIVITY_FOCUSED_WITH_WINDOW_TRANSACTION, data, reply, 0);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
+
     public void setMaximizedWindowSize(Rect screen) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
@@ -5728,12 +5703,6 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
-    /**
-     * Date: Aug 28, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Getter for custom maximized window size.
-     */
     public Rect getMaximizedWindowSize() throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
