@@ -3391,6 +3391,8 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private boolean applyAnimationLocked(AppWindowToken atoken,
             WindowManager.LayoutParams lp, int transit, boolean enter, boolean isVoiceInteraction) {
+        return false;
+        /*
         // Only apply an animation if the display isn't frozen.  If it is
         // frozen, there is no reason to animate and it can cause strange
         // artifacts when we unfreeze the display if some different animation
@@ -3445,6 +3447,7 @@ public class WindowManagerService extends IWindowManager.Stub
         }
 
         return atoken.mAppAnimator.animation != null;
+        */
     }
 
     // -------------------------------------------------------------
