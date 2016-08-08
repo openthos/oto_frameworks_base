@@ -973,4 +973,6 @@
 
     <!--quick setting Screenshot-->
     <string name="quick_settings_screenshot_label">"Screenshot"</string>
+    <string name="quick_settings_projection_label">"Projection"</string>
+    <string name="quick_settings_isolation_mode_label">"Isolation Mode"</string>
 </resources>

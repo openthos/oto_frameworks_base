@@ -386,4 +386,6 @@
     <string name="print_message">打印信息</string>
     <string name="print_manager">打印任务管理器</string>
     <string name="quick_settings_screenshot_label">"截屏"</string>
+    <string name="quick_settings_projection_label">"投影"</string>
+    <string name="quick_settings_isolation_mode_label">"隔离模式"</string>
 </resources>

@@ -118,7 +118,7 @@
 
     <!-- The default tiles to display in QuickSettings -->
     <string name="quick_settings_tiles_default" translatable="false">
-        screenshot,airplane,cast,setting
+        screenshot,isolationmode,projection,setting
     </string>
 
     <!-- The tiles to display in QuickSettings -->
