@@ -29,6 +29,14 @@
     <item quantity="one" msgid="3969335317929254918">"概览中有 1 个屏幕"</item>
     <item quantity="other" msgid="5523506463832158203">"概览中有 %d 个屏幕"</item>
   </plurals>
+
+    <string name="status_bar_maxmize">最大化窗口</string>
+    <string name="status_bar_minimize">最小化窗口</string>
+    <string name="status_bar_dock">固定到状态栏</string>
+    <string name="status_bar_undock">解除固定</string>
+    <string name="status_bar_open">打开应用</string>
+    <string name="status_bar_close">关闭应用</string>
+
     <string name="status_bar_no_notifications_title" msgid="4755261167193833213">"无通知"</string>
     <string name="status_bar_ongoing_events_title" msgid="1682504513316879202">"正在进行的"</string>
     <string name="status_bar_latest_events_title" msgid="6594767438577593172">"通知"</string>

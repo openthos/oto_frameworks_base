@@ -148,6 +148,14 @@ public class PhoneStatusBarView extends PanelBar {
     }
 
     @Override
+    public boolean onHoverEvent(MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+            ActivityKeyView.dismissDialog(true);
+        }
+        return false;
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if (checkValidEvent((int)event.getX()) == false) {
@@ -202,7 +210,7 @@ public class PhoneStatusBarView extends PanelBar {
                 } catch (Exception e) {
                 }
             }
-            ActivityKeyView.dismissRBM();
+            //ActivityKeyView.dismissDialog();
             if (mNotificationPanel.getVisibility() == View.VISIBLE) {
                 mBar.makeExpandedInvisible();
             }

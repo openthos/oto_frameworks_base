@@ -65,10 +65,10 @@
 
     <string name="status_bar_maxmize">Maxmize window</string>
     <string name="status_bar_minimize">Minimize window</string>
-    <string name="status_bar_dock">Dock to statusbar</string>
-    <string name="status_bar_undock">Undock from statusbar</string>
-    <string name="status_bar_open">Open window</string>
-    <string name="status_bar_close">Close window</string>
+    <string name="status_bar_dock">Dock</string>
+    <string name="status_bar_undock">Undock</string>
+    <string name="status_bar_open">Open application</string>
+    <string name="status_bar_close">Close application</string>
     <!-- The label in the bar at the top of the status bar when there are no notifications
          showing.  [CHAR LIMIT=40]-->
     <string name="status_bar_no_notifications_title">No notifications</string>

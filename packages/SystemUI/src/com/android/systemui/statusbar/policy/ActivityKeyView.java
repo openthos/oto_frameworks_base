@@ -34,6 +34,10 @@ import android.view.MotionEvent;
 import android.content.pm.PackageManager;
 
 public class ActivityKeyView extends ImageView {
+
+    private static final int DIALOG_OFFSET_PART = 3; // divide 3
+    private static final int DIALOG_PADDING_TIPS = 10; // divide 3
+
     OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
     OnClickListener mDock;      /* Use to dock related StatusbarActivity in status bar. */
@@ -41,8 +45,9 @@ public class ActivityKeyView extends ImageView {
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
     View mFocusedView;
 
-    String TAG = "ActivityKeyView"; /* Log Tag. */
-    public static Dialog mRBM = null;   /* Define right button menu as a Singleton dialog. */
+    private static final String TAG = "ActivityKeyView";
+    private static Dialog mDialog = null;   /* Define a Singleton dialog as tools. */
+    private static boolean mShowRBM = false;
 
     public ActivityKeyView(Context context) {
         super(context);
@@ -60,12 +65,11 @@ public class ActivityKeyView extends ImageView {
     }
 
     public void initListener() {
-        /* Init all OnClickListener. */
         mOpen = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 runApkByPkg();
-                mRBM.dismiss();
+                dismissDialog();
             }
         };
 
@@ -77,7 +81,7 @@ public class ActivityKeyView extends ImageView {
                 } catch (RemoteException e) {
                     Log.e(TAG, "Close button failes", e);
                 }
-                mRBM.dismiss();
+                dismissDialog();
             }
         };
 
@@ -85,7 +89,7 @@ public class ActivityKeyView extends ImageView {
             @Override
             public void onClick(View v) {
                 mActivity.mIsDocked = true;
-                mRBM.dismiss();
+                dismissDialog();
             }
         };
 
@@ -93,10 +97,12 @@ public class ActivityKeyView extends ImageView {
             @Override
             public void onClick(View v) {
                 mActivity.mIsDocked = false;
-                mRBM.dismiss();
+                dismissDialog();
                 removeFromRoot();
             }
         };
+
+        setOnHoverListener(new HoverListener());
     }
 
     public void removeFromRoot() {
@@ -124,10 +130,9 @@ public class ActivityKeyView extends ImageView {
         mActivity.mApkRun = false;
     }
 
-    /* Build right button menu consider about
-       the state of realted StatusbarActivity. */
     public View getRbmView() {
-        LayoutInflater li = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li =
+                        (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(mActivity.mIsDocked) {
             if(mActivity.mApkRun) {
                 return buildRbmDockedRun(li);
@@ -166,27 +171,55 @@ public class ActivityKeyView extends ImageView {
         return rbmRun;
     }
 
-    /* Only new RBM in first get. */
-    public static Dialog getRBM(Context context) {
-        if(mRBM == null) {
-            mRBM = new Dialog(context);
-            mRBM.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            Window rbmWindow = mRBM.getWindow();
-            rbmWindow.setType(2008);
-        }
-        return mRBM;
+    public static void dismissDialog() {
+        dismissDialog(false);
     }
 
-    /* Make sure RMB can be dismiss by other (especially by statusbar). */
-    public static void dismissRBM() {
-        if(mRBM != null) {
-            if(mRBM.isShowing()) {
-                mRBM.dismiss();
-            }
+    public static void dismissDialog(boolean fromHover) {
+        if (fromHover && mShowRBM) {
+            return;
         }
+        mShowRBM = false;
+        if ((mDialog == null) || !mDialog.isShowing()) {
+            return;
+        }
+        mDialog.dismiss();
     }
 
-    /* Use to get related StatubarActivity from PhoneStatusBar. */
+    public static boolean preventResponseHover() {
+        return mShowRBM && mDialog.isShowing();
+    }
+
+    private void showDialog(View view, int padding) {
+        if(mDialog == null) {
+            mDialog = new Dialog(mContext);
+            mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
+        }
+        mDialog.setContentView(view);
+
+        Window dw = mDialog.getWindow();
+        WindowManager.LayoutParams lp = dw.getAttributes();
+        int dpx = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                                                  .getDefaultDisplay().getWidth();
+        int dpy = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                                                 .getDefaultDisplay().getHeight();
+        int iconSize = getResources().getDimensionPixelSize(R.dimen.status_bar_icon_size_big);
+        int[] location = new int[2];
+
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        getLocationOnScreen(location);
+        lp.x = location[0] - dpx / 2 + iconSize - iconSize / DIALOG_OFFSET_PART;
+        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() - padding;
+        lp.width = LayoutParams.WRAP_CONTENT;
+        lp.height = LayoutParams.WRAP_CONTENT;
+
+        dw.setAttributes(lp);
+        mDialog.show();
+    }
+
     public void setStatusbarActivity(StatusbarActivity sa) {
         mActivity = sa;
     }
@@ -207,7 +240,6 @@ public class ActivityKeyView extends ImageView {
 
     public void resizeStack(){
         if(mActivity.mHiden){
-            //Resize
             try {
                 ActivityManagerNative.getDefault().relayoutWindow(mActivity.mStackId,
                                                                   mActivity.mRestoreRect);
@@ -218,7 +250,6 @@ public class ActivityKeyView extends ImageView {
     }
 
     public void runApkByPkg() {
-        //Run APK by PkgName
         try {
             PackageManager manager = mContext.getPackageManager();
             Intent lanuch = new Intent();
@@ -234,38 +265,10 @@ public class ActivityKeyView extends ImageView {
         int button = e.getButtonState();
         int action = e.getAction();
 
-        /* Show RBM when right button is clicked. */
         if(button == MotionEvent.BUTTON_SECONDARY && action == MotionEvent.ACTION_DOWN) {
-
-            /* Set Rbm View to RBM dialog. */
-            Dialog dialog = getRBM(mContext);
-            View rbm = getRbmView();
-            dialog.setContentView(rbm);
-
-            Window dw = dialog.getWindow();
-            WindowManager.LayoutParams lp = dw.getAttributes();
-
-            /* Measure rbm by force to get real width and height. */
-            int dpx = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
-                                                                      .getDefaultDisplay().getWidth();
-            int dpy = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
-                                                                     .getDefaultDisplay().getHeight();
-            int w = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-            int h = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-            rbm.measure(w, h);
-
-            /* Compute location by ActivityKeyView's location and rbm's size. */
-            int[] location = new int[2];
-            this.getLocationOnScreen(location);
-            lp.x = location[0] - dpx/2;
-            lp.y = location[1] - dpy/2 - rbm.getMeasuredHeight() - rbm.getMeasuredHeight()/2;
-            lp.width = LayoutParams.WRAP_CONTENT;
-            lp.height = LayoutParams.WRAP_CONTENT;
-
-            dw.setAttributes(lp);
-            dialog.show();
-
-            /* Return true to finish this MotionEvent. */
+            dismissDialog();
+            mShowRBM = true;
+            showDialog(getRbmView(), 0);
             return true;
         }
         if(action == MotionEvent.ACTION_DOWN) {
@@ -285,5 +288,28 @@ public class ActivityKeyView extends ImageView {
 
     public void setFocused(boolean focused) {
         mFocusedView.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private class HoverListener implements OnHoverListener {
+        @Override
+        public boolean onHover(View useless, MotionEvent event){
+            if (preventResponseHover()) {
+                return false;
+            }
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    View view = ((LayoutInflater) mContext.getSystemService(
+                                                           Context.LAYOUT_INFLATER_SERVICE))
+                                     .inflate(R.layout.status_bar_activity_hover_tips, null, false);
+                    TextView v = (TextView) view.findViewById(R.id.akv_tips);
+                    if (v != null) {
+                        v.setText(PackageManager.getTitleByPkg(getContext(), mActivity.mPkgName));
+                    }
+                    dismissDialog();
+                    showDialog(view, DIALOG_PADDING_TIPS);
+                    break;
+            }
+            return false;
+        }
     }
 }

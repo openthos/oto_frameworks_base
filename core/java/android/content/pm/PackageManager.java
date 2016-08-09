@@ -4104,4 +4104,22 @@ public abstract class PackageManager {
             }
         }
     }
+
+    public static CharSequence getTitleDefault(Context context) {
+        PackageManager pm = context.getPackageManager();
+        ApplicationInfo ai = context.getApplicationInfo();
+        return pm.getApplicationLabel(ai);
+    }
+
+    public static CharSequence getTitleByPkg(Context context, String pkg) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            final ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+            if (ai != null) {
+                return pm.getApplicationLabel(ai);
+            }
+        } catch (NameNotFoundException e) {
+        }
+        return getTitleDefault(context);
+    }
 }
