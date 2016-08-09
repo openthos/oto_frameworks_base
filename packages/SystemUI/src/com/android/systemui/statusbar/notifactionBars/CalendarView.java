@@ -44,7 +44,7 @@ public class CalendarView extends ViewFlipper implements
     private Animation mPushRightIn;
     private Animation mPushRightOut;
 
-    private int ROWS_TOTAL = 6;
+    private int ROWS_TOTAL = 5;
     private int COLS_TOTAL = 7;
     private String[][] mDates = new String[6][7];
     private float mTB;
@@ -62,6 +62,8 @@ public class CalendarView extends ViewFlipper implements
 
     private Map<String, Integer> mMarksMap = new HashMap<String, Integer>();
     private Map<String, Integer> mDayBgColorMap = new HashMap<String, Integer>();
+
+    private int TEXT_SIZE=12;
 
     public CalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -110,10 +112,9 @@ public class CalendarView extends ViewFlipper implements
         LinearLayout title = new LinearLayout(getContext());
         title.setBackgroundColor(COLOR_TX_WEEK_TITLE);
         title.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1,  0, 0.5f);
+        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1,  0, 1);
         Resources res = getResources();
         mTB = res.getDimension(R.dimen.linear_length_unit_over_the_weekend_padding);
-        layout.setMargins(0, 0, 0, (int) (mTB * 1.2));
         title.setLayoutParams(layout);
         oneCalendar.addView(title);
 
@@ -122,6 +123,7 @@ public class CalendarView extends ViewFlipper implements
             view.setGravity(Gravity.CENTER);
             view.setText(weekday[i]);
             view.setTextColor(COLOR_BK_DAGE_GRAY);
+            view.setTextSize(TEXT_SIZE);
             view.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1));
             title.addView(view);
         }
@@ -209,7 +211,8 @@ public class CalendarView extends ViewFlipper implements
                         group.addView(view);
                     }
                     view.setText(Integer.toString(lastMonthDay));
-                     view.setTextColor(COLOR_BK_DAGE_GRAY);
+                    view.setTextColor(COLOR_BK_DAGE_GRAY);
+                    view.setTextSize(TEXT_SIZE);
                     mDates[0][k] = format(new Date(year, month, lastMonthDay));
                     if (mDayBgColorMap.get(mDates[0][k]) != null) {
                     } else {
@@ -230,6 +233,7 @@ public class CalendarView extends ViewFlipper implements
                     view = new TextView(getContext());
                     view.setLayoutParams(params);
                     view.setGravity(Gravity.CENTER);
+                    view.setTextSize(TEXT_SIZE);
                     group.addView(view);
                 }
                 if (day <= lastDay) {
@@ -239,10 +243,7 @@ public class CalendarView extends ViewFlipper implements
                     if (mThisday.getDate() == day
                         && mThisday.getMonth() == mCalendarday.getMonth()
                         && mThisday.getYear() == mCalendarday.getYear()) {
-                        view.setText("Today");
-                        //view.setTextColor(COLOR_BK_TRANSPARENT);
-                        view.setTextColor(COLOR_TX_WEEK_RED);
-                        view.setBackgroundColor(Color.TRANSPARENT);
+                        view.setBackgroundColor(COLOR_BK_TRANSPARENT);
                     } else {
                          //COLOR_BK_DAGE_GRAY
                         //view.setTextColor(COLOR_TX_THIS_MONTH_DAY);

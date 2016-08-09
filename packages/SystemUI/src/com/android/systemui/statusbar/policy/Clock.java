@@ -41,6 +41,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import libcore.icu.LocaleData;
+import java.util.Date;
 
 /**
  * Digital clock for the status bar.
@@ -140,7 +141,7 @@ public class Clock extends TextView implements DemoMode {
     final void updateClock() {
         if (mDemoMode) return;
         mCalendar.setTimeInMillis(System.currentTimeMillis());
-        setText(getSmallTime());
+        setText(getSmallTime()+"\n"+getClockYear());
     }
 
     private final CharSequence getSmallTime() {
@@ -235,8 +236,12 @@ public class Clock extends TextView implements DemoMode {
                 mCalendar.set(Calendar.HOUR, hh);
                 mCalendar.set(Calendar.MINUTE, mm);
             }
-            setText(getSmallTime());
+            setText(getSmallTime()+"\n"+getClockYear());
         }
+    }
+    private String getClockYear() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        return sdf.format(new Date());
     }
 }
 

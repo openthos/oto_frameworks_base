@@ -67,8 +67,8 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         mCalendar = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
         TextView popupwindow_calendar_bt_enter = (TextView)
                                                mediaView.findViewById(R.id.popupwindow_calendar_bt_enter);
-        popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + "/"
-                                           + mCalendar.getCalendarMonth() + "/");
+        popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + "年"
+                                           + mCalendar.getCalendarMonth() + "月");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss EE");
         mStr = formatter.format(new Date());
         mHandler = new Handler() {
@@ -83,7 +83,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
             int years = Integer.parseInt(mDate.substring(0, mDate.indexOf("-")));
             int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + 1,
                                                          mDate.lastIndexOf("-")));
-            popupwindow_calendar_month.setText(years + "/" + month +"/");
+            popupwindow_calendar_month.setText(years + "年" + month +"月");
             mCalendar.showCalendar(years, month);
             mCalendar.setCalendarDayBgColor(mDate, R.drawable.statusbar_sound);
         }
@@ -115,7 +115,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
 
         mCalendar.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
             public void onCalendarDateChanged(int year, int month) {
-                popupwindow_calendar_month.setText(year + "/" + month +"/");
+                popupwindow_calendar_month.setText(year + "年" + month +"月");
             }
         });
 
@@ -134,6 +134,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         case R.id.popupwindow_calendar_bt_enter:
             mContext.startActivity(new Intent(Settings.ACTION_DATE_SETTINGS)
              .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            CalendarDialog.this.dismiss();
             break;
         case R.id.popupwindow_calendar_next_month:
             mCalendar.nextMonth();
@@ -145,9 +146,9 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     }
 
     public String showMonth(String str) {
-        return str.substring(0, 11);
+        String mWeek=mStr.substring(23,24);
+        return str.substring(0, 11)+" 星期"+mWeek;
     }
-
     public String showTime(String str) {
         String hh = str.substring(8, 10);
         String mm = str.substring(10, 12);
