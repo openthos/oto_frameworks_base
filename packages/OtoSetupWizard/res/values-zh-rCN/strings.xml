@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="str_next">下一步</string>
-    <string name="str_prev">上一步</string>
+    <string name="str_prev">返回</string>
     <string name="str_finish">完成</string>
     <string name="str_username">给自己取一个昵称</string>
     <string name="str_language">语言</string>

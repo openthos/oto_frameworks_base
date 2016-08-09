@@ -4,13 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class OpenthosIDRegisterActivity extends BaseActivity {
-    private Button mButtonFinish;
-    private Button mButtonCancel;
+    private TextView mFinish;
+    private TextView mCancel;
     private WebView mWebView;
     private  final String URL="http://dev.openthos.org/?q=user/register";
 
@@ -20,8 +22,8 @@ public class OpenthosIDRegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_openthos_id_register);
 
         this.mWebView = (WebView) findViewById(R.id.webview_register);
-        this.mButtonFinish = (Button) findViewById(R.id.button_register_finish);
-        this.mButtonCancel = (Button) findViewById(R.id.button_cancel);
+        mFinish = (TextView) findViewById(R.id.tv_register_finish);
+        mCancel = (TextView) findViewById(R.id.tv_cancel);
 
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.loadUrl(URL);
@@ -34,7 +36,7 @@ public class OpenthosIDRegisterActivity extends BaseActivity {
        //     }
        // });
 
-        this.mButtonFinish.setOnClickListener(new OnClickListener() {
+        mFinish.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putString("opethosid","xxxx@xx.com");
@@ -44,7 +46,7 @@ public class OpenthosIDRegisterActivity extends BaseActivity {
                 finish();
             }
         });
-        this.mButtonCancel.setOnClickListener(new OnClickListener() {
+        mCancel.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 Intent mIntent1 = new Intent();

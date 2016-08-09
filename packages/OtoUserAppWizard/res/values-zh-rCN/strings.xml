@@ -2,4 +2,7 @@
 <resources>
     <string name="str_finish">完成</string>
     <string name="str_cancel">取消</string>
+    <string name="common_title">请设置您的openthos</string>
+    <string name="register_openthos_title">注册 Openthos ID</string>
+    <string name="register_openthos_summary">Openthos ID 是您获得平openthos服务的唯一凭证,请牢记你的ID名称和密码.</string>
 </resources>
