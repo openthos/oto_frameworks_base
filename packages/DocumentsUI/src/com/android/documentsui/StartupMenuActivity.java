@@ -175,16 +175,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
             new mThread().start();
             mListView = (ListView) findViewById(R.id.lv_view);
-            Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
-            while (c.moveToNext()) {
-                int number = c.getInt(c.getColumnIndex("int"));
-                if (number != 0) {
-                    mListViewOpen = true;
-                }
-            }
-            if (mListViewOpen) {
-                queryCommonlyUsedSoftware();
-            }
+            queryCommonlyUsedSoftware();
         }
         class mThread extends Thread {
             public void run(){
@@ -558,7 +549,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         public static Date ConverToDate(String StrDate) throws Exception {
-            DateFormat df = new SimpleDateFormat("YYYY-MM-dd");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             return df.parse(StrDate);
         }
 

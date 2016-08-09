@@ -42,6 +42,8 @@ public class StartupMenuAdapter extends BaseAdapter {
                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistAppInfo = apps;
         this.isCheckedMap = isCheckedMap;
+        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mdb = mMsoh.getWritableDatabase();
     }
 
     @Override
@@ -75,8 +77,6 @@ public class StartupMenuAdapter extends BaseAdapter {
         AppInfo appInfo = (AppInfo) getItem(position);
         holder.appIcon.setImageDrawable(appInfo.getAppIcon());
         holder.tvAppLabel.setText(appInfo.getAppLabel());
-        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
-        mdb = mMsoh.getWritableDatabase();
         view.setOnGenericMotionListener(new View.OnGenericMotionListener() {
             @Override
             public boolean onGenericMotion(View view, MotionEvent motionEvent) {
