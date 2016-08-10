@@ -24,6 +24,7 @@
     android:id="@+id/notification_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:background="@android:color/transparent"
     >
 
@@ -67,33 +68,37 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:background="#99ffffff">
                 <TextView
                     android:id="@+id/notification_center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="3dp"
-                    android:paddingTop="10dp"
+                    android:layout_centerVertical="true"
                     android:text="@string/notification_center"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
                  <Button
                     android:id="@+id/notificationManager"
-                    android:layout_width="wrap_content"
+                    android:layout_width="42dp"
                     android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/clearAll"
+                    android:layout_marginRight="8dp"
+                    android:layout_centerVertical="true"
                     android:background="@null"
                     android:text="@string/notification_manager"
-                    android:layout_toRightOf="@id/notification_center"
                     android:textSize="12sp" />
 
                 <Button
                     android:id="@+id/clearAll"
-                    android:layout_width="wrap_content"
+                    android:layout_width="42dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:background="@null"
                     android:text="@string/clear_all"
-                    android:layout_alignParentRight="true"
                     android:textSize="12sp" />
 
             </RelativeLayout>
@@ -117,8 +122,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="8dp">
+                android:layout_height="48dp"
+                android:padding="8dp"
+                android:background="#1affffff">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -134,6 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:paddingRight="8dp"
                     android:background="@null"
                     android:text="@string/print_manager"
