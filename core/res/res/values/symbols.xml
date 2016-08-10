@@ -2184,17 +2184,19 @@
   <java-symbol type="id" name="mw_decor_header" />
   <java-symbol type="id" name="mw_dialog_header" />
   <java-symbol type="id" name="mwOuterBorder" />
+  <java-symbol type="id" name="mwBackground" />
   <java-symbol type="id" name="mwIcon" />
   <java-symbol type="id" name="mwTitle" />
   <java-symbol type="color" name="mw_blue_decor" />
   <java-symbol type="color" name="mw_gray_decor" />
   <java-symbol type="color" name="mw_transparent_white" />
-  <java-symbol type="color" name="mw_white_border" />
+  <java-symbol type="color" name="mw_gray_border" />
   <java-symbol type="dimen" name="mw_outer_border" />
+  <java-symbol type="dimen" name="mw_outer_border_shadowless" />
   <java-symbol type="dimen" name="mw_header_border" />
   <java-symbol type="dimen" name="mw_dialog_border" />
   <java-symbol type="drawable" name="mw_outer_border" />
-  <java-symbol type="drawable" name="mw_outer_border_wide" />
+  <java-symbol type="drawable" name="mw_outer_border_shadowless" />
   <java-symbol type="drawable" name="mw_app_header_focused" />
   <java-symbol type="drawable" name="mw_app_header_unfocused" />
   <java-symbol type="drawable" name="mw_btn_add_content" />

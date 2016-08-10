@@ -18,14 +18,28 @@
 This is an optimized layout for a screen with a toolbar enabled.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mwOuterBorder"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mw_outer_border"
-    android:padding="@dimen/mw_outer_border"
-    android:orientation="vertical">
+    >
 
-    <include layout="@layout/mw_decor"/>
-    <include layout="@layout/screen_toolbar"/>
-</LinearLayout>
+    <ImageView
+        android:id="@+id/mwBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/mw_background"
+        android:scaleType="fitXY"
+        />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mwOuterBorder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/mw_outer_border"
+        android:padding="@dimen/mw_outer_border"
+        android:orientation="vertical">
+
+        <include layout="@layout/mw_decor"/>
+        <include layout="@layout/screen_toolbar"/>
+    </LinearLayout>
+</FrameLayout>

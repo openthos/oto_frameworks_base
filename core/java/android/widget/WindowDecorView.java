@@ -50,6 +50,12 @@ public class WindowDecorView extends FrameLayout {
         mWindow = window;
     }
 
+    public void setShadow(boolean hasShadow) {
+        if (mWindow != null) {
+            mWindow.setShadow(hasShadow);
+        }
+    }
+
     public boolean isMWWindow() {
         return mWindow.isMWWindow();
     }

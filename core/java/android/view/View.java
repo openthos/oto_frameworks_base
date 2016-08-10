@@ -17680,10 +17680,16 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             }
         }
 
-        if (mMayMSOfficeFirstSkipView) {
+        if (getViewRootImpl() != null) {
             View decor = getViewRootImpl().getView();
-            if (decor instanceof WindowDecorView) {
-                ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
+            if ((decor != null) && (decor instanceof WindowDecorView)) {
+                if (mMayMSOfficeFirstSkipView) {
+                    ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
+                }
+
+                if ((this instanceof TextureView) || (this instanceof SurfaceView)) {
+                    ((WindowDecorView) decor).setShadow(false);
+                }
             }
         }
 

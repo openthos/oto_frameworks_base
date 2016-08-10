@@ -1949,4 +1949,7 @@ public abstract class Window {
     public boolean isMWDialog() {
         return (mStackId > 0) && (mDialog != null);
     }
+
+    public void setShadow(boolean hasShadow) {
+    }
 }
