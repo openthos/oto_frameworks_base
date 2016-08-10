@@ -38,7 +38,7 @@ public class SetupWizardActivity extends BaseActivity {
     };
     private  TextView mChinese;
     private  TextView mEnglish;
-    private int chooseItem = CHOOSE_CHINA_ITEM;
+    private int chooseItem = 0;
     private static final String PROPERTY_NATIVEBRIDGE = "persist.sys.nativebridge";
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,21 +83,14 @@ public class SetupWizardActivity extends BaseActivity {
                 switch(chooseItem){
                     case CHOOSE_CHINA_ITEM:
                         mCurrentLocale = Locale.CHINA;
-                        new Handler().post(new Runnable() {
-                            public void run() {
-                                updateLocale(mCurrentLocale);
-                            }
-                        });
+                        updateLocale(mCurrentLocale);
                         break;
                     case CHOOSE_ENGLISH_ITEM:
                         mCurrentLocale = Locale.US;
-                        new Handler().post(new Runnable() {
-                            public void run() {
-                                updateLocale(mCurrentLocale);
-                            }
-                        });
+                        updateLocale(mCurrentLocale);
                         break;
                     default:
+                        updateLocale(mCurrentLocale);
                         break;
                 }
                 SetupWizardActivity.this.startActivity(SetupWizardActivity.this.buildWifiSetupIntent());
