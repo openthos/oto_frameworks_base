@@ -152,7 +152,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
-                android:layout_height="200dp" >
+                android:layout_height="220dp" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
@@ -172,19 +172,19 @@
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="100dp" />
 
             <!-- A view to reserve space for the collapsed stack -->
             <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->
             <View
                 android:id="@+id/reserve_notification_space"
-                android:layout_height="@dimen/min_stack_height"
+                android:layout_height="0dp"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/notifications_top_padding"
                 android:visibility="gone" />
 
             <View
-                android:layout_height="@dimen/notification_side_padding"
+                android:layout_height="0dp"
                 android:layout_width="match_parent"
                 android:visibility="gone" />
         </LinearLayout>
@@ -193,7 +193,7 @@
         <com.android.systemui.statusbar.phone.ObservableScrollView
             android:id="@+id/scroll_view"
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
             android:layout_gravity="bottom|center"
             android:scrollbars="none"
             android:overScrollMode="never"
@@ -204,7 +204,7 @@
         <ViewStub
             android:id="@+id/keyguard_user_switcher"
             android:layout="@layout/keyguard_user_switcher"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_width="match_parent"
             android:visibility="gone" />
 
@@ -220,7 +220,7 @@
 
     <com.android.systemui.statusbar.AlphaOptimizedView
         android:id="@+id/qs_navbar_scrim"
-        android:layout_height="96dp"
+        android:layout_height="0dp"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
         android:visibility="gone"
