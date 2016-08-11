@@ -126,7 +126,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private View  my_computer;
         private ImageView mIvArrowGray;
         private TextView mTvSortShow;
-
+        private LinearLayout mIvArrowWhite;
         @Override
         protected void onNewIntent(Intent intent) {
             super.onNewIntent(intent);
@@ -166,6 +166,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mIvArrowGray = (ImageView) findViewById(R.id.iv_arrow_gray);
             mTvSortShow = (TextView) findViewById(R.id.tv_sort_show);
             mEditText = (EditText) findViewById(R.id.et_text);
+            mIvArrowWhite = (LinearLayout) findViewById(R.id.iv_arrow_white);
+            mIvArrowWhite.setOnClickListener(this);
             mTvSortShow.setOnClickListener(this);
             imView.setOnClickListener(this);
             mEditText.setOnEditorActionListener(this);
@@ -399,7 +401,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 gv_view.setAdapter(mBrowseAppAdapter);
                 break;
             case R.id.tv_sort_show:
-                sortShow();
+                //sortShow();
                 break;
             case R.id.name_sort:
                 mEditText.setText("");
@@ -432,6 +434,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mPopupWindow.dismiss();
                 mEditText.setText("");
                 clickSort();
+                break;
+            case R.id.iv_arrow_white:
+                sortShow();
                 break;
             }
         }

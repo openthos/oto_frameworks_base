@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/ll_layout"
-    android:background="#e9edf0"
+    android:background="#f2e9edf0"
     android:orientation="vertical" >
 
 
@@ -44,7 +44,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:paddingLeft="16dp" >
 
             <TextView
                 android:id="@+id/my_computer"
@@ -89,22 +90,23 @@
                android:background="@drawable/search_background"
             -->
             <RelativeLayout
-                android:layout_marginTop="@dimen/px16"
-                android:layout_marginLeft="@dimen/px32"
-                android:layout_marginRight="@dimen/px32"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/px58"
+                android:layout_height="28dp"
                 android:background="#ffffff" >
 
                 <EditText
                     style="?android:attr/textViewStyle"
                     android:id="@+id/et_text"
                     android:imeOptions="actionSend"
-                    android:layout_width="@dimen/px336"
-                    android:layout_height="@dimen/px58"
-                    android:paddingLeft="16dp"
+                    android:layout_width="192dp"
+                    android:layout_height="28dp"
+                    android:paddingLeft="8dp"
+                    android:gravity="left|center_vertical"
                     android:hint="Software search"
-                    android:textSize="@dimen/px16"
+                    android:textSize="12sp"
                     android:maxLength="10"
                     android:minLines="1"
                     android:textCursorDrawable="@null"
@@ -115,8 +117,8 @@
                     android:id="@+id/iv_view"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:layout_width="@dimen/px34"
-                    android:layout_height="@dimen/px34"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:layout_marginRight="8dp"
                     android:layout_toRightOf="@id/et_text"
                     android:layout_centerVertical="true"
@@ -125,22 +127,22 @@
                 <View
                     android:id="@+id/line_view"
                     android:layout_toRightOf="@id/iv_view"
-                    android:layout_width="@dimen/px12"
+                    android:layout_width="4dp"
                     android:layout_height="match_parent"
-                    android:background="#e9edf0" />
+                    android:background="#f2e9edf0" />
 
-               <ImageView
+                <ImageView
                     android:id="@+id/iv_arrow_gray"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:layout_width="@dimen/px34"
-                    android:layout_height="@dimen/px34"
-                    android:layout_marginLeft="12dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@id/line_view"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_starter_down_arrow_gray" />
 
-               <TextView
+                <TextView
                     android:id="@+id/tv_sort_show"
                     android:onClick="SortShow"
                     android:layout_width="@dimen/px100"
@@ -148,30 +150,37 @@
                     android:layout_toRightOf="@id/iv_arrow_gray"
                     android:layout_centerVertical="true"
                     android:text="@string/click_sort"
+                    android:gravity="center"
                     android:textColor="#939aa3"
-                    android:textSize="@dimen/px24"  />
+                    android:textSize="12sp"  />
 
-                <ImageView
+                <LinearLayout
                     android:id="@+id/iv_arrow_white"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:layout_width="@dimen/px58"
-                    android:layout_height="@dimen/px58"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_starter_top_arrow_white"
-                    android:background="#e9edf0" />
+                    android:background="#e9edf0" >
 
+                    <ImageView
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_width="28dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_starter_top_arrow_white"
+                        android:background="#e9edf0" />
+                </LinearLayout>
 
             </RelativeLayout>
 
             <!-- android:verticalSpacing="10dip"
                 android:horizontalSpacing="10dip"  -->
             <GridView
-                android:layout_marginTop="@dimen/px16"
+                android:layout_marginTop="16dp"
                 android:id="@+id/gv_view"
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_width="match_parent"
+                android:layout_width="352dp"
                 android:layout_height="match_parent"
                 android:numColumns="4" />
         </LinearLayout>

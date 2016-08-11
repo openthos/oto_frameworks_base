@@ -19,7 +19,6 @@
     <style name="DialogWhenReallyLarge" parent="@*android:style/Theme.DeviceDefault.Light.Dialog.FixedSize" />
 
     <style name="Mstyle">
-        <item name="android:paddingLeft">@dimen/px16</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:drawablePadding">@dimen/px13</item>
