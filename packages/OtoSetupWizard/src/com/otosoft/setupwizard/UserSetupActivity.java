@@ -138,7 +138,9 @@ public class UserSetupActivity extends BaseActivity {
                     startActivity(intent);
                 }
                 else{
-                    Toast.makeText(UserSetupActivity.this, "you have null input or the twice password was not the same", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserSetupActivity.this,
+                            getText(R.string.toast_openthos_register_password_wrong),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

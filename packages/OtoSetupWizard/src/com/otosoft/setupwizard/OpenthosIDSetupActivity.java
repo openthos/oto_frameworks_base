@@ -69,10 +69,12 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                         String code = result.split(":")[1].split("\"")[1].trim();
                         if(CODE_WRONG_USERNAME.equals(code)) {
                             Toast.makeText(OpenthosIDSetupActivity.this,
-                                    "openthos Id is not invalid!",Toast.LENGTH_SHORT).show();
+                                    getText(R.string.toast_openthos_id_invalid),
+                                    Toast.LENGTH_SHORT).show();
                         } else if (CODE_WRONG_PASSWORD.equals(code)) {
                             Toast.makeText(OpenthosIDSetupActivity.this,
-                                    "passowrd is wrong!",Toast.LENGTH_SHORT).show();
+                                    getText(R.string.toast_openthos_password_wrong),
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             Intent intent = new Intent();
                             intent.setAction("com.android.wizard.FINISH");
@@ -81,7 +83,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                         break;
                     default:
                         Toast.makeText(OpenthosIDSetupActivity.this,
-                                "you can not connect the openthos web!",Toast.LENGTH_SHORT).show();
+                                getText(R.string.toast_network_not_connect),
+                                Toast.LENGTH_SHORT).show();
                         break;
                 }
             }
@@ -203,12 +206,9 @@ public class OpenthosIDSetupActivity extends BaseActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RG_REQUEST) {
-            if (resultCode == RESULT_CANCELED)
-                Toast.makeText(OpenthosIDSetupActivity.this, "you have canceled.",
-                               Toast.LENGTH_SHORT).show();
-            else if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(OpenthosIDSetupActivity.this,
-                               "you have register successfully!",
+                               getText(R.string.toast_openthos_register_cancel),
                                Toast.LENGTH_SHORT).show();
             }
         }
