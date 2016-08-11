@@ -40,6 +40,8 @@ public class UserSetupActivity extends BaseActivity {
     private String defaultComputerName;
     private String computerName;
     private String userName;
+    private String oldPassword;
+    private String newPassword;
     private static final String RO_PROPERTY_HOST = "ro.build.host";
     private static final String RO_PROPERTY_USER = "ro.build.user";
 
@@ -73,8 +75,6 @@ public class UserSetupActivity extends BaseActivity {
 //        if (!TextUtils.equals(userName, "\u673a\u4e3b")) {
 //            this.mEditTextUsername.setText(userName);
 //        }
-        final String oldPassword = this.mOldPassword.getText().toString().trim();
-        final String newPassword = this.mNewPassword.getText().toString().trim();
         devicePolicyManager = (DevicePolicyManager) this.getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         mFinish.setEnabled(!TextUtils.isEmpty(this.mEditTextUsername.getText().toString().trim()));
@@ -109,6 +109,8 @@ public class UserSetupActivity extends BaseActivity {
             public void onClick(View v) {
                 computerName = mComputername.getText().toString().trim();
                 userName = mEditTextUsername.getText().toString().trim();
+                oldPassword = mOldPassword.getText().toString().trim();
+                newPassword = mNewPassword.getText().toString().trim();
                 //grant permission
                 ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
 
@@ -127,7 +129,8 @@ public class UserSetupActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(oldPassword) && !TextUtils.isEmpty(newPassword) && oldPassword.equals(newPassword)) {
                     //reset password
                     //FIXME: it did not work well
-                    devicePolicyManager.resetPassword(oldPassword, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+                    //devicePolicyManager.resetPassword(oldPassword,
+                    //                            DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
 
                     ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
                     Intent intent = new Intent();
