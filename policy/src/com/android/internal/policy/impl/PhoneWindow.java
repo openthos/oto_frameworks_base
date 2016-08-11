@@ -144,6 +144,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
     private final static int MW_WINDOW_RESIZE_PADDING_FACTOR = 3; // 3 times
     private final static int MW_WINDOW_RESIZE_HEADER_FACTOR = 2; // 2 times
+    private final static int MW_WINDOW_RESIZE_LINE_WIDTH = 3;  // 3dp
 
     public final static int MW_WINDOW_RESIZE_NONE = 0;
     public final static int MW_WINDOW_RESIZE_TOP = 1;
@@ -3523,8 +3524,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
 
         public TouchListener(ResizeWindow rw) {
             mResizeWindow = rw;
-            mLeftDockFrame = new Rect(0, 0, mFullScreen.right/2, mFullScreen.bottom);
-            mRightDockFrame = new Rect(mFullScreen.right/2, 0, mFullScreen.right, mFullScreen.bottom);
+            mLeftDockFrame = new Rect(mFullScreen.left, mFullScreen.top,
+                                      mFullScreen.right / 2 - mBorderPadding
+                                                            - MW_WINDOW_RESIZE_LINE_WIDTH,
+                                      mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
+            mRightDockFrame = new Rect(mFullScreen.right / 2 - mBorderPadding, mFullScreen.top,
+                                       mFullScreen.right - MW_WINDOW_RESIZE_LINE_WIDTH,
+                                       mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
         }
 
         private boolean fitWindowInScreen(Rect pos) {
@@ -3604,10 +3610,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     int dy = rawY - mLastY;
                     Rect r = mResizeWindow.resize(mFrame, dx, dy, mResizeWays);
                     if (fitWindowInScreen(r)) {
-                        if ((mDialogMW == null) && (rawX <= mFullScreen.left + mBorderPadding)) {
+                        if ((mDialogMW == null)
+                            // fullscreen.left + padding is the left screen real border.
+                            && (rawX <= mFullScreen.left + 2 * mBorderPadding)) {
                             mNewFrame = mLeftDockFrame;
                         } else if ((mDialogMW == null)
-                                   && (rawX >= mFullScreen.right - mBorderPadding)) {
+                                   // fullscreen.right - padding is the right screen real border.
+                                   && (rawX >= mFullScreen.right - 2 * mBorderPadding)) {
                             mNewFrame = mRightDockFrame;
                         } else {
                             if (mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
