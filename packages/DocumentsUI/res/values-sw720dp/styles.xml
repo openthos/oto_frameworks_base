@@ -19,14 +19,13 @@
     <style name="DialogWhenReallyLarge" parent="@*android:style/Theme.DeviceDefault.Light.Dialog.FixedSize" />
 
     <style name="Mstyle">
-        <item name="android:layout_marginLeft">@dimen/px16</item>
         <item name="android:paddingLeft">@dimen/px16</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:drawablePadding">@dimen/px12</item>
-        <item name="android:textSize">@dimen/px16</item>
+        <item name="android:drawablePadding">@dimen/px13</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/px48</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>

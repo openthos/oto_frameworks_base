@@ -14,7 +14,7 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:layout_width="@dimen/px180"
+            android:layout_width="@dimen/dp180"
             android:layout_height="match_parent"
             android:background="#5a41a2" >
 
@@ -22,26 +22,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="@dimen/px16"
-                android:paddingLeft="@dimen/px24"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
                 android:orientation="vertical" >
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/px40"
-                android:textSize="@dimen/px16"
+                android:layout_height="40dp"
+                android:textSize="12sp"
                 android:text="@string/common_application" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
 
             <ListView
                 android:id="@+id/lv_view"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/px450"
                 android:divider="#00000000"
-                android:dividerHeight="5dp" />
+                android:dividerHeight="16dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -54,7 +50,7 @@
                 android:id="@+id/my_computer"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_computer"
-                android:text="@string/my_computer" />
+                android:text="@string/file_manager" />
 
             <View
                 android:layout_width="match_parent"
@@ -75,7 +71,7 @@
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_power"
                 android:layout_marginBottom="10dp"
-                android:text="@string/power_off" />
+                android:text="@string/power_source" />
             </LinearLayout>
         </RelativeLayout>
 
