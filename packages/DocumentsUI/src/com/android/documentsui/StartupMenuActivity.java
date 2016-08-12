@@ -94,10 +94,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
-        public static final int FILTER_THIRD_APP_TYPE_X = 192;
-        public static final int FILTER_THIRD_APP_TYPE_Y = 840;
-        public static final int FILTER_THIRD_APP_TYPE_UI_X = 130;
-        public static final int FILTER_THIRD_APP_TYPE_UI_Y = 130;
+        public static final int FILTER_THIRD_APP_TYPE_X = 260;
+        public static final int FILTER_THIRD_APP_TYPE_Y = 845;
+        public static final int FILTER_THIRD_APP_TYPE_UI_X = 153;
+        public static final int FILTER_THIRD_APP_TYPE_UI_Y = 125;
 
         public static StartMenuDialog mStartMenuDialog;
         public static List<AppInfo> mlistAppInfo = null;
@@ -632,7 +632,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             layout.addView(tv);
 
             mPopupWindow = new PopupWindow(layout, FILTER_THIRD_APP_TYPE_UI_X,
-                                           FILTER_THIRD_APP_TYPE_UI_X);
+                                           FILTER_THIRD_APP_TYPE_UI_Y);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());

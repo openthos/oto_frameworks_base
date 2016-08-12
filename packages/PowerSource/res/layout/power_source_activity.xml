@@ -11,7 +11,7 @@
         android:layout_width="536dp"
         android:layout_height="179dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:background="#aa000000"
+        android:background="@drawable/ic_power_background"
         android:orientation="vertical" >
 
         <ImageView
@@ -97,6 +97,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop"
+                    android:layout_gravity="center_horizontal"
                     android:src="@drawable/ic_restart" />
 
                 <TextView

@@ -42,11 +42,9 @@
     </style>
 
     <style name="PowerStyle">
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/px10</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:drawablePadding">@dimen/px10</item>
-        <item name="android:textSize">@dimen/px16</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/px50</item>
         <item name="android:singleLine">true</item>
