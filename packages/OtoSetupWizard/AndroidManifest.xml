@@ -47,5 +47,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="com.otosoft.tools.myprovider"
+            android:name="com.otosoft.tools.MyProvider"
+            android:exported="true"/>
     </application>
 </manifest>
