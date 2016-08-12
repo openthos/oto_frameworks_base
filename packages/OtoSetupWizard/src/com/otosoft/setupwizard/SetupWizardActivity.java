@@ -46,7 +46,8 @@ public class SetupWizardActivity extends BaseActivity {
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         if (mCurrentLocale == null) {
-            mCurrentLocale = Locale.CHINA;
+            //mCurrentLocale = Locale.CHINA; //for multiwindow branch
+            mCurrentLocale = Locale.US; //for multiwin-english branch
             updateLocale(mCurrentLocale);
         }
         setContentView(R.layout.activity_setupwizard);
