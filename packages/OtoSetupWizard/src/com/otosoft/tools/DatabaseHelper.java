@@ -18,8 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String sql = "create table selectState(_id integer primary key autoincrement,
-                                               appPackage varchar, state int)";
+        String sql = "create table selectState(_id integer primary key autoincrement,"
+                                              + "appPackage varchar, state int)";
         sqLiteDatabase.execSQL(sql);
     }
 
