@@ -85,7 +85,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                                                          mDate.lastIndexOf("-")));
             popupwindow_calendar_month.setText(years + "年" + month +"月");
             mCalendar.showCalendar(years, month);
-            mCalendar.setCalendarDayBgColor(mDate, R.drawable.statusbar_sound);
+            mCalendar.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
         }
 
         List<String> list = new ArrayList<String>();
@@ -107,7 +107,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                 } else {
                     mCalendar.removeAllBgColor();
                     mCalendar.setCalendarDayBgColor(dateFormat,
-                    R.drawable.statusbar_sound);
+                    R.drawable.status_bar_calendar_background);
                     mDate = dateFormat;
                 }
             }
