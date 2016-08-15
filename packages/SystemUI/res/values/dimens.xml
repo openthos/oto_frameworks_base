@@ -169,12 +169,12 @@
     <!-- The size of the gesture span needed to activate the "pull" notification expansion -->
     <dimen name="pull_span_min">25dp</dimen>
 
-    <dimen name="qs_tile_height">88dp</dimen>
+    <dimen name="qs_tile_height">68dp</dimen>
     <dimen name="qs_tile_icon_size">28dp</dimen>
     <dimen name="qs_tile_text_size">12sp</dimen>
     <dimen name="qs_tile_divider_height">1dp</dimen>
     <dimen name="qs_panel_padding">16dp</dimen>
-    <dimen name="qs_dual_tile_height">112dp</dimen>
+    <dimen name="qs_dual_tile_height">92dp</dimen>
     <dimen name="qs_dual_tile_padding_vertical">8dp</dimen>
     <dimen name="qs_dual_tile_padding_horizontal">6dp</dimen>
     <dimen name="qs_tile_padding_top">14dp</dimen>
@@ -566,4 +566,9 @@
 
     <!--Linear length unit over the weekend in the calendar -->
     <dimen name="linear_length_unit_over_the_weekend_padding">10dp</dimen>
+
+    <!--Icon top padding of Quick Settings Tile" -->
+    <dimen name="quick_settings_tile_icon_top_padding">16dp</dimen>
+    <!-- Label top padding of Quick Settings Tile -->
+    <dimen name="quick_settings_tile_label_top_padding">2dp</dimen>
 </resources>

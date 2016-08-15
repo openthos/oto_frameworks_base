@@ -24,7 +24,7 @@
     android:id="@+id/notification_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="12dp"
     android:background="@android:color/transparent"
     >
 
@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:padding="8dp"
-                android:background="#99ffffff">
+                android:background="#1affffff">
                 <TextView
                     android:id="@+id/notification_center"
                     android:layout_width="wrap_content"

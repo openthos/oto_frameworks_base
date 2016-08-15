@@ -259,12 +259,13 @@ public class QSTileView extends ViewGroup {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int w = getMeasuredWidth();
         final int h = getMeasuredHeight();
+        final Resources res = mContext.getResources();
 
         layout(mTopBackgroundView, 0, mTileSpacingPx);
 
-        int top = 0;
+        int top = res.getDimensionPixelSize(R.dimen.quick_settings_tile_icon_top_padding);
         top += mTileSpacingPx;
-        top += mTilePaddingTopPx;
+        //top += mTilePaddingTopPx;
         final int iconLeft = (w - mIcon.getMeasuredWidth()) / 2;
         layout(mIcon, iconLeft, top);
         if (mRipple != null) {
@@ -272,7 +273,9 @@ public class QSTileView extends ViewGroup {
 
         }
         top = mIcon.getBottom();
-        top += mTilePaddingBelowIconPx;
+        //top += mTilePaddingBelowIconPx;
+        top +=res.getDimensionPixelSize(R.dimen.quick_settings_tile_label_top_padding);
+
         if (mDual) {
             layout(mDivider, 0, top);
             top = mDivider.getBottom();
