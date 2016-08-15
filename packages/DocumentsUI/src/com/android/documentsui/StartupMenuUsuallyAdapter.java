@@ -53,7 +53,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         }
         AppInfo appInfo = (AppInfo) getItem(position);
         holder.appIcon.setImageDrawable(appInfo.getAppIcon());
-        holder.tvAppLabel.setText(appInfo.getAppLabel());
+        holder.tvAppLabel.setText(getAppName(appInfo.getAppLabel()));
         // holder.tvPkgName.setText(appInfo.getPkgName());
         return view;
     }
@@ -68,5 +68,13 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
             this.tvAppLabel = (TextView) view.findViewById(R.id.list_package_name);
             // this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
+    }
+
+    private String getAppName(String str) {
+        String appName = str;
+        if (str.length() > 10) {
+            appName = str.substring(0,10) + "...";
+        }
+        return appName;
     }
 }
