@@ -1,7 +1,9 @@
 package com.otosoft.setupwizard;
 
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemProperties;
@@ -19,6 +21,7 @@ import com.android.internal.app.LocalePicker;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class SetupWizardActivity extends BaseActivity {
     private TextView mNext;
@@ -27,8 +30,11 @@ public class SetupWizardActivity extends BaseActivity {
     private static final int CHOOSE_CHINA_ITEM = 1;
     private static final int CHOOSE_ENGLISH_ITEM = 2;
     private static final int DEFAULT_SLEEP_TIME = 1800000; // 30 min -- 1800 seconds
+    private static final String HOURS_24 = "24";
+    private static final String CHINA_TIME_ZONE = "GMT+8:00";
     private int noSelectedBg;
     private int selectedBg;
+    private TimeZone defualtTimeZone;
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
             if (SetupWizardActivity.this.mNext != null) {
@@ -56,6 +62,12 @@ public class SetupWizardActivity extends BaseActivity {
         SetupWizardActivity.this.sendBroadcast(intent1);
         Settings.System.putInt(getContentResolver(),
                 android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);
+        //set default timezone
+        defualtTimeZone = TimeZone.getTimeZone(CHINA_TIME_ZONE);
+        final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setTimeZone(defualtTimeZone.getID());
+        //set time 24 hour
+        Settings.System.putString(getContentResolver(), Settings.System.TIME_12_24, HOURS_24);
         this.mChinese = (TextView) findViewById(R.id.tv_chinese);
         this.mEnglish = (TextView) findViewById(R.id.tv_english);
         Resources res = getBaseContext().getResources();
