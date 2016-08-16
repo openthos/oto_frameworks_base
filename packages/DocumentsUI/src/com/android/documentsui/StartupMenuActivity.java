@@ -102,7 +102,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static StartMenuDialog mStartMenuDialog;
         public static List<AppInfo> mlistAppInfo = null;
         public static StartupMenuActivity StartupMenuActivity;
-        private List<AppInfo> mlistViewAppInfo = null;
+        public static  List<AppInfo> mlistViewAppInfo = null;
         private Map<Integer, Boolean> isCheckedMap = null;
 
         private Context mContext;
@@ -262,17 +262,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
                                                                 mlistViewAppInfo);
                 mListView.setAdapter(mUsuallyAdapter);
-                mListView.setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        String pkgName = mlistViewAppInfo.get(position).getPkgName();
-                        Intent intent = mlistViewAppInfo.get(position).getIntent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        doUpdate(pkgName);
-                    }
-                });
             }
         }
 

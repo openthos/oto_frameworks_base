@@ -116,7 +116,7 @@ public class StartupMenuAdapter extends BaseAdapter {
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartupMenuActivity.mStartMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
                     ,(int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
-                    ,START_MENU_RIGHT_MOUSE_UI_X, START_MENU_RIGHT_MOUSE_UI_Y);
+                    ,START_MENU_RIGHT_MOUSE_UI_X, START_MENU_RIGHT_MOUSE_UI_Y, 0);
     }
 
     class ViewHolder {

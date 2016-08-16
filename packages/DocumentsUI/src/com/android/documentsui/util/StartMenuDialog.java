@@ -37,6 +37,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
+    private int mListType;
 
     public StartMenuDialog(Context context) {
         super(context);
@@ -87,7 +88,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         }
     }
 
-    public void showDialog(int x, int y, int height, int width) {
+    public void showDialog(int x, int y, int height, int width, int type) {
         show();
         Window dialogWindow = getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -109,14 +110,22 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         lp.height = height;
         lp.alpha = 0.9f;
         dialogWindow.setAttributes(lp);
+        mListType = type;
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
         case R.id.tv_right_open:
-            String pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+            String pkgName;
+            Intent intent;
+            if (mListType == 0) {
+                pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+            } else {
+                pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+                intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+            }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",

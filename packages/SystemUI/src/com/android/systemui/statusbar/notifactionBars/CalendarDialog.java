@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Locale;
 
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarClickListener;
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarDateChangedListener;
@@ -44,6 +45,9 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     String mStr;
     private CalendarView mCalendar;
     private Handler mHandler;
+    public static final int TIME_CUT_BEGIN = 11;
+    public static final int WEEK_CUT_BEGIN = 22;
+    public static final int WEEK_CUT_END = 24;
     public CalendarDialog(Context context) {
         super(context);
     }
@@ -69,7 +73,8 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                                                mediaView.findViewById(R.id.popupwindow_calendar_bt_enter);
         popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + "年"
                                            + mCalendar.getCalendarMonth() + "月");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss EE");
+        SimpleDateFormat formatter = new SimpleDateFormat
+                                           ("yyyy年MM月dd日  HH:mm:s EEEE" , Locale.getDefault());
         mStr = formatter.format(new Date());
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
@@ -146,8 +151,34 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     }
 
     public String showMonth(String str) {
-        String mWeek=mStr.substring(23,24);
-        return str.substring(0, 11)+" 星期"+mWeek;
+        String mWeek;
+        switch (str.substring(WEEK_CUT_BEGIN, WEEK_CUT_END)){
+            case "周一":
+                mWeek = "星期一";
+                break;
+            case "周二":
+                mWeek = "星期二";
+                break;
+            case "周三":
+                mWeek = "星期三";
+                break;
+            case "周四":
+                mWeek = "星期四";
+                break;
+            case "周五":
+                mWeek = "星期五";
+                break;
+            case "周六":
+                mWeek = "星期六";
+                break;
+            case "周日":
+                mWeek = "星期日";
+                break;
+            default:
+                mWeek = str.substring(WEEK_CUT_BEGIN, str.length());
+                break;
+        }
+        return str.substring(0, TIME_CUT_BEGIN) + " " + mWeek;
     }
     public String showTime(String str) {
         String hh = str.substring(8, 10);
