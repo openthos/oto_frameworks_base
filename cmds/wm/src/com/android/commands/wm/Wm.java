@@ -23,6 +23,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.SystemClock;
 import android.util.AndroidException;
 import android.view.Display;
 import android.view.IWindowManager;
@@ -31,8 +32,14 @@ import com.android.internal.os.BaseCommand;
 import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import android.os.Parcel;
+import android.os.IBinder;
 
 public class Wm extends BaseCommand {
+    /* sleep 5s after WMS resize, change composition */
+    public static final int RESIZE_SLEEP = 5000;
+
+    public static final int SET_RESOLUTION = 19;
 
     private IWindowManager mWm;
 
@@ -121,6 +128,14 @@ public class Wm extends BaseCommand {
             if (w >= 0 && h >= 0) {
                 // TODO(multidisplay): For now Configuration only applies to main screen.
                 mWm.setForcedDisplaySize(Display.DEFAULT_DISPLAY, w, h);
+                IBinder surfaceFlinger = ServiceManager.getService("SurfaceFlinger");
+                SystemClock.sleep(RESIZE_SLEEP);
+                if(surfaceFlinger != null){
+                    Parcel data = Parcel.obtain();
+                    data.writeInterfaceToken("android.ui.ISurfaceComposer");
+                    surfaceFlinger.transact(SET_RESOLUTION , data, null, 0);
+                    data.recycle();
+                }
             } else {
                 mWm.clearForcedDisplaySize(Display.DEFAULT_DISPLAY);
             }
