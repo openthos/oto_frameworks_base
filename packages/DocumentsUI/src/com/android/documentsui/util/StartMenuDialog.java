@@ -28,6 +28,8 @@ import android.database.Cursor;
 import com.android.documentsui.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.documentsui.util.MySqliteOpenHelper;
+import android.net.Uri;
+import android.provider.Settings;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     private Context mContext;
@@ -38,6 +40,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
     private int mListType;
+    private String mPkgName;
 
     public StartMenuDialog(Context context) {
         super(context);
@@ -117,25 +120,24 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
         case R.id.tv_right_open:
-            String pkgName;
             Intent intent;
             if (mListType == 0) {
-                pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
                 intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
             } else {
-                pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
                 intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                                    new String[] { pkgName });
+                                    new String[] { mPkgName });
             c.moveToNext();
             int numbers = c.getInt(c.getColumnIndex("int"));
             numbers++;
             ContentValues values = new ContentValues();
             values.put("int", numbers);
-            mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+            mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
         break;
 
         case R.id.tv_right_phone_run:
@@ -148,7 +150,14 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             Toast.makeText(mContext, "fied taskbar: COMING SOON", 0).show();
         break;
         case R.id.tv_right_uninstall:
-            Toast.makeText(mContext, "app uninstall: COMING SOON", 0).show();
+            if (mListType == 0) {
+                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+            } else {
+                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+            }
+            Uri uri = Uri.parse("package:" + mPkgName);
+            Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+            mContext.startActivity(intents);
         break;
         }
     }

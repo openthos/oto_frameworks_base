@@ -151,34 +151,8 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     }
 
     public String showMonth(String str) {
-        String mWeek;
-        switch (str.substring(WEEK_CUT_BEGIN, WEEK_CUT_END)){
-            case "周一":
-                mWeek = "星期一";
-                break;
-            case "周二":
-                mWeek = "星期二";
-                break;
-            case "周三":
-                mWeek = "星期三";
-                break;
-            case "周四":
-                mWeek = "星期四";
-                break;
-            case "周五":
-                mWeek = "星期五";
-                break;
-            case "周六":
-                mWeek = "星期六";
-                break;
-            case "周日":
-                mWeek = "星期日";
-                break;
-            default:
-                mWeek = str.substring(WEEK_CUT_BEGIN, str.length());
-                break;
-        }
-        return str.substring(0, TIME_CUT_BEGIN) + " " + mWeek;
+        String week = str.substring(WEEK_CUT_BEGIN, str.length());
+        return str.substring(0, TIME_CUT_BEGIN) + " " + week;
     }
     public String showTime(String str) {
         String hh = str.substring(8, 10);
@@ -190,7 +164,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     public void run() {
         try {
             while(true) {
-                SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
                 String str = formatter.format(new Date());
                 mHandler.sendMessage(mHandler.obtainMessage(100, str));
                 Thread.sleep(1000);
