@@ -62,4 +62,5 @@ This is a custom layout for a screen.
             android:foregroundGravity="fill_horizontal|top"
             android:foreground="?android:attr/windowContentOverlay" />
     </LinearLayout>
+    <include layout="@layout/mw_cover"/>
 </FrameLayout>

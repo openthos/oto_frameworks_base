@@ -17664,7 +17664,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     private void setMeasuredDimensionRaw(int measuredWidth, int measuredHeight) {
         int id = getId();
 
-        if ((id != NO_ID) && Resources.resourceHasPackage(id) && (mResources != null)) {
+        /* if ((id != NO_ID) && Resources.resourceHasPackage(id) && (mResources != null)) {
             String entry = mResources.getResourceEntryName(id);
             if ((entry.compareTo("mw_dialog_header") == 0) || (entry.compareTo("mwLaunchBtn") == 0)
                 || (entry.compareTo("mwCloseBtn") == 0)) {
@@ -17678,7 +17678,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                     measuredWidth = measuredHeight;
                 }
             }
-        }
+        } */
 
         if (getViewRootImpl() != null) {
             View decor = getViewRootImpl().getView();

@@ -51,6 +51,7 @@ import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.os.StrictMode;
 import android.service.voice.IVoiceInteractionSession;
+import android.view.WindowManager;
 import com.android.internal.app.IVoiceInteractor;
 
 import java.util.List;
@@ -584,13 +585,18 @@ public interface IActivityManager extends IInterface {
 
     public boolean relayoutWindow(int stackId, Rect r) throws RemoteException;
 
+    public boolean closeActivityAsync(int stackId) throws RemoteException;
+
     public boolean closeActivity(int stackId) throws RemoteException;
 
     public void closeActivityFocused() throws RemoteException;
 
-    public void setMaximizedWindowSize(Rect rect) throws RemoteException;
+    public Rect disableMultiWindowToWindowManager(int stackId) throws RemoteException;
 
-    public Rect getMaximizedWindowSize() throws RemoteException;
+    public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect)
+                                                                             throws RemoteException;
+
+    public Rect getStackBounds(int stackId) throws RemoteException;
 
     String descriptor = "android.app.IActivityManager";
 
@@ -778,8 +784,8 @@ public interface IActivityManager extends IInterface {
 
     int RELAYOUT_WINDOW_CORNERSTONE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+186;
     int CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+187;
-    int SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
-    int GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
+    int DISABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
+    int ENABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
 
     int GET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+190;
 
@@ -791,6 +797,8 @@ public interface IActivityManager extends IInterface {
     int FOCUS_RECENT_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+195;
 
     int CLOSE_ACTIVITY_FOCUSED_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+196;
+    int CLOSE_ACTIVITY_WITH_WINDOW_ASYNC_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+197;
+    int GET_STACK_BOUNDS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+198;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

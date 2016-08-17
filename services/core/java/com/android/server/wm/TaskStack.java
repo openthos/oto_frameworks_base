@@ -16,20 +16,27 @@
 
 package com.android.server.wm;
 
+import static android.view.WindowManager.MultiWindow.*;
 import static com.android.server.wm.WindowManagerService.DEBUG_TASK_MOVEMENT;
 import static com.android.server.wm.WindowManagerService.TAG;
 
 import android.graphics.Rect;
+import android.hardware.input.InputManager;
 import android.os.Debug;
+import android.os.RemoteException;
 import android.util.EventLog;
 import android.util.Slog;
 import android.util.TypedValue;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.WindowManager;
 import com.android.server.EventLogTags;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-public class TaskStack {
+public class TaskStack  implements WindowManager.MultiWindow.Callback {
     /** Amount of time in milliseconds to animate the dim surface from one value to another,
      * when no window animation is driving it. */
     private static final int DEFAULT_DIM_DURATION = 200;
@@ -84,6 +91,14 @@ public class TaskStack {
     /** Detach this stack from its display when animation completes. */
     boolean mDeferDetach;
 
+    WindowManager.MultiWindow mMultiWindow;
+    Rect mDialogRect;
+    boolean mEnableMultiWindow = false;
+
+    WindowManager.MultiWindow.ResizeWindow mCurrentWindow;
+    WindowManager.MultiWindow.ResizeWindow mResizeWindow;
+    WindowManager.MultiWindow.MoveWindow mMoveWindow;
+
     TaskStack(WindowManagerService service, int stackId, boolean floating) {
         mService = service;
         mStackId = stackId;
@@ -91,6 +106,157 @@ public class TaskStack {
         // TODO: remove bounds from log, they are always 0.
         EventLog.writeEvent(EventLogTags.WM_STACK_CREATED, stackId, mBounds.left, mBounds.top,
                 mBounds.right, mBounds.bottom);
+    }
+
+    private boolean isOnBorder(int x, int y) {
+        return (x <= mMultiWindow.mFramePadding) || (y <= mMultiWindow.mFramePadding)
+               || (x >= (mBounds.width() - mMultiWindow.mFramePadding))
+               || (y >= (mBounds.height() - mMultiWindow.mFramePadding));
+    }
+
+    private boolean isOnHeader(int x, int y) {
+        return (x > mMultiWindow.mFramePadding) && (y > mMultiWindow.mFramePadding)
+               && (x < (mBounds.width() - mMultiWindow.mFramePadding))
+               && (y < (mMultiWindow.mFramePadding + mMultiWindow.mHeaderHeight));
+    }
+
+    private boolean isOnRect(Rect rect, int x, int y) {
+        return (x > rect.left) && (x < rect.right) && (y > rect.top) && (y < rect.bottom);
+    }
+
+    private boolean isOnContentArea(int x, int y) {
+        int offX = (mBounds.width() - mDialogRect.width()) / 2;
+        int offY = (mBounds.height() - mDialogRect.height()) / 2;
+        if ((x > offX) && (x < (mBounds.width() - offX))
+            && (y > offY) && (y < (mBounds.height() - offY))) {
+            return false;
+        }
+        return true;
+    }
+
+    public void onHoverEvent(int what, int x, int y) {
+        if (!mEnableMultiWindow) {
+            return;
+        }
+        switch (what) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+            case MotionEvent.ACTION_HOVER_MOVE:
+                syncResizingIcon(mMultiWindow.getResizeWays(mBounds, x, y));
+                break;
+            case MotionEvent.ACTION_HOVER_EXIT:
+                syncResizingIcon(mMultiWindow.getResizeWays(null, 0, 0));
+                break;
+        }
+    }
+
+    public void onTouchEvent(int what, int x, int y) {
+        if (!mEnableMultiWindow) {
+            return;
+        }
+        x -= mBounds.left;
+        y -= mBounds.top;
+        switch (what) {
+            case MotionEvent.ACTION_DOWN:
+                mCurrentWindow = null;
+                if (isOnBorder(x, y)) {
+                    mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
+                                               mBounds, mResizeWindow);
+                    mCurrentWindow = mResizeWindow;
+                } else if (isOnHeader(x, y)) {
+                    int w = mBounds.width();
+                    if (!isOnRect(mMultiWindow.mBack, x, y)
+                        && !isOnRect(mMultiWindow.mMin.toRect(w, mTmpRect), x, y)
+                        && !isOnRect(mMultiWindow.mMax.toRect(w, mTmpRect), x, y)
+                        && !isOnRect(mMultiWindow.mClose.toRect(w, mTmpRect), x, y)) {
+                        mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
+                                                   mBounds, mMoveWindow);
+                        mCurrentWindow = mMoveWindow;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mCurrentWindow != null) {
+                    mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
+                                               mBounds, mCurrentWindow);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mCurrentWindow != null) {
+                    mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
+                                               mBounds, mCurrentWindow);
+                    mCurrentWindow = null;
+                    break;
+                }
+                if (isOnBorder(x, y)) {
+                    ; // Skip, at present.
+                } else if (isOnHeader(x, y)) {
+                    int w = mBounds.width();
+                    if (isOnRect(mMultiWindow.mBack, x, y)) {
+                        KeyEvent.sendKeyEventBack();
+                    } else if (isOnRect(mMultiWindow.mMin.toRect(w, mTmpRect), x, y)) {
+                        mMultiWindow.onMinimize(mBounds);
+                    } else if (isOnRect(mMultiWindow.mMax.toRect(w, mTmpRect), x, y)) {
+                        mMultiWindow.toggleFullScreen(mBounds);
+                    } else if (isOnRect(mMultiWindow.mClose.toRect(w, mTmpRect), x, y)) {
+                        try {
+                            mService.mActivityManager.closeActivityAsync(mStackId);
+                        } catch (RemoteException e) {
+                            Slog.e(TAG, "Close failed", e);
+                        }
+                    }
+                } else if (isOnContentArea(x, y)) {
+                    KeyEvent.sendKeyEventBack();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public Rect disableMultiWindow() {
+        if (mEnableMultiWindow) {
+            if (mMultiWindow.isResizing()) {
+                syncResizingIcon(mMultiWindow.getResizeWays(null, 0, 0));
+            }
+            mEnableMultiWindow = false;
+            return mMultiWindow.mOldSize;
+        }
+        return new Rect();
+    }
+
+    public void enableMultiWindow(WindowManager.MultiWindow mw, Rect dialogRect) {
+        mEnableMultiWindow  = true;
+
+        if (mDialogRect == null) {
+            mDialogRect = new Rect();
+        }
+        mDialogRect.set(dialogRect); // Now, only consider about center dialog.
+
+        if (mResizeWindow == null) {
+            mResizeWindow = new WindowManager.MultiWindow.ResizeWindow();
+        }
+        if (mMoveWindow == null) {
+            mMoveWindow = new WindowManager.MultiWindow.MoveWindow();
+        }
+        if (mMultiWindow == null) {
+            mMultiWindow = new WindowManager.MultiWindow(mService.mContext);
+        }
+
+        mMultiWindow.mStackId = mStackId;
+        mMultiWindow.mCallback = this;
+
+        mMultiWindow.mFramePadding = mw.mFramePadding;
+        mMultiWindow.mHeaderHeight = mw.mHeaderHeight;
+
+        mMultiWindow.mBack.set(mw.mBack);
+        mMultiWindow.mMin.set(mw.mMin);
+        mMultiWindow.mMax.set(mw.mMax);
+        mMultiWindow.mClose.set(mw.mClose);
+
+        mMultiWindow.mOldSize.set(mw.mOldSize);
+        mMultiWindow.mFullScreen.set(mw.mFullScreen);
+        mMultiWindow.mLeftDockFrame.set(mw.mLeftDockFrame);
+        mMultiWindow.mRightDockFrame.set(mw.mRightDockFrame);
     }
 
     DisplayContent getDisplayContent() {
@@ -445,5 +611,45 @@ public class TaskStack {
 
     public boolean isCrappyRelayouted() {
         return mCrappyRelayouted;
+    }
+
+    public void relayoutWindow(int stackId, Rect rect) {
+        try {
+            mService.mActivityManager.relayoutWindow(stackId, rect);
+        } catch (RemoteException e) {
+        }
+    }
+
+    public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
+        try {
+            mService.mActivityManager.saveInfoInStatusbarActivity(stackId, rect);
+        } catch (RemoteException e) {
+        }
+    }
+
+    public int getFocusedStackId() {
+        try {
+            return mService.mActivityManager.getFocusedStackId();
+        } catch (RemoteException e) {
+        }
+        return -1;
+    }
+
+    public void setFocusedStack(int stackId) {
+        try {
+            mService.mActivityManager.setFocusedStack(stackId);
+        } catch (RemoteException e) {
+        }
+    }
+
+    public void unsetFocusedStack(int stackId) {
+        try {
+            mService.mActivityManager.setFocusedStack(stackId);
+        } catch (RemoteException e) {
+        }
+    }
+
+    public void syncResizingIcon(int ways) {
+        InputManager.getInstance().setPointerIcon(ways);
     }
 }

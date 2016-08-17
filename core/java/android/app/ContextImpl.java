@@ -1234,12 +1234,12 @@ class ContextImpl extends Context {
     @Override
     public void startActivity(Intent intent, Bundle options) {
         warnIfCallingFromSystemProcess();
-        if ((intent.getFlags()&Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
-            throw new AndroidRuntimeException(
-                    "Calling startActivity() from outside of an Activity "
-                    + " context requires the FLAG_ACTIVITY_NEW_TASK flag."
-                    + " Is this really what you want?");
-        }
+        //if ((intent.getFlags()&Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
+        //    throw new AndroidRuntimeException(
+        //            "Calling startActivity() from outside of an Activity "
+        //            + " context requires the FLAG_ACTIVITY_NEW_TASK flag."
+        //            + " Is this really what you want?");
+        //}
         mMainThread.getInstrumentation().execStartActivity(
             getOuterContext(), mMainThread.getApplicationThread(), null,
             (Activity)null, intent, -1, options);

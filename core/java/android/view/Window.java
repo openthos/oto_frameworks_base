@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.session.MediaController;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import android.os.SystemProperties;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.DisplayMetrics;
 import android.view.accessibility.AccessibilityEvent;
 
 /**
@@ -453,6 +455,7 @@ public abstract class Window {
     public Window(Context context) {
         mContext = context;
         mFeatures = mLocalFeatures = getDefaultFeatures(context);
+        mMultiWindow = new WindowManager.MultiWindow(context);
     }
 
     /**
@@ -1881,75 +1884,141 @@ public abstract class Window {
     public abstract void setNavigationBarColor(int color);
 
     /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * Stack id in which app was started.
-     * Setters and getters
+     * MultiWindow Object
      */
-    private int mStackId = -1;
-    private int mTaskId = -1;
+    private final WindowManager.MultiWindow mMultiWindow;
     private Dialog mDialog = null;
+    private int mTaskId = -1;
 
-    /**
-     * @hide
-     */
+    private Window mChildWindow = null;
+
+    public void setChildWindow(Window child) {
+        mChildWindow = child;
+    }
+
+    public Window getChildWindow() {
+        return mChildWindow;
+    }
+
+    public abstract void SyncChildWindow();
+
     public void setDialog(Dialog dialog) {
         mDialog = dialog;
     }
 
-    /**
-     * @hide
-     */
     public Dialog getDialog() {
         return mDialog;
     }
 
-    /**
-     * @hide
-     */
     public void setStackId(int id) {
-        mStackId = id;
+        mMultiWindow.mStackId = id;
     }
 
-    /**
-     * @hide
-     */
     public int getStackId() {
-        return mStackId;
+        return mMultiWindow.mStackId;
     }
 
-    /**
-     * @hide
-     */
     public void setTaskId(int id) {
         mTaskId = id;
     }
 
-    /**
-     * @hide
-     */
     public int getTaskId() {
         return mTaskId;
     }
 
-    /**
-     * Date: Feb 25, 2014
-     * Copyright (C) 2014 Tieto Poland Sp. z o.o.
-     *
-     * TietoTODO: this is used to indicate, that window should
-     * have decor frame. Check if FocusedStackFrame can be used
-     * as decor
-     * @hide
-     */
     public boolean isMWWindow() {
-        return (mStackId > 0) && (mDialog == null);
+        return (mMultiWindow.mStackId > 0) && (mDialog == null);
     }
 
     public boolean isMWDialog() {
-        return (mStackId > 0) && (mDialog != null);
+        return (mMultiWindow.mStackId > 0) && (mDialog != null);
     }
 
-    public void setShadow(boolean hasShadow) {
+    public int getBorderPadding() {
+        return mMultiWindow.mFramePadding;
     }
+
+    public void setBorderPadding(int padding) {
+        mMultiWindow.mFramePadding = padding;
+    }
+
+    public int getHeaderHeight() {
+        return mMultiWindow.mHeaderHeight;
+    }
+
+    public void setHeaderHeight(int height) {
+        mMultiWindow.mHeaderHeight = height;
+    }
+
+    public void setButtons(View back, View min, View max, View close) {
+        int padding = getBorderPadding();
+
+        mMultiWindow.mBack.left = padding;
+        mMultiWindow.mBack.top = padding;
+        mMultiWindow.mBack.right = mMultiWindow.mBack.left + back.getWidth();
+        mMultiWindow.mBack.bottom = mMultiWindow.mBack.top + back.getHeight();
+
+        mMultiWindow.mClose.mWidth = close.getWidth();
+        mMultiWindow.mClose.mHeight = close.getHeight();
+        mMultiWindow.mClose.mOffTop = padding;
+        mMultiWindow.mClose.mOffRight = mMultiWindow.mClose.mWidth + padding;
+
+        mMultiWindow.mMax.mWidth = max.getWidth();
+        mMultiWindow.mMax.mHeight = max.getHeight();
+        mMultiWindow.mMax.mOffTop = padding;
+        mMultiWindow.mMax.mOffRight = mMultiWindow.mMax.mWidth + mMultiWindow.mClose.mOffRight;
+
+        mMultiWindow.mMin.mWidth = min.getWidth();
+        mMultiWindow.mMin.mHeight = min.getHeight();
+        mMultiWindow.mMin.mOffTop = padding;
+        mMultiWindow.mMin.mOffRight = mMultiWindow.mMin.mWidth + mMultiWindow.mMax.mOffRight;
+    }
+
+    public WindowManager.MultiWindow getMultiWindow() {
+        return mMultiWindow;
+    }
+
+    public Rect getOldSize() {
+        return mMultiWindow.mOldSize;
+    }
+
+    public Rect getFullScreen() {
+        return mMultiWindow.mFullScreen;
+    }
+
+    public void updateScreenFrame() {
+        mMultiWindow.updateScreenFrame(getContext().getResources().getDisplayMetrics());
+    }
+
+    public void setFocusedStack() {
+        mMultiWindow.setFocusedStack();
+    }
+
+    public void unsetFocusedStack() {
+        mMultiWindow.unsetFocusedStack();
+    }
+
+    public void toggleFullScreen(Rect frame) {
+        mMultiWindow.toggleFullScreen(frame);
+    }
+
+    public void onMinimize(Rect orig) {
+        mMultiWindow.onMinimize(orig);
+    }
+
+    public void setCallback(WindowManager.MultiWindow.Callback callback) {
+        mMultiWindow.mCallback = callback;
+    }
+
+    public int getResizeWays(Rect frame, int x, int y) {
+        return mMultiWindow.getResizeWays(frame, x, y);
+    }
+
+    public Rect onTouchWindow(int what, int x, int y, Rect frame,
+                              WindowManager.MultiWindow.ResizeWindow resizeWindow) {
+        return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow);
+    }
+
+    public abstract void setShadow(boolean hasShadow);
+    public abstract void showCover(boolean show);
 }

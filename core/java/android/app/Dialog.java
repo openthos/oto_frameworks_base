@@ -308,8 +308,13 @@ public class Dialog implements DialogInterface, Window.Callback,
 
         try {
             Activity activity = (mOwnerActivity != null) ? mOwnerActivity : mContextActivity;
-            mDecor.setFromDialog(mDecor, (activity != null) ? activity.getWindow() : null);
+            Window parent = (activity != null) ? activity.getWindow() : null;
+            if (parent != null) {
+                parent.setChildWindow(mWindow);
+                parent.showCover(true);
+            }
             mWindowManager.addView(mDecor, l);
+            mDecor.setFromDialog(mDecor, parent);
             mShowing = true;
     
             sendShowMessage();

@@ -25,6 +25,9 @@ import android.util.SparseIntArray;
 import android.view.KeyCharacterMap;
 import android.view.KeyCharacterMap.KeyData;
 
+import java.io.IOException;
+import java.lang.Runtime;
+
 /**
  * Object used to report key and button events.
  * <p>
@@ -2944,5 +2947,13 @@ public class KeyEvent extends InputEvent implements Parcelable {
         out.writeInt(mFlags);
         out.writeLong(mDownTime);
         out.writeLong(mEventTime);
+    }
+
+    public static void sendKeyEventBack() {
+        try {
+            Runtime.getRuntime().exec("input keyevent " + KEYCODE_BACK);
+        } catch (IOException e) {
+            Log.e(TAG, "Back button failes", e);
+        }
     }
 }

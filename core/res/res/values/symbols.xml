@@ -2182,6 +2182,7 @@
   <java-symbol type="id" name="mwMaximizeBtn" />
   <java-symbol type="id" name="mwMinimizeBtn" />
   <java-symbol type="id" name="mw_decor_header" />
+  <java-symbol type="id" name="mw_cover_view" />
   <java-symbol type="id" name="mw_dialog_header" />
   <java-symbol type="id" name="mwOuterBorder" />
   <java-symbol type="id" name="mwBackground" />
@@ -2189,7 +2190,7 @@
   <java-symbol type="id" name="mwTitle" />
   <java-symbol type="color" name="mw_blue_decor" />
   <java-symbol type="color" name="mw_gray_decor" />
-  <java-symbol type="color" name="mw_transparent_white" />
+  <java-symbol type="color" name="mw_transparent_gray" />
   <java-symbol type="color" name="mw_gray_border" />
   <java-symbol type="dimen" name="mw_outer_border" />
   <java-symbol type="dimen" name="mw_outer_border_shadowless" />
@@ -2206,4 +2207,5 @@
   <java-symbol type="drawable" name="mw_btn_resize_left" />
   <java-symbol type="drawable" name="mw_btn_resize_right" />
   <java-symbol type="layout" name="mw_decor" />
+  <java-symbol type="layout" name="mw_cover" />
 </resources>

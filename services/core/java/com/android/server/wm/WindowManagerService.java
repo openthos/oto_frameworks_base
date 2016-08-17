@@ -7637,6 +7637,75 @@ public class WindowManagerService extends IWindowManager.Stub
 
         public static final int CHECK_IF_BOOT_ANIMATION_FINISHED = 37;
         public static final int RESET_ANR_MESSAGE = 38;
+        public static final int POINTER_EVENT_ACTION_DOWN = 39;
+        public static final int POINTER_EVENT_ACTION_MOVE = 40;
+        public static final int POINTER_EVENT_ACTION_UP = 41;
+        public static final int POINTER_EVENT_ACTION_HOVER_MOVE = 42;
+
+        boolean mActionDown = false;
+        int mCurrentStackId = -1;
+        TaskStack mStack;
+
+        private void hoverEnter(int stackId, int x, int y) {
+            mCurrentStackId = stackId;
+            mStack = mStackIdToStack.get(mCurrentStackId);
+            mStack.onHoverEvent(MotionEvent.ACTION_HOVER_ENTER, x, y);
+        }
+
+        private void hoverExit(int x, int y) {
+            mStack.onHoverEvent(MotionEvent.ACTION_HOVER_EXIT, x, y);
+            mCurrentStackId = -1;
+        }
+
+        private void onHoverMove(int x, int y, DisplayContent dc) {
+            if (mActionDown) {
+                return;
+            }
+            int stackId = dc.stackIdFromPoint(x, y);
+            if (mCurrentStackId > 0) {
+                if (mCurrentStackId != stackId) {
+                    hoverExit(x, y);
+                    if (stackId > 0) {
+                        hoverEnter(stackId, x, y);
+                    }
+                } else {
+                    mStack.onHoverEvent(MotionEvent.ACTION_HOVER_MOVE, x, y);
+                }
+            } else if (stackId > 0) {
+                hoverEnter(stackId, x, y);
+            }
+        }
+
+        private void onPointerEvent(int what, int x, int y, DisplayContent dc) {
+            switch (what) {
+                case POINTER_EVENT_ACTION_DOWN:
+                    mActionDown = true;
+                    synchronized (mWindowMap) {
+                        mCurrentStackId = dc.stackIdFromPoint(x, y);
+                    }
+                    if (mCurrentStackId > 0) {
+                        mStack = mStackIdToStack.get(mCurrentStackId);
+                        mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y);
+                    } else {
+                        mCurrentStackId = -1;
+                    }
+                    break;
+                case POINTER_EVENT_ACTION_MOVE:
+                    if (mCurrentStackId != -1) {
+                        mStack.onTouchEvent(MotionEvent.ACTION_MOVE, x, y);
+                    }
+                    break;
+                case POINTER_EVENT_ACTION_UP:
+                    mActionDown = false;
+                    if (mCurrentStackId != -1) {
+                        mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y);
+                    }
+                    // Fall through
+                default:
+                    mCurrentStackId = -1;
+                    break;
+            }
+        }
 
         @Override
         public void handleMessage(Message msg) {
@@ -8096,6 +8165,14 @@ public class WindowManagerService extends IWindowManager.Stub
                     }
                 }
                 break;
+                case POINTER_EVENT_ACTION_HOVER_MOVE:
+                    onHoverMove(msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                    break;
+                case POINTER_EVENT_ACTION_DOWN:
+                case POINTER_EVENT_ACTION_MOVE:
+                case POINTER_EVENT_ACTION_UP:
+                    onPointerEvent(msg.what, msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                    break;
                 case NOTIFY_ACTIVITY_DRAWN:
                     try {
                         mActivityManager.notifyActivityDrawn((IBinder) msg.obj);
@@ -11861,5 +11938,20 @@ public class WindowManagerService extends IWindowManager.Stub
     public int getStatusbarHeight() {
         return mContext.getResources().getDimensionPixelSize(
                                            com.android.internal.R.dimen.status_bar_height_real);
+    }
+
+    public Rect disableMultiWindowToWindowManager(int stackId) {
+        final TaskStack stack = mStackIdToStack.get(stackId);
+        if (stack != null) {
+            return stack.disableMultiWindow();
+        }
+        return new Rect();
+    }
+
+    public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect) {
+        final TaskStack stack = mStackIdToStack.get(mw.mStackId);
+        if (stack != null) {
+            stack.enableMultiWindow(mw, dialogRect);
+        }
     }
 }

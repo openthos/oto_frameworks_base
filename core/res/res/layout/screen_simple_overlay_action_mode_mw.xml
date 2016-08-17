@@ -44,4 +44,5 @@ enabled.
         <include layout="@layout/mw_decor"/>
         <include layout="@layout/screen_simple_overlay_action_mode"/>
     </LinearLayout>
+    <include layout="@layout/mw_cover"/>
 </FrameLayout>

@@ -407,6 +407,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     private boolean mFocusJustChanged = false;
 
+    private int mClosingStackId = -1;
+
      /**
      * Date: Aug 29, 2014
      * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -2201,6 +2203,11 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 boolean ret = true;
                                 while (ret) {
                                     ret = killUselessStatusbarActivity();
+                                }
+
+                                if (mClosingStackId > 0) {
+                                    closeActivity(mClosingStackId);
+                                    mClosingStackId = -1;
                                 }
                             }
 
@@ -19961,6 +19968,14 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     @Override
+    public boolean closeActivityAsync(int stackId) {
+        synchronized (mSBAThread) {
+            mClosingStackId = stackId;
+        }
+        return false;
+    }
+
+    @Override
     public boolean closeActivity(int stackId) {
         return closeActivity(stackId, true, 0);
     }
@@ -19976,12 +19991,34 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     @Override
-    public void setMaximizedWindowSize(Rect screen) {
-        mMaximizedWindowSize = screen;
+    public Rect getStackBounds(int stackId) {
+        long ident = Binder.clearCallingIdentity();
+        Rect rect = new Rect();
+        try {
+            mWindowManager.getStackBounds(stackId, rect);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+        return rect;
     }
 
     @Override
-    public Rect getMaximizedWindowSize() {
-        return mMaximizedWindowSize;
+    public Rect disableMultiWindowToWindowManager(int stackId) {
+        long ident = Binder.clearCallingIdentity();
+        try {
+            return mWindowManager.disableMultiWindowToWindowManager(stackId);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+    }
+
+    @Override
+    public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect) {
+        long ident = Binder.clearCallingIdentity();
+        try {
+            mWindowManager.enableMultiWindowToWindowManager(mw, dialogRect);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
     }
 }

@@ -50,6 +50,7 @@ import android.service.voice.IVoiceInteractionSession;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Singleton;
+import android.view.WindowManager;
 import com.android.internal.app.IVoiceInteractor;
 
 import java.util.ArrayList;
@@ -2443,6 +2444,16 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
+        case CLOSE_ACTIVITY_WITH_WINDOW_ASYNC_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            boolean[] ret = new boolean[1];
+            ret[0] = closeActivityAsync(stackId);
+            reply.writeNoException();
+            reply.writeBooleanArray(ret);
+            return true;
+        }
+
         case CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
@@ -2460,19 +2471,33 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
-        case SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION: {
+        case GET_STACK_BOUNDS_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
             Rect r = new Rect();
-            r.readFromParcel(data);
-            setMaximizedWindowSize(r);
+            r = getStackBounds(stackId);
             reply.writeNoException();
+            r.writeToParcel(reply, 0);
             return true;
         }
 
-        case GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION: {
+        case DISABLE_MULTI_WINDOW_WMS_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
-            Rect r = getMaximizedWindowSize();
+            int stackId = data.readInt();
+            Rect r = new Rect();
+            r = disableMultiWindowToWindowManager(stackId);
+            reply.writeNoException();
             r.writeToParcel(reply, 0);
+            return true;
+        }
+
+        case ENABLE_MULTI_WINDOW_WMS_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            WindowManager.MultiWindow mw = new WindowManager.MultiWindow(null);
+            mw.readFromParcel(data);
+            Rect dialogRect = new Rect();
+            dialogRect.readFromParcel(data);
+            enableMultiWindowToWindowManager(mw, dialogRect);
             reply.writeNoException();
             return true;
         }
@@ -5668,6 +5693,20 @@ class ActivityManagerProxy implements IActivityManager
         return ret[0];
     }
 
+    public boolean closeActivityAsync(int stackId) throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        mRemote.transact(CLOSE_ACTIVITY_WITH_WINDOW_ASYNC_TRANSACTION, data, reply, 0);
+        reply.readException();
+        boolean[] ret = new boolean[1];
+        reply.readBooleanArray(ret);
+        data.recycle();
+        reply.recycle();
+        return ret[0];
+    }
+
     public boolean closeActivity(int stackId) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
@@ -5692,28 +5731,45 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
 
-    public void setMaximizedWindowSize(Rect screen) throws RemoteException {
+    public Rect getStackBounds(int stackId) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
         data.writeInterfaceToken(IActivityManager.descriptor);
-        screen.writeToParcel(data,0);
-        mRemote.transact(SET_MAXIMIZED_WINDOW_SIZE_TRANSACTION, data, reply, 0);
+        data.writeInt(stackId);
+        mRemote.transact(GET_STACK_BOUNDS_TRANSACTION, data, reply, 0);
         reply.readException();
+        Rect r = new Rect();
+        r.readFromParcel(reply);
         data.recycle();
         reply.recycle();
+        return r;
     }
 
-    public Rect getMaximizedWindowSize() throws RemoteException {
+    public Rect disableMultiWindowToWindowManager(int stackId) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
         data.writeInterfaceToken(IActivityManager.descriptor);
-        mRemote.transact(GET_MAXIMIZED_WINDOW_SIZE_TRANSACTION, data, reply, 0);
-        Rect screen = new Rect();
-        screen.readFromParcel(reply);
+        data.writeInt(stackId);
+        mRemote.transact(DISABLE_MULTI_WINDOW_WMS_TRANSACTION, data, reply, 0);
+        reply.readException();
+        Rect r = new Rect();
+        r.readFromParcel(reply);
+        data.recycle();
+        reply.recycle();
+        return r;
+    }
+
+    public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect)
+                                                                            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        mw.writeToParcel(data, 0);
+        dialogRect.writeToParcel(data, 0);
+        mRemote.transact(ENABLE_MULTI_WINDOW_WMS_TRANSACTION, data, reply, 0);
         reply.readException();
         data.recycle();
         reply.recycle();
-        return screen;
     }
 
     private IBinder mRemote;

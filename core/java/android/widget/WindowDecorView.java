@@ -17,6 +17,7 @@
 package android.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.Window;
 import android.view.View;
 import android.util.Log;
@@ -60,11 +61,25 @@ public class WindowDecorView extends FrameLayout {
         return mWindow.isMWWindow();
     }
 
+    public void adjustDialog() {
+    }
+
+    public void enableMultiWindowToWindowManager(Rect dialogRect) {
+    }
+
     public void setFromDialog(View dialogView, Window dialogParentWindow) {
+        if ((dialogView == null) && (mDialogView != null) && (mDialogParentWindow != null)
+            &&  mDialogParentWindow.isMWWindow()) {
+            mDialogParentWindow.showCover(false);
+        }
+
         mDialogView = dialogView;
         mDialogParentWindow = dialogParentWindow;
         mDialogParentDecor = (mDialogParentWindow != null) ? mDialogParentWindow.getDecorView()
                              : null;
+        if (isDialogFromMWParent()) {
+            adjustDialog();
+        }
     }
 
     public boolean needDialogHeader() {
@@ -83,12 +98,25 @@ public class WindowDecorView extends FrameLayout {
     }
 
     public boolean isDialogFromMWParent() {
-        return (mDialogView != null) && (mDialogParentWindow != null)
-               && mDialogParentWindow.isMWWindow();
+        return isDialogFromMWParent(false);
+    }
+
+    public boolean isDialogFromMWParent(boolean onlyFather) {
+        if ((mDialogView == null) || (mDialogParentWindow == null)) {
+            return false;
+        }
+        if (mDialogParentWindow.isMWWindow()) {
+            return true;
+        }
+        return !onlyFather && ((WindowDecorView) mDialogParentDecor).isDialogFromMWParent();
     }
 
     public View getParentDecor() {
         return mDialogParentDecor;
+    }
+
+    public Window getParentWindow() {
+        return mDialogParentWindow;
     }
 
     public int getDialogLeftOffset() {

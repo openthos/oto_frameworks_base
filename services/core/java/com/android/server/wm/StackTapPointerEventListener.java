@@ -49,12 +49,24 @@ public class StackTapPointerEventListener implements PointerEventListener {
     public void onPointerEvent(MotionEvent motionEvent) {
         final int action = motionEvent.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_HOVER_MOVE:
+                mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_HOVER_MOVE,
+                                          (int) motionEvent.getX(),
+                                          (int) motionEvent.getY(),
+                                          mDisplayContent).sendToTarget();
+                break;
             case MotionEvent.ACTION_DOWN:
                 mPointerId = motionEvent.getPointerId(0);
                 mDownX = motionEvent.getX();
                 mDownY = motionEvent.getY();
+                mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_DOWN, (int) mDownX, (int) mDownY,
+                                          mDisplayContent).sendToTarget();
                 break;
             case MotionEvent.ACTION_MOVE:
+                mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_MOVE,
+                                          (int) motionEvent.getX(),
+                                          (int) motionEvent.getY(),
+                                          mDisplayContent).sendToTarget();
                 if (mPointerId >= 0) {
                     int index = motionEvent.findPointerIndex(mPointerId);
                     if ((motionEvent.getEventTime() - motionEvent.getDownTime()) > TAP_TIMEOUT_MSEC
@@ -67,6 +79,10 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP: {
+                mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_UP,
+                                          (int) motionEvent.getX(),
+                                          (int) motionEvent.getY(),
+                                          mDisplayContent).sendToTarget();
                 int index = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
                         >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 // Extract the index of the pointer that left the touch sensor

@@ -112,15 +112,15 @@ public class MultiwindowManager {
      * @param fullScreen takes size of window in fullscreen.
      * @return true if method succeed, false if not.
      */
-    public boolean setMaximizedWindowSize(Rect size) {
-        try {
-            mService.setMaximizedWindowSize(size);
-            return true;
-        } catch (RemoteException e) {
-            Log.e(TAG, "setFullScreenRect failed ", e);
-            return false;
-        }
-    }
+    //public boolean setMaximizedWindowSize(Rect size) {
+    //    try {
+    //        mService.setMaximizedWindowSize(size);
+    //        return true;
+    //    } catch (RemoteException e) {
+    //        Log.e(TAG, "setFullScreenRect failed ", e);
+    //        return false;
+    //    }
+    //}
 
     public void checkPermission(){
         PackageManager pm = mContext.getPackageManager();

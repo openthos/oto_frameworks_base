@@ -18,7 +18,9 @@
 package android.view;
 
 import android.app.Presentation;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Insets;
 import android.graphics.PixelFormat;
@@ -27,6 +29,7 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 
@@ -2033,5 +2036,556 @@ public interface WindowManager extends ViewManager {
         }
 
         private CharSequence mTitle = "";
+    }
+
+    /**
+     * Multi-window information from application window to task stack in WMS.
+     */
+    public static class MultiWindow {
+        private final static String TAG = "WindowManager.MultiWindow";
+
+        private final static int MW_WINDOW_RESIZE_PADDING_MIN = 6;   // 6dp
+        private final static int MW_WINDOW_RESIZE_HEADER_FACTOR = 2; // 2 times
+        private final static int MW_WINDOW_RESIZE_LINE_WIDTH = 3;     //3dp
+
+        private final static int MW_WINDOW_RESIZE_NONE = 0;
+        private final static int MW_WINDOW_RESIZE_TOP = 1;
+        private final static int MW_WINDOW_RESIZE_BOTTOM = 2;
+        private final static int MW_WINDOW_RESIZE_LEFT = 3;
+        private final static int MW_WINDOW_RESIZE_RIGHT = 4;
+        private final static int MW_WINDOW_RESIZE_TOPLEFT = 5;
+        private final static int MW_WINDOW_RESIZE_TOPRIGHT = 6;
+        private final static int MW_WINDOW_RESIZE_BOTTOMLEFT = 7;
+        private final static int MW_WINDOW_RESIZE_BOTTOMRIGHT = 8;
+
+        private final static int MW_WINDOW_MOVING_PADDING = 50;      // 50dp
+
+        private static final long DOUBLE_CLICK_INTERVAL = 500; // 0.5 second
+
+        private final static String LINERECT_LOCATION = "com.android.linerect";
+        private final static String LINERECT_ACTIVITY = "com.android.linerect.LineRectActivity";
+
+        public int mStackId = -1;
+
+        public int mFramePadding = 0;
+        public int mHeaderHeight = 0;
+
+        public Rect  mBack;
+        public AlignRight mMin;
+        public AlignRight mMax;
+        public AlignRight mClose;
+
+        public Rect mOldSize;
+        public Rect mFullScreen;
+        public Rect mLeftDockFrame;
+        public Rect mRightDockFrame;
+
+        public Callback mCallback;
+        private int mResizeWays = MW_WINDOW_RESIZE_NONE;
+
+        private long mLastMilliSeconds = 0;
+        private Intent mIntent;
+        private Context mContext;
+
+        private Rect mFrame;
+        private Rect mNewFrame;
+        private int mLastX = 0;
+        private int mLastY = 0;
+
+        public interface Callback {
+            public void relayoutWindow(int stackId, Rect rect);
+            public void saveInfoInStatusbarActivity(int stackId, Rect rect);
+            public int getFocusedStackId();
+            public void setFocusedStack(int stackId);
+            public void unsetFocusedStack(int stackId);
+            public void syncResizingIcon(int ways);
+        }
+
+        public class AlignRight {
+            public int mOffRight = 0;
+            public int mOffTop = 0;
+            public int mWidth = 0;
+            public int mHeight = 0;
+
+            public void set(AlignRight ar) {
+                mOffRight = ar.mOffRight;
+                mOffTop = ar.mOffTop;
+                mWidth = ar.mWidth;
+                mHeight = ar.mHeight;
+            }
+
+            public Rect toRect(int w, Rect out) {
+                out.left = w - mOffRight;
+                out.right = out.left + mWidth;
+                out.top = mOffTop;
+                out.bottom = mOffTop + mHeight;
+                return out;
+            }
+        }
+
+        public MultiWindow(Context context) {
+            mOldSize = new Rect();
+            mFullScreen = new Rect();
+            mLeftDockFrame = new Rect();
+            mRightDockFrame = new Rect();
+            mBack = new Rect();
+            mMin = new AlignRight();
+            mMax = new AlignRight();
+            mClose = new AlignRight();
+
+            if (context != null) {
+                final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+                mFullScreen.set(0, 0, metrics.widthPixels, metrics.heightPixels);
+                mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
+                                   mFullScreen.right / 2 - MW_WINDOW_RESIZE_LINE_WIDTH,
+                                   mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
+                mRightDockFrame.set(mFullScreen.right / 2, mFullScreen.top,
+                                    mFullScreen.right - MW_WINDOW_RESIZE_LINE_WIDTH,
+                                    mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
+                mContext = context;
+                mIntent = new Intent();
+                mIntent.setComponent(new ComponentName(LINERECT_LOCATION, LINERECT_ACTIVITY));
+                mFrame = new Rect();
+            }
+        }
+
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(mStackId);
+            out.writeInt(mFramePadding);
+            out.writeInt(mHeaderHeight);
+            out.writeInt(mBack.left);
+            out.writeInt(mBack.top);
+            out.writeInt(mBack.right);
+            out.writeInt(mBack.bottom);
+            out.writeInt(mMin.mOffRight);
+            out.writeInt(mMin.mOffTop);
+            out.writeInt(mMin.mWidth);
+            out.writeInt(mMin.mHeight);
+            out.writeInt(mMax.mOffRight);
+            out.writeInt(mMax.mOffTop);
+            out.writeInt(mMax.mWidth);
+            out.writeInt(mMax.mHeight);
+            out.writeInt(mClose.mOffRight);
+            out.writeInt(mClose.mOffTop);
+            out.writeInt(mClose.mWidth);
+            out.writeInt(mClose.mHeight);
+            out.writeInt(mOldSize.left);
+            out.writeInt(mOldSize.top);
+            out.writeInt(mOldSize.right);
+            out.writeInt(mOldSize.bottom);
+            out.writeInt(mFullScreen.left);
+            out.writeInt(mFullScreen.top);
+            out.writeInt(mFullScreen.right);
+            out.writeInt(mFullScreen.bottom);
+            out.writeInt(mLeftDockFrame.left);
+            out.writeInt(mLeftDockFrame.top);
+            out.writeInt(mLeftDockFrame.right);
+            out.writeInt(mLeftDockFrame.bottom);
+            out.writeInt(mRightDockFrame.left);
+            out.writeInt(mRightDockFrame.top);
+            out.writeInt(mRightDockFrame.right);
+            out.writeInt(mRightDockFrame.bottom);
+        }
+
+        public void readFromParcel(Parcel in) {
+            mStackId = in.readInt();
+            mFramePadding = in.readInt();
+            mHeaderHeight = in.readInt();
+            mBack.left = in.readInt();
+            mBack.top = in.readInt();
+            mBack.right = in.readInt();
+            mBack.bottom = in.readInt();
+            mMin.mOffRight = in.readInt();
+            mMin.mOffTop = in.readInt();
+            mMin.mWidth = in.readInt();
+            mMin.mHeight = in.readInt();
+            mMax.mOffRight = in.readInt();
+            mMax.mOffTop = in.readInt();
+            mMax.mWidth = in.readInt();
+            mMax.mHeight = in.readInt();
+            mClose.mOffRight = in.readInt();
+            mClose.mOffTop = in.readInt();
+            mClose.mWidth = in.readInt();
+            mClose.mHeight = in.readInt();
+            mOldSize.left = in.readInt();
+            mOldSize.top = in.readInt();
+            mOldSize.right = in.readInt();
+            mOldSize.bottom = in.readInt();
+            mFullScreen.left = in.readInt();
+            mFullScreen.top = in.readInt();
+            mFullScreen.right = in.readInt();
+            mFullScreen.bottom = in.readInt();
+            mLeftDockFrame.left = in.readInt();
+            mLeftDockFrame.top = in.readInt();
+            mLeftDockFrame.right = in.readInt();
+            mLeftDockFrame.bottom = in.readInt();
+            mRightDockFrame.left = in.readInt();
+            mRightDockFrame.top = in.readInt();
+            mRightDockFrame.right = in.readInt();
+            mRightDockFrame.bottom = in.readInt();
+        }
+
+        public String toString() {
+            return "padding: " + mFramePadding + "; height " + mHeaderHeight + ";  back: "
+                   + mBack + ";  min: " + mMin.mOffRight + ", " + mMin.mOffTop + " - " + mMin.mWidth
+                   + ", " + mMin.mHeight + ";  max: " + mMax.mOffRight + ", " + mMax.mOffTop
+                   + " - " + mMax.mWidth + ", " + mMax.mHeight + ";  close: " + mClose.mOffRight
+                   + ", " + mClose.mOffTop + " - " + mClose.mWidth + ", " + mClose.mHeight
+                   + "; full: " + mFullScreen + "; left: " + mLeftDockFrame + "; right: "
+                   + mRightDockFrame + "; old: " + mOldSize;
+        }
+
+        public void toggleFullScreen(Rect frame) {
+            if (!frame.equals(mFullScreen)){
+                mOldSize.set(frame);
+                if (mCallback != null) {
+                    mCallback.relayoutWindow(mStackId, mFullScreen);
+                }
+            } else {
+                if (mCallback != null) {
+                    mCallback.relayoutWindow(mStackId, mOldSize);
+                }
+            }
+        }
+
+        public void onMinimize(Rect orig) {
+            Rect outOfScreen = new Rect(orig.left + mFullScreen.width(),
+                                        orig.top + mFullScreen.height(),
+                                        orig.right + mFullScreen.width(),
+                                        orig.bottom + mFullScreen.height());
+            if (mCallback != null) {
+                mCallback.saveInfoInStatusbarActivity(mStackId, orig);
+                mCallback.relayoutWindow(mStackId, outOfScreen);
+            }
+            unsetFocusedStack();
+        }
+
+        public void setFocusedStack() {
+            if ((mCallback != null) && (mCallback.getFocusedStackId() != mStackId)) {
+                mCallback.setFocusedStack(mStackId);
+            }
+        }
+
+        public void unsetFocusedStack() {
+            if ((mCallback != null) && (mCallback.getFocusedStackId() == mStackId)) {
+                mCallback.unsetFocusedStack(mStackId);
+            }
+        }
+
+        public void updateScreenFrame(DisplayMetrics m) {
+            mFullScreen.set(0 - mFramePadding, 0 - mFramePadding, m.widthPixels + mFramePadding,
+                            m.heightPixels + mFramePadding);
+            mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
+                               mFullScreen.right / 2 - mFramePadding- MW_WINDOW_RESIZE_LINE_WIDTH,
+                               mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
+            mRightDockFrame.set(mFullScreen.right / 2 - mFramePadding, mFullScreen.top,
+                                mFullScreen.right - MW_WINDOW_RESIZE_LINE_WIDTH,
+                                mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
+        }
+
+        public int getResizeWays(Rect frame, int x, int y) {
+            if (frame != null) {
+                mResizeWays = getResizeWaysInternal(frame, x, y);
+            } else {
+                mResizeWays = MW_WINDOW_RESIZE_NONE;
+            }
+            return mResizeWays;
+        }
+
+        private int getResizeWaysInternal(Rect frame, int x, int y) {
+            int padding = (mFramePadding < MW_WINDOW_RESIZE_PADDING_MIN)
+                          ? MW_WINDOW_RESIZE_PADDING_MIN : mFramePadding;
+
+            if (frame.equals(mFullScreen)) {
+                return MW_WINDOW_RESIZE_NONE;
+            } else if (y - frame.top <= padding / MW_WINDOW_RESIZE_HEADER_FACTOR) {
+                if(x - frame.left <= padding) {
+                    return MW_WINDOW_RESIZE_TOPLEFT;
+                } else if(frame.right - x <= padding) {
+                    return MW_WINDOW_RESIZE_TOPRIGHT;
+                } else {
+                    return MW_WINDOW_RESIZE_TOP;
+                }
+            } else if (frame.bottom - y <= padding) {
+                if(x - frame.left <= padding) {
+                    return MW_WINDOW_RESIZE_BOTTOMLEFT;
+                } else if(frame.right - x <= padding) {
+                    return MW_WINDOW_RESIZE_BOTTOMRIGHT;
+                } else {
+                    return MW_WINDOW_RESIZE_BOTTOM;
+                }
+            } else if (x - frame.left <= padding) {
+                return MW_WINDOW_RESIZE_LEFT;
+            } else if (frame.right - x <= padding) {
+                return MW_WINDOW_RESIZE_RIGHT;
+            }
+            return MW_WINDOW_RESIZE_NONE;
+        }
+
+        public boolean fitWindowInScreen(Rect pos) {
+            int w = pos.width() - MW_WINDOW_MOVING_PADDING;
+            if (pos.left < (mFullScreen.left - w)) {
+                return false;
+            }
+            if (pos.right > (mFullScreen.right + w)) {
+                return false;
+            }
+            int h = pos.height() - MW_WINDOW_MOVING_PADDING;
+            if (pos.bottom > (mFullScreen.bottom + h)) {
+                return false;
+            }
+            if (pos.top < mFullScreen.top) {
+                pos.bottom = mFullScreen.top + pos.height();
+                pos.top = mFullScreen.top;
+            }
+            return true;
+        }
+
+        public boolean onDoubleClick(int what, int x, int y, Rect frame) {
+            if (MotionEvent.ACTION_DOWN == what) {
+                if ((System.currentTimeMillis() - mLastMilliSeconds) < DOUBLE_CLICK_INTERVAL) {
+                    toggleFullScreen(frame);
+                    return true;
+                }
+
+            } else if(MotionEvent.ACTION_UP == what) {
+                mLastMilliSeconds = System.currentTimeMillis();
+            }
+            return false;
+        }
+
+        private void sendFrame(int flags, int left, int top, int right, int bottom) {
+            mIntent.setFlags(flags | Intent.FLAG_ACTIVITY_NO_ANIMATION
+                             | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+            mIntent.putExtra(Intent.EXTRA_RECT_LEFT, left);
+            mIntent.putExtra(Intent.EXTRA_RECT_TOP, top);
+            mIntent.putExtra(Intent.EXTRA_RECT_RIGHT, right);
+            mIntent.putExtra(Intent.EXTRA_RECT_BOTTOM, bottom);
+            mContext.startActivity(mIntent);
+        }
+
+        public void sendFrameEnd() {
+            sendFrame(0, -1, -1, -1, -1);
+        }
+
+        public void sendNewFrame(int flags) {
+            sendFrame(flags, mNewFrame.left + mFramePadding, mNewFrame.top + mFramePadding,
+                      mNewFrame.right - mFramePadding, mNewFrame.bottom - mFramePadding);
+        }
+
+        public static class ResizeWindow {
+            private final static int MW_WINDOW_MIN_WIDTH = 250;
+            private final static int MW_WINDOW_MIN_HEIGHT = 180;
+
+            public int mLastDx = 0;
+            public int mLastDy = 0;
+            protected Rect mTmpFrame = new Rect();
+
+            public ResizeWindow() {
+            }
+
+            public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+                switch(ways) {
+                    case MW_WINDOW_RESIZE_BOTTOM:
+                            mTmpFrame.top = frame.top;
+                            if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.bottom = frame.bottom + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.bottom = frame.bottom + mLastDy;
+                            }
+                            mTmpFrame.left = frame.left;
+                            mTmpFrame.right = frame.right;
+                            break;
+                    case MW_WINDOW_RESIZE_LEFT:
+                            mTmpFrame.top = frame.top;
+                            mTmpFrame.bottom = frame.bottom;
+                            if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.left = frame.left + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.left = frame.left + mLastDx;
+                            }
+                            mTmpFrame.right = frame.right;
+                            break;
+                    case MW_WINDOW_RESIZE_RIGHT:
+                            mTmpFrame.top = frame.top;
+                            mTmpFrame.bottom = frame.bottom;
+                            mTmpFrame.left = frame.left;
+                            if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.right = frame.right + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.right = frame.right + mLastDx;
+                            }
+                            break;
+                    case MW_WINDOW_RESIZE_TOPLEFT:
+                            if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.top = frame.top + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.top = frame.top + mLastDy;
+                            }
+                            mTmpFrame.bottom = frame.bottom;
+                            if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.left = frame.left + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.left = frame.left + mLastDx;
+                            }
+                            mTmpFrame.right = frame.right;
+                            break;
+                    case MW_WINDOW_RESIZE_TOPRIGHT:
+                            if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.top = frame.top + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.top = frame.top + mLastDy;
+                            }
+                            mTmpFrame.bottom = frame.bottom;
+                            mTmpFrame.left = frame.left;
+                            if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.right = frame.right + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.right = frame.right + mLastDx;
+                            }
+                            break;
+                    case MW_WINDOW_RESIZE_BOTTOMLEFT:
+                            mTmpFrame.top = frame.top;
+                            if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.bottom = frame.bottom + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.bottom = frame.bottom + mLastDy;
+                            }
+                            if (frame.right - (frame.left + diffX) >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.left = frame.left + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.left = frame.left + mLastDx;
+                            }
+                            mTmpFrame.right = frame.right;
+                            break;
+                    case MW_WINDOW_RESIZE_BOTTOMRIGHT:
+                            mTmpFrame.top = frame.top;
+                            if (frame.bottom + diffY - frame.top >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.bottom = frame.bottom + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.bottom = frame.bottom + mLastDy;
+                            }
+                            mTmpFrame.left = frame.left;
+                            if (frame.right + diffX - frame.left >= MW_WINDOW_MIN_WIDTH) {
+                                mTmpFrame.right = frame.right + diffX;
+                                mLastDx = diffX;
+                            } else {
+                                mTmpFrame.right = frame.right + mLastDx;
+                            }
+                            break;
+                    case MW_WINDOW_RESIZE_TOP:
+                            if (frame.bottom - (frame.top + diffY) >= MW_WINDOW_MIN_HEIGHT) {
+                                mTmpFrame.top = frame.top + diffY;
+                                mLastDy = diffY;
+                            } else {
+                                mTmpFrame.top = frame.top + mLastDy;
+                            }
+                            mTmpFrame.bottom = frame.bottom;
+                            mTmpFrame.left = frame.left;
+                            mTmpFrame.right = frame.right;
+                            break;
+                    default:
+                            mTmpFrame.top = frame.top;
+                            mTmpFrame.bottom = frame.bottom;
+                            mTmpFrame.left = frame.left;
+                            mTmpFrame.right = frame.right;
+                            break;
+                }
+                return mTmpFrame;
+            }
+        }
+
+        public static class MoveWindow extends ResizeWindow  {
+            public MoveWindow() {
+            }
+            @Override
+            public Rect resize(Rect frame, int diffX, int diffY, int ways) {
+                mTmpFrame.left = frame.left + diffX;
+                mTmpFrame.top = frame.top + diffY;
+                mTmpFrame.right = frame.right + diffX;
+                mTmpFrame.bottom = frame.bottom + diffY;
+                return mTmpFrame;
+            }
+        }
+
+        public boolean isResizing() {
+            return mResizeWays != MW_WINDOW_RESIZE_NONE;
+        }
+
+        public Rect onTouchWindow(int what, int x, int y, Rect frame, ResizeWindow resizeWindow) {
+
+            if (onDoubleClick(what, x, y, frame)) {
+                return null;
+            }
+
+            if (frame.equals(mFullScreen)) {
+                return null;
+            }
+
+            if (MotionEvent.ACTION_DOWN == what) {
+                setFocusedStack();
+                mLastX = x;
+                mLastY = y;
+                resizeWindow.mLastDx = 0;
+                resizeWindow.mLastDy = 0;
+                mFrame.set(frame);
+                mNewFrame = mFrame;
+                if (mCallback != null) {
+                    mCallback.setFocusedStack(mStackId);
+                    mCallback.syncResizingIcon(getResizeWays(mFrame, x, y));
+                }
+                if (isResizing()) {
+                    sendNewFrame(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                }
+            } else if(MotionEvent.ACTION_MOVE == what) {
+                int dx = x - mLastX;
+                int dy = y - mLastY;
+                Rect r = resizeWindow.resize(mFrame, dx, dy, mResizeWays);
+                if (fitWindowInScreen(r)) {
+                    // fullscreen.left + padding is the left screen real border.
+                    if (x <= mFullScreen.left + 2 * mFramePadding) {
+                        mNewFrame = mLeftDockFrame;
+                    // fullscreen.right - padding is the right screen real border.
+                    } else if (x >= mFullScreen.right - 2 * mFramePadding) {
+                        mNewFrame = mRightDockFrame;
+                    } else {
+                        if ((mNewFrame == mLeftDockFrame) || (mNewFrame == mRightDockFrame)) {
+                            sendFrameEnd();
+                        }
+                        mNewFrame = r;
+                    }
+                    if (isResizing()
+                        || mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
+                        sendNewFrame(0);
+                    } else if (mCallback != null) {
+                        mCallback.relayoutWindow(mStackId, mNewFrame);
+                    }
+                }
+            } else if(MotionEvent.ACTION_UP == what) {
+                mFrame.set(mNewFrame);
+                if (isResizing()
+                    || (mNewFrame == mLeftDockFrame) || (mNewFrame == mRightDockFrame)) {
+                    sendFrameEnd();
+                    if (mCallback != null) {
+                        mCallback.relayoutWindow(mStackId, mNewFrame);
+                        mCallback.setFocusedStack(mStackId);
+                    }
+                }
+                if (mCallback != null) {
+                    mCallback.syncResizingIcon(getResizeWays(null, 0, 0));
+                }
+            }
+            return mNewFrame;
+        }
     }
 }
