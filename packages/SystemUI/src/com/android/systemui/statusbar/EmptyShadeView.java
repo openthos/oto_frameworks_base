@@ -23,23 +23,54 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
 
+import android.widget.Button;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 public class EmptyShadeView extends StackScrollerDecorView {
 
+    PhoneStatusBar  mBar;
     public EmptyShadeView(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setPhoneStatusBar(PhoneStatusBar phoneStatusBar) {
+        mBar = phoneStatusBar;
     }
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        //((TextView) findViewById(R.id.no_notifications)).setText(R.string.empty_shade_text);
     }
 
     @Override
     protected View findContentView() {
         return findViewById(R.id.notification_center);
     }
+
+    @Override
+    protected void initViews() {
+        super.initViews();
+        makeLayout();
+    }
+
+    private void makeLayout() {
+        Button btnNotificationManager = (Button) findViewById(R.id.notificationManager);
+        btnNotificationManager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        Button btnClearAll = (Button) findViewById(R.id.clearAll);
+        btnClearAll.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 mBar.clearAllNotifications();
+             }
+       });
+
+    }
+
+
 }

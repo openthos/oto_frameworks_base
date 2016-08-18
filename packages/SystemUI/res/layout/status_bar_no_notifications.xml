@@ -27,7 +27,8 @@
 
         <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginBottom="12dp">
 
         <TextView
             android:id="@+id/notification_center"

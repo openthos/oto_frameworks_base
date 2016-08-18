@@ -729,7 +729,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStackScroller.setSpeedBumpView(speedBump);
         mEmptyShadeView = (EmptyShadeView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_no_notifications, mStackScroller, false);
+        mEmptyShadeView.setPhoneStatusBar(this);
         mStackScroller.setEmptyShadeView(mEmptyShadeView);
+
         mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_notification_dismiss_all, mStackScroller, false);
         mDismissView.setOnButtonClickListener(new View.OnClickListener() {
@@ -1039,7 +1041,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     }
 
-    private void clearAllNotifications() {
+    public void clearAllNotifications() {
 
         // animate-swipe all dismissable notifications, then animate the shade closed
         int numChildren = mStackScroller.getChildCount();
