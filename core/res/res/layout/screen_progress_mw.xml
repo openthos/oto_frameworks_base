@@ -92,5 +92,6 @@ This is the basic layout for a screen, with all of its features enabled.
                 android:foreground="?android:attr/windowContentOverlay"
                 />
         </LinearLayout>
+        <include layout="@layout/mw_cover"/>
     </FrameLayout>
 </FrameLayout>

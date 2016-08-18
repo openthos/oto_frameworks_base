@@ -39,5 +39,6 @@ This is an optimized layout for a screen with a toolbar enabled.
             <include layout="@layout/mw_decor"/>
             <include layout="@layout/screen_toolbar"/>
         </LinearLayout>
+        <include layout="@layout/mw_cover"/>
     </FrameLayout>
 </FrameLayout>

@@ -39,5 +39,6 @@ This is a layout for a window whose resident activity is finished when swiped aw
             <include layout="@layout/mw_decor"/>
             <include layout="@layout/screen_swipe_dismiss"/>
         </LinearLayout>
+        <include layout="@layout/mw_cover"/>
     </FrameLayout>
 </FrameLayout>
