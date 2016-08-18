@@ -2527,6 +2527,10 @@ public interface WindowManager extends ViewManager {
 
         public Rect onTouchWindow(int what, int x, int y, Rect frame, ResizeWindow resizeWindow) {
 
+            if ((frame == null) || (frame.width() <= 0) || (frame.height() <= 0)) {
+                return null;
+            }
+
             if (onDoubleClick(what, x, y, frame)) {
                 return null;
             }
