@@ -19,15 +19,48 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/qs_background_primary"
         >
-    <TextView
-            android:id="@+id/no_notifications"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:paddingTop="12dp"
-            android:gravity="top|center_horizontal"
-            android:textColor="#ffffff"
-            android:textSize="12sp"
-            android:text="@string/empty_shade_text"/>
+    <LinearLayout
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/notification_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/notification_center"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/notificationManager"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/clearAll"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:text="@string/notification_manager"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/clearAll"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:text="@string/clear_all"
+            android:textSize="12sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
 </com.android.systemui.statusbar.EmptyShadeView>

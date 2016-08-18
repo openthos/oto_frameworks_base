@@ -40,6 +40,6 @@ public class EmptyShadeView extends StackScrollerDecorView {
 
     @Override
     protected View findContentView() {
-        return findViewById(R.id.no_notifications);
+        return findViewById(R.id.notification_center);
     }
 }

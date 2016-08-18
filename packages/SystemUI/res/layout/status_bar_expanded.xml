@@ -24,7 +24,6 @@
     android:id="@+id/notification_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dp"
     android:background="@android:color/transparent"
     >
 
@@ -63,54 +62,29 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="wrap_content"
+            android:layout_height="340dp"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:background="#1affffff">
-                <TextView
-                    android:id="@+id/notification_center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:text="@string/notification_center"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
-
-                 <Button
-                    android:id="@+id/notificationManager"
-                    android:layout_width="42dp"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/clearAll"
-                    android:layout_marginRight="8dp"
-                    android:layout_centerVertical="true"
-                    android:background="@null"
-                    android:text="@string/notification_manager"
-                    android:textSize="12sp" />
-
-                <Button
-                    android:id="@+id/clearAll"
-                    android:layout_width="42dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:background="@null"
-                    android:text="@string/clear_all"
-                    android:textSize="12sp" />
-
-            </RelativeLayout>
-
-            <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
-                android:id="@+id/notification_stack_scroller"
+            <FrameLayout
                 android:layout_width="@dimen/notification_panel_width"
-                android:layout_height="240dp"
-                android:layout_gravity="top|center"
-                android:layout_marginBottom="@dimen/close_handle_underlap"
-                android:importantForAccessibility="no" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:background="#1affffff" />
+
+                <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
+                    android:id="@+id/notification_stack_scroller"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center"
+                    android:layout_marginBottom="@dimen/close_handle_underlap"
+                    android:importantForAccessibility="no" />
+
+            </FrameLayout>
         </LinearLayout>
         <!-- end of notification panel -->
 
@@ -172,7 +146,7 @@
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="110dp" />
 
             <!-- A view to reserve space for the collapsed stack -->
             <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->
