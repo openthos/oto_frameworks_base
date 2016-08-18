@@ -571,4 +571,6 @@
     <dimen name="quick_settings_tile_icon_top_padding">16dp</dimen>
     <!-- Label top padding of Quick Settings Tile -->
     <dimen name="quick_settings_tile_label_top_padding">2dp</dimen>
+    <!-- Status bar home but width-->
+    <dimen name="status_bar_home_width">10dp</dimen>
 </resources>

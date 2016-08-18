@@ -31,25 +31,25 @@ import com.android.documentsui.util.MySqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
 
-public class StartMenuDialog extends Dialog implements OnClickListener {
-    public static int STARTMENU_WIDTH = 55;
-    public static int STARTMENU_LOCATION = 300;
+public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
+    public static int STARTMENU_WIDTH = 65;
+    public static int STARTMENU_LOCATION = 330;
     private Context mContext;
     private boolean mFlag;
     private int mPosition;
-    private TextView mRightOpen;
+    private TextView mRightUsuallyOpen;
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
     private int mListType;
     private String mPkgName;
 
-    public StartMenuDialog(Context context) {
+    public StartMenuUsuallyDialog(Context context) {
         super(context);
         mContext = context;
     }
 
-    public StartMenuDialog(Context context, int themeResId) {
+    public StartMenuUsuallyDialog(Context context, int themeResId) {
         super(context, themeResId);
         mContext = context;
     }
@@ -58,38 +58,37 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         mPosition = pos;
     }
 
-    protected StartMenuDialog(Context context, boolean cancelable,
+    protected StartMenuUsuallyDialog(Context context, boolean cancelable,
                               OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
 
-     @Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.right_click_menu1);
+        setContentView(R.layout.right_click_usually_menu);
 
         mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
-        mRightOpen = (TextView) findViewById(R.id.tv_right_open);
-        TextView rightPhoneRun = (TextView) findViewById(R.id.tv_right_phone_run);
-        TextView rightDesktopRun = (TextView) findViewById(R.id.tv_right_desktop_run);
-        TextView rightFixedTaskbar = (TextView) findViewById(R.id.tv_right_fixed_taskbar);
-        TextView rightUninstall = (TextView) findViewById(R.id.tv_right_uninstall);
+        mRightUsuallyOpen = (TextView) findViewById(R.id.tv_right_usually_open);
+        TextView rightPhoneUsuallyRun = (TextView) findViewById(R.id.tv_right_phone_usually_run);
+        TextView rightDesktopUsuallyRun = (TextView) findViewById(
+                                                         R.id.tv_right_desktop_usually_run);
+        TextView romeList = (TextView) findViewById(R.id.tv_removed_list);
 
         mFlag = true;
-        mRightOpen.setOnClickListener(this);
-        rightPhoneRun.setOnClickListener(this);
-        rightDesktopRun.setOnClickListener(this);
-        rightFixedTaskbar.setOnClickListener(this);
-        rightUninstall.setOnClickListener(this);
+        mRightUsuallyOpen.setOnClickListener(this);
+        rightPhoneUsuallyRun.setOnClickListener(this);
+        rightDesktopUsuallyRun.setOnClickListener(this);
+        romeList.setOnClickListener(this);
     }
 
     public void setEnableOpenwith(boolean can) {
         mFlag = can;
         if (can) {
-            mRightOpen.setTextColor(Color.parseColor("#000000"));
+            mRightUsuallyOpen.setTextColor(Color.parseColor("#000000"));
         } else {
-            mRightOpen.setTextColor(Color.parseColor("#b19898"));
+            mRightUsuallyOpen.setTextColor(Color.parseColor("#b19898"));
         }
     }
 
@@ -101,8 +100,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager m = dialogWindow.getWindowManager();
         Display d = m.getDefaultDisplay();
-        if (x > (d.getWidth() - dialogWindow.getAttributes().width))
-        {
+        if (x > (d.getWidth() - dialogWindow.getAttributes().width)) {
             lp.x = d.getWidth() - dialogWindow.getAttributes().width;
         } else {
             lp.x = x;
@@ -122,7 +120,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-        case R.id.tv_right_open:
+        case R.id.tv_right_usually_open:
             Intent intent;
             if (mListType == 0) {
                 mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
@@ -141,27 +139,17 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             ContentValues values = new ContentValues();
             values.put("int", numbers);
             mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
-        break;
+            break;
 
-        case R.id.tv_right_phone_run:
+        case R.id.tv_right_phone_usually_run:
             Toast.makeText(mContext, "phone run: COMING SOON", 0).show();
-        break;
-        case R.id.tv_right_desktop_run:
+            break;
+        case R.id.tv_right_desktop_usually_run:
             Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
-        break;
-        case R.id.tv_right_fixed_taskbar:
-            Toast.makeText(mContext, "fied taskbar: COMING SOON", 0).show();
-        break;
-        case R.id.tv_right_uninstall:
-            if (mListType == 0) {
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            } else {
-                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-            }
-            Uri uri = Uri.parse("package:" + mPkgName);
-            Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-            mContext.startActivity(intents);
-        break;
+            break;
+        case R.id.tv_removed_list:
+            Toast.makeText(mContext, "removed list: COMING SOON", 0).show();
+            break;
         }
     }
 }

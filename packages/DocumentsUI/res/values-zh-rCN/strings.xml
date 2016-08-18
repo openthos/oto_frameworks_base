@@ -81,4 +81,5 @@
     <string name="my_desktop_run">"以桌面模式运行"</string>
     <string name="fixed_the_taskbar">"固定到任务栏"</string>
     <string name="my_uninstall">"卸载"</string>
+    <string name="removed_the_list">"从此列表中删除"</string>
 </resources>

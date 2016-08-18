@@ -108,10 +108,11 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
     }
 
     private void showMenuDialog1(int position,MotionEvent motionEvent){
-        StartupMenuActivity.mStartMenuDialog.setPosition(position);
+        StartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
-        StartupMenuActivity.mStartMenuDialog.showDialog((int)motionEvent.getRawX() - location[0],
+        StartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
+                (int)motionEvent.getRawX() - location[0],
                 (int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
                 START_MENU_RIGHT_MOUSE_UI_X, START_MENU_RIGHT_MOUSE_UI_Y, 1);
     }

@@ -18,6 +18,7 @@ import com.android.documentsui.util.MySqliteOpenHelper;
 import com.android.documentsui.util.BaseSettingDialog;
 import com.android.documentsui.util.PowerSourceDialog;
 import com.android.documentsui.util.StartMenuDialog;
+import com.android.documentsui.util.StartMenuUsuallyDialog;
 
 import android.content.ActivityNotFoundException;
 import android.util.Slog;
@@ -100,6 +101,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_THIRD_APP_TYPE_UI_Y = 125;
 
         public static StartMenuDialog mStartMenuDialog;
+        public static StartMenuUsuallyDialog mStartMenuUsuallyDialog;
         public static List<AppInfo> mlistAppInfo = null;
         public static StartupMenuActivity StartupMenuActivity;
         public static  List<AppInfo> mlistViewAppInfo = null;
@@ -158,7 +160,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
             my_computer = (TextView) findViewById(R.id.my_computer);
             mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
-            //mStartMenuDialog = new MenuDialog1(this, R.style.dialog);
+            mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
 
