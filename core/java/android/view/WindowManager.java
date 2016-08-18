@@ -2068,6 +2068,7 @@ public interface WindowManager extends ViewManager {
         public int mStackId = -1;
 
         public int mFramePadding = 0;
+        public int mFrameTopPadding = 0;
         public int mHeaderHeight = 0;
 
         public Rect  mBack;
@@ -2152,6 +2153,7 @@ public interface WindowManager extends ViewManager {
         public void writeToParcel(Parcel out, int flags) {
             out.writeInt(mStackId);
             out.writeInt(mFramePadding);
+            out.writeInt(mFrameTopPadding);
             out.writeInt(mHeaderHeight);
             out.writeInt(mBack.left);
             out.writeInt(mBack.top);
@@ -2190,6 +2192,7 @@ public interface WindowManager extends ViewManager {
         public void readFromParcel(Parcel in) {
             mStackId = in.readInt();
             mFramePadding = in.readInt();
+            mFrameTopPadding = in.readInt();
             mHeaderHeight = in.readInt();
             mBack.left = in.readInt();
             mBack.top = in.readInt();
@@ -2232,7 +2235,7 @@ public interface WindowManager extends ViewManager {
                    + " - " + mMax.mWidth + ", " + mMax.mHeight + ";  close: " + mClose.mOffRight
                    + ", " + mClose.mOffTop + " - " + mClose.mWidth + ", " + mClose.mHeight
                    + "; full: " + mFullScreen + "; left: " + mLeftDockFrame + "; right: "
-                   + mRightDockFrame + "; old: " + mOldSize;
+                   + mRightDockFrame + "; old: " + mOldSize + ";  top padding: " + mFrameTopPadding;
         }
 
         public void toggleFullScreen(Rect frame) {
@@ -2273,7 +2276,7 @@ public interface WindowManager extends ViewManager {
         }
 
         public void updateScreenFrame(DisplayMetrics m) {
-            mFullScreen.set(0 - mFramePadding, 0 - mFramePadding, m.widthPixels + mFramePadding,
+            mFullScreen.set(0 - mFramePadding, 0 - mFrameTopPadding, m.widthPixels + mFramePadding,
                             m.heightPixels + mFramePadding);
             mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
                                mFullScreen.right / 2 - mFramePadding- MW_WINDOW_RESIZE_LINE_WIDTH,
@@ -2369,7 +2372,7 @@ public interface WindowManager extends ViewManager {
         }
 
         public void sendNewFrame(int flags) {
-            sendFrame(flags, mNewFrame.left + mFramePadding, mNewFrame.top + mFramePadding,
+            sendFrame(flags, mNewFrame.left + mFramePadding, mNewFrame.top + mFrameTopPadding,
                       mNewFrame.right - mFramePadding, mNewFrame.bottom - mFramePadding);
         }
 

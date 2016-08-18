@@ -2317,18 +2317,20 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             int h = getContext().getResources().getDimensionPixelSize(
                                                     com.android.internal.R.dimen.mw_header_border);
             int padding = getBorderPadding();
-            if ((getWidth() <= 2 * padding) || (getHeight() <= 2 * padding + h)) {
+            int paddingTop = getTopBorderPadding();
+            if ((getWidth() <= 2 * padding) || (getHeight() <= padding + paddingTop + h)) {
                 return null;
             }
 
-            return new Rect(padding, h + padding, getWidth() - padding, getHeight() - padding);
+            return new Rect(padding, h + paddingTop, getWidth() - padding, getHeight() - padding);
         }
 
         public Rect getContentRectForCenter() {
             int h = getContext().getResources().getDimensionPixelSize(
                                                     com.android.internal.R.dimen.mw_header_border);
             int padding = getBorderPadding();
-            if ((getWidth() <= 2 * padding) || (getHeight() <= 2 * padding + h)) {
+            int paddingTop = getTopBorderPadding();
+            if ((getWidth() <= 2 * padding) || (getHeight() <= padding + paddingTop + h)) {
                 return null;
             }
 
@@ -2337,8 +2339,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
              *    border + header + Height/2 - (Height + 2*border + header)/2
              *  +1 is for the foating roundup.
              */
-            return new Rect(0, h / 2 + 1, getWidth() - 2 * padding + 1,
-                            getHeight() - 2 * padding - h / 2);
+            return new Rect(0, h / 2, getWidth() - 2 * padding + 1,
+                            getHeight() - padding - paddingTop - h / 2);
         }
 
         @Override
@@ -2971,11 +2973,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void setWindowBackground(Drawable drawable) {
-            if ((mDecorMW != null) && mDecorMW.isShadow()) {
-                mDecorMW.saveDecorBackground(drawable);
-                drawable = new ColorDrawable(Color.TRANSPARENT);
-            } else {
-            }
             if (getBackground() != drawable) {
                 setBackgroundDrawable(drawable);
                 if (drawable != null) {
@@ -3618,8 +3615,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private Rect getClientRect() {
         int padding = getBorderPadding();
+        int paddingTop = getTopBorderPadding();
         Rect frame = getActivityFrame();
-        return new Rect(padding, getHeaderHeight() + padding, frame.width() - padding,
+        return new Rect(padding, getHeaderHeight() + paddingTop, frame.width() - padding,
                         frame.height() - padding);
     }
 
@@ -3645,7 +3643,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 return;
             }
             int padding = getBorderPadding();
-            v.setPadding(padding, getHeaderHeight() + padding, padding, padding);
+            int paddingTop = getTopBorderPadding();
+            v.setPadding(padding, getHeaderHeight() + paddingTop, padding, padding);
             v.setVisibility(View.VISIBLE);
         }
     }
@@ -3745,13 +3744,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
-    @Override
-    public void setShadow(boolean hasShadow) {
-        if (mDecorMW != null) {
-            mDecorMW.setShadow(hasShadow);
-        }
-    }
-
     class DecorMW {
 
         private LinearLayout mHeader;
@@ -3760,54 +3752,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private ImageButton mMaximizeBtn;
         private ImageButton mMinimizeBtn;
         private View mOuterBorder;
-        private View mBackground;
-        private boolean mHasShadow;
-
-        Drawable mDecorBackgroundDrawable = null;
 
         public void hide() {
             mHeader.setVisibility(View.INVISIBLE);
         }
 
         public int getDecorMWPureHeight() {
-            return mHeader.getHeight() + 2 * getBorderPadding();
-        }
-
-        public void saveDecorBackground(Drawable drawable) {
-            mDecorBackgroundDrawable = drawable;
-        }
-
-        public void setShadow(boolean hasShadow) {
-            setShadow(hasShadow, false);
-        }
-
-        private void setShadow(boolean hasShadow, boolean force) {
-            if (!force && (mHasShadow == hasShadow)) {
-                return;
-            }
-
-            if (hasShadow) {
-                setBorderPadding(getContext().getResources().getDimensionPixelSize(
-                                                     com.android.internal.R.dimen.mw_outer_border));
-                mOuterBorder.setBackgroundResource(com.android.internal.R.drawable.mw_outer_border);
-                mBackground.setVisibility(View.VISIBLE);
-            } else {
-                setBorderPadding(getContext().getResources().getDimensionPixelSize(
-                                          com.android.internal.R.dimen.mw_outer_border_shadowless));
-                mOuterBorder.setBackgroundResource(
-                                        com.android.internal.R.drawable.mw_outer_border_shadowless);
-                mBackground.setVisibility(View.INVISIBLE);
-            }
-
-            int padding = getBorderPadding();
-            mOuterBorder.setPadding(padding, padding, padding, padding);
-
-            updateScreenFrame();
-
-            mHasShadow = hasShadow;
-            if (mDecorBackgroundDrawable != null) {
-                mDecor.setWindowBackground(mDecorBackgroundDrawable);
-            }
+            return mHeader.getHeight() + getBorderPadding() + getTopBorderPadding();
         }
 
         public void enableMultiWindowToWindowManager(Rect dialogRect) {
@@ -3836,17 +3787,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
         }
 
-        public boolean isShadow() {
-            return mHasShadow;
-        }
-
         public DecorMW(ViewGroup root) {
             mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_decor_header);
             mHeader.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
             setHeaderHeight(getContext().getResources().getDimensionPixelSize(
                                                     com.android.internal.R.dimen.mw_header_border));
 
-            mBackground = root.findViewById(com.android.internal.R.id.mwBackground);
             mOuterBorder = root.findViewById(com.android.internal.R.id.mwOuterBorder);
 
             mCloseBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwCloseBtn);
@@ -3862,7 +3808,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 Log.e(TAG, "create statusbar activity failed", e);
             }
 
-            setShadow(!getContext().getApplicationInfo().isPhoneStyleWindow(), true);
+            setBorderPadding();
+            setTopBorderPadding();
+            updateScreenFrame();
 
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(

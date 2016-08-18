@@ -1934,12 +1934,28 @@ public abstract class Window {
         return (mMultiWindow.mStackId > 0) && (mDialog != null);
     }
 
+    public int getTopBorderPadding() {
+        return mMultiWindow.mFrameTopPadding;
+    }
+
     public int getBorderPadding() {
         return mMultiWindow.mFramePadding;
     }
 
-    public void setBorderPadding(int padding) {
-        mMultiWindow.mFramePadding = padding;
+    public void setBorderPadding() {
+        mMultiWindow.mFramePadding = mContext.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border)
+                                     + mContext.getResources().getDimensionPixelSize(
+                                              com.android.internal.R.dimen.mw_shadow_outside_border)
+                                     + mContext.getResources().getDimensionPixelSize(
+                                              com.android.internal.R.dimen.mw_shadow_inside_border);
+    }
+
+    public void setTopBorderPadding() {
+        mMultiWindow.mFrameTopPadding = mContext.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border)
+                                        + mContext.getResources().getDimensionPixelSize(
+                                              com.android.internal.R.dimen.mw_shadow_inside_border);
     }
 
     public int getHeaderHeight() {
@@ -1951,7 +1967,7 @@ public abstract class Window {
     }
 
     public void setButtons(View back, View min, View max, View close) {
-        int padding = getBorderPadding();
+        int padding = getBorderPadding();  // For top header, can still use border padding.
 
         mMultiWindow.mBack.left = padding;
         mMultiWindow.mBack.top = padding;
@@ -2019,6 +2035,5 @@ public abstract class Window {
         return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow);
     }
 
-    public abstract void setShadow(boolean hasShadow);
     public abstract void showCover(boolean show);
 }

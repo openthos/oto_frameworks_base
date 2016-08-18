@@ -4,9 +4,10 @@ Copyright (C) 2013 Tieto Corporation.
 Dariusz Kluska
 -->
 <resources>
-    <dimen name="mw_outer_border">10dip</dimen>
+    <dimen name="mw_outer_border">1dip</dimen>
     <dimen name="mw_inner_border">2dip</dimen>
-    <dimen name="mw_outer_border_shadowless">2dip</dimen>
     <dimen name="mw_header_border">26dip</dimen>
     <dimen name="mw_dialog_border">50dip</dimen>
+    <dimen name="mw_shadow_outside_border">1dip</dimen>
+    <dimen name="mw_shadow_inside_border">1dip</dimen>
 </resources>
