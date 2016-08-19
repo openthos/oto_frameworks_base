@@ -168,7 +168,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     // This is the top-level view of the window, containing the window decor.
     private DecorView mDecor;
     private DecorMW mDecorMW;
-    private DialogMW mDialogMW;
 
     // This is the view in which the window contents are placed. It is either
     // mDecor itself, or a child of mDecor where the contents go.
@@ -2813,13 +2812,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                         // Now, only support center dialog, so only width and height has effect.
                         ((WindowDecorView) getParentDecor()).enableMultiWindowToWindowManager(
                                                            new Rect(0, 0, getWidth(), getHeight()));
-                    //    if (needDialogHeader()) {
-                    //        mDialogMW.show();
-                    //        mDialogMW.enableButton();
-                    //        //if (canMoveDialog()) {
-                    //            mDialogMW.enableMove();
-                    //        //}
-                    //    }
                     }
                     mHeaderChecked = true;
                 }
@@ -3649,85 +3641,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
-    class DialogMW {
-        private ImageButton mCloseBtn;
-        private LinearLayout mHeader;
-
-        public boolean haveHeader() {
-            return mHeader != null;
-        }
-
-        public void adjustDialog() {
-            Rect rect = getActivityContentRect();
-            if (rect == null) {
-                return;
-            }
-
-            WindowManager.LayoutParams l = getAttributes();
-            boolean touch = false;
-
-            //if (mDecor.getWidth() > rect.width()) {
-            //    l.x = rect.right;
-            //    l.width = rect.width();
-            //    l.gravity &= ~Gravity.FILL_HORIZONTAL;
-            //    l.gravity |= Gravity.CENTER_HORIZONTAL;
-            //    touch = true;
-            //}
-            if (mDecor.getHeight() > rect.height()) {
-                l.y = rect.top;
-                l.height = rect.height();
-                l.gravity &= ~Gravity.FILL_VERTICAL;
-                l.gravity |= Gravity.CENTER_VERTICAL;
-                touch = true;
-            }
-
-            if (touch) {
-                l.flags &= ~FLAG_FULLSCREEN;
-                l.flags |= FLAG_LAYOUT_INSET_DECOR | FLAG_LAYOUT_IN_SCREEN;
-                setAttributes(l);
-                invalidateByForce();
-            }
-        }
-
-        public void show() {
-            if (mHeader != null) {
-                mHeader.setVisibility(View.VISIBLE);
-                invalidateByForce();
-            }
-        }
-
-        public void hideButtons() {
-            if (mCloseBtn != null) {
-                mCloseBtn.setVisibility(View.INVISIBLE);
-            }
-        }
-
-        public void enableMove() {
-            mHeader.setOnTouchListener(new TouchListener(
-                                               new WindowManager.MultiWindow.MoveWindow()));
-        }
-
-        public void enableButton() {
-            mCloseBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mDecor.isMSOfficeFirstSkipView()) {
-                        System.exit(0);
-                    } else {
-                        KeyEvent.sendKeyEventBack();
-                    }
-                }
-            });
-        }
-
-        public DialogMW(ViewGroup root) {
-            mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_dialog_header);
-            if (mHeader != null) {
-                mCloseBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwCloseBtn);
-            }
-        }
-    }
-
     @Override
     public Rect getOldSize() {
         prepareOldSize();
@@ -4139,8 +4052,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                         R.attr.dialogCustomTitleDecorLayout, res, true);
                 layoutResource = res.resourceId;
             } else {
-                layoutResource = isMWDialog() ? R.layout.screen_custom_title_dialog
-                                              : R.layout.screen_custom_title;
+                layoutResource = R.layout.screen_custom_title;
             }
             // XXX Remove this once action bar supports these features.
             removeFeature(FEATURE_ACTION_BAR);
@@ -4162,24 +4074,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 layoutResource = res.resourceId;
             } else if ((features & (1 << FEATURE_ACTION_BAR)) != 0) {
                 layoutResource = a.getResourceId(
-                        isMWDialog() ? R.styleable.Window_windowActionBarFullscreenDecorLayoutDialog
-                                     : R.styleable.Window_windowActionBarFullscreenDecorLayout,
-                        isMWDialog() ? R.layout.screen_action_bar_dialog
-                                     : R.layout.screen_action_bar);
+                                     R.styleable.Window_windowActionBarFullscreenDecorLayout,
+                                     R.layout.screen_action_bar);
             } else {
-                layoutResource = isMWDialog() ? R.layout.screen_title_dialog
-                                              : R.layout.screen_title;
+                layoutResource = R.layout.screen_title;
             }
             // System.out.println("Title!");
         } else if ((features & (1 << FEATURE_ACTION_MODE_OVERLAY)) != 0) {
             layoutResource = isMWWindow() ? R.layout.screen_simple_overlay_action_mode_mw
-                                  : isMWDialog() ? R.layout.screen_simple_overlay_action_mode_dialog
                                                  : R.layout.screen_simple_overlay_action_mode;
         } else {
             // Embedded, so no decoration is needed.
-            layoutResource = isMWWindow() ? R.layout.screen_simple_mw
-                                          : isMWDialog() ? R.layout.screen_simple_dialog
-                                                         : R.layout.screen_simple;
+            layoutResource = isMWWindow() ? R.layout.screen_simple_mw : R.layout.screen_simple;
             // System.out.println("Simple!");
         }
 
@@ -4190,8 +4096,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         mContentRoot = (ViewGroup) in;
         if(isMWWindow()) {
             mDecorMW = new DecorMW(mContentRoot);
-        } else if (isMWDialog()) {
-            mDialogMW = new DialogMW(mContentRoot);
         }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);

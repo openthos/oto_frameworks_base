@@ -43,10 +43,6 @@ public class WindowDecorView extends FrameLayout {
         mMayMSOfficeFirstSkipView = mayMSOfficeFirstSkipView;
     }
 
-    public boolean isMSOfficeFirstSkipView() {
-        return mMayMSOfficeFirstSkipView && canMoveDialog();
-    }
-
     public void setWindow(Window window) {
         mWindow = window;
     }
@@ -74,21 +70,6 @@ public class WindowDecorView extends FrameLayout {
         if (isDialogFromMWParent()) {
             adjustDialog();
         }
-    }
-
-    public boolean needDialogHeader() {
-        if ((mDialogView == null) || (mDialogParentWindow == null)) {
-            return false;
-        }
-        int h = mDialogView.getHeight();
-        return (h > DIALOG_HAS_HEADER_MIN_HEIGHT) && (mDialogParentDecor.getHeight() <= h);
-    }
-
-    public boolean canMoveDialog() {
-        if ((mDialogView == null) || (mDialogParentWindow == null)) {
-            return false;
-        }
-        return needDialogHeader() && (mDialogParentDecor.getWidth() <= mDialogView.getWidth());
     }
 
     public boolean isDialogFromMWParent() {
