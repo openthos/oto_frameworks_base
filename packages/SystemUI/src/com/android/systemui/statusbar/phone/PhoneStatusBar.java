@@ -200,6 +200,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import android.content.SharedPreferences;
+import java.util.Iterator;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -915,6 +919,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             filter.addAction("fake_artwork");
         }
         filter.addAction(ACTION_DEMO);
+        filter.addAction("com.android.documentsui.util.startmenudialog");
+        filter.addAction("com.android.systemui.activitykeyview");
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -2537,6 +2543,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         checkBarModes();
     }
+    private Set<String> set = new HashSet<> () ;
+    // private SharedPreferences presPkg = mContext.getSharedPreferences("pkg",
+    //                                                    Context.MODE_PRIVATE);
+    // private SharedPreferences.Editor editorPkg = presPkg.edit();
+    /*private void loadPkg () {
+        Map<String,?> map = presPkg.getAll();
+        for (Map.Entry<String,?> entry : map.entrySet()) {
+            String keyPkg = entry.getKey();
+            loadDockedApk(keyPkg);
+        }
+    }*/
+    private void loadDocked (String str) {
+        int count = 0 ;
+        set.add("com.cyanogenmod.filemanager");
+        set.add("com.android.browser");
+        for (String setStr : set) {
+            count ++ ;
+            if (setStr.equals(str)) {
+                break;
+            }
+        }
+        if (count >= set.size()) {
+            set.add(str);
+            // editorPkg.putString(str,"");
+            // editorPkg.commit();
+            loadDockedApk(str);
+        }
+    }
 
     private void loadDockedApk(String pkg) {
         try {
@@ -3279,6 +3313,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (DEBUG_MEDIA_FAKE_ARTWORK) {
                     updateMediaMetaData(true);
                 }
+            } else {
+                String apkInfo = intent.getStringExtra("keyInfo");
+                if (action.equals("com.android.documentsui.util.startmenudialog")) {
+                    loadDocked(apkInfo);
+                }
+                /*if (action.equals("com.android.systemui.activitykeyview")) {
+                   String pkgName = intent.getStringExtra("rmIcon");
+                   set.remove(pkgName);
+                   Toast.makeText(mContext,"set集合："+set,Toast.LENGTH_LONG).show();
+                }*/
             }
         }
     };

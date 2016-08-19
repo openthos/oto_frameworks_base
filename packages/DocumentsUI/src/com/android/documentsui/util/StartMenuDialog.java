@@ -30,6 +30,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.android.documentsui.util.MySqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
+import android.util.Log;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
@@ -150,7 +151,13 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
         break;
         case R.id.tv_right_fixed_taskbar:
-            Toast.makeText(mContext, "fied taskbar: COMING SOON", 0).show();
+            String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+            //LocalBroadcastManager localManager = LocalBroadcastManager.getInstance(mContext);
+            Intent intentSend = new Intent();
+            intentSend.putExtra("keyInfo",pkgInfo);
+            intentSend.setAction("com.android.documentsui.util.startmenudialog");
+            mContext.sendBroadcast(intentSend);
+            Log.i("-----","zx+send"+pkgInfo);
         break;
         case R.id.tv_right_uninstall:
             if (mListType == 0) {
