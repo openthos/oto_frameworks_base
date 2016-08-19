@@ -172,7 +172,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     private final static String VIRTUAL_DISPLAY_BASE_NAME = "ActivityViewVirtualDisplay";
 
-    private final static String HOME_FRONT_ACTIVITY_RECENTS = "com.android.systemui/.recents.RecentsActivity";
+    private final static String HOME_FRONT_ACTIVITY_RECENTS
+                                        = "com.android.systemui/.recents.RecentsActivity";
+    private final static String SINGLEWINDOW_ACTIVITY_RESOLVER
+                                        = "android/com.android.internal.app.ResolverActivity";
 
     private static final String LOCK_TASK_TAG = "Lock-to-App";
 
@@ -1619,7 +1622,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
             int intentFlags = 0;
 
             // FIXME: mContext is not merged into 5.1 originally.
-            if (multiwindowEnabled() && (r.intent != null)) {
+            if (multiwindowEnabled() && (r.intent != null)
+                && (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) != 0)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             }
 
