@@ -25,6 +25,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -309,7 +310,7 @@ public class Dialog implements DialogInterface, Window.Callback,
         try {
             Activity activity = (mOwnerActivity != null) ? mOwnerActivity : mContextActivity;
             Window parent = (activity != null) ? activity.getWindow() : null;
-            if (parent != null) {
+            if ((parent != null) && !isActivityNotShowCover(activity)) {
                 parent.setChildWindow(mWindow);
                 parent.showCover(true);
             }
@@ -320,6 +321,17 @@ public class Dialog implements DialogInterface, Window.Callback,
             sendShowMessage();
         } finally {
         }
+    }
+
+    private boolean isActivityNotShowCover(Activity a) {
+        return (a.getComponentName().flattenToString().compareTo(
+                                                          ActivityInfo.ISSUE_WIN_WPS_NEWFILE) == 0)
+               || (a.getComponentName().flattenToString().compareTo(
+                                                      ActivityInfo.ISSUE_WIN_WPS_NEWFILE_PRO) == 0)
+               || (a.getComponentName().flattenToString().compareTo(
+                                                              ActivityInfo.ISSUE_WIN_WPS_PAD) == 0)
+               || (a.getComponentName().flattenToString().compareTo(
+                                                          ActivityInfo.ISSUE_WIN_WPS_PAD_PRO) == 0);
     }
     
     /**

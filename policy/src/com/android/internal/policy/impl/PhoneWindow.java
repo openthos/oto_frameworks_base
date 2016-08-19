@@ -3634,9 +3634,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (!show) {
                 return;
             }
-            int padding = getBorderPadding();
-            int paddingTop = getTopBorderPadding();
-            v.setPadding(padding, getHeaderHeight() + paddingTop, padding, padding);
+            int padding = getContext().getResources().getDimensionPixelSize(
+                                                      com.android.internal.R.dimen.mw_outer_border);
+            v.setPadding(padding, getHeaderHeight() + padding, padding, padding);
             v.setVisibility(View.VISIBLE);
         }
     }

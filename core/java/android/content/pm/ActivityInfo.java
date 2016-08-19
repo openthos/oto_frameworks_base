@@ -33,6 +33,16 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class ActivityInfo extends ComponentInfo
         implements Parcelable {
+
+    public static final String ISSUE_WIN_WPS_NEWFILE =
+                 "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.newfiles.NewFileActivity";
+    public static final String ISSUE_WIN_WPS_NEWFILE_PRO =
+                 "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.newfiles.NewFileActivity";
+    public static final String ISSUE_WIN_WPS_PAD =
+                 "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.PadHomeActivity";
+    public static final String ISSUE_WIN_WPS_PAD_PRO =
+                 "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.PadHomeActivity";
+
     /**
      * A style resource identifier (in the package's resources) of this
      * activity's theme.  From the "theme" attribute or, if not set, 0.
