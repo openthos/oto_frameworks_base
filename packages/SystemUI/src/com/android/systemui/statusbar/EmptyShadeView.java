@@ -48,6 +48,12 @@ public class EmptyShadeView extends StackScrollerDecorView {
         return findViewById(R.id.notification_center);
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        makeLayout();
+    }
+
     private void makeLayout() {
         Button btnNotificationManager = (Button) findViewById(R.id.notificationManager);
         btnNotificationManager.setOnClickListener(new View.OnClickListener() {
