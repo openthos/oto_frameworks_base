@@ -15,7 +15,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table perpo(_id integer primary key autoincrement, "
                                        + "label char(20), pkname char(100), date char(50), "
-                                       + "int char(10))");
+                                       + "int char(10), click char(10))");
     }
 
     @Override

@@ -31,6 +31,8 @@ import com.android.documentsui.util.MySqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
@@ -139,17 +141,26 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             c.moveToNext();
             int numbers = c.getInt(c.getColumnIndex("int"));
             numbers++;
+            int number = c.getInt(c.getColumnIndex("click"));
+            number++;
             ContentValues values = new ContentValues();
             values.put("int", numbers);
+            values.put("click", number);
             mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
-        break;
+            SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
+                                                          Context.MODE_PRIVATE);
+            Editor editor = sharedPreference.edit();
+            editor.clear();
+            editor.putInt("isClick", 1);
+            editor.commit();
+            break;
 
         case R.id.tv_right_phone_run:
             Toast.makeText(mContext, "phone run: COMING SOON", 0).show();
-        break;
+            break;
         case R.id.tv_right_desktop_run:
             Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
-        break;
+            break;
         case R.id.tv_right_fixed_taskbar:
             String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
             //LocalBroadcastManager localManager = LocalBroadcastManager.getInstance(mContext);
@@ -158,7 +169,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             intentSend.setAction("com.android.documentsui.util.startmenudialog");
             mContext.sendBroadcast(intentSend);
             Log.i("-----","zx+send"+pkgInfo);
-        break;
+            break;
         case R.id.tv_right_uninstall:
             if (mListType == 0) {
                 mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
@@ -168,7 +179,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             Uri uri = Uri.parse("package:" + mPkgName);
             Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
             mContext.startActivity(intents);
-        break;
+            break;
         }
     }
 }

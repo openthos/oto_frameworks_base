@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.SharedPreferences;
 
 public class StartupMenuUsuallyAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_X = 260;
@@ -88,9 +89,18 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         c.moveToNext();
                         int numbers = c.getInt(c.getColumnIndex("int"));
                         numbers++;
+                        int number = c.getInt(c.getColumnIndex("int"));
+                        number++;
                         ContentValues values = new ContentValues();
                         values.put("int", numbers);
+                        values.put("click", number);
                         mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+                        SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
+                                                                             Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreference.edit();
+                        editor.clear();
+                        editor.putInt("isClick", 1);
+                        editor.commit();
                         break;
                     case MotionEvent.BUTTON_TERTIARY:
                         break;

@@ -88,6 +88,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.IntentFilter;
+import android.widget.Toast;
 
 public class StartupMenuActivity extends Activity implements OnClickListener,
                  OnEditorActionListener {
@@ -179,8 +183,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
             new mThread().start();
             mListView = (ListView) findViewById(R.id.lv_view);
-            queryCommonlyUsedSoftware();
+            SharedPreferences sharedPreference = getSharedPreferences("click",
+                                                                      Context.MODE_PRIVATE);
+            int isClick = sharedPreference.getInt("isClick", 0);
+            if (isClick == 1) {
+                mListViewOpen = true;
+                queryCommonlyUsedSoftware();
+            }
         }
+
         class mThread extends Thread {
             public void run(){
                 BackstageRenewalData();
@@ -217,13 +228,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         public void queryCommonlyUsedSoftware() {
-            Cursor c = mdb.rawQuery("select distinct * from perpo", new String[] {});
-            while (c.moveToNext()) {
-                int number = c.getInt(c.getColumnIndex("int"));
-                if (number != 0) {
-                    mListViewOpen = true;
-                }
-            }
             if (mListViewOpen) {
                 mlistViewAppInfo = new ArrayList<AppInfo>();
                 Cursor cs = mdb.rawQuery("select distinct * from perpo", new String[] {});
@@ -239,7 +243,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    int number = cs.getInt(cs.getColumnIndex("int"));
+                    int number = cs.getInt(cs.getColumnIndex("click"));
                     if (number > 0) {
                         Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
                         AppInfo appInfo = new AppInfo();
@@ -260,9 +264,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         return (rScore.compareTo(iScore));
                     }
                 });
-
+                List<AppInfo> listViewEight = new ArrayList<>();
+                for (int i = 0; i < 8; i++) {
+                    if (i >= mlistViewAppInfo.size()) {
+		        break;
+                    }
+                    AppInfo appInfo = mlistViewAppInfo.get(i);
+                    listViewEight.add(appInfo);
+                }
                 mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
-                                                                mlistViewAppInfo);
+                                                                listViewEight);
                 mListView.setAdapter(mUsuallyAdapter);
             }
         }
@@ -293,10 +304,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
 
                 if (!mIsHasReayDb) {
-                    mdb.execSQL("insert into perpo(label,pkname,date,int) "
-                                + "values (?,?,?,?)",
+                    mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
+                                + "values (?,?,?,?,?)",
                                 new Object[] { appLabel, pkgName, systemDate,
-                                              mNumber});
+                                              mNumber,mNumber});
                 }
                 if(isEnglish(appLabel)) {
                     ContentValues contentvalues = new ContentValues();

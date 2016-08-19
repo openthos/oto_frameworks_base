@@ -21,6 +21,7 @@ import com.android.documentsui.util.StartMenuDialog;
 import com.android.documentsui.StartupMenuActivity;
 import com.android.documentsui.util.MySqliteOpenHelper;
 
+import android.content.SharedPreferences;
 
 public class StartupMenuAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_X = 260;
@@ -92,9 +93,18 @@ public class StartupMenuAdapter extends BaseAdapter {
                     c.moveToNext();
                     int numbers = c.getInt(c.getColumnIndex("int"));
                     numbers++;
+                    int number = c.getInt(c.getColumnIndex("click"));
+                    number++;
                     ContentValues values = new ContentValues();
                     values.put("int", numbers);
+                    values.put("click", number);
                     mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+                    SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
+                                                                         Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreference.edit();
+                    editor.clear();
+                    editor.putInt("isClick", 1);
+                    editor.commit();
                     break;
                 case MotionEvent.BUTTON_TERTIARY:
                     break;
