@@ -1622,9 +1622,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
             int intentFlags = 0;
 
             // FIXME: mContext is not merged into 5.1 originally.
-            if (multiwindowEnabled() && (r.intent != null)
-                && (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) != 0)) {
+            if (multiwindowEnabled() && (r.intent != null)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
+            }
+            if (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
+                r.intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
             }
 
             intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
@@ -1680,9 +1682,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
              */
             if (isMultiwindow) {
                 if(runFullScreen) {
-                    ActivityDisplay activityDisplay = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
-                    Rect rectFullScreen = new Rect(0, 0, activityDisplay.mDisplayInfo.logicalWidth,
-                                                   activityDisplay.mDisplayInfo.logicalHeight);
+                    ActivityDisplay display = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
+                    int height = display.mDisplayInfo.logicalHeight;
+                    if ((intentFlags & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) == 0) {
+                        height -= mWindowManager.getStatusbarHeight();
+                    }
+                    Rect rectFullScreen = new Rect(0, 0, display.mDisplayInfo.logicalWidth, height);
                     mService.relayoutWindow(stackId, rectFullScreen);
                 } else {
                     mService.relayoutWindow(stackId, getInitializingRect(intentFlags,
