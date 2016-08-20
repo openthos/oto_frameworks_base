@@ -14,7 +14,7 @@ public class OpenthosIDRegisterActivity extends BaseActivity {
     private TextView mFinish;
     private TextView mCancel;
     private WebView mWebView;
-    private  final String URL="http://dev.openthos.org/?q=user/register";
+    private  final String URL="http://dev.openthos.org/register";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
