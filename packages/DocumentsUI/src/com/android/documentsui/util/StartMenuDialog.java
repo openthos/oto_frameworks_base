@@ -99,6 +99,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     public void showDialog(int x, int y, int height, int width, int type) {
         show();
         Window dialogWindow = getWindow();
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.dimAmount = 0.0f;
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);

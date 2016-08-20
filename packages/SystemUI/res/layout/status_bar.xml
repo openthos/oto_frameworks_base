@@ -191,6 +191,11 @@
                     android:textSize="10sp"
                     android:paddingLeft="5dp"
                     android:gravity="center" />
+                 <View
+                     android:layout_width="2dp"
+                     android:layout_height="match_parent"
+                     android:gravity="center"
+                     android:src="#FFFFFF"/>
 
             </com.android.keyguard.AlphaOptimizedLinearLayout>
         </LinearLayout>
