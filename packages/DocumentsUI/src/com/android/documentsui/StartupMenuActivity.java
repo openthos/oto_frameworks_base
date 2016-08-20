@@ -46,6 +46,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.text.TextWatcher;
 import android.text.Editable;
@@ -133,6 +135,25 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private ImageView mIvArrowGray;
         private TextView mTvSortShow;
         private LinearLayout mIvArrowWhite;
+        private List<AppInfo> mListViewEight;
+        private TextView mClickSort;
+        private TextView mTimeSort;
+        private TextView mNameSort;
+        private int mClickSortStatus = 1;
+        private int mTimeSortStatus = 1;
+        private int mNameSortStatus = 1;
+        private boolean mOnlyNameSort = false;
+        private LinearLayout mSelectLayout;
+        private View mSelectView;
+        private SharedPreferences sharedPreference;
+        private String mNameSortText;
+        private String mTimeSortText;
+        private String mClickSortText;
+        private String mType;
+        private int mOrder;
+        private Handler mHandler;
+        private int mFinishFlag = 0;
+        private int mGetValueFlag = 1;
         @Override
         protected void onNewIntent(Intent intent) {
             super.onNewIntent(intent);
@@ -153,12 +174,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             gv_view = (GridView) findViewById(R.id.gv_view);
             StartupMenuActivity.this.setFinishOnTouchOutside(true);
-
             mlistAppInfo = new ArrayList<AppInfo>();
-            queryAppInfo();
             isCheckedMap = new HashMap<Integer, Boolean>();
             mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
-            gv_view.setAdapter(mBrowseAppAdapter);
             //gv_view.setOnItemClickListener(this);
 
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
@@ -181,22 +199,102 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             mTvSortShow.setText("");
             mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+            mHandler=new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    if (msg.what == mFinishFlag) {
+                        mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
+                                                                mListViewEight);
+                        mListView.setAdapter(mUsuallyAdapter);
+                    } else if (msg.what == mGetValueFlag) {
+                        selectAppShow();
+                    }
+                }
+            };
             new mThread().start();
             mListView = (ListView) findViewById(R.id.lv_view);
-            SharedPreferences sharedPreference = getSharedPreferences("click",
-                                                                      Context.MODE_PRIVATE);
-            int isClick = sharedPreference.getInt("isClick", 0);
-            if (isClick == 1) {
-                mListViewOpen = true;
-                queryCommonlyUsedSoftware();
+            initSelectLayout();
+            // selectAppShow();
+        }
+
+        public void initSelectLayout() {
+            mSelectLayout =  new LinearLayout(StartupMenuActivity.this);
+            mSelectLayout.setBackgroundColor(Color.WHITE);
+            mSelectView = LayoutInflater.from(StartupMenuActivity.this).inflate(
+                                         R.layout.showsort_activity, null);
+            mSelectView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                                            LayoutParams.WRAP_CONTENT));
+            mClickSort = (TextView) mSelectView.findViewById(R.id.click_sort);
+            mTimeSort = (TextView) mSelectView.findViewById(R.id.time_sort);
+            mNameSort = (TextView) mSelectView.findViewById(R.id.name_sort);
+
+            mClickSortText = mClickSort.getText().toString();
+            mTimeSortText = mTimeSort.getText().toString();
+            mNameSortText = mNameSort.getText().toString();
+            //TextView type_sort = (TextView) tv.findViewById(R.id.type_sort);
+
+            mClickSort.setOnClickListener(this);
+            mTimeSort.setOnClickListener(this);
+            mNameSort.setOnClickListener(this);
+            //type_sort.setOnClickListener(this);
+            mSelectLayout.addView(mSelectView);
+        }
+
+        public void selectAppShow() {
+            if (mType.equals("sortName")) {
+                mTvSortShow.setText(R.string.name_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                nameSort();
+            } else if (mType.equals(mNameSortText) && mOrder == 1) {
+                mTvSortShow.setText(R.string.name_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                nameSort();
+            } else if (mType.equals(mNameSortText) && mOrder == -1) {
+                mTvSortShow.setText(R.string.name_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mNameSortStatus = -1;
+                mOnlyNameSort = true;
+                nameSort();
+            } else if (mType.equals(mTimeSortText) && mOrder == 1) {
+                mTvSortShow.setText(R.string.time_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                timeSort();
+            } else if (mType.equals(mTimeSortText) && mOrder == -1) {
+                mTvSortShow.setText(R.string.time_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mTimeSortStatus = -1;
+                timeSort();
+            } else if (mType.equals(mClickSortText) && mOrder == 1) {
+                mTvSortShow.setText(R.string.click_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mEditText.setText("");
+                clickSort();
+            } else if (mType.equals(mClickSortText) && mOrder == -1) {
+                mTvSortShow.setText(R.string.click_sort);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mEditText.setText("");
+                mClickSortStatus=-1;
+                clickSort();
             }
         }
 
         class mThread extends Thread {
             public void run(){
                 BackstageRenewalData();
+                sharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
+                int isClick = sharedPreference.getInt("isClick", 0);
+                mType = sharedPreference.getString("type", "sortName");
+                mOrder = sharedPreference.getInt("order", 0);
+                Message m = new Message();
+                m.what = mGetValueFlag;
+                mHandler.sendMessage(m);
+                if (isClick == 1) {
+                    mListViewOpen = true;
+                    queryCommonlyUsedSoftware();
+                }
             }
-        };
+        }
 
         public void queryAppInfo() {
             PackageManager pm = this.getPackageManager();
@@ -264,17 +362,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         return (rScore.compareTo(iScore));
                     }
                 });
-                List<AppInfo> listViewEight = new ArrayList<>();
+                mListViewEight = new ArrayList<>();
                 for (int i = 0; i < 8; i++) {
                     if (i >= mlistViewAppInfo.size()) {
 		        break;
                     }
                     AppInfo appInfo = mlistViewAppInfo.get(i);
-                    listViewEight.add(appInfo);
+                    mListViewEight.add(appInfo);
                 }
-                mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
-                                                                listViewEight);
-                mListView.setAdapter(mUsuallyAdapter);
+                //selectAppShow();
+                Message m = new Message();
+                m.what = mFinishFlag;
+                mHandler.sendMessage(m);
             }
         }
 
@@ -404,6 +503,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 break;
             case R.id.tv_sort_show:
                 //sortShow();
+                selectShow(v);
                 break;
             case R.id.name_sort:
                 mEditText.setText("");
@@ -448,6 +548,19 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mBrowseAppAdapter.notifyDataSetChanged();
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
+            SharedPreferences.Editor edit = sharedPreference.edit();
+            edit.putString("type", mNameSortText);
+            edit.putInt("order", 1);
+            edit.commit();
+            if (mNameSortStatus == -1 && mOnlyNameSort) {
+                Collections.reverse(mlistAppInfo);
+                mOnlyNameSort = false;
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                edit.putString("type", mNameSortText);
+                edit.putInt("order", -1);
+                edit.commit();
+            }
+
             //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
             isCheckedMap = new HashMap<Integer, Boolean>();
             mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
@@ -459,6 +572,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mBrowseAppAdapter.notifyDataSetChanged();
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
+            SharedPreferences.Editor edit = sharedPreference.edit();
+            edit.putString("type", mTimeSortText);
+            edit.putInt("order", 1);
+            edit.commit();
+
             timeAlgorithm();
             //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
             isCheckedMap = new HashMap<Integer, Boolean>();
@@ -506,10 +624,41 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     return (rScore.compareTo(iScore));
                 }
             });
+            SharedPreferences.Editor editor = sharedPreference.edit();
+            editor.putString("type", mClickSortText);
+            editor.putInt("order", 1);
+            editor.commit();
+            if (mClickSortStatus == -1) {
+                Collections.reverse(mlistAppInfo);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                SharedPreferences.Editor edit = sharedPreference.edit();
+                edit.putString("type", mClickSortText);
+                edit.putInt("order", -1);
+                edit.commit();
+            }
             //mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
             isCheckedMap = new HashMap<Integer, Boolean>();
             mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             gv_view.setAdapter(mBroAdapter);
+        }
+
+        private void selectShow(View v) {
+            mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+            if (v instanceof TextView) {
+                TextView textView = (TextView) v;
+                String textViewText = textView.getText().toString();
+                if (textViewText.equals(mNameSortText)) {
+                    mNameSortStatus = mNameSortStatus * -1;
+                    mOnlyNameSort = true;
+                    nameSort();
+                } else if (textViewText.equals(mTimeSortText)) {
+                    mTimeSortStatus = mTimeSortStatus * -1;
+                    timeSort();
+                } else if (textViewText.equals(mClickSortText)) {
+                    mClickSortStatus = mClickSortStatus * -1;
+                    clickSort();
+                }
+            }
         }
 
         private void querySqlAppinfo() {
@@ -568,6 +717,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     return p2.getDate().compareTo(p1.getDate());
                 }
             });
+            if (mTimeSortStatus == -1) {
+                Collections.reverse(mlistAppInfo);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                SharedPreferences.Editor editor = sharedPreference.edit();
+                editor.putString("type", mTimeSortText);
+                editor.putInt("order", -1);
+                editor.commit();
+            }
+
         }
 
         public void appData(PackageManager pm, ResolveInfo reInfo) {
@@ -617,23 +775,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         public void sortShow() {
             mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
-            LinearLayout layout = new LinearLayout(StartupMenuActivity.this);
-            layout.setBackgroundColor(Color.WHITE);
-            View tv = LayoutInflater.from(StartupMenuActivity.this).inflate(
-                                                              R.layout.showsort_activity, null);
-            tv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-                               LayoutParams.WRAP_CONTENT));
-            TextView click_sort = (TextView) tv.findViewById(R.id.click_sort);
-            TextView time_sort = (TextView) tv.findViewById(R.id.time_sort);
-            TextView name_sort = (TextView) tv.findViewById(R.id.name_sort);
-            //TextView type_sort = (TextView) tv.findViewById(R.id.type_sort);
-            click_sort.setOnClickListener(this);
-            time_sort.setOnClickListener(this);
-            name_sort.setOnClickListener(this);
-            //type_sort.setOnClickListener(this);
-            layout.addView(tv);
 
-            mPopupWindow = new PopupWindow(layout, FILTER_THIRD_APP_TYPE_UI_X,
+            mPopupWindow = new PopupWindow(mSelectLayout, FILTER_THIRD_APP_TYPE_UI_X,
                                            FILTER_THIRD_APP_TYPE_UI_Y);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
