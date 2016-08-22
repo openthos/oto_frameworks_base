@@ -179,6 +179,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             }
             Uri uri = Uri.parse("package:" + mPkgName);
             Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+            intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intents);
             break;
         }
