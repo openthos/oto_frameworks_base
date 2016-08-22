@@ -159,16 +159,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_alignParentRight="true"
-                    android:background="#e9edf0" >
-
-                    <ImageView
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:layout_width="28dp"
-                        android:layout_height="8dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_starter_top_arrow_white"
-                        android:background="#e9edf0" />
+                    android:background="@drawable/ic_starter_top_arrow_white" >
                 </LinearLayout>
 
             </RelativeLayout>
