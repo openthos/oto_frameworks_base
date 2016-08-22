@@ -3674,6 +3674,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private ImageButton mMaximizeBtn;
         private ImageButton mMinimizeBtn;
         private View mOuterBorder;
+        private boolean mUseShadow;
 
         public void hide() {
             mHeader.setVisibility(View.INVISIBLE);
