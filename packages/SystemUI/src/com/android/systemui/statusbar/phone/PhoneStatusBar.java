@@ -395,6 +395,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
+    private SharedPreferences presPkg;
+    private SharedPreferences.Editor editorPkg;
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -601,6 +603,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void start() {
+        presPkg = mContext.getSharedPreferences("pkg",Context.MODE_APPEND);
+        editorPkg = presPkg.edit();
         mDisplay = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay();
         updateDisplaySize();
@@ -674,6 +678,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarActivities = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_activity_contents);
         loadDockedApk("com.cyanogenmod.filemanager");
         loadDockedApk("com.android.browser");
+        loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
         mClock = mStatusBarView.findViewById(R.id.clock);
@@ -2543,18 +2548,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         checkBarModes();
     }
-    private Set<String> set = new HashSet<> () ;
-    // private SharedPreferences presPkg = mContext.getSharedPreferences("pkg",
-    //                                                    Context.MODE_PRIVATE);
-    // private SharedPreferences.Editor editorPkg = presPkg.edit();
-    /*private void loadPkg () {
+    private Set<String> set = new HashSet<>();
+    private void loadPkg() {
         Map<String,?> map = presPkg.getAll();
         for (Map.Entry<String,?> entry : map.entrySet()) {
             String keyPkg = entry.getKey();
             loadDockedApk(keyPkg);
+            set.add(keyPkg);// add to set
         }
-    }*/
-    private void loadDocked (String str) {
+    }
+    private void loadDocked(String str) {
         int count = 0 ;
         set.add("com.cyanogenmod.filemanager");
         set.add("com.android.browser");
@@ -2566,8 +2569,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (count >= set.size()) {
             set.add(str);
-            // editorPkg.putString(str,"");
-            // editorPkg.commit();
+            editorPkg.putString(str,"");
+            editorPkg.commit();
             loadDockedApk(str);
         }
     }
@@ -3318,11 +3321,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (action.equals("com.android.documentsui.util.startmenudialog")) {
                     loadDocked(apkInfo);
                 }
-                /*if (action.equals("com.android.systemui.activitykeyview")) {
+                if (action.equals("com.android.systemui.activitykeyview")) {
                    String pkgName = intent.getStringExtra("rmIcon");
                    set.remove(pkgName);
-                   Toast.makeText(mContext,"set集合："+set,Toast.LENGTH_LONG).show();
-                }*/
+                }
             }
         }
     };

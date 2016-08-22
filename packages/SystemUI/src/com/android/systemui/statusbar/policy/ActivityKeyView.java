@@ -32,6 +32,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.MotionEvent;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 public class ActivityKeyView extends ImageView {
 
@@ -52,6 +53,7 @@ public class ActivityKeyView extends ImageView {
     public ActivityKeyView(Context context) {
         super(context);
         initListener();
+        sendBroadcastMethod();
     }
 
     public ActivityKeyView(Context context, AttributeSet attrs) {
@@ -108,6 +110,11 @@ public class ActivityKeyView extends ImageView {
     public void removeFromRoot() {
         if(!mActivity.mApkRun) {
             this.setVisibility(View.GONE);
+            // use to tell phoneStartmenu reduce one
+            Intent intentIcon = new Intent();
+            intentIcon.putExtra("rmIcon",mActivity.mPkgName);
+            intentIcon.setAction("com.android.systemui.activitykeyview");
+            mContext.sendBroadcast(intentIcon);
         }
     }
 
@@ -258,6 +265,13 @@ public class ActivityKeyView extends ImageView {
             mContext.startActivity(lanuch);
         } catch(Exception exc) {
         }
+    }
+    //send broadCast
+    public void sendBroadcastMethod() {
+        Intent intent = new Intent();
+        intent.putExtra("keyInfo",mActivity.mPkgName);
+        intent.setAction("com.android.systemui.activitykeyview.pkgname");
+        mContext.sendBroadcast(intent);
     }
 
     @Override
