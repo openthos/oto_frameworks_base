@@ -2806,9 +2806,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if ((getWidth() > 0) && (getHeight() > 0)) {
                 SyncChildWindow();
                 if (!mHeaderChecked) {
-                    if ((mDecorMW != null)
-                        && (mContentRoot.getHeight() <= mDecorMW.getDecorMWPureHeight())) {
-                        mDecorMW.hide();
+                    if ((mDecorMW != null) && mDecorMW.isEmpty()) {
+                        mContentRoot.setVisibility(View.INVISIBLE);
                     } else if (isDialogFromMWParent(true)) {
                         // Now, only support center dialog, so only width and height has effect.
                         ((WindowDecorView) getParentDecor()).enableMultiWindowToWindowManager(
@@ -3676,15 +3675,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private View mOuterBorder;
         private boolean mUseShadow;
 
-        public void hide() {
-            mHeader.setVisibility(View.INVISIBLE);
-        }
-
-        public int getDecorMWPureHeight() {
-            return mHeader.getHeight() + getBorderPadding() + getTopBorderPadding();
+        public boolean isEmpty() {
+            return mContentRoot.getHeight() <= mHeader.getHeight() + getBorderPadding()
+                                                                   + getTopBorderPadding();
         }
 
         public void enableMultiWindowToWindowManager(Rect dialogRect) {
+            if (isEmpty()) {
+                return;
+            }
             setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
             try {
                 ((PhoneWindow) getActivityWindow()).prepareOldSize();
@@ -3697,6 +3696,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void disableMultiWindowToWindowManager() {
+            if (!mWMSEnabled) {
+                return;
+            }
             try {
                 Rect rect = ActivityManagerNative.getDefault().disableMultiWindowToWindowManager(
                                                                                       getStackId());
