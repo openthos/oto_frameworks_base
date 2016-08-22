@@ -1942,20 +1942,26 @@ public abstract class Window {
         return mMultiWindow.mFramePadding;
     }
 
-    public void setBorderPadding() {
+    public void setBorderPadding(boolean useShadow) {
         mMultiWindow.mFramePadding = mContext.getResources().getDimensionPixelSize(
-                                                     com.android.internal.R.dimen.mw_outer_border)
-                                     + mContext.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border);
+        if (useShadow) {
+            mMultiWindow.mFramePadding += mContext.getResources().getDimensionPixelSize(
                                               com.android.internal.R.dimen.mw_shadow_outside_border)
-                                     + mContext.getResources().getDimensionPixelSize(
+                                          + mContext.getResources().getDimensionPixelSize(
+                                              com.android.internal.R.dimen.mw_shadow_middle_border)
+                                          + mContext.getResources().getDimensionPixelSize(
                                               com.android.internal.R.dimen.mw_shadow_inside_border);
+        }
     }
 
-    public void setTopBorderPadding() {
+    public void setTopBorderPadding(boolean useShadow) {
         mMultiWindow.mFrameTopPadding = mContext.getResources().getDimensionPixelSize(
-                                                     com.android.internal.R.dimen.mw_outer_border)
-                                        + mContext.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border);
+        if (useShadow) {
+            mMultiWindow.mFrameTopPadding += mContext.getResources().getDimensionPixelSize(
                                               com.android.internal.R.dimen.mw_shadow_inside_border);
+        }
     }
 
     public int getHeaderHeight() {

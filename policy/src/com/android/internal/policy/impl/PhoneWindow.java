@@ -55,6 +55,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.session.MediaController;
@@ -2965,6 +2966,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void setWindowBackground(Drawable drawable) {
+            if ((mDecorMW != null) && mDecorMW.hasShadow()) {
+                if (drawable instanceof ColorDrawable) {
+                    GradientDrawable dw = new GradientDrawable();
+                    dw.setColor(((ColorDrawable) drawable).getColor());
+                    dw.setStroke(2 * getBorderPadding(), Color.TRANSPARENT);
+                    drawable = dw;
+                }
+            }
             if (getBackground() != drawable) {
                 setBackgroundDrawable(drawable);
                 if (drawable != null) {
@@ -3700,6 +3709,25 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
         }
 
+        private void setShadow(boolean useShadow) {
+            if (!useShadow) {
+                View shadowInside = (View) mOuterBorder.getParent();
+                View shadowMiddle = (View) shadowInside.getParent();
+                View shadowOutside = (View) shadowMiddle.getParent();
+                shadowInside.setPadding(0, 0, 0, 0);
+                shadowMiddle.setPadding(0, 0, 0, 0);
+                shadowOutside.setPadding(0, 0, 0, 0);
+            }
+            setBorderPadding(useShadow);
+            setTopBorderPadding(useShadow);
+            updateScreenFrame();
+            mUseShadow = useShadow;
+        }
+
+        public boolean hasShadow() {
+            return mUseShadow;
+        }
+
         public DecorMW(ViewGroup root) {
             mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_decor_header);
             mHeader.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
@@ -3721,9 +3749,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 Log.e(TAG, "create statusbar activity failed", e);
             }
 
-            setBorderPadding();
-            setTopBorderPadding();
-            updateScreenFrame();
+            setShadow(getContext().getApplicationInfo().needShadow());
 
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(

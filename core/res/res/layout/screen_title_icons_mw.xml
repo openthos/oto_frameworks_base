@@ -28,94 +28,104 @@ This is the basic layout for a screen, with all of its features enabled.
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/mw_shadow_inside"
-        android:padding="@dimen/mw_shadow_inside_border">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/mwOuterBorder"
+        android:paddingLeft="@dimen/mw_shadow_middle_border"
+        android:paddingRight="@dimen/mw_shadow_middle_border"
+        android:paddingBottom="@dimen/mw_shadow_middle_border">
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/mw_outer_border"
-            android:padding="@dimen/mw_outer_border"
-            android:orientation="vertical">
-            <include layout="@layout/mw_decor"/>
-            <!-- Popout bar for action modes -->
-            <ViewStub android:id="@+id/action_mode_bar_stub"
-                      android:inflatedId="@+id/action_mode_bar"
-                      android:layout="@layout/action_mode_bar"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:theme="?attr/actionBarTheme"/>
-            <RelativeLayout android:id="@android:id/title_container"
-                style="?android:attr/windowTitleBackgroundStyle"
+            android:background="@drawable/mw_shadow_inside"
+            android:paddingLeft="@dimen/mw_shadow_inside_border"
+            android:paddingRight="@dimen/mw_shadow_inside_border"
+            android:paddingBottom="@dimen/mw_shadow_inside_border">
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/mwOuterBorder"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/windowTitleSize">
-                <!-- The title background has 9px left padding. -->
-                <ImageView android:id="@android:id/left_icon"
-                    android:visibility="gone"
-                    android:layout_marginEnd="9dip"
-                    android:layout_width="16dip"
-                    android:layout_height="16dip"
-                    android:scaleType="fitCenter"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true" />
-                <ProgressBar android:id="@+id/progress_circular"
-                    style="?android:attr/progressBarStyleSmallTitle"
-                    android:visibility="gone"
-                    android:max="10000"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="6dip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <!-- There are 6dip between this and the circular progress on the right, we
-                     also make 6dip (with the -3dip margin_left) to the icon on the left or
-                     the screen left edge if no icon. This also places our left edge 3dip to
-                     the left of the title text left edge. -->
-                <ProgressBar android:id="@+id/progress_horizontal"
-                    style="?android:attr/progressBarStyleHorizontal"
+                android:layout_height="match_parent"
+                android:background="@drawable/mw_outer_border"
+                android:padding="@dimen/mw_outer_border"
+                android:orientation="vertical">
+                <include layout="@layout/mw_decor"/>
+                <!-- Popout bar for action modes -->
+                <ViewStub android:id="@+id/action_mode_bar_stub"
+                          android:inflatedId="@+id/action_mode_bar"
+                          android:layout="@layout/action_mode_bar"
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:theme="?attr/actionBarTheme"/>
+                <RelativeLayout android:id="@android:id/title_container"
+                    style="?android:attr/windowTitleBackgroundStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="-3dip"
-                    android:layout_toStartOf="@android:id/progress_circular"
-                    android:layout_toEndOf="@android:id/left_icon"
-                    android:layout_centerVertical="true"
-                    android:visibility="gone"
-                    android:max="10000" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_toStartOf="@id/progress_circular"
-                    android:layout_toEndOf="@android:id/left_icon"
-                    >
-                    <TextView android:id="@android:id/title"
-                        style="?android:attr/windowTitleStyle"
-                        android:layout_width="0dip"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@null"
-                        android:fadingEdge="horizontal"
-                        android:scrollHorizontally="true"
-                        android:gravity="center_vertical"
-                        android:layout_marginEnd="2dip"
-                        />
-                    <!-- 2dip between the icon and the title text, if icon is present. -->
-                    <ImageView android:id="@android:id/right_icon"
+                    android:layout_height="?android:attr/windowTitleSize">
+                    <!-- The title background has 9px left padding. -->
+                    <ImageView android:id="@android:id/left_icon"
                         android:visibility="gone"
+                        android:layout_marginEnd="9dip"
                         android:layout_width="16dip"
                         android:layout_height="16dip"
-                        android:layout_weight="0"
-                        android:layout_gravity="center_vertical"
                         android:scaleType="fitCenter"
-                        />
-                </LinearLayout>
-            </RelativeLayout>
-            <FrameLayout android:id="@android:id/content"
-                android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:foregroundGravity="fill_horizontal|top"
-                android:foreground="?android:attr/windowContentOverlay" />
-        </LinearLayout>
-        <include layout="@layout/mw_cover"/>
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true" />
+                    <ProgressBar android:id="@+id/progress_circular"
+                        style="?android:attr/progressBarStyleSmallTitle"
+                        android:visibility="gone"
+                        android:max="10000"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="6dip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <!-- There are 6dip between this and the circular progress on the right, we
+                         also make 6dip (with the -3dip margin_left) to the icon on the left or
+                         the screen left edge if no icon. This also places our left edge 3dip to
+                         the left of the title text left edge. -->
+                    <ProgressBar android:id="@+id/progress_horizontal"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="-3dip"
+                        android:layout_toStartOf="@android:id/progress_circular"
+                        android:layout_toEndOf="@android:id/left_icon"
+                        android:layout_centerVertical="true"
+                        android:visibility="gone"
+                        android:max="10000" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_toStartOf="@id/progress_circular"
+                        android:layout_toEndOf="@android:id/left_icon"
+                        >
+                        <TextView android:id="@android:id/title"
+                            style="?android:attr/windowTitleStyle"
+                            android:layout_width="0dip"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:fadingEdge="horizontal"
+                            android:scrollHorizontally="true"
+                            android:gravity="center_vertical"
+                            android:layout_marginEnd="2dip"
+                            />
+                        <!-- 2dip between the icon and the title text, if icon is present. -->
+                        <ImageView android:id="@android:id/right_icon"
+                            android:visibility="gone"
+                            android:layout_width="16dip"
+                            android:layout_height="16dip"
+                            android:layout_weight="0"
+                            android:layout_gravity="center_vertical"
+                            android:scaleType="fitCenter"
+                            />
+                    </LinearLayout>
+                </RelativeLayout>
+                <FrameLayout android:id="@android:id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dip"
+                    android:layout_weight="1"
+                    android:foregroundGravity="fill_horizontal|top"
+                    android:foreground="?android:attr/windowContentOverlay" />
+            </LinearLayout>
+            <include layout="@layout/mw_cover"/>
+        </FrameLayout>
     </FrameLayout>
 </FrameLayout>

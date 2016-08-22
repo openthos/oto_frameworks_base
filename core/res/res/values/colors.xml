@@ -179,8 +179,9 @@
     <color name="mw_blue_decor">#76ceea</color>
     <color name="mw_gray_decor">#d1d1f1</color>
     <color name="mw_gray_border">#c1d1f1</color>
-    <color name="mw_standard_border">#cccccc</color>
+    <color name="mw_standard_border">#ffaaaaaa</color>
     <color name="mw_transparent_gray">#88444444</color>
-    <color name="mw_shadow_outside">#aaaaaa</color>
-    <color name="mw_shadow_inside">#bbbbbb</color>
+    <color name="mw_shadow_outside">#22222222</color>
+    <color name="mw_shadow_middle">#33444444</color>
+    <color name="mw_shadow_inside">#55666666</color>
 </resources>

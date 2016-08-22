@@ -2193,11 +2193,13 @@
   <java-symbol type="color" name="mw_gray_border" />
   <java-symbol type="dimen" name="mw_outer_border" />
   <java-symbol type="dimen" name="mw_shadow_outside_border" />
+  <java-symbol type="dimen" name="mw_shadow_middle_border" />
   <java-symbol type="dimen" name="mw_shadow_inside_border" />
   <java-symbol type="dimen" name="mw_header_border" />
   <java-symbol type="dimen" name="mw_dialog_border" />
   <java-symbol type="drawable" name="mw_outer_border" />
   <java-symbol type="drawable" name="mw_shadow_outside" />
+  <java-symbol type="drawable" name="mw_shadow_middle" />
   <java-symbol type="drawable" name="mw_shadow_inside" />
   <java-symbol type="drawable" name="mw_app_header_focused" />
   <java-symbol type="drawable" name="mw_app_header_unfocused" />
