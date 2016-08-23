@@ -43,9 +43,9 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
     }
 
     public void init() {
-        mStatusIcons = mView.findViewById(R.id.statusIcons);
-        mSignalCluster = mView.findViewById(R.id.signal_cluster);
-        mBattery = mView.findViewById(R.id.battery);
+        //mStatusIcons = mView.findViewById(R.id.statusIcons);
+        //mSignalCluster = mView.findViewById(R.id.signal_cluster);
+        //mBattery = mView.findViewById(R.id.battery);
         mClock = mView.findViewById(R.id.clock);
         applyModeBackground(-1, getMode(), false /*animate*/);
         applyMode(getMode(), false /*animate*/);
@@ -86,9 +86,9 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         if (animate) {
             AnimatorSet anims = new AnimatorSet();
             anims.playTogether(
-                    animateTransitionTo(mStatusIcons, newAlpha),
-                    animateTransitionTo(mSignalCluster, newAlpha),
-                    animateTransitionTo(mBattery, newAlphaBC),
+                    //animateTransitionTo(mStatusIcons, newAlpha),
+                    //animateTransitionTo(mSignalCluster, newAlpha),
+                    //animateTransitionTo(mBattery, newAlphaBC),
                     animateTransitionTo(mClock, newAlphaBC)
                     );
             if (isLightsOut(mode)) {
@@ -97,9 +97,9 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
             anims.start();
             mCurrentAnimation = anims;
         } else {
-            mStatusIcons.setAlpha(newAlpha);
-            mSignalCluster.setAlpha(newAlpha);
-            mBattery.setAlpha(newAlphaBC);
+            //mStatusIcons.setAlpha(newAlpha);
+            //mSignalCluster.setAlpha(newAlpha);
+            //mBattery.setAlpha(newAlphaBC);
             mClock.setAlpha(newAlphaBC);
         }
     }

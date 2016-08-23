@@ -314,7 +314,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     LinearLayout mSystemIcons;
 
     // left-hand icons
-    LinearLayout mStatusIcons;
+    //LinearLayout mStatusIcons;
     LinearLayout mStatusIconsKeyguard;
 
     // status_bar_activity
@@ -717,8 +717,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
 
-        mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
-        mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
+        //mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
+        //mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
 
         mStackScroller = (NotificationStackScrollLayout) mStatusBarWindow.findViewById(
@@ -824,7 +824,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mZenModeController = mVolumeComponent.getZenController();
         }
         mCastController = new CastControllerImpl(mContext);
-        final SignalClusterView signalCluster =
+        /*final SignalClusterView signalCluster =
                 (SignalClusterView) mStatusBarView.findViewById(R.id.signal_cluster);
         final SignalClusterView signalClusterKeyguard =
                 (SignalClusterView) mKeyguardStatusBar.findViewById(R.id.signal_cluster);
@@ -833,7 +833,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         signalCluster.setSecurityController(mSecurityController);
         signalCluster.setNetworkController(mNetworkController);
         signalClusterKeyguard.setSecurityController(mSecurityController);
-        signalClusterKeyguard.setNetworkController(mNetworkController);
+        signalClusterKeyguard.setNetworkController(mNetworkController);*/
         final boolean isAPhone = mNetworkController.hasVoiceCallingFeature();
         if (isAPhone) {
             mNetworkController.addEmergencyListener(new NetworkControllerImpl.EmergencyListener() {
@@ -904,8 +904,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mUserInfoController.reloadUserInfo();
 
-        ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
-                mBatteryController);
+        //((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
+               // mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -1346,7 +1346,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     public void refreshAllStatusBarIcons() {
-        refreshAllIconsForLayout(mStatusIcons);
+       // refreshAllIconsForLayout(mStatusIcons);
         refreshAllIconsForLayout(mStatusIconsKeyguard);
     }
 
@@ -1365,27 +1365,27 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 + " icon=" + icon);
         StatusBarIconView view = new StatusBarIconView(mContext, slot, null);
         view.set(icon);
-        mStatusIcons.addView(view, viewIndex, new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, mIconSize));
+        //mStatusIcons.addView(view, viewIndex, new LinearLayout.LayoutParams(
+               // LayoutParams.WRAP_CONTENT, mIconSize));
         view = new StatusBarIconView(mContext, slot, null);
         view.set(icon);
-        mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, mIconSize));
+        //mStatusIconsKeyguard.addView(view, viewIndex, new LinearLayout.LayoutParams(
+               // LayoutParams.WRAP_CONTENT, mIconSize));
     }
 
     public void updateIcon(String slot, int index, int viewIndex,
-            StatusBarIcon old, StatusBarIcon icon) {
+            StatusBarIcon old, StatusBarIcon icon) {/*
         if (SPEW) Log.d(TAG, "updateIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex
                 + " old=" + old + " icon=" + icon);
         StatusBarIconView view = (StatusBarIconView) mStatusIcons.getChildAt(viewIndex);
         view.set(icon);
         view = (StatusBarIconView) mStatusIconsKeyguard.getChildAt(viewIndex);
         view.set(icon);
-    }
+    */ }
 
     public void removeIcon(String slot, int index, int viewIndex) {
         if (SPEW) Log.d(TAG, "removeIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex);
-        mStatusIcons.removeViewAt(viewIndex);
+        //mStatusIcons.removeViewAt(viewIndex);
         mStatusIconsKeyguard.removeViewAt(viewIndex);
     }
 
@@ -3131,12 +3131,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNotificationData.dump(pw, "  ");
             }
 
-            int N = mStatusIcons.getChildCount();
+            /*int N = mStatusIcons.getChildCount();
             pw.println("  system icons: " + N);
             for (int i=0; i<N; i++) {
                 StatusBarIconView ic = (StatusBarIconView) mStatusIcons.getChildAt(i);
                 pw.println("    [" + i + "] icon=" + ic);
-            }
+            }*/
 
             if (false) {
                 pw.println("see the logcat for a dump of the views we have created.");
@@ -3713,14 +3713,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             dispatchDemoCommandToView(command, args, R.id.clock);
         }
         if (modeChange || command.equals(COMMAND_BATTERY)) {
-            dispatchDemoCommandToView(command, args, R.id.battery);
+            //dispatchDemoCommandToView(command, args, R.id.battery);
         }
-        if (modeChange || command.equals(COMMAND_STATUS)) {
+        if (modeChange || command.equals(COMMAND_STATUS)) {/*
             if (mDemoStatusIcons == null) {
                 mDemoStatusIcons = new DemoStatusIcons(mStatusIcons, mIconSize);
             }
             mDemoStatusIcons.dispatchDemoCommand(command, args);
-        }
+        */}
         if (mNetworkController != null && (modeChange || command.equals(COMMAND_NETWORK))) {
             mNetworkController.dispatchDemoCommand(command, args);
         }

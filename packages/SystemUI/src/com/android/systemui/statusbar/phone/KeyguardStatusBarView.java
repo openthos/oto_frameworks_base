@@ -138,7 +138,7 @@ public class KeyguardStatusBarView extends RelativeLayout
 
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
-        ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
+        //((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
     }
 
     public void setUserInfoController(UserInfoController userInfoController) {

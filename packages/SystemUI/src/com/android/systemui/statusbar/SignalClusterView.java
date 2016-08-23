@@ -56,11 +56,11 @@ public class SignalClusterView
     private String mWifiDescription;
     private ArrayList<PhoneState> mPhoneStates = new ArrayList<PhoneState>();
 
-    ViewGroup mWifiGroup;
+    //ViewGroup mWifiGroup;
     ImageView mVpn, mWifi, mAirplane, mNoSims;
-    View mWifiAirplaneSpacer;
-    View mWifiSignalSpacer;
-    LinearLayout mMobileSignalGroup;
+    //View mWifiAirplaneSpacer;
+    //View mWifiSignalSpacer;
+    //LinearLayout mMobileSignalGroup;
 
     private int mWideTypeIconStartPadding;
     private int mSecondaryTelephonyPadding;
@@ -108,16 +108,16 @@ public class SignalClusterView
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        mVpn            = (ImageView) findViewById(R.id.vpn);
-        mWifiGroup      = (ViewGroup) findViewById(R.id.wifi_combo);
-        mWifi           = (ImageView) findViewById(R.id.wifi_signal);
-        mAirplane       = (ImageView) findViewById(R.id.airplane);
-        mNoSims         = (ImageView) findViewById(R.id.no_sims);
-        mWifiAirplaneSpacer =         findViewById(R.id.wifi_airplane_spacer);
-        mWifiSignalSpacer =           findViewById(R.id.wifi_signal_spacer);
-        mMobileSignalGroup = (LinearLayout) findViewById(R.id.mobile_signal_group);
+        //mVpn            = (ImageView) findViewById(R.id.vpn);
+        //mWifiGroup      = (ViewGroup) findViewById(R.id.wifi_combo);
+        //mWifi           = (ImageView) findViewById(R.id.wifi_signal);
+        //mAirplane       = (ImageView) findViewById(R.id.airplane);
+        //mNoSims         = (ImageView) findViewById(R.id.no_sims);
+        //mWifiAirplaneSpacer =         findViewById(R.id.wifi_airplane_spacer);
+        //mWifiSignalSpacer =           findViewById(R.id.wifi_signal_spacer);
+        //mMobileSignalGroup = (LinearLayout) findViewById(R.id.mobile_signal_group);
         for (PhoneState state : mPhoneStates) {
-            mMobileSignalGroup.addView(state.mMobileGroup);
+            //mMobileSignalGroup.addView(state.mMobileGroup);
         }
 
         apply();
@@ -125,12 +125,12 @@ public class SignalClusterView
 
     @Override
     protected void onDetachedFromWindow() {
-        mVpn            = null;
-        mWifiGroup      = null;
-        mWifi           = null;
-        mAirplane       = null;
-        mMobileSignalGroup.removeAllViews();
-        mMobileSignalGroup = null;
+        //mVpn            = null;
+        //mWifiGroup      = null;
+        //mWifi           = null;
+        //mAirplane       = null;
+        //mMobileSignalGroup.removeAllViews();
+        //mMobileSignalGroup = null;
 
         super.onDetachedFromWindow();
     }
@@ -180,9 +180,9 @@ public class SignalClusterView
     public void setSubs(List<SubscriptionInfo> subs) {
         // Clear out all old subIds.
         mPhoneStates.clear();
-        if (mMobileSignalGroup != null) {
-            mMobileSignalGroup.removeAllViews();
-        }
+        //if (mMobileSignalGroup != null) {
+        //    mMobileSignalGroup.removeAllViews();
+        //}
         final int n = subs.size();
         for (int i = 0; i < n; i++) {
             inflatePhoneState(subs.get(i).getSubscriptionId());
@@ -200,9 +200,9 @@ public class SignalClusterView
 
     private PhoneState inflatePhoneState(int subId) {
         PhoneState state = new PhoneState(subId, mContext);
-        if (mMobileSignalGroup != null) {
-            mMobileSignalGroup.addView(state.mMobileGroup);
-        }
+        //if (mMobileSignalGroup != null) {
+        //    mMobileSignalGroup.addView(state.mMobileGroup);
+        //}
         mPhoneStates.add(state);
         return state;
     }
@@ -220,8 +220,8 @@ public class SignalClusterView
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
         // Standard group layout onPopulateAccessibilityEvent() implementations
         // ignore content description, so populate manually
-        if (mWifiVisible && mWifiGroup != null && mWifiGroup.getContentDescription() != null)
-            event.getText().add(mWifiGroup.getContentDescription());
+        //if (mWifiVisible && mWifiGroup != null && mWifiGroup.getContentDescription() != null)
+        //    event.getText().add(mWifiGroup.getContentDescription());
         for (PhoneState state : mPhoneStates) {
             state.populateAccessibilityEvent(event);
         }
@@ -233,7 +233,7 @@ public class SignalClusterView
         super.onRtlPropertiesChanged(layoutDirection);
 
         if (mWifi != null) {
-            mWifi.setImageDrawable(null);
+            //mWifi.setImageDrawable(null);
         }
 
         for (PhoneState state : mPhoneStates) {
@@ -246,7 +246,7 @@ public class SignalClusterView
         }
 
         if(mAirplane != null) {
-            mAirplane.setImageDrawable(null);
+           // mAirplane.setImageDrawable(null);
         }
 
         apply();
@@ -259,16 +259,16 @@ public class SignalClusterView
 
     // Run after each indicator change.
     private void apply() {
-        if (mWifiGroup == null) return;
+        //if (mWifiGroup == null) return;
 
-        mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
+        //mVpn.setVisibility(mVpnVisible ? View.VISIBLE : View.GONE);
         if (DEBUG) Log.d(TAG, String.format("vpn: %s", mVpnVisible ? "VISIBLE" : "GONE"));
         if (mWifiVisible) {
-            mWifi.setImageResource(mWifiStrengthId);
-            mWifiGroup.setContentDescription(mWifiDescription);
-            mWifiGroup.setVisibility(View.VISIBLE);
+            //mWifi.setImageResource(mWifiStrengthId);
+            //mWifiGroup.setContentDescription(mWifiDescription);
+            //mWifiGroup.setVisibility(View.VISIBLE);
         } else {
-            mWifiGroup.setVisibility(View.GONE);
+            //mWifiGroup.setVisibility(View.GONE);
         }
 
         if (DEBUG) Log.d(TAG,
@@ -287,28 +287,28 @@ public class SignalClusterView
             }
         }
 
-        if (mIsAirplaneMode) {
+        /*if (mIsAirplaneMode) {
             mAirplane.setImageResource(mAirplaneIconId);
             mAirplane.setContentDescription(mAirplaneContentDescription != 0 ?
                     mContext.getString(mAirplaneContentDescription) : null);
             mAirplane.setVisibility(View.VISIBLE);
         } else {
             mAirplane.setVisibility(View.GONE);
-        }
+        }*/
 
         if (mIsAirplaneMode && mWifiVisible) {
-            mWifiAirplaneSpacer.setVisibility(View.VISIBLE);
+            //mWifiAirplaneSpacer.setVisibility(View.VISIBLE);
         } else {
-            mWifiAirplaneSpacer.setVisibility(View.GONE);
+            //mWifiAirplaneSpacer.setVisibility(View.GONE);
         }
 
         if (((anyMobileVisible && firstMobileTypeId != 0) || mNoSimsVisible) && mWifiVisible) {
-            mWifiSignalSpacer.setVisibility(View.VISIBLE);
+            //mWifiSignalSpacer.setVisibility(View.VISIBLE);
         } else {
-            mWifiSignalSpacer.setVisibility(View.GONE);
+            //mWifiSignalSpacer.setVisibility(View.GONE);
         }
 
-        mNoSims.setVisibility(mNoSimsVisible ? View.VISIBLE : View.GONE);
+        //mNoSims.setVisibility(mNoSimsVisible ? View.VISIBLE : View.GONE);
 
         boolean anythingVisible = mNoSimsVisible || mWifiVisible || mIsAirplaneMode
                 || anyMobileVisible || mVpnVisible;
