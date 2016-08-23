@@ -41,7 +41,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_TENCENT_WECHAT = "com.tencent.mm";
 
     public static final String APPNAME_CAMERA2 = "com.android.camera2";
-    public static final String APPNAME_MUSIC = "com.android.music";
+    public static final String APPNAME_WPS = "cn.wps.moffice_eng";
+    public static final String APPNAME_WPS_PRO = "com.kingsoft.moffice_pro";
     
     /**
      * Default task affinity of all activities in this application. See 
@@ -607,11 +608,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     }
 
     public static boolean needShadow(String pkgName) {
-        if (isPhoneStyleWindow(pkgName)) {
-            return false;
-        }
         return (pkgName == null) || ((pkgName.compareTo(APPNAME_CAMERA2) != 0)
-                                     && (pkgName.compareTo(APPNAME_MUSIC) != 0));
+                                     && (pkgName.compareTo(APPNAME_WPS) != 0)
+                                     && (pkgName.compareTo(APPNAME_WPS_PRO) != 0)
+                                     && (pkgName.compareTo(APPNAME_TENCENT_WECHAT) != 0));
     }
 
     public void dump(Printer pw, String prefix) {

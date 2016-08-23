@@ -8161,7 +8161,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 break;
                 case POINTER_EVENT_ACTION_HOVER_MOVE:
-                    onHoverMove(msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                    // There are issues to let WMS crash.
+                    //onHoverMove(msg.arg1, msg.arg2, (DisplayContent)msg.obj);
                     break;
                 case POINTER_EVENT_ACTION_DOWN:
                 case POINTER_EVENT_ACTION_MOVE:

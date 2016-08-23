@@ -56,6 +56,19 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.AnimatedRotateDrawable;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.DrawableContainer;
+import android.graphics.drawable.InsetDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.PictureDrawable;
+import android.graphics.drawable.RotateDrawable;
+import android.graphics.drawable.ScaleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.session.MediaController;
@@ -2967,10 +2980,47 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         public void setWindowBackground(Drawable drawable) {
             if ((mDecorMW != null) && mDecorMW.hasShadow()) {
                 if (drawable instanceof ColorDrawable) {
+                    //Log.i(TAG, "============ gchen_tag: ColorDrawable.");
                     GradientDrawable dw = new GradientDrawable();
                     dw.setColor(((ColorDrawable) drawable).getColor());
                     dw.setStroke(2 * getBorderPadding(), Color.TRANSPARENT);
                     drawable = dw;
+                } else if (drawable instanceof GradientDrawable) {
+                    //Log.i(TAG, "============ gchen_tag: GradientDrawable.");
+                    ((GradientDrawable) drawable).setStroke(2 * getBorderPadding(),
+                                                            Color.TRANSPARENT);
+                } else {
+                    if (drawable instanceof BitmapDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: BitmapDrawable.");
+                    } else if (drawable instanceof AnimatedRotateDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: AnimatedRotateDrawable.");
+                    } else if (drawable instanceof AnimatedVectorDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: AnimatedVectorDrawable.");
+                    } else if (drawable instanceof ClipDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: ClipDrawable.");
+                    } else if (drawable instanceof DrawableContainer) {
+                        // music
+                        //Log.i(TAG, "============ gchen_tag: DrawableContainer.");
+                    } else if (drawable instanceof InsetDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: InsertDrawable.");
+                    } else if (drawable instanceof LayerDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: LayerDrawable.");
+                    } else if (drawable instanceof NinePatchDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: NinePatchDrawable.");
+                    } else if (drawable instanceof PictureDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: PictureDrawable.");
+                    } else if (drawable instanceof RotateDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: RotateDrawable.");
+                    } else if (drawable instanceof ScaleDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: ScaleDrawable.");
+                    } else if (drawable instanceof ShapeDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: ShapeDrawable.");
+                    } else if (drawable instanceof TransitionDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: TransitionDrawable.");
+                    } else {
+                        //Log.i(TAG, "============ gchen_tag: Others.");
+                    }
+                    drawable = mDecorMW.getDefaultDrawable();
                 }
             }
             if (getBackground() != drawable) {
@@ -3649,6 +3699,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
+    public boolean isCoverShowed() {
+        return mContentRoot.findViewById(com.android.internal.R.id.mw_cover_view)
+                                .getVisibility() == View.VISIBLE;
+    }
+
     @Override
     public Rect getOldSize() {
         prepareOldSize();
@@ -3674,14 +3729,32 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private ImageButton mMinimizeBtn;
         private View mOuterBorder;
         private boolean mUseShadow;
+        private String mPackageName;
+        private GradientDrawable mDrawable;
 
         public boolean isEmpty() {
             return mContentRoot.getHeight() <= mHeader.getHeight() + getBorderPadding()
                                                                    + getTopBorderPadding();
         }
 
+        public GradientDrawable getDefaultDrawable() {
+            if (mDrawable == null) {
+                mDrawable = new GradientDrawable();
+                mDrawable.setColor(Color.BLACK);
+            }
+            mDrawable.setStroke(2 * getBorderPadding(), Color.TRANSPARENT);
+            return mDrawable;
+        }
+
         public void enableMultiWindowToWindowManager(Rect dialogRect) {
             if (isEmpty()) {
+                return;
+            }
+            if (!isCoverShowed()) {
+                //if ((mPackageName.compareTo(ApplicationInfo.APPNAME_WPS) == 0)
+                //    || (mPackageName.compareTo(ApplicationInfo.APPNAME_WPS_PRO) == 0)) {
+                //    mDecor.setWindowBackground(getDefaultDrawable());
+                //}
                 return;
             }
             setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
@@ -3744,10 +3817,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             mMaximizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMaximizeBtn);
             mMinimizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMinimizeBtn);
 
-            String packageName = setMWWindowTitle(root);
+            mPackageName = setMWWindowTitle(root);
 
             try {
-                ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(), packageName);
+                ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(),
+                                                                           mPackageName);
             } catch (RemoteException e) {
                 Log.e(TAG, "create statusbar activity failed", e);
             }

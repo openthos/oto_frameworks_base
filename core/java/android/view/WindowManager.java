@@ -2147,6 +2147,7 @@ public interface WindowManager extends ViewManager {
                 mIntent = new Intent();
                 mIntent.setComponent(new ComponentName(LINERECT_LOCATION, LINERECT_ACTIVITY));
                 mFrame = new Rect();
+                mNewFrame = mFrame;
             }
         }
 
