@@ -21,7 +21,6 @@ public class MyInstalledReceiver extends BroadcastReceiver {
                                                               null, 1);
             SQLiteDatabase db = mMsoh.getWritableDatabase();
             db.delete("perpo", "pkname = ? ", new String[] { pkName });
-            Toast.makeText(context, "UnInstall" + pkName, 0).show();
         }
     }
 }

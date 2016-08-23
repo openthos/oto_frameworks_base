@@ -116,7 +116,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private Context mContext;
         private PopupWindow mPopupWindow;
         private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
-        private StartupMenuUsuallyAdapter mUsuallyAdapter;
+        public static StartupMenuUsuallyAdapter mUsuallyAdapter;
         private MySqliteOpenHelper mMsoh;
         private SQLiteDatabase mdb;
         BaseSettingDialog mPowerSourceDialog;
@@ -135,7 +135,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private ImageView mIvArrowGray;
         private TextView mTvSortShow;
         private LinearLayout mIvArrowWhite;
-        private List<AppInfo> mListViewEight;
+        public static List<AppInfo> mListViewEight;
         private TextView mClickSort;
         private TextView mTimeSort;
         private TextView mNameSort;

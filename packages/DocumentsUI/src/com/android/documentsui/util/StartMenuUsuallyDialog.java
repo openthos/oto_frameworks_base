@@ -137,8 +137,11 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             c.moveToNext();
             int numbers = c.getInt(c.getColumnIndex("int"));
             numbers++;
+            int number = c.getInt(c.getColumnIndex("click"));
+            number++;
             ContentValues values = new ContentValues();
             values.put("int", numbers);
+            values.put("click", number);
             mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
             break;
 
@@ -150,6 +153,18 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             break;
         case R.id.tv_removed_list:
             Toast.makeText(mContext, "removed list: COMING SOON", 0).show();
+            mPkgName = StartupMenuActivity.mListViewEight.get(mPosition).getPkgName();
+            StartupMenuActivity.mListViewEight.remove(mPosition);
+            StartupMenuActivity.mUsuallyAdapter.notifyDataSetChanged();
+            cancel();
+            Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
+                                    new String[] { mPkgName });
+            cursor.moveToNext();
+            int numClick = cursor.getInt(cursor.getColumnIndex("click"));
+            numClick = 0;
+            ContentValues value = new ContentValues();
+            value.put("click", numClick);
+            mdb.update("perpo", value, "pkname = ?", new String[] { mPkgName });
             break;
         }
     }
