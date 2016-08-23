@@ -21,8 +21,8 @@ import android.widget.TextView;
 import android.content.SharedPreferences;
 
 public class StartupMenuUsuallyAdapter extends BaseAdapter {
-    public static final int START_MENU_RIGHT_MOUSE_UI_X = 260;
-    public static final int START_MENU_RIGHT_MOUSE_UI_Y = 200;
+    public static final int START_MENU_RIGHT_MOUSE_UI_X = 165;
+    public static final int START_MENU_RIGHT_MOUSE_UI_Y = 180;
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
 
     private List<AppInfo> mlistViewAppInfo = null;
