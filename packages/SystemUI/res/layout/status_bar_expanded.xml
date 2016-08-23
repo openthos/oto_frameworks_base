@@ -62,7 +62,7 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="340dp"
+            android:layout_height="360dp"
             android:orientation="vertical">
 
             <FrameLayout
@@ -72,8 +72,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="#1affffff" />
+                    android:layout_height="48dp" />
 
                 <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
                     android:id="@+id/notification_stack_scroller"
@@ -125,7 +124,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
-                android:layout_height="220dp" >
+                android:layout_height="200dp" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
