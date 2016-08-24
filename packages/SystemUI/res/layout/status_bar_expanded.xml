@@ -124,7 +124,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_margin="8dp"
-                android:layout_height="200dp" >
+                android:layout_height="210dp" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_height="110dp" />
+                android:layout_height="100dp" />
 
             <!-- A view to reserve space for the collapsed stack -->
             <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->

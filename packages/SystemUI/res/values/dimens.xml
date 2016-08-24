@@ -146,7 +146,7 @@
 
     <!-- Width for the notification panel and related windows -->
     <dimen name="match_parent">-1px</dimen>
-    <dimen name="standard_notification_panel_width">220dp</dimen><!-- includes notification_side_padding on each side -->
+    <dimen name="standard_notification_panel_width">280dp</dimen><!-- includes notification_side_padding on each side -->
     <dimen name="notification_panel_width">@dimen/match_parent</dimen>
 
     <!-- Gravity for the notification panel -->
@@ -568,7 +568,7 @@
     <dimen name="linear_length_unit_over_the_weekend_padding">10dp</dimen>
 
     <!--Icon top padding of Quick Settings Tile" -->
-    <dimen name="quick_settings_tile_icon_top_padding">16dp</dimen>
+    <dimen name="quick_settings_tile_icon_top_padding">3dp</dimen>
     <!-- Label top padding of Quick Settings Tile -->
     <dimen name="quick_settings_tile_label_top_padding">2dp</dimen>
     <!-- Status bar home but width-->
