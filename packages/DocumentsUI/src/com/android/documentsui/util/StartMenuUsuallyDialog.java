@@ -81,6 +81,11 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         rightPhoneUsuallyRun.setOnClickListener(this);
         rightDesktopUsuallyRun.setOnClickListener(this);
         romeList.setOnClickListener(this);
+
+        mRightUsuallyOpen.setOnHoverListener(hoverListener);
+        rightPhoneUsuallyRun.setOnHoverListener(hoverListener);
+        rightDesktopUsuallyRun.setOnHoverListener(hoverListener);
+        romeList.setOnHoverListener(hoverListener);
     }
 
     public void setEnableOpenwith(boolean can) {
@@ -168,4 +173,20 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             break;
         }
     }
+
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.inRightMenuFocus);
+                    break;
+            }
+            return false;
+        }
+    };
+
 }

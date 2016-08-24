@@ -85,6 +85,12 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         rightDesktopRun.setOnClickListener(this);
         rightFixedTaskbar.setOnClickListener(this);
         rightUninstall.setOnClickListener(this);
+
+        mRightOpen.setOnHoverListener(hoverListener);
+        rightPhoneRun.setOnHoverListener(hoverListener);
+        rightDesktopRun.setOnHoverListener(hoverListener);
+        rightFixedTaskbar.setOnHoverListener(hoverListener);
+        rightUninstall.setOnHoverListener(hoverListener);
     }
 
     public void setEnableOpenwith(boolean can) {
@@ -184,4 +190,19 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             break;
         }
     }
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.inRightMenuFocus);
+                    break;
+            }
+            return false;
+        }
+    };
+
 }

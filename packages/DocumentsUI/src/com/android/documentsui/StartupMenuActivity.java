@@ -181,10 +181,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
             my_computer = (TextView) findViewById(R.id.my_computer);
+            TextView powerOff = (TextView) findViewById(R.id.power_off);
             mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
             mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
             my_computer.setOnClickListener(this);
             system_setting.setOnClickListener(this);
+            my_computer.setOnHoverListener(hoverListener);
+            system_setting.setOnHoverListener(hoverListener);
+            powerOff.setOnHoverListener(hoverListener);
 
             ImageView imView = (ImageView) findViewById(R.id.iv_view);
             mIvArrowGray = (ImageView) findViewById(R.id.iv_arrow_gray);
@@ -238,8 +242,26 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mTimeSort.setOnClickListener(this);
             mNameSort.setOnClickListener(this);
             //type_sort.setOnClickListener(this);
+            mClickSort.setOnHoverListener(hoverListeners);
+            mTimeSort.setOnHoverListener(hoverListeners);
+            mNameSort.setOnHoverListener(hoverListeners);
             mSelectLayout.addView(mSelectView);
         }
+
+        View.OnHoverListener hoverListeners= new View.OnHoverListener() {
+            public boolean onHover(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_HOVER_ENTER:
+                        v.setBackgroundResource(R.color.rightMenuFocus);
+                        break;
+                    case MotionEvent.ACTION_HOVER_EXIT:
+                        v.setBackgroundResource(R.color.showSortBackground);
+                        break;
+                }
+                return false;
+            }
+        };
 
         public void selectAppShow() {
             if (mType.equals("sortName")) {
@@ -278,6 +300,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 clickSort();
             }
         }
+
+        View.OnHoverListener hoverListener = new View.OnHoverListener() {
+            public boolean onHover(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_HOVER_ENTER:
+                        v.setBackgroundResource(R.drawable.power_background);
+                        break;
+                    case MotionEvent.ACTION_HOVER_EXIT:
+                        v.setBackgroundResource(R.color.appUsuallyBackground);
+                        break;
+                }
+                return false;
+            }
+        };
 
         class mThread extends Thread {
             public void run(){

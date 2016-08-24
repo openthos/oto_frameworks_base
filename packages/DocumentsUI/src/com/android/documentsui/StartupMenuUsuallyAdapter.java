@@ -114,8 +114,24 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                 return false;
             }
         });
+        view.setOnHoverListener(hoverListener);
         return view;
     }
+
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.drawable.power_background);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.appUsuallyBackground);
+                    break;
+            }
+            return false;
+        }
+    };
 
     private void showMenuDialog1(int position,MotionEvent motionEvent){
         StartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
