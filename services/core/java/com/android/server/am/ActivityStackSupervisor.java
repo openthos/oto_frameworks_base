@@ -18,6 +18,8 @@
 package com.android.server.am;
 
 import static android.Manifest.permission.START_ANY_ACTIVITY;
+import static android.content.Intent.FLAG_ACTIVITY_RUN_PHONE_MODE;
+import static android.content.Intent.FLAG_ACTIVITY_RUN_PC_MODE;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_TASK_ON_HOME;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN;
@@ -1711,6 +1713,18 @@ public final class ActivityStackSupervisor implements DisplayListener {
                             mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
                                 - mWindowManager.getStatusbarHeight());
         }
+
+        // run phone mode
+        if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PHONE_MODE) != 0) {
+           return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
+        }
+
+        //run pc mode
+        if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PC_MODE) != 0) {
+           return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+        }
+
+        //run default mode
         return  mWindowManager.getDisplayMetrics().getDefaultFrameRect(
                                                        ApplicationInfo.isPhoneStyleWindow(pkgName));
     }

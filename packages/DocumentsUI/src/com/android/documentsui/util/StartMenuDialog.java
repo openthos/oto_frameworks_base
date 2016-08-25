@@ -143,6 +143,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
+
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                                     new String[] { mPkgName });
             c.moveToNext();
@@ -161,21 +162,20 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             editor.putInt("isClick", 1);
             editor.commit();
             break;
-
         case R.id.tv_right_phone_run:
-            Toast.makeText(mContext, "phone run: COMING SOON", 0).show();
+            runPhoneMode();
+            addUsedNum();
             break;
         case R.id.tv_right_desktop_run:
-            Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
+            runPcMode();
+            addUsedNum();
             break;
         case R.id.tv_right_fixed_taskbar:
             String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            //LocalBroadcastManager localManager = LocalBroadcastManager.getInstance(mContext);
             Intent intentSend = new Intent();
             intentSend.putExtra("keyInfo",pkgInfo);
             intentSend.setAction("com.android.documentsui.util.startmenudialog");
             mContext.sendBroadcast(intentSend);
-            Log.i("-----","zx+send"+pkgInfo);
             break;
         case R.id.tv_right_uninstall:
             if (mListType == 0) {
@@ -205,4 +205,39 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         }
     };
 
+    //Method of run phone mode
+    private void runPhoneMode() {
+        Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE);
+        mContext.startActivity(intent);
+    }
+
+    //Method of run pc mode
+    private void runPcMode() {
+        Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
+
+    //Method of save used numbers
+    private void addUsedNum() {
+        String pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+        Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
+                                     new String[] { pkgName });
+        cursor.moveToNext();
+        int numbers = cursor.getInt(cursor.getColumnIndex("int"));
+        numbers++;
+        int number = cursor.getInt(cursor.getColumnIndex("click"));
+        number++;
+        ContentValues values = new ContentValues();
+        values.put("int", numbers);
+        values.put("click",number);
+        mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+        SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
+                                                             Context.MODE_PRIVATE);
+        Editor editor = sharedPreference.edit();
+        editor.clear();
+        editor.putInt("isClick",1);
+        editor.commit();
+    }
 }

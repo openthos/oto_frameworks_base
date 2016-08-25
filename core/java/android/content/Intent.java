@@ -3697,6 +3697,9 @@ public class Intent implements Parcelable, Cloneable {
      * the activity being launched.
      */
     public static final int FLAG_ACTIVITY_NEW_TASK = 0x10000000;
+    public static final int FLAG_ACTIVITY_RUN_PHONE_MODE = 0x00000800;
+    public static final int FLAG_ACTIVITY_RUN_PC_MODE = 0x00001000;
+
     /**
      * This flag is used to create a new task and launch an activity into it.
      * This flag is always paired with either {@link #FLAG_ACTIVITY_NEW_DOCUMENT}
@@ -4319,8 +4322,22 @@ public class Intent implements Parcelable, Cloneable {
     public static Intent makeRestartActivityTask(ComponentName mainActivity) {
         Intent intent = makeMainActivity(mainActivity);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                       | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
+    }
+
+    //Use to support running by phone mode
+    public static Intent makePhoneActivityTask(ComponentName mainActivity) {
+        Intent intentPhone = makeMainActivity(mainActivity);
+        intentPhone.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE);
+        return intentPhone;
+    }
+
+    //Use to support running by pc mode
+    public static Intent makePcActivityTask(ComponentName mainActivity) {
+        Intent intentPc = makeMainActivity(mainActivity);
+        intentPc.addFlags(Intent.FLAG_ACTIVITY_RUN_PC_MODE);
+        return intentPc;
     }
 
     /**
