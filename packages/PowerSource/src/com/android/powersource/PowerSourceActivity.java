@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.MotionEvent;
 import android.view.View.OnHoverListener;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -23,6 +23,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
     protected void onCreate(Bundle context) {
         super.onCreate(context);
         setContentView(R.layout.power_source_activity);
+
         View view = findViewById(R.id.power_source);
         ImageView powerClose = (ImageView) view.findViewById(R.id.power_close);
         LinearLayout powerOff = (LinearLayout) view.findViewById(R.id.power_off);
@@ -34,8 +35,29 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         powerSleep.setOnClickListener(this);
         powerLock.setOnClickListener(this);
         powerRestart.setOnClickListener(this);
+
+        powerClose.setOnHoverListener(hoverListeners);
+        powerOff.setOnHoverListener(hoverListeners);
+        powerSleep.setOnHoverListener(hoverListeners);
+        powerLock.setOnHoverListener(hoverListeners);
+        powerRestart.setOnHoverListener(hoverListeners);
         hideStatusBar();
     }
+
+    View.OnHoverListener hoverListeners= new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.color.layoutFocus);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.drawable.ic_power_background);
+                    break;
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onDestroy() {

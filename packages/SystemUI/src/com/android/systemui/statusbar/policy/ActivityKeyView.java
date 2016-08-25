@@ -312,6 +312,7 @@ public class ActivityKeyView extends ImageView {
             }
             switch(event.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
+                    useless.setBackgroundResource(R.drawable.app_get_focus_background);
                     View view = ((LayoutInflater) mContext.getSystemService(
                                                            Context.LAYOUT_INFLATER_SERVICE))
                                      .inflate(R.layout.status_bar_activity_hover_tips, null, false);
@@ -321,6 +322,9 @@ public class ActivityKeyView extends ImageView {
                     }
                     dismissDialog();
                     showDialog(view, DIALOG_PADDING_TIPS);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    useless.setBackgroundResource(R.drawable.system_bar_background);
                     break;
             }
             return false;

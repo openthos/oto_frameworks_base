@@ -32,8 +32,9 @@
 
             <LinearLayout
                 android:id="@+id/power_off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:paddingTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:orientation="vertical" >
 
@@ -52,8 +53,9 @@
 
             <LinearLayout
                 android:id="@+id/power_sleep"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:paddingTop="5dp"
                 android:layout_marginLeft="72dp"
                 android:orientation="vertical" >
 
@@ -61,6 +63,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop"
+                    android:layout_gravity="center_horizontal"
                     android:src="@drawable/ic_sleep" />
 
                 <TextView
@@ -71,8 +74,9 @@
 
             <LinearLayout
                 android:id="@+id/power_lock"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:paddingTop="5dp"
                 android:layout_marginLeft="72dp"
                 android:orientation="vertical" >
 
@@ -80,6 +84,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:scaleType="centerCrop"
+                    android:layout_gravity="center_horizontal"
                     android:src="@drawable/ic_setting_safety" />
 
                 <TextView
@@ -90,8 +95,9 @@
 
             <LinearLayout
                 android:id="@+id/power_restart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="55dp"
+                android:layout_height="70dp"
+                android:paddingTop="5dp"
                 android:layout_marginLeft="72dp"
                 android:orientation="vertical" >
 
