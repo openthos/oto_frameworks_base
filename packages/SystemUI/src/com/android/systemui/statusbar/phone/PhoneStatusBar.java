@@ -300,6 +300,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
     private PointF mScreenOnTouchLocation;
+    private KeyButtonView mStartupMenu;
+    private KeyButtonView mActionButton;
+    private KeyButtonView mInputButton;
+    private KeyButtonView mBatteryButton;
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
     private View mClock;
@@ -690,7 +694,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mCalendarDialog.show(mClock);
             }
         });
-
+        mClock.setOnHoverListener(hoverListener);
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
         mNotificationPanel.setStatusBar(this);
@@ -932,13 +936,68 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
+        mStartupMenu = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
+        mActionButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_action_center);
+        mInputButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_input_method);
+        mBatteryButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_battery);
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
+        mStartupMenu.setOnHoverListener(startupMenuListener);
+        mActionButton.setOnHoverListener(hoverListeners);
+        mInputButton.setOnHoverListener(hoverListeners);
+        mBatteryButton.setOnHoverListener(hoverListeners);
+        mVolumeButton.setOnHoverListener(hoverListeners);
+        mWifiButton.setOnHoverListener(hoverListeners);
         return mStatusBarView;
     }
+
+    View.OnHoverListener startupMenuListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.drawable.app_get_focus_background);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.drawable.system_bar_background);
+                    break;
+            }
+            return false;
+        }
+    };
+
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.drawable.date_background);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.drawable.system_bar_background);
+                    break;
+            }
+            return false;
+        }
+    };
+
+    View.OnHoverListener hoverListeners = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.drawable.power_sound_background);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.drawable.system_bar_background);
+                    break;
+            }
+            return false;
+        }
+    };
 
     private BroadcastReceiver mPrinterBroadcastReceiver = null;
 
