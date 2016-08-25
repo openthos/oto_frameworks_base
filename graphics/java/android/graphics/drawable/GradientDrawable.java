@@ -82,7 +82,7 @@ import java.io.IOException;
  * @attr ref android.R.styleable#GradientDrawablePadding_right
  * @attr ref android.R.styleable#GradientDrawablePadding_bottom
  */
-public class GradientDrawable extends ColorDrawable {
+public class GradientDrawable extends Drawable {
     /**
      * Shape is a rectangle, possibly with rounded corners
      */
@@ -713,7 +713,6 @@ public class GradientDrawable extends ColorDrawable {
      * @see #mutate()
      * @see #setColors(int[])
      */
-    @Override
     public void setColor(int argb) {
         mGradientState.setColorStateList(ColorStateList.valueOf(argb));
         mFillPaint.setColor(argb);
@@ -1526,7 +1525,6 @@ public class GradientDrawable extends ColorDrawable {
     /**
      * @hide
      */
-    @Override
     public void clearMutated() {
         super.clearMutated();
         mMutated = false;

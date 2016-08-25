@@ -55,6 +55,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BackgroundDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.AnimatedRotateDrawable;
@@ -2979,18 +2980,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         public void setWindowBackground(Drawable drawable) {
             if ((mDecorMW != null) && mDecorMW.hasShadow()) {
-                if (drawable instanceof ColorDrawable) {
+                if ((drawable != null) && (drawable instanceof BackgroundDrawable)) {
+                    //Log.i(TAG, "============ gchen_tag: BackgroundDrawable.");
+                    ((BackgroundDrawable) drawable).setDrawablePadding(getBorderPadding());
+                } else if (drawable instanceof ColorDrawable) {
                     //Log.i(TAG, "============ gchen_tag: ColorDrawable.");
-                    GradientDrawable dw = new GradientDrawable();
-                    dw.setColor(((ColorDrawable) drawable).getColor());
-                    dw.setStroke(2 * getBorderPadding(), Color.TRANSPARENT);
-                    drawable = dw;
-                } else if (drawable instanceof GradientDrawable) {
-                    //Log.i(TAG, "============ gchen_tag: GradientDrawable.");
-                    ((GradientDrawable) drawable).setStroke(2 * getBorderPadding(),
-                                                            Color.TRANSPARENT);
+                    drawable = mDecorMW.getDrawableByColor(((ColorDrawable) drawable).getColor());
                 } else {
-                    if (drawable instanceof BitmapDrawable) {
+                    if (drawable instanceof GradientDrawable) {
+                        //Log.i(TAG, "============ gchen_tag: GradientDrawable.");
+                    } else if (drawable instanceof BitmapDrawable) {
                         //Log.i(TAG, "============ gchen_tag: BitmapDrawable.");
                     } else if (drawable instanceof AnimatedRotateDrawable) {
                         //Log.i(TAG, "============ gchen_tag: AnimatedRotateDrawable.");
@@ -3722,6 +3721,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     class DecorMW {
 
+        private static final int COLOR_OFFICE_WORD = 0xff4444cc;
+        private static final int COLOR_OFFICE_EXCEL = 0xff448844;
+        private static final int COLOR_OFFICE_POWERPOINT = 0xff884422;
+
         private LinearLayout mHeader;
         private ImageButton mCloseBtn;
         private ImageButton mLaunchBtn;
@@ -3730,31 +3733,41 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private View mOuterBorder;
         private boolean mUseShadow;
         private String mPackageName;
-        private GradientDrawable mDrawable;
+        private BackgroundDrawable mDrawable;
 
         public boolean isEmpty() {
             return mContentRoot.getHeight() <= mHeader.getHeight() + getBorderPadding()
                                                                    + getTopBorderPadding();
         }
 
-        public GradientDrawable getDefaultDrawable() {
-            if (mDrawable == null) {
-                mDrawable = new GradientDrawable();
-                mDrawable.setColor(Color.BLACK);
+        public BackgroundDrawable getDefaultDrawable() {
+            int color;
+            if ((mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0)
+                || (mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)) {
+                color = Color.LTGRAY;
+            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) == 0) {
+                color = COLOR_OFFICE_WORD;
+            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {
+                color = COLOR_OFFICE_EXCEL;
+            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_POWERPOINT) == 0) {
+                color = COLOR_OFFICE_POWERPOINT;
+            } else {
+                color = Color.BLACK;
             }
-            mDrawable.setStroke(2 * getBorderPadding(), Color.TRANSPARENT);
+            return getDrawableByColor(color);
+        }
+
+        public BackgroundDrawable getDrawableByColor(int color) {
+            if (mDrawable == null) {
+                mDrawable = new BackgroundDrawable();
+            }
+            mDrawable.setColor(color);
+            mDrawable.setDrawablePadding(getBorderPadding());
             return mDrawable;
         }
 
         public void enableMultiWindowToWindowManager(Rect dialogRect) {
-            if (isEmpty()) {
-                return;
-            }
-            if (!isCoverShowed()) {
-                //if ((mPackageName.compareTo(ApplicationInfo.APPNAME_WPS) == 0)
-                //    || (mPackageName.compareTo(ApplicationInfo.APPNAME_WPS_PRO) == 0)) {
-                //    mDecor.setWindowBackground(getDefaultDrawable());
-                //}
+            if (isEmpty() || !isCoverShowed()) {
                 return;
             }
             setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);

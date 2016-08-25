@@ -44,6 +44,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_WPS = "cn.wps.moffice_eng";
     public static final String APPNAME_WPS_PRO = "com.kingsoft.moffice_pro";
     
+    public static final String APPNAME_OFFICE_WORD = "com.microsoft.office.word";
+    public static final String APPNAME_OFFICE_EXCEL = "com.microsoft.office.excel";
+    public static final String APPNAME_OFFICE_POWERPOINT = "com.microsoft.office.powerpoint";
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 
@@ -608,10 +612,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     }
 
     public static boolean needShadow(String pkgName) {
-        return (pkgName == null) || ((pkgName.compareTo(APPNAME_CAMERA2) != 0)
-                                     && (pkgName.compareTo(APPNAME_WPS) != 0)
-                                     && (pkgName.compareTo(APPNAME_WPS_PRO) != 0)
-                                     && (pkgName.compareTo(APPNAME_TENCENT_WECHAT) != 0));
+        return true;
     }
 
     public void dump(Printer pw, String prefix) {

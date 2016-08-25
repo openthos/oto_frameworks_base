@@ -104,6 +104,8 @@ import android.util.Log;
 public class TextureView extends View {
     private static final String LOG_TAG = "TextureView";
 
+    private static final float TEXTUEVIEW_MAX_ALPHA = 0.99f;
+
     private HardwareLayer mLayer;
     private SurfaceTexture mSurface;
     private SurfaceTextureListener mListener;
@@ -389,6 +391,7 @@ public class TextureView extends View {
 
         applyUpdate();
         applyTransformMatrix();
+        setAlpha(TEXTUEVIEW_MAX_ALPHA);
 
         return mLayer;
     }
@@ -807,4 +810,21 @@ public class TextureView extends View {
 
     private static native boolean nLockCanvas(long nativeWindow, Canvas canvas, Rect dirty);
     private static native void nUnlockCanvasAndPost(long nativeWindow, Canvas canvas);
+
+    /**
+     * TODO: It is a temporary fix, if the background is white, it will be all white.
+     *
+     * At present, this stream format can not work well with transparent plane, which should be
+     * fixed, next.
+     *
+     * Another way is: transform this stream format to the common stream format which is fit with
+     * transparent plane.
+     */
+    @Override
+    public void setAlpha(float alpha) {
+        if (alpha > 1.0f) {
+            alpha = TEXTUEVIEW_MAX_ALPHA;
+        }
+        super.setAlpha(alpha);
+    }
 }
