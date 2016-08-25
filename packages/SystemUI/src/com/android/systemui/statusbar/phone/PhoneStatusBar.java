@@ -315,7 +315,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // left-hand icons
     //LinearLayout mStatusIcons;
-    LinearLayout mStatusIconsKeyguard;
+    //LinearLayout mStatusIconsKeyguard;
 
     // status_bar_activity
     LinearLayout mStatusBarActivities;
@@ -764,7 +764,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mDozeScrimController = new DozeScrimController(mScrimController, context);
 
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
-        mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
+        //mStatusIconsKeyguard = (LinearLayout) mKeyguardStatusBar.findViewById(R.id.statusIcons);
         mKeyguardStatusView = mStatusBarWindow.findViewById(R.id.keyguard_status_view);
         mKeyguardBottomArea =
                 (KeyguardBottomAreaView) mStatusBarWindow.findViewById(R.id.keyguard_bottom_area);
@@ -1346,8 +1346,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     public void refreshAllStatusBarIcons() {
-       // refreshAllIconsForLayout(mStatusIcons);
-        refreshAllIconsForLayout(mStatusIconsKeyguard);
+       //refreshAllIconsForLayout(mStatusIcons);
+       //refreshAllIconsForLayout(mStatusIconsKeyguard);
     }
 
     private void refreshAllIconsForLayout(LinearLayout ll) {
@@ -1386,7 +1386,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void removeIcon(String slot, int index, int viewIndex) {
         if (SPEW) Log.d(TAG, "removeIcon slot=" + slot + " index=" + index + " viewIndex=" + viewIndex);
         //mStatusIcons.removeViewAt(viewIndex);
-        mStatusIconsKeyguard.removeViewAt(viewIndex);
+        //mStatusIconsKeyguard.removeViewAt(viewIndex);
     }
 
     public UserHandle getCurrentUserHandle() {
