@@ -168,6 +168,7 @@
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_battery"
                    systemui:keyCode="100006"
+                   android:visibility="gone"
                    systemui:keyRepeat="true" />
 
 
@@ -195,7 +196,7 @@
                    systemui:keyCode="100008"
                    systemui:keyRepeat="true" />
 
-                <!-- <include layout="@layout/system_icons" /> -->
+                <include layout="@layout/system_icons" />
 
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"

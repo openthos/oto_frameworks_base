@@ -721,7 +721,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
 
-        //mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
+        mSystemIcons = (LinearLayout) mStatusBarView.findViewById(R.id.system_icons);
         //mStatusIcons = (LinearLayout)mStatusBarView.findViewById(R.id.statusIcons);
         mStatusBarContents = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_contents);
 
@@ -908,8 +908,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyguardStatusBar.setUserInfoController(mUserInfoController);
         mUserInfoController.reloadUserInfo();
 
-        //((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
-               // mBatteryController);
+        ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
+                mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -3772,7 +3772,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             dispatchDemoCommandToView(command, args, R.id.clock);
         }
         if (modeChange || command.equals(COMMAND_BATTERY)) {
-            //dispatchDemoCommandToView(command, args, R.id.battery);
+            dispatchDemoCommandToView(command, args, R.id.battery);
         }
         if (modeChange || command.equals(COMMAND_STATUS)) {/*
             if (mDemoStatusIcons == null) {

@@ -69,8 +69,8 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private ImageView mMultiUserAvatar;
     private TextView mDateCollapsed;
     private TextView mDateExpanded;
-    //private LinearLayout mSystemIcons;
-    //private View mSignalCluster;
+    private LinearLayout mSystemIcons;
+    private View mSignalCluster;
     private View mSettingsButton;
     private View mQsDetailHeader;
     private TextView mQsDetailHeaderTitle;
@@ -152,7 +152,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
         //mSignalCluster = findViewById(R.id.signal_cluster);
-        //mSystemIcons = (LinearLayout) findViewById(R.id.system_icons);
+        mSystemIcons = (LinearLayout) findViewById(R.id.system_icons);
         loadDimens();
         updateVisibilities();
         updateClockScale();
@@ -265,7 +265,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     public void setBatteryController(BatteryController batteryController) {
         mBatteryController = batteryController;
-        //((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
+        ((BatteryMeterView) findViewById(R.id.battery)).setBatteryController(batteryController);
     }
 
     public void setNextAlarmController(NextAlarmController nextAlarmController) {
@@ -323,14 +323,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmStatus.setVisibility(mExpanded && mAlarmShowing ? View.VISIBLE : View.INVISIBLE);
         mSettingsButton.setVisibility(mExpanded ? View.VISIBLE : View.INVISIBLE);
         mQsDetailHeader.setVisibility(mExpanded && mShowingDetail? View.VISIBLE : View.INVISIBLE);
-        /*if (mSignalCluster != null) {
+        if (mSignalCluster != null) {
             updateSignalClusterDetachment();
-        }*/
+        }
         mEmergencyCallsOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly ? VISIBLE : GONE);
         mBatteryLevel.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
     }
 
-    /*private void updateSignalClusterDetachment() {
+    private void updateSignalClusterDetachment() {
         boolean detached = mExpanded;
         if (detached != mSignalClusterDetached) {
             if (detached) {
@@ -345,7 +345,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private void reattachSignalCluster() {
         getOverlay().remove(mSignalCluster);
         mSystemIcons.addView(mSignalCluster, 1);
-    }*/
+    }
 
     private void updateSystemIconsLayoutParams() {
         RelativeLayout.LayoutParams lp = (LayoutParams) mSystemIconsSuperContainer.getLayoutParams();
@@ -604,7 +604,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             mSystemIconsSuperContainer.setX(values.batteryX - mSystemIconsContainer.getLeft());
         }
         mSystemIconsSuperContainer.setY(values.batteryY - mSystemIconsContainer.getTop());
-        /*if (mSignalCluster != null && mExpanded) {
+        if (mSignalCluster != null && mExpanded) {
             if (getLayoutDirection() == LAYOUT_DIRECTION_LTR) {
                 mSignalCluster.setX(mSystemIconsSuperContainer.getX()
                         - mSignalCluster.getWidth());
@@ -618,7 +618,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         } else if (mSignalCluster != null) {
             mSignalCluster.setTranslationX(0f);
             mSignalCluster.setTranslationY(0f);
-        }*/
+        }
         mSettingsButton.setTranslationY(mSystemIconsSuperContainer.getTranslationY());
         mSettingsButton.setTranslationX(values.settingsTranslation);
         mSettingsButton.setRotation(values.settingsRotation);
