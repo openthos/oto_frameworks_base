@@ -68,10 +68,6 @@ public class StartupMenuAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertview, ViewGroup arg2) {
-        // register
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.android.systemui.activitykeyview.pkgname");
-        mContext.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         View view = null;
         ViewHolder holder = null;
         if (convertview == null || convertview.getTag() == null) {
@@ -167,30 +163,4 @@ public class StartupMenuAdapter extends BaseAdapter {
         //  this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
     }
-    // receiver
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals("com.android.systemui.activitykeyview.pkgname")) {
-                String pkgName = intent.getStringExtra("keyInfo");
-                Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                        new String[] { pkgName });
-                c.moveToNext();
-                int numbers = c.getInt(c.getColumnIndex("int"));
-                numbers ++ ;
-                int number = c.getInt(c.getColumnIndex("click"));
-                number ++;
-                ContentValues values = new ContentValues();
-                values.put("int", numbers);
-                values.put("click", number);
-                mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
-                SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
-                                                                      Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreference.edit();
-                editor.clear();
-                editor.putInt("isClick", 1);
-                editor.commit();
-            }
-        }
-    };
 }

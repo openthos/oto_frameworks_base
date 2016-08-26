@@ -88,6 +88,7 @@
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.android.documentsui.SQLITE_CHANGE" />
+                <action android:name="com.android.action.PACKAGE_SEND"/>
             </intent-filter>
         </receiver>
     </application>

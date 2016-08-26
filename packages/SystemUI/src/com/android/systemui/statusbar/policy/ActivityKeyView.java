@@ -53,7 +53,6 @@ public class ActivityKeyView extends ImageView {
     public ActivityKeyView(Context context) {
         super(context);
         initListener();
-        sendBroadcastMethod();
     }
 
     public ActivityKeyView(Context context, AttributeSet attrs) {
@@ -70,6 +69,7 @@ public class ActivityKeyView extends ImageView {
         mOpen = new OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendBroadcastMethod();
                 runApkByPkg();
                 dismissDialog();
             }
@@ -269,8 +269,8 @@ public class ActivityKeyView extends ImageView {
     //send broadCast
     public void sendBroadcastMethod() {
         Intent intent = new Intent();
-        intent.putExtra("keyInfo",mActivity.mPkgName);
-        intent.setAction("com.android.systemui.activitykeyview.pkgname");
+        intent.putExtra("keyAddInfo",mActivity.mPkgName);
+        intent.setAction("com.android.action.PACKAGE_SEND");
         mContext.sendBroadcast(intent);
     }
 
@@ -288,6 +288,7 @@ public class ActivityKeyView extends ImageView {
         if(action == MotionEvent.ACTION_DOWN) {
             if(mActivity.mIsDocked) {
                 if(!mActivity.mApkRun) {
+                    sendBroadcastMethod();
                     runApkByPkg();
                 } else if(mActivity.mHiden) {
                     resizeStack();

@@ -19,6 +19,9 @@ import java.util.Date;
 import java.util.List;
 import static com.android.documentsui.StartupMenuActivity.isEnglish;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
 public class MySQLReceiver extends BroadcastReceiver {
     private MySqliteOpenHelper mMsoh;
     private SQLiteDatabase mdb;
@@ -30,6 +33,21 @@ public class MySQLReceiver extends BroadcastReceiver {
         mdb = mMsoh.getWritableDatabase();
         if (intent.getAction().equals("com.android.documentsui.SQLITE_CHANGE")) {
             BackstageRenewalData(context);
+        }
+        //Accept Message
+        if (intent.getAction().equals("com.android.action.PACKAGE_SEND")) {
+            String pkgName = intent.getStringExtra("keyAddInfo");
+            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
+                      new String[] { pkgName });
+            c.moveToNext();
+            int numbers = c.getInt(c.getColumnIndex("int"));
+            int number = c.getInt(c.getColumnIndex("click"));
+            numbers ++ ;
+            number ++;
+            ContentValues values = new ContentValues();
+            values.put("int", numbers);
+            values.put("click", number);
+            mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
         }
     }
 
