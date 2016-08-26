@@ -8,8 +8,8 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="536dp"
-        android:layout_height="179dp"
+        android:layout_width="560dp"
+        android:layout_height="192dp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:background="@drawable/ic_power_background"
         android:orientation="vertical" >
@@ -32,10 +32,9 @@
 
             <LinearLayout
                 android:id="@+id/power_off"
-                android:layout_width="55dp"
-                android:layout_height="70dp"
-                android:paddingTop="5dp"
-                android:layout_gravity="center_horizontal"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingTop="13dp"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -46,17 +45,17 @@
                     android:src="@drawable/ic_starter_power" />
 
                 <TextView
-                   android:id="@+id/shut_power_off"
-                   style="@style/PowerStyle"
-                   android:text="@string/power_off" />
+                    android:id="@+id/shut_power_off"
+                    style="@style/PowerStyle"
+                    android:text="@string/power_off" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/power_sleep"
-                android:layout_width="55dp"
-                android:layout_height="70dp"
-                android:paddingTop="5dp"
-                android:layout_marginLeft="72dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingTop="13dp"
+                android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -74,10 +73,10 @@
 
             <LinearLayout
                 android:id="@+id/power_lock"
-                android:layout_width="55dp"
-                android:layout_height="70dp"
-                android:paddingTop="5dp"
-                android:layout_marginLeft="72dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingTop="13dp"
+                android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -95,10 +94,10 @@
 
             <LinearLayout
                 android:id="@+id/power_restart"
-                android:layout_width="55dp"
-                android:layout_height="70dp"
-                android:paddingTop="5dp"
-                android:layout_marginLeft="72dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:paddingTop="13dp"
+                android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 
                 <ImageView

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="88dp"
     android:layout_height="104dp"
+    android:paddingTop="12dp"
     android:orientation="vertical" >
 
     <ImageView

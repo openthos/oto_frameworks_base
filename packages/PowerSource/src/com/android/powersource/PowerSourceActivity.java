@@ -49,10 +49,10 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    v.setBackgroundResource(R.color.layoutFocus);
+                    v.setBackgroundResource(R.drawable.power_setting_background);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.drawable.ic_power_background);
+                    v.setBackgroundColor(android.R.color.transparent);
                     break;
             }
             return false;
