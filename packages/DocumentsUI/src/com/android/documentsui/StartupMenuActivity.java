@@ -291,35 +291,35 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public void selectAppShow() {
             if (mType.equals("sortName")) {
                 mTvSortShow.setText(R.string.name_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 nameSort();
             } else if (mType.equals(mNameSortText) && mOrder == 1) {
                 mTvSortShow.setText(R.string.name_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 nameSort();
             } else if (mType.equals(mNameSortText) && mOrder == -1) {
                 mTvSortShow.setText(R.string.name_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 mNameSortStatus = -1;
                 mOnlyNameSort = true;
                 nameSort();
             } else if (mType.equals(mTimeSortText) && mOrder == 1) {
                 mTvSortShow.setText(R.string.time_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 timeSort();
             } else if (mType.equals(mTimeSortText) && mOrder == -1) {
                 mTvSortShow.setText(R.string.time_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 mTimeSortStatus = -1;
                 timeSort();
             } else if (mType.equals(mClickSortText) && mOrder == 1) {
                 mTvSortShow.setText(R.string.click_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 mEditText.setText("");
                 clickSort();
             } else if (mType.equals(mClickSortText) && mOrder == -1) {
                 mTvSortShow.setText(R.string.click_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 mEditText.setText("");
                 mClickSortStatus=-1;
                 clickSort();
@@ -539,14 +539,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             case R.id.name_sort:
                 mEditText.setText("");
                 mTvSortShow.setText(R.string.name_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 mPopupWindow.dismiss();
                 nameSort();
                 break;
             case R.id.time_sort:
                 mEditText.setText("");
                 mTvSortShow.setText(R.string.time_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 mPopupWindow.dismiss();
                 timeSort();
                 break;
@@ -563,7 +563,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 break;*/
             case R.id.click_sort:
                 mTvSortShow.setText(R.string.click_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
                 mPopupWindow.dismiss();
                 mEditText.setText("");
                 clickSort();
@@ -583,7 +583,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             if (mNameSortStatus == -1 && mOnlyNameSort) {
                 Collections.reverse(mlistAppInfo);
                 mOnlyNameSort = false;
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 edit.putString("type", mNameSortText);
                 edit.putInt("order", -1);
                 edit.commit();
@@ -658,7 +658,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             editor.commit();
             if (mClickSortStatus == -1) {
                 Collections.reverse(mlistAppInfo);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 SharedPreferences.Editor edit = sharedPreference.edit();
                 edit.putString("type", mClickSortText);
                 edit.putInt("order", -1);
@@ -671,7 +671,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         }
 
         private void selectShow(View v) {
-            mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
+            mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
             if (v instanceof TextView) {
                 TextView textView = (TextView) v;
                 String textViewText = textView.getText().toString();
@@ -743,7 +743,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             });
             if (mTimeSortStatus == -1) {
                 Collections.reverse(mlistAppInfo);
-                mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
+                mIvArrowGray.setImageResource(R.drawable.ic_starter_down_arrow_gray);
                 SharedPreferences.Editor editor = sharedPreference.edit();
                 editor.putString("type", mTimeSortText);
                 editor.putInt("order", -1);
