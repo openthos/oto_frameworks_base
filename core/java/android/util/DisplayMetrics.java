@@ -18,7 +18,10 @@ package android.util;
 
 import android.os.SystemProperties;
 import android.graphics.Rect;
-
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.PixelFormat;
+import android.view.WindowManager;
 
 /**
  * A structure describing general information about a display, such as its
@@ -386,4 +389,47 @@ public class DisplayMetrics {
         int height = phoneStyle ? getInitWindowHeightPhone() : getInitWindowHeightNormal();
         return new Rect(posX, posY, posX + width, posY + height);
     }
+
+    public int getBorderPadding(Context context, boolean useShadow) {
+        int borderPadding = context.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border);
+        if (useShadow) {
+            borderPadding += context.getResources().getDimensionPixelSize(
+                                             com.android.internal.R.dimen.mw_shadow_outside_border)
+                                         + context.getResources().getDimensionPixelSize(
+                                             com.android.internal.R.dimen.mw_shadow_middle_border)
+                                         + context.getResources().getDimensionPixelSize(
+                                             com.android.internal.R.dimen.mw_shadow_inside_border);
+        }
+        return borderPadding;
+    }
+
+    public int getTopBorderPadding(Context context, boolean useShadow) {
+        int topBorderPadding = context.getResources().getDimensionPixelSize(
+                                                     com.android.internal.R.dimen.mw_outer_border);
+        if (useShadow) {
+            topBorderPadding += context.getResources().getDimensionPixelSize(
+                                             com.android.internal.R.dimen.mw_shadow_inside_border);
+        }
+        return topBorderPadding;
+    }
+
+    public Rect getFullScreenRect(Context context) {
+        int border = getBorderPadding(context,true);
+        int topBorder = getTopBorderPadding(context,true);
+        return new Rect(0 - border, 0 - topBorder,  widthPixels + border,
+                                                    heightPixels + border);
+    }
+
+    public Rect prepareSize(Context context, Rect oldSize, Rect frame) {
+        if (oldSize.width() == 0) {
+            Rect rect = frame;
+            if (rect.equals(getFullScreenRect(context))) {
+                rect.set(getDefaultFrameRect(context.getApplicationInfo().isPhoneStyleWindow()));
+            }
+            oldSize.set(rect);
+        }
+        return oldSize;
+    }
+
 }

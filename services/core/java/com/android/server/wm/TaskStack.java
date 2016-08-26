@@ -652,4 +652,9 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
     public void syncResizingIcon(int ways) {
         InputManager.getInstance().setPointerIcon(ways);
     }
+
+    public Rect prepareOldSize(Rect oldSize) {
+        return mService.mContext.getResources().getDisplayMetrics()
+                       .prepareSize(mService.mContext, oldSize, mBounds);
+    }
 }

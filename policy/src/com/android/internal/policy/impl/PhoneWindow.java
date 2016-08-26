@@ -3719,6 +3719,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
+    public Rect prepareOldSize(Rect oldSize) {
+        return getContext().getResources().getDisplayMetrics().prepareSize(getContext(),
+                                                                       oldSize, getActivityFrame());
+    }
+
     class DecorMW {
 
         private static final int COLOR_OFFICE_WORD = 0xff4444cc;

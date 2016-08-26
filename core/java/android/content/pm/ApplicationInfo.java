@@ -47,6 +47,37 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OFFICE_WORD = "com.microsoft.office.word";
     public static final String APPNAME_OFFICE_EXCEL = "com.microsoft.office.excel";
     public static final String APPNAME_OFFICE_POWERPOINT = "com.microsoft.office.powerpoint";
+    public static final String APPNAME_MICROSOFT_OFFICE_EXCEL = "com.microsoft.office.excel";
+    public static final String APPNAME_MICROSOFT_OFFICE_WORD = "com.microsoft.office.word";
+    public static final String APPNAME_MICROSOFT_OFFICE_POWERPOINT
+                                                        = "com.microsoft.office.powerpoint";
+    public static final String APPNAME_ADOBE_READER = "com.adobe.reader";
+    public static final String APPNAME_ESTRONGS_ANDROID_POP = "com.estrongs.android.pop";
+    public static final String APPNAME_ORG_MOZILLA_FIREFOX = "org.mozilla.firefox";
+    public static final String APPNAME_SEAFILE_SEADROID = "com.seafile.seadroid2";
+    public static final String APPNAME_DIGIPLEX_GAME = "com.digiplex.game";
+    public static final String APPNAME_ROVIO_ANGRYBIRDSSEASONS = "com.rovio.angrybirdsseasons";
+    public static final String APPNAME_EMINDSOFT_FILEMANAGER = "com.emindsoft.filemanager";
+    public static final String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
+    public static final String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
+
+    public static final String APPNAME_KINGSOFT_EMAIL = "com.kingsoft.email";
+    public static final String APPNAME_ANDROID_EMAIL = "com.android.email";
+    public static final String APPNAME_ANDROID_DESKCLOCK = "com.android.deskclock";
+    public static final String APPNAME_ANDROID_CALENDAR = "com.android.calendar";
+    public static final String APPNAME_EXAMPLE_ANDROID_NOTEPAD = "com.example.android.notepad";
+    public static final String APPNAME_ANDROID_CALCULATOR = "com.android.calculator2";
+    public static final String APPNAME_AUTONAVI_MINIMAP = "com.autonavi.minimap";
+    public static final String APPNAME_JACKPAL_ANDROIDTERM = "jackpal.androidterm";
+    public static final String APPNAME_COM_TERMUX = "com.termux";
+    public static final String APPNAME_XUETANGX_MOBILE = "com.xuetangx.mobile";
+    public static final String APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN
+                                                     = "com.google.android.inputmethod.pinyin";
+    public static final String APPNAME_ANDROID_BROWSER = "com.android.browser";
+    public static final String APPNAME_ANDROID_SETTINGS = "com.android.settings";
+    public static final String APPNAME_ANDROID_GALLERY3D = "com.android.gallery3d";
+    public static final String APPNAME_FIHTDC_NOTE = "com.fihtdc.note";
+    public static final String APPNAME_ORG_VIDEOLAN_VLC = "org.videolan.vlc";
 
     /**
      * Default task affinity of all activities in this application. See 
@@ -603,8 +634,48 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     }
 
     public static boolean isPhoneStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo(APPNAME_TENCENT_WECHAT) == 0)
-                                     || (pkgName.compareTo(APPNAME_TENCENT_QQ) == 0));
+        return (pkgName != null) && !isDesktopStyleWindow(pkgName)
+                                     && !isFullScreenStyleWindow(pkgName);
+    }
+
+    public static boolean isDesktopStyleWindow(String pkgName) {
+        return (pkgName != null) && ((pkgName.compareTo(APPNAME_KINGSOFT_EMAIL) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_EMAIL) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_DESKCLOCK) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_CALENDAR) == 0)
+                                     || (pkgName.compareTo(APPNAME_EXAMPLE_ANDROID_NOTEPAD) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_CALCULATOR) == 0)
+                                     || (pkgName.compareTo(APPNAME_AUTONAVI_MINIMAP) == 0)
+                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
+                                     || (pkgName.compareTo(APPNAME_COM_TERMUX) == 0)
+                                     || (pkgName.compareTo(APPNAME_XUETANGX_MOBILE) == 0)
+                                     || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
+                                         == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
+                                     || (pkgName.compareTo(APPNAME_FIHTDC_NOTE) == 0)
+                                     || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
+
+    }
+
+    public static boolean isFullScreenStyleWindow(String pkgName) {
+        return (pkgName != null) && ((pkgName.compareTo(APPNAME_CAMERA2) == 0)
+                                     || (pkgName.compareTo(APPNAME_WPS) == 0)
+                                     || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
+                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_EXCEL) == 0)
+                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_WORD) == 0)
+                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_POWERPOINT)
+                                        == 0)
+                                     || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
+                                     || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)
+                                     || (pkgName.compareTo(APPNAME_ORG_MOZILLA_FIREFOX) == 0)
+                                     || (pkgName.compareTo(APPNAME_SEAFILE_SEADROID) == 0)
+                                     || (pkgName.compareTo(APPNAME_DIGIPLEX_GAME) == 0)
+                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_FILEMANAGER) == 0)
+                                     || (pkgName.compareTo(APPNAME_CYANOGENMOD_FILEMANAGER) == 0)
+                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_FILEMANAGER) == 0)
+                                     || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
     public boolean needShadow() {

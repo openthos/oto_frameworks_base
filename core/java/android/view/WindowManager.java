@@ -2100,6 +2100,7 @@ public interface WindowManager extends ViewManager {
             public void setFocusedStack(int stackId);
             public void unsetFocusedStack(int stackId);
             public void syncResizingIcon(int ways);
+            public Rect prepareOldSize(Rect rect);
         }
 
         public class AlignRight {
@@ -2247,6 +2248,7 @@ public interface WindowManager extends ViewManager {
                 }
             } else {
                 if (mCallback != null) {
+                    mOldSize = mCallback.prepareOldSize(mOldSize);
                     mCallback.relayoutWindow(mStackId, mOldSize);
                 }
             }

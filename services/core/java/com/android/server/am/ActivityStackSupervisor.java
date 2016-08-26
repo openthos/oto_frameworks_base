@@ -1725,8 +1725,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         //run default mode
-        return  mWindowManager.getDisplayMetrics().getDefaultFrameRect(
-                                                       ApplicationInfo.isPhoneStyleWindow(pkgName));
+        if (ApplicationInfo.isFullScreenStyleWindow(pkgName)) {
+            return mWindowManager.getDisplayMetrics().getFullScreenRect(mService.mContext);
+        } else {
+            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+                                 !ApplicationInfo.isDesktopStyleWindow(pkgName));
+        }
     }
 
     boolean isHomeActivity(ActivityRecord r) {
