@@ -647,9 +647,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_BROWSER = 17;
     private static final int MSG_STARTUP_HOME = 18;
     private static final int MSG_STARTUP_ACTION_CENTER = 19;
-    private static final int MSG_STARTUP_BATTERY = 20;
-    private static final int MSG_STARTUP_WIFI = 21;
-    private static final int MSG_STARTUP_SOUND = 22;
+    private static final int MSG_STARTUP_INPUT_MENTHOD = 20;
+    private static final int MSG_STARTUP_BATTERY = 21;
+    private static final int MSG_STARTUP_WIFI = 22;
+    private static final int MSG_STARTUP_SOUND = 23;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -712,6 +713,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_ACTION_CENTER:
                     startActionCenterManager();
+                    break;
+                case MSG_STARTUP_INPUT_MENTHOD:
+                    startInputMenthodManager();
                     break;
                 case MSG_STARTUP_BATTERY:
                     startBatteryManager();
@@ -1213,6 +1217,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_ACTION_CENTER);
     }
 
+   public void sendInputMethodManager() {
+        mHandler.removeMessages(MSG_STARTUP_INPUT_MENTHOD);
+        mHandler.sendEmptyMessage(MSG_STARTUP_INPUT_MENTHOD);
+   }
+
     public void sendBatteryManager() {
         mHandler.removeMessages(MSG_STARTUP_BATTERY);
         mHandler.sendEmptyMessage(MSG_STARTUP_BATTERY);
@@ -1332,6 +1341,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         Log.e("com", "ActionCenter: COMING SOON.");
     }
 
+    void startInputMenthodManager() {
+        mContext.startActivity(new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
+
     void startBatteryManager() {
         Log.e("com", "Battery: COMING SOON");
     }
@@ -1347,7 +1361,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
              // re-acquire status bar service next time it is needed.
              mStatusBarService = null;
         }
-        Log.e("com", "Wifi: COMING SOON");
     }
 
     void startSoundManager() {
@@ -1361,7 +1374,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
              // re-acquire status bar service next time it is needed.
              mStatusBarService = null;
         }
-        Log.e("com", "Sound: COMING SOON");
     }
 
     void startupMenuInternal() {
@@ -2846,6 +2858,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_ACTION_CENTER) {
             if (down) {
                sendActionCenterManager();
+            }
+       } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_INPUT_METHOD) {
+            if (down) {
+               sendInputMethodManager();
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BATTERY) {
             if (down) {

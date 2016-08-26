@@ -167,7 +167,7 @@
                    android:layout_gravity="center_vertical"
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_battery"
-                   systemui:keyCode="100005"
+                   systemui:keyCode="100006"
                    systemui:keyRepeat="true" />
 
 
@@ -180,7 +180,7 @@
                    android:layout_gravity="center_vertical"
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_wifi"
-                   systemui:keyCode="100006"
+                   systemui:keyCode="100007"
                    systemui:keyRepeat="true" />
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
@@ -192,7 +192,7 @@
                    android:layout_gravity="center_vertical"
                    android:layout_marginRight="13dp"
                    android:src="@drawable/statusbar_sound"
-                   systemui:keyCode="100007"
+                   systemui:keyCode="100008"
                    systemui:keyRepeat="true" />
 
                 <!-- <include layout="@layout/system_icons" /> -->
