@@ -109,8 +109,12 @@ public class StartupMenuAdapter extends BaseAdapter {
                     SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                                          Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreference.edit();
+                    String type = sharedPreference.getString("type", "sortName");
+                    int order = sharedPreference.getInt("order", 0);
                     editor.clear();
                     editor.putInt("isClick", 1);
+                    editor.putString("type", type);
+                    editor.putInt("order", order);
                     editor.commit();
                     break;
                 case MotionEvent.BUTTON_TERTIARY:

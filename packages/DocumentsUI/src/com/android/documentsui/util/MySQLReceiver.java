@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import static com.android.documentsui.StartupMenuActivity.isEnglish;
 
-public class MyInstalledReceiver extends BroadcastReceiver {
+public class MySQLReceiver extends BroadcastReceiver {
     private MySqliteOpenHelper mMsoh;
     private SQLiteDatabase mdb;
     private boolean mIsHasReayDb;
@@ -28,14 +28,8 @@ public class MyInstalledReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
-        if (intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
-            String pkName = intent.getData().getSchemeSpecificPart();
-            Log.i("openthos", "Install app package name :" + pkName);
+        if (intent.getAction().equals("com.android.documentsui.SQLITE_CHANGE")) {
             BackstageRenewalData(context);
-        }
-        if (intent.getAction().equals("android.intent.action.PACKAGE_REMOVED")) {
-            String pkName = intent.getData().getSchemeSpecificPart();
-            mdb.delete("perpo", "pkname = ? ", new String[] { pkName });
         }
     }
 
@@ -67,7 +61,7 @@ public class MyInstalledReceiver extends BroadcastReceiver {
                 mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
                                 + "values (?,?,?,?,?)",
                         new Object[] { appLabel, pkgName, systemDate,
-                                mNumber, mNumber});
+                                mNumber,mNumber});
             }
             if(isEnglish(appLabel)) {
                 ContentValues contentvalues = new ContentValues();

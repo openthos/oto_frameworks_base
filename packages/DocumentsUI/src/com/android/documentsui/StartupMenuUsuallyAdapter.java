@@ -95,12 +95,6 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         values.put("int", numbers);
                         values.put("click", number);
                         mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
-                        SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
-                                                                             Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreference.edit();
-                        editor.clear();
-                        editor.putInt("isClick", 1);
-                        editor.commit();
                         break;
                     case MotionEvent.BUTTON_TERTIARY:
                         break;

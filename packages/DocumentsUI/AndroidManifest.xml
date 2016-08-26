@@ -83,5 +83,12 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".util.MySQLReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.android.documentsui.SQLITE_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -158,8 +158,12 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                           Context.MODE_PRIVATE);
             Editor editor = sharedPreference.edit();
+            String type = sharedPreference.getString("type", "sortName");
+            int order = sharedPreference.getInt("order", 0);
             editor.clear();
             editor.putInt("isClick", 1);
+            editor.putString("type", type);
+            editor.putInt("order", order);
             editor.commit();
             break;
         case R.id.tv_right_phone_run:

@@ -157,8 +157,9 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
             break;
         case R.id.tv_removed_list:
-            Toast.makeText(mContext, "removed list: COMING SOON", 0).show();
             mPkgName = StartupMenuActivity.mListViewEight.get(mPosition).getPkgName();
+            String label = StartupMenuActivity.mListViewEight.get(mPosition).getAppLabel();
+            Toast.makeText(mContext, "移除应用：" + label, 0).show();
             StartupMenuActivity.mListViewEight.remove(mPosition);
             StartupMenuActivity.mUsuallyAdapter.notifyDataSetChanged();
             cancel();

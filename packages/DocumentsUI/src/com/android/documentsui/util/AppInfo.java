@@ -4,8 +4,10 @@ import java.util.Date;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class AppInfo {
+public class AppInfo implements Parcelable {
 
     private String appLabel;
     private Drawable appIcon;
@@ -17,6 +19,36 @@ public class AppInfo {
     private long cachesize;
     private long datasize;
     private long codesieze;
+
+    protected AppInfo(Parcel in) {
+        appLabel = in.readString();
+        intent = in.readParcelable(Intent.class.getClassLoader());
+        pkgName = in.readString();
+        number = in.readInt();
+        cachesize = in.readLong();
+        datasize = in.readLong();
+        codesieze = in.readLong();
+    }
+
+    public static final Creator<AppInfo> CREATOR = new Creator<AppInfo>() {
+        @Override
+        public AppInfo createFromParcel(Parcel in) {
+            AppInfo appInfo = new AppInfo();
+            appInfo.setAppLabel(in.readString());
+            appInfo.setIntent((Intent) in.readParcelable(Intent.class.getClassLoader()));
+            appInfo.setPkgName(in.readString());
+            appInfo.setNumber(in.readInt());
+            appInfo.setCachesize(in.readLong());
+            appInfo.setDatasize(in.readLong());
+            appInfo.setCodesieze(in.readLong());
+            return new AppInfo(in);
+        }
+
+        @Override
+        public AppInfo[] newArray(int size) {
+            return new AppInfo[size];
+        }
+    };
 
     public long getCachesize() {
         return cachesize;
@@ -91,5 +123,21 @@ public class AppInfo {
 
     public int getNumber() {
         return number;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(appLabel);
+        parcel.writeParcelable(intent, i);
+        parcel.writeString(pkgName);
+        parcel.writeInt(number);
+        parcel.writeLong(cachesize);
+        parcel.writeLong(datasize);
+        parcel.writeLong(codesieze);
     }
 }
