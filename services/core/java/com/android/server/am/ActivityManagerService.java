@@ -10683,13 +10683,27 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
+    private boolean isInNormalMultiWindow(ActivityRecord r) {
+        if ((r.task.stack.mStackId <= 0) || (r.intent == null)) {
+            return false;
+        }
+
+        int f = r.intent.getFlags();
+        if ((f & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) {
+            return false;
+        }
+
+        return (f & (Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN
+                     | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU)) == 0;
+    }
+
     @Override
     public boolean convertFromTranslucent(IBinder token) {
         final long origId = Binder.clearCallingIdentity();
         try {
             synchronized (this) {
                 final ActivityRecord r = ActivityRecord.isInStackLocked(token);
-                if (r == null) {
+                if ((r == null) || isInNormalMultiWindow(r)) {
                     return false;
                 }
                 final boolean translucentChanged = r.changeWindowTranslucency(true);

@@ -321,6 +321,17 @@ public class Dialog implements DialogInterface, Window.Callback,
             sendShowMessage();
         } finally {
         }
+
+        if (needHidden(l)) {
+            mDecor.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private boolean needHidden(WindowManager.LayoutParams l) {
+        return (l.getTitle().toString().compareTo(ActivityInfo.ISSUE_WIN_WPS_NEWFILE) == 0)
+               || (l.getTitle().toString().compareTo(ActivityInfo.ISSUE_WIN_WPS_NEWFILE_PRO) == 0)
+               || (l.getTitle().toString().compareTo(ActivityInfo.ISSUE_WIN_WPS_PAD) == 0)
+               || (l.getTitle().toString().compareTo(ActivityInfo.ISSUE_WIN_WPS_PAD_PRO) == 0);
     }
 
     private boolean isActivityNotShowCover(Activity a) {

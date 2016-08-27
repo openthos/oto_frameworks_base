@@ -1056,15 +1056,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 if (atoken != null && lastWindow == atoken.startingWindow) {
                     placeWindowBefore(lastWindow, win);
                     tokenWindowsPos = indexOfWinInWindowList(lastWindow, token.windows);
-                } else if ((win.mAttrs.getTitle().toString().compareTo(
-                                                          ActivityInfo.ISSUE_WIN_WPS_NEWFILE) != 0)
-                    && (win.mAttrs.getTitle().toString().compareTo(
-                                                      ActivityInfo.ISSUE_WIN_WPS_NEWFILE_PRO) != 0)
-                    && (win.mAttrs.getTitle().toString().compareTo(
-                                                              ActivityInfo.ISSUE_WIN_WPS_PAD) != 0)
-                    && (win.mAttrs.getTitle().toString().compareTo(
-                                                       ActivityInfo.ISSUE_WIN_WPS_PAD_PRO) != 0)) {
-
+                } else {
                     int newIdx = findIdxBasedOnAppTokens(win);
                     //there is a window above this one associated with the same
                     //apptoken note that the window could be a floating window

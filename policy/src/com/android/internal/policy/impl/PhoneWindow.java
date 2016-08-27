@@ -2396,7 +2396,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         @Override
         public void addView(View child, int index) {
             if (isWhiteList()) {
-                child.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
+                adjustChildView((ViewGroup) child);
                 super.addView(child, index);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2828,6 +2828,27 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                                            new Rect(0, 0, getWidth(), getHeight()));
                     }
                     mHeaderChecked = true;
+                }
+            }
+        }
+
+        private void adjustChildView(ViewGroup parent) {
+            int border = getBorderPadding();
+            int count = parent.getChildCount();
+
+            for (int i = 0; i < count; i++) {
+                View view = parent.getChildAt(i);
+                if (view == mContentRoot) {
+                    continue;
+                }
+
+                if (view.getLayoutParams() instanceof MarginLayoutParams) {
+                    MarginLayoutParams lp = (MarginLayoutParams) view.getLayoutParams();
+                    lp.leftMargin = border;
+                    lp.rightMargin = border;
+                    lp.bottomMargin = border;
+                    // Need not process head, since it is already processed during fit window.
+                    view.setLayoutParams(lp);
                 }
             }
         }
