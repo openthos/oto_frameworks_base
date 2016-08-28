@@ -62,7 +62,7 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="360dp"
+            android:layout_height="704dp"
             android:orientation="vertical">
 
             <FrameLayout
@@ -95,7 +95,6 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:padding="8dp"
                 android:background="#1affffff">
 
                 <TextView
@@ -104,8 +103,9 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:text="@string/print_message"
+                    android:paddingLeft="16dp"
                     android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="24sp" />
 
                 <Button
                     android:id="@+id/printManager"
@@ -113,18 +113,17 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:paddingRight="8dp"
+                    android:paddingRight="20dp"
                     android:background="@null"
                     android:text="@string/print_manager"
-                    android:textSize="12sp" />
+                    android:textSize="20sp" />
 
             </RelativeLayout>
 
             <!-- printer job layout -->
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_margin="8dp"
-                android:layout_height="210dp" >
+                android:layout_height="176dp" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
@@ -144,7 +143,7 @@
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="112dp" />
 
             <!-- A view to reserve space for the collapsed stack -->
             <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->
