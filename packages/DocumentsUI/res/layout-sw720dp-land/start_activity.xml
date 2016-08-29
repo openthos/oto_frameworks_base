@@ -52,27 +52,16 @@
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_computer"
                 android:text="@string/file_manager" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/px16" />
-
             <TextView
                 android:id="@+id/system_setting"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_setting"
                 android:text="@string/system_setting" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/px16" />
-
             <TextView
                 android:id="@+id/power_off"
                 android:onClick="powerOff"
                 style="@style/Mstyle"
                 android:drawableLeft="@drawable/startup_menuicon_power"
-                android:layout_marginBottom="10dp"
                 android:text="@string/power_source" />
             </LinearLayout>
         </RelativeLayout>

@@ -6,27 +6,27 @@
 
     <TextView
         android:id="@+id/tv_right_open"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_open" />
 
     <TextView
         android:id="@+id/tv_right_phone_run"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_mobile_phone_mode_run" />
 
     <TextView
         android:id="@+id/tv_right_desktop_run"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_desktop_run" />
 
     <TextView
         android:id="@+id/tv_right_fixed_taskbar"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/fixed_the_taskbar" />
 
     <TextView
         android:id="@+id/tv_right_uninstall"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_uninstall" />
 
 </LinearLayout>

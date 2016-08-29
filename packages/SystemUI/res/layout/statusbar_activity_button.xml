@@ -11,12 +11,13 @@
         android:id="@+id/activity_key_view"
         android:layout_width="38dp"
         android:layout_height="match_parent"
+        android:background="@drawable/tasker_app_getfocus"
         android:scaleType="centerInside" />
     <View
         android:id="@+id/activity_focused"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#66ffffff"
+        android:background="@drawable/ic_background_mouse_click"
         android:visibility="gone"
         />
 </FrameLayout>

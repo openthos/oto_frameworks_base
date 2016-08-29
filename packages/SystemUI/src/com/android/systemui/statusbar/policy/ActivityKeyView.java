@@ -313,7 +313,7 @@ public class ActivityKeyView extends ImageView {
             }
             switch(event.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    useless.setBackgroundResource(R.drawable.app_get_focus_background);
+                    useless.setBackgroundResource(R.drawable.ic_background_mouse_hover);
                     View view = ((LayoutInflater) mContext.getSystemService(
                                                            Context.LAYOUT_INFLATER_SERVICE))
                                      .inflate(R.layout.status_bar_activity_hover_tips, null, false);

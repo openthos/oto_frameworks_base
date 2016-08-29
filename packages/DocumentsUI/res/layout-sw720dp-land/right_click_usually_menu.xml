@@ -6,22 +6,22 @@
 
     <TextView
         android:id="@+id/tv_right_usually_open"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_open" />
 
     <TextView
         android:id="@+id/tv_right_phone_usually_run"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_mobile_phone_mode_run" />
 
     <TextView
         android:id="@+id/tv_right_desktop_usually_run"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/my_desktop_run" />
 
     <TextView
         android:id="@+id/tv_removed_list"
-        style="@style/SortMstyle"
+        style="@style/StartMenuAppStyle"
         android:text="@string/removed_the_list" />
 
 </LinearLayout>

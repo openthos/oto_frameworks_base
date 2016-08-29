@@ -936,7 +936,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
-        mStartupMenu = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
+        // mStartupMenu = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
         mActionButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_action_center);
         mInputButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_input_method);
         mBatteryButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_battery);
@@ -945,7 +945,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
-        mStartupMenu.setOnHoverListener(startupMenuListener);
+        // mStartupMenu.setOnHoverListener(startupMenuListener);
         mActionButton.setOnHoverListener(hoverListeners);
         mInputButton.setOnHoverListener(hoverListeners);
         mBatteryButton.setOnHoverListener(hoverListeners);
@@ -959,7 +959,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    v.setBackgroundResource(R.drawable.app_get_focus_background);
+                    v.setBackgroundResource(R.drawable.ic_background_mouse_hover);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
                     v.setBackgroundResource(R.drawable.system_bar_background);
