@@ -143,6 +143,7 @@
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_action_center"
                    systemui:keyCode="100004"
+                   android:visibility="gone"
                    systemui:keyRepeat="true" />
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
@@ -158,6 +159,8 @@
                     systemui:keyRepeat="true" />
 
 
+                <include layout="@layout/system_icons" />
+
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_battery"
                    android:layout_width="wrap_content"
@@ -165,6 +168,7 @@
                    android:paddingLeft="3dp"
                    android:paddingRight="3dp"
                    android:layout_gravity="center_vertical"
+                   android:layout_marginLeft="10dp"
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_battery"
                    systemui:keyCode="100006"
@@ -179,6 +183,7 @@
                    android:paddingLeft="3dp"
                    android:paddingRight="3dp"
                    android:layout_gravity="center_vertical"
+                   android:layout_marginLeft="10dp"
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_wifi"
                    systemui:keyCode="100007"
@@ -191,12 +196,17 @@
                    android:paddingLeft="3dp"
                    android:paddingRight="3dp"
                    android:layout_gravity="center_vertical"
-                   android:layout_marginRight="13dp"
+                   android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_sound"
                    systemui:keyCode="100008"
                    systemui:keyRepeat="true" />
 
-                <include layout="@layout/system_icons" />
+
+                <ImageView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/statusbar_action_center" />
 
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"
