@@ -46,6 +46,7 @@ public class DisplayMetrics {
 
     /* For initializing startup menu window positon */
     public static final int WINDOW_STARTUP_MENU_WIDTH = 770;
+    public static final int WINDOW_STARTUP_MENU_WIDTH_LAND = 513;
     public static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3;
 
     /**

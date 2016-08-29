@@ -131,6 +131,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     static final boolean DEBUG_STATES = DEBUG || false;
     static final boolean DEBUG_VISIBLE_BEHIND = DEBUG || false;
 
+    /* Window height 768 */
+    public static final int WINDOW_HEIGHT = 768;
+
     public static final int HOME_STACK_ID = 0;
     /**
      * Date: Mar 21, 2014
@@ -1709,9 +1712,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
-            return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH,
-                            mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
-                                - mWindowManager.getStatusbarHeight());
+            DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
+            int h = metrics.heightPixels;
+            if (h > WINDOW_HEIGHT) {
+                return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH,
+                    mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
+                        - mWindowManager.getStatusbarHeight());
+            } else {
+                return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH_LAND,
+                    mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
+                        - mWindowManager.getStatusbarHeight());
+            }
         }
 
         // run phone mode
