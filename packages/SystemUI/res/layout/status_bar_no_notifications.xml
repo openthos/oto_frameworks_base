@@ -36,31 +36,30 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/notification_center"
-            android:paddingLeft="16dp"
             android:textStyle="bold"
-            android:textSize="24sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/notificationManager"
-            android:layout_width="126dp"
+            android:layout_width="42dp"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/clearAll"
             android:layout_marginRight="8dp"
             android:layout_centerVertical="true"
             android:background="@null"
             android:text="@string/notification_manager"
-            android:textSize="20sp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/clearAll"
-            android:layout_width="126dp"
+            android:layout_width="42dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
             android:text="@string/clear_all"
-            android:textSize="20sp" />
+            android:textSize="12sp" />
 
         </RelativeLayout>
 
