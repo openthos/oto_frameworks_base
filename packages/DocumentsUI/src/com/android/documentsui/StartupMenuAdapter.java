@@ -27,8 +27,6 @@ import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 
 public class StartupMenuAdapter extends BaseAdapter {
-    public static final int START_MENU_RIGHT_MOUSE_UI_X = 200;
-    public static final int START_MENU_RIGHT_MOUSE_UI_Y = 180;
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
 
     private List<AppInfo> mlistAppInfo = null;
@@ -38,10 +36,16 @@ public class StartupMenuAdapter extends BaseAdapter {
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
+    private int mStartMenuAppWidth;
+    private int mStartMenuAppHeight;
 
     public StartupMenuAdapter(Context context, List<AppInfo> apps,
                               Map<Integer,Boolean> isCheckedMap) {
         mContext = context;
+        mStartMenuAppWidth = mContext.getResources()
+                                     .getDimensionPixelSize(R.dimen.start_menu_app_width);
+        mStartMenuAppHeight = mContext.getResources()
+                                      .getDimensionPixelSize(R.dimen.start_menu_app_height);
         infater = (LayoutInflater) context
                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistAppInfo = apps;
@@ -150,7 +154,7 @@ public class StartupMenuAdapter extends BaseAdapter {
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartupMenuActivity.mStartMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
                     ,(int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
-                    ,START_MENU_RIGHT_MOUSE_UI_X, START_MENU_RIGHT_MOUSE_UI_Y, 0);
+                    , mStartMenuAppWidth, mStartMenuAppHeight, 0);
     }
 
     class ViewHolder {

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.android.documentsui.R;
 import com.android.documentsui.util.AppInfo;
 import com.android.documentsui.util.MySqliteOpenHelper;
 import com.android.documentsui.util.BaseSettingDialog;
@@ -102,10 +103,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
-        public static final int FILTER_THIRD_APP_TYPE_X = 260;
-        public static final int FILTER_THIRD_APP_TYPE_Y = 845;
-        public static final int FILTER_THIRD_APP_TYPE_UI_X = 153;
-        public static final int FILTER_THIRD_APP_TYPE_UI_Y = 125;
 
         public static StartMenuDialog mStartMenuDialog;
         public static StartMenuUsuallyDialog mStartMenuUsuallyDialog;
@@ -805,9 +802,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         public void sortShow() {
             mIvArrowGray.setImageResource(R.drawable.ic_starter_rank_arrow_gray);
-
-            mPopupWindow = new PopupWindow(mSelectLayout, FILTER_THIRD_APP_TYPE_UI_X,
-                                           FILTER_THIRD_APP_TYPE_UI_Y);
+            int mSortLyoutWidth = mContext.getResources()
+                                          .getDimensionPixelSize(R.dimen.sort_layout_width);
+            int mSortLyoutHeight = mContext.getResources()
+                                          .getDimensionPixelSize(R.dimen.sort_layout_height);
+            int mSortLyoutWidthX = mContext.getResources()
+                                          .getDimensionPixelSize(R.dimen.sort_layout_width_x);
+            int mSortLyoutHeightY = mContext.getResources()
+                                          .getDimensionPixelSize(R.dimen.sort_layout_height_y);
+            mPopupWindow = new PopupWindow(mSelectLayout, mSortLyoutWidth, mSortLyoutHeight);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -816,8 +819,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mTvSortShow.getLocationOnScreen(location);
             //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(),
             //                           location[1]);
-            mPopupWindow.showAtLocation(mTvSortShow, Gravity.BOTTOM, FILTER_THIRD_APP_TYPE_X,
-                                        FILTER_THIRD_APP_TYPE_Y);
+            mPopupWindow.showAtLocation(mTvSortShow, Gravity.BOTTOM, mSortLyoutWidthX,
+                                                                     mSortLyoutHeightY);
         }
 
         private void dismisTargetDialog(BaseSettingDialog newDialog){

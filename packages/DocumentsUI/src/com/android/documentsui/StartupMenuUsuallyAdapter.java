@@ -21,8 +21,6 @@ import android.widget.TextView;
 import android.content.SharedPreferences;
 
 public class StartupMenuUsuallyAdapter extends BaseAdapter {
-    public static final int START_MENU_RIGHT_MOUSE_UI_X = 165;
-    public static final int START_MENU_RIGHT_MOUSE_UI_Y = 180;
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
 
     private List<AppInfo> mlistViewAppInfo = null;
@@ -31,12 +29,18 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
     private Context mContext;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
+    private int mStartMenuCommonlWidth;
+    private int mStartMenuCommonlHeight;
 
     public StartupMenuUsuallyAdapter(Context context, List<AppInfo> apps) {
         mInfater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistViewAppInfo = apps;
         mContext=context;
+        mStartMenuCommonlWidth = mContext.getResources()
+                                  .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
+        mStartMenuCommonlHeight = mContext.getResources()
+                                  .getDimensionPixelSize(R.dimen.start_menu_commonl_height);
         mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
     }
@@ -134,7 +138,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         StartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
                 (int)motionEvent.getRawX() - location[0],
                 (int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
-                START_MENU_RIGHT_MOUSE_UI_X, START_MENU_RIGHT_MOUSE_UI_Y, 1);
+                mStartMenuCommonlWidth, mStartMenuCommonlHeight, 1);
     }
 
     class ViewHolder {
