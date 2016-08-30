@@ -72,7 +72,7 @@
             android:src="#808080" />
 
         <LinearLayout
-            android:background="#e4dfdf"
+            android:background="#1affffff"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" >
@@ -160,6 +160,7 @@
             <GridView
                 android:layout_marginTop="16dp"
                 android:id="@+id/gv_view"
+                android:listSelector="@android:color/transparent"
                 android:layout_marginRight="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_width="352dp"

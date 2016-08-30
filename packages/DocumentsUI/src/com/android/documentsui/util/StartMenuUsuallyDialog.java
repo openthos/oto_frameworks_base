@@ -118,7 +118,6 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         }
         lp.width = width;
         lp.height = height;
-        lp.alpha = 0.9f;
         dialogWindow.setAttributes(lp);
         mListType = type;
     }
@@ -183,7 +182,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                     v.setBackgroundResource(R.color.rightMenuFocus);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.color.inRightMenuFocus);
+                    v.setBackgroundResource(android.R.color.transparent);
                     break;
             }
             return false;

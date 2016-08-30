@@ -137,7 +137,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                     v.setBackgroundResource(R.color.app_background);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.color.appBackgroundColor);
+                    v.setBackgroundResource(android.R.color.transparent);
                     break;
             }
             return false;
