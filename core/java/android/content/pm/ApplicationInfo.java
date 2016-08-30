@@ -60,6 +60,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_EMINDSOFT_FILEMANAGER = "com.emindsoft.filemanager";
     public static final String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
     public static final String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
+    public static final String APPNAME_DUOWAN_PAD = "com.duowan.pad";
+    public static final String APPNAME_TOGIC_LIVEVIDEO = "com.togic.livevideo";
+    public static final String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
+    public static final String APPNAME_TAOBAO_APAD = "com.taobao.apad";
 
     public static final String APPNAME_KINGSOFT_EMAIL = "com.kingsoft.email";
     public static final String APPNAME_ANDROID_EMAIL = "com.android.email";
@@ -78,6 +82,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ANDROID_GALLERY3D = "com.android.gallery3d";
     public static final String APPNAME_FIHTDC_NOTE = "com.fihtdc.note";
     public static final String APPNAME_ORG_VIDEOLAN_VLC = "org.videolan.vlc";
+    public static final String APPNAME_HEXIN_PLAT_ANDROID = "com.hexin.plat.android";
+    public static final String APPNAME_NETEASE_CLOUDMUSIC = "com.netease.cloudmusic";
+    public static final String APPNAME_WANDOUJIA_PHOENIX = "com.wandoujia.phoenix2";
+    public static final String APPNAME_JINGDONG_APP_MALL = "com.jingdong.app.mall";
 
     /**
      * Default task affinity of all activities in this application. See 
@@ -655,6 +663,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
                                      || (pkgName.compareTo(APPNAME_FIHTDC_NOTE) == 0)
+                                     || (pkgName.compareTo(APPNAME_HEXIN_PLAT_ANDROID) == 0)
+                                     || (pkgName.compareTo(APPNAME_NETEASE_CLOUDMUSIC) == 0)
+                                     || (pkgName.compareTo(APPNAME_WANDOUJIA_PHOENIX) == 0)
+                                     || (pkgName.compareTo(APPNAME_JINGDONG_APP_MALL) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
 
     }
@@ -675,6 +687,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_CYANOGENMOD_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHAOZHUO_FILEMANAGER) == 0)
+                                     || (pkgName.compareTo(APPNAME_DUOWAN_PAD) == 0)
+                                     || (pkgName.compareTo(APPNAME_TOGIC_LIVEVIDEO) == 0)
+                                     || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
+                                     || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
