@@ -3770,7 +3770,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             int color;
             if ((mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0)
                 || (mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)) {
-                color = Color.LTGRAY;
+                color = Color.WHITE;
             } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) == 0) {
                 color = COLOR_OFFICE_WORD;
             } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {
