@@ -2395,7 +2395,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index) {
-            if (isWhiteList()) {
+            if (isWhiteList() && (child instanceof ViewGroup)) {
                 adjustChildView((ViewGroup) child);
                 super.addView(child, index);
             } else {
@@ -3750,6 +3750,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private static final int COLOR_OFFICE_WORD = 0xff4444cc;
         private static final int COLOR_OFFICE_EXCEL = 0xff448844;
         private static final int COLOR_OFFICE_POWERPOINT = 0xff884422;
+        private static final int COLOR_TENCENT_APP = 0xFFEEEEEE;
 
         private LinearLayout mHeader;
         private ImageButton mCloseBtn;
@@ -3770,7 +3771,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             int color;
             if ((mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0)
                 || (mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)) {
-                color = Color.WHITE;
+                color = COLOR_TENCENT_APP;
             } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) == 0) {
                 color = COLOR_OFFICE_WORD;
             } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {

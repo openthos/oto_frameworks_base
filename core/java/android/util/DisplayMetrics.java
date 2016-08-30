@@ -35,7 +35,7 @@ public class DisplayMetrics {
     private static final float WINDOW_INIT_PART_CHECK_4_3_16_9 = 1.50f;   // 4/3 < 1.5, 16/9 > 1.5
     private static final float WINDOW_INIT_PART_WIDTH_THIN_4_3 = 0.33f;
     private static final float WINDOW_INIT_PART_HEIGHT_THIN_4_3 = 0.88f;
-    private static final float WINDOW_INIT_PART_WIDTH_THIN_16_9 = 0.25f;
+    private static final float WINDOW_INIT_PART_WIDTH_THIN_16_9 = 0.30f;
     private static final float WINDOW_INIT_PART_HEIGHT_THIN_16_9 = 0.90f;
     private static final float WINDOW_INIT_PART_WIDTH_WIDE = 0.66f;
     private static final float WINDOW_INIT_PART_HEIGHT_WIDE = 0.75f;
