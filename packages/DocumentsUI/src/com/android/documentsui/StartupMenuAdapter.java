@@ -111,6 +111,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                     editor.putInt("isClick", 1);
                     editor.putString("type", type);
                     editor.putInt("order", order);
+                    editor.putInt("isSql", 1);
                     editor.commit();
                     break;
                 case MotionEvent.BUTTON_TERTIARY:

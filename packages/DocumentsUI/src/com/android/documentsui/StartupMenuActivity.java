@@ -174,6 +174,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             mMsoh = new MySqliteOpenHelper(StartupMenuActivity.this, "Application_database.db", null, 1);
             mdb = mMsoh.getWritableDatabase();
+            sharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
 
             gv_view = (GridView) findViewById(R.id.gv_view);
             mListView = (ListView) findViewById(R.id.lv_view);
@@ -235,12 +236,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public boolean onHover(View view, MotionEvent motionEvent) {
             int what = motionEvent.getAction();
+            int isSql = sharedPreference.getInt("isSql", 0);
             switch(what) {
                 case MotionEvent.ACTION_HOVER_ENTER:
                     if (mIsClick == 0) {
-                        Intent i = new Intent();
-                        i.setAction("com.android.documentsui.SQLITE_CHANGE");
-                        sendBroadcast(i);
+                        if (isSql == 0) {
+                            Intent i = new Intent();
+                            i.setAction("com.android.documentsui.SQLITE_CHANGE");
+                            sendBroadcast(i);
+                            SharedPreferences.Editor edit = sharedPreference.edit();
+                            edit.putInt("isSql", 1);
+                            edit.commit();
+                        }
                     }
                     break;
             }
@@ -348,7 +355,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         class mThread extends Thread {
             public void run(){
-                sharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
                 mIsClick = sharedPreference.getInt("isClick", 0);
                 mType = sharedPreference.getString("type", "sortName");
                 mOrder = sharedPreference.getInt("order", 0);

@@ -31,6 +31,7 @@ public class BaseSettingDialog extends Dialog {
         window.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setCanceledOnTouchOutside(true);
+        setCancelable(true);
         initViews();
         updatePosition();
     }
