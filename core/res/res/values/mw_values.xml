@@ -8,7 +8,8 @@ Dariusz Kluska
     <dimen name="mw_inner_border">2dip</dimen>
     <dimen name="mw_header_border">26dip</dimen>
     <dimen name="mw_dialog_border">50dip</dimen>
-    <dimen name="mw_shadow_outside_border">2dip</dimen>
-    <dimen name="mw_shadow_middle_border">1dip</dimen>
-    <dimen name="mw_shadow_inside_border">1dip</dimen>
+    <dimen name="mw_shadow_outside_border">0dip</dimen>
+    <dimen name="mw_shadow_middle_border">0dip</dimen>
+    <dimen name="mw_shadow_inside_border">25dp</dimen>
+    <dimen name="mw_shadow_padding">25dp</dimen>
 </resources>

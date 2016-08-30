@@ -2187,6 +2187,10 @@
   <java-symbol type="id" name="mwOuterBorder" />
   <java-symbol type="id" name="mwIcon" />
   <java-symbol type="id" name="mwTitle" />
+  <java-symbol type="id" name="corner_lefttop" />
+  <java-symbol type="id" name="corner_righttop" />
+  <java-symbol type="id" name="corner_leftbottom" />
+  <java-symbol type="id" name="corner_rightbottom" />
   <java-symbol type="color" name="mw_blue_decor" />
   <java-symbol type="color" name="mw_gray_decor" />
   <java-symbol type="color" name="mw_transparent_gray" />
@@ -2195,6 +2199,7 @@
   <java-symbol type="dimen" name="mw_shadow_outside_border" />
   <java-symbol type="dimen" name="mw_shadow_middle_border" />
   <java-symbol type="dimen" name="mw_shadow_inside_border" />
+  <java-symbol type="dimen" name="mw_shadow_padding" />
   <java-symbol type="dimen" name="mw_header_border" />
   <java-symbol type="dimen" name="mw_dialog_border" />
   <java-symbol type="drawable" name="mw_outer_border" />

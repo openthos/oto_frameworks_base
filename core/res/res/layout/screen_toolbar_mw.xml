@@ -21,23 +21,17 @@ This is an optimized layout for a screen with a toolbar enabled.
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/mw_shadow_outside"
-    android:paddingLeft="@dimen/mw_shadow_outside_border"
-    android:paddingRight="@dimen/mw_shadow_outside_border"
-    android:paddingBottom="@dimen/mw_shadow_outside_border">
+    android:padding="@dimen/mw_shadow_outside_border">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/mw_shadow_inside"
-        android:paddingLeft="@dimen/mw_shadow_middle_border"
-        android:paddingRight="@dimen/mw_shadow_middle_border"
-        android:paddingBottom="@dimen/mw_shadow_middle_border">
+        android:background="@drawable/mw_shadow_middle"
+        android:padding="@dimen/mw_shadow_middle_border">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/mw_shadow_inside"
-            android:paddingLeft="@dimen/mw_shadow_inside_border"
-            android:paddingRight="@dimen/mw_shadow_inside_border"
-            android:paddingBottom="@dimen/mw_shadow_inside_border">
+            android:padding="@dimen/mw_shadow_inside_border">
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/mwOuterBorder"
                 android:layout_width="match_parent"
@@ -51,4 +45,5 @@ This is an optimized layout for a screen with a toolbar enabled.
             <include layout="@layout/mw_cover"/>
         </FrameLayout>
     </FrameLayout>
+    <include layout="@layout/mw_shadow"/>
 </FrameLayout>
