@@ -97,6 +97,9 @@ import android.content.IntentFilter;
 import android.widget.Toast;
 import android.os.Bundle;
 
+import java.util.Comparator;
+import java.text.Collator;
+
 public class StartupMenuActivity extends Activity implements OnClickListener,
                  OnEditorActionListener, View.OnHoverListener {
 
@@ -374,7 +377,36 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
-            Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+            // Sort to resolveInfos :Matthew
+            List<ResolveInfo> listEnglish = new ArrayList<>();
+            List<ResolveInfo> listChina = new ArrayList<>();
+            List<ResolveInfo> listNumber = new ArrayList<>();
+            for (ResolveInfo info : resolveInfos) {
+                String str = info.loadLabel(pm).toString().trim();
+                int ch = str.charAt(0);
+                if (ch >= '0' && ch <= '9') {
+                    listNumber.add(info);
+                } else {
+                    if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
+                        listEnglish.add(info);
+                    } else {
+                        listChina.add(info);
+                    }
+                }
+            }
+            Collections.sort(listEnglish, new ResolveInfo.DisplayNameComparator(pm));
+            Collections.sort(listChina, new ResolveInfo.DisplayNameComparator(pm));
+            Collections.sort(listNumber, new ResolveInfo.DisplayNameComparator(pm));
+            resolveInfos.clear();
+            for (ResolveInfo number : listNumber) {
+                resolveInfos.add(number);
+            }
+            for (ResolveInfo english : listEnglish) {
+                resolveInfos.add(english);
+            }
+            for (ResolveInfo china : listChina) {
+                resolveInfos.add(china);
+            }
             mlistAppInfo.clear();
             for (ResolveInfo reInfo : resolveInfos) {
                 File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
@@ -396,6 +428,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
         }
 
+        // Used left numbers
         public void queryCommonlyUsedSoftware() {
             if (mListViewOpen) {
                 mlistViewAppInfo = new ArrayList<AppInfo>();
