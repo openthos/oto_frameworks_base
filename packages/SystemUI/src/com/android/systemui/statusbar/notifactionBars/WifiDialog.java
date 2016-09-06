@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import android.view.Gravity;
+import android.view.Window;
 
 /**
  * Created by Mingkai on 2016/6/22.
@@ -138,7 +140,6 @@ public final class WifiDialog extends BaseSettingDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         initWifiInfo();
     }
 
@@ -158,10 +159,6 @@ public final class WifiDialog extends BaseSettingDialog {
 
     @Override
     protected void initViews() {
-        super.initViews();
-        WindowManager.LayoutParams lp = getWindow().getAttributes();
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        getWindow().setAttributes(lp);
         LinearLayout wifiRootView = (LinearLayout) LayoutInflater.from(mContext)
                                                                       .inflate(R.layout.wifi_list,
                                                                                null);

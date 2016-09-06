@@ -204,6 +204,8 @@ import java.util.Set;
 import java.util.HashSet;
 import android.content.SharedPreferences;
 import java.util.Iterator;
+import android.media.AudioManager;
+import android.view.Window;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -401,6 +403,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private HandlerThread mHandlerThread;
     private SharedPreferences presPkg;
     private SharedPreferences.Editor editorPkg;
+
+    private MyVolumeReceiver mVolumeReceiver;
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
@@ -945,13 +949,54 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
+        Window window = mWifiPopupWindow.getWindow();
+        window.setGravity(Gravity.BOTTOM);
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.width = LayoutParams.WRAP_CONTENT;
+        lp.height = LayoutParams.WRAP_CONTENT;
+        lp.gravity = Gravity.BOTTOM;
+        lp.y = 0;
+        window.setAttributes(lp);
         // mStartupMenu.setOnHoverListener(startupMenuListener);
         mActionButton.setOnHoverListener(hoverListeners);
         mInputButton.setOnHoverListener(hoverListeners);
         mBatteryButton.setOnHoverListener(hoverListeners);
         mVolumeButton.setOnHoverListener(hoverListeners);
         mWifiButton.setOnHoverListener(hoverListeners);
+        myRegisterReceiver();
         return mStatusBarView;
+    }
+
+    private void myRegisterReceiver(){
+        mVolumeReceiver = new MyVolumeReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.media.VOLUME_CHANGED_ACTION");
+        mContext.registerReceiver(mVolumeReceiver, filter);
+    }
+
+    private class MyVolumeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.media.VOLUME_CHANGED_ACTION")) {
+                AudioManager audioManager = (AudioManager) mContext.getSystemService(
+                                             Context.AUDIO_SERVICE);
+                if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
+                    mVolumeButton.setImageDrawable(mContext.getDrawable(
+                                                                R.drawable.ic_notice_sound_off));
+                } else {
+                    mVolumeButton.setImageDrawable(mContext.getDrawable(
+                                                                R.drawable.statusbar_sound));
+                }
+            }
+        }
+    }
+
+    private void setVolumeIcon(KeyButtonView keyButtonView) {
+        AudioManager audioManager = (AudioManager) mContext.getSystemService(
+                                           Context.AUDIO_SERVICE);
+        if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
+            keyButtonView.setImageDrawable(mContext.getDrawable(R.drawable.ic_notice_sound_off));
+        }
     }
 
     View.OnHoverListener startupMenuListener = new View.OnHoverListener() {
