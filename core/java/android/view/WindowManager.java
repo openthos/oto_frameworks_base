@@ -2240,18 +2240,21 @@ public interface WindowManager extends ViewManager {
                    + mRightDockFrame + "; old: " + mOldSize + ";  top padding: " + mFrameTopPadding;
         }
 
-        public void toggleFullScreen(Rect frame) {
+        public Rect toggleFullScreen(Rect frame) {
             if (!frame.equals(mFullScreen)){
                 mOldSize.set(frame);
                 if (mCallback != null) {
                     mCallback.relayoutWindow(mStackId, mFullScreen);
+                    mFrame.set(mFullScreen);
                 }
             } else {
                 if (mCallback != null) {
                     mOldSize = mCallback.prepareOldSize(mOldSize);
                     mCallback.relayoutWindow(mStackId, mOldSize);
+                    mFrame.set(mOldSize);
                 }
             }
+            return mFrame;
         }
 
         public void onMinimize(Rect orig) {
@@ -2535,7 +2538,7 @@ public interface WindowManager extends ViewManager {
             }
 
             if (onDoubleClick(what, x, y, frame)) {
-                return null;
+                return mFrame;
             }
 
             if (frame.equals(mFullScreen)) {
@@ -2594,8 +2597,9 @@ public interface WindowManager extends ViewManager {
                 if (mCallback != null) {
                     mCallback.syncResizingIcon(getResizeWays(null, 0, 0));
                 }
+                return mFrame;
             }
-            return mNewFrame;
+            return null;
         }
     }
 }

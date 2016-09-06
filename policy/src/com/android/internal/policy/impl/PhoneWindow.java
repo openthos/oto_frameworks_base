@@ -3611,14 +3611,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         public boolean onTouch(View v, MotionEvent event) {
             Rect ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
                                      (int) event.getRawY(),  getActivityFrame(), mResizeWindow);
-            if((ret != null) && (MotionEvent.ACTION_UP == event.getAction())) {
-                setActivityFrame(ret);
-                mDecor.invalidate();
-                if (mFrameOrig == null) {
-                    mFrameOrig = new Rect(getClientRect());
-                } else {
-                    mFrameOrig.set(getClientRect());
-                }
+            if(ret != null) {
+                syncFrame(ret);
             }
             return true;
         }
@@ -3743,6 +3737,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     public Rect prepareOldSize(Rect oldSize) {
         return getContext().getResources().getDisplayMetrics().prepareSize(getContext(),
                                                                        oldSize, getActivityFrame());
+    }
+
+    public void syncFrame(Rect r) {
+        setActivityFrame(r);
+        mDecor.invalidate();
+        if (mFrameOrig == null) {
+            mFrameOrig = new Rect(getClientRect());
+        } else {
+            mFrameOrig.set(getClientRect());
+        }
     }
 
     class DecorMW {
@@ -3895,7 +3899,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             mMaximizeBtn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toggleFullScreen(getActivityFrame());
+                    syncFrame(toggleFullScreen(getActivityFrame()));
                 }
             });
 

@@ -1021,7 +1021,24 @@ class WindowStateAnimator {
         mPendingDestroySurface = null;
     }
 
+    private void computeShownFrameDefault() {
+        mWin.mShownFrame.set(mWin.mFrame);
+        if (mWin.mXOffset != 0 || mWin.mYOffset != 0) {
+            mWin.mShownFrame.offset(mWin.mXOffset, mWin.mYOffset);
+        }
+        mShownAlpha = mAlpha;
+        mHaveMatrix = false;
+        mDsDx = mWin.mGlobalScale;
+        mDtDx = 0;
+        mDsDy = 0;
+        mDtDy = mWin.mGlobalScale;
+    }
+
     void computeShownFrameLocked() {
+        if (mWin.getStack().isFloating()) {
+            computeShownFrameDefault();
+            return;
+        }
         final boolean selfTransformation = mHasLocalTransformation;
         Transformation attachedTransformation =
                 (mAttachedWinAnimator != null && mAttachedWinAnimator.mHasLocalTransformation)
@@ -1235,16 +1252,7 @@ class WindowStateAnimator {
                 mShownAlpha *= mAnimator.mUniverseBackground.mUniverseTransform.getAlpha();
             }
         } else {
-            mWin.mShownFrame.set(mWin.mFrame);
-            if (mWin.mXOffset != 0 || mWin.mYOffset != 0) {
-                mWin.mShownFrame.offset(mWin.mXOffset, mWin.mYOffset);
-            }
-            mShownAlpha = mAlpha;
-            mHaveMatrix = false;
-            mDsDx = mWin.mGlobalScale;
-            mDtDx = 0;
-            mDsDy = 0;
-            mDtDy = mWin.mGlobalScale;
+            computeShownFrameDefault();
         }
     }
 

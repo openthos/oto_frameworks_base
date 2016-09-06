@@ -2020,8 +2020,8 @@ public abstract class Window {
         mMultiWindow.unsetFocusedStack();
     }
 
-    public void toggleFullScreen(Rect frame) {
-        mMultiWindow.toggleFullScreen(frame);
+    public Rect toggleFullScreen(Rect frame) {
+        return mMultiWindow.toggleFullScreen(frame);
     }
 
     public void onMinimize(Rect orig) {
