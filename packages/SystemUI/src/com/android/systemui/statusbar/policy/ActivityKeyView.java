@@ -33,11 +33,14 @@ import android.view.WindowManager.LayoutParams;
 import android.view.MotionEvent;
 import android.content.pm.PackageManager;
 import android.widget.Toast;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ActivityKeyView extends ImageView {
 
     private static final int DIALOG_OFFSET_PART = 3; // divide 3
     private static final int DIALOG_PADDING_TIPS = 10; // divide 3
+    private static final int TIMER_NUMBERS = 1000;
 
     OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
@@ -69,7 +72,7 @@ public class ActivityKeyView extends ImageView {
         mOpen = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendBroadcastMethod();
+                waitTimer();
                 runApkByPkg();
                 dismissDialog();
             }
@@ -266,12 +269,23 @@ public class ActivityKeyView extends ImageView {
         } catch(Exception exc) {
         }
     }
-    //send broadCast
+    //send broadCast; Matthew
     public void sendBroadcastMethod() {
         Intent intent = new Intent();
-        intent.putExtra("keyAddInfo",mActivity.mPkgName);
+        intent.putExtra("keyAddInfo", mActivity.mPkgName);
         intent.setAction("com.android.action.PACKAGE_SEND");
         mContext.sendBroadcast(intent);
+    }
+    //Wait one second; Matthew
+    private void waitTimer() {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                sendBroadcastMethod();
+            }
+        };
+        timer.schedule(task, TIMER_NUMBERS);
     }
 
     @Override
@@ -285,10 +299,11 @@ public class ActivityKeyView extends ImageView {
             showDialog(getRbmView(), 0);
             return true;
         }
+        // Locked status to click
         if(action == MotionEvent.ACTION_DOWN) {
             if(mActivity.mIsDocked) {
                 if(!mActivity.mApkRun) {
-                    sendBroadcastMethod();
+                    waitTimer();
                     runApkByPkg();
                 } else if(mActivity.mHiden) {
                     resizeStack();

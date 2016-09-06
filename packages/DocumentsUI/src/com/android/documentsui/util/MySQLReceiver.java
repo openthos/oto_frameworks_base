@@ -22,6 +22,10 @@ import static com.android.documentsui.StartupMenuActivity.isEnglish;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.widget.Toast;
+
 public class MySQLReceiver extends BroadcastReceiver {
     private MySqliteOpenHelper mMsoh;
     private SQLiteDatabase mdb;
@@ -48,6 +52,17 @@ public class MySQLReceiver extends BroadcastReceiver {
             values.put("int", numbers);
             values.put("click", number);
             mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+            //Same to open run
+            SharedPreferences sharedPreference = context.getSharedPreferences("click",
+                                                          Context.MODE_PRIVATE);
+            Editor editor = sharedPreference.edit();
+            String type = sharedPreference.getString("type", "sortName");
+            int order = sharedPreference.getInt("order", 0);
+            editor.clear();
+            editor.putInt("isClick", 1);
+            editor.putString("type", type);
+            editor.putInt("order", order);
+            editor.commit();
         }
     }
 
