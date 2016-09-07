@@ -50,6 +50,7 @@ import android.view.animation.Transformation;
 
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.WindowDecorView;
 
 import com.android.internal.R;
 import com.android.internal.util.Predicate;
@@ -5579,13 +5580,12 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
             int parentHeightMeasureSpec, int heightUsed) {
         final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
 
-        if (getClass().getName().compareTo("com.tencent.mm.ui.tools.TestTimeForChatting") == 0) {
-            Resources res = getContext().getResources();
-            mPaddingLeft = res.getDimensionPixelSize(com.android.internal.R.dimen.mw_outer_border);
-            mPaddingRight = mPaddingLeft;
-            mPaddingBottom = mPaddingLeft;
-            mPaddingTop = res.getDimensionPixelSize(com.android.internal.R.dimen.mw_header_border)
-                          + mPaddingLeft;
+        if ((getClass().getName().compareTo("com.tencent.mm.ui.tools.TestTimeForChatting") == 0)
+            && (getViewRootImpl() != null)) {
+            View decor = getViewRootImpl().getView();
+            if ((decor != null) && (decor instanceof WindowDecorView)) {
+                mPaddingTop = ((WindowDecorView) decor).getWindowHeaderPadding();
+            }
         }
 
         final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,

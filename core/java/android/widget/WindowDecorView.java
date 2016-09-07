@@ -22,7 +22,7 @@ import android.view.Window;
 import android.view.View;
 import android.util.Log;
 
-public class WindowDecorView extends FrameLayout {
+public abstract class WindowDecorView extends FrameLayout {
 
     private static final String TAG = "WindowDecorView";
     private static final int DIALOG_HAS_HEADER_MIN_HEIGHT = 300;
@@ -51,11 +51,11 @@ public class WindowDecorView extends FrameLayout {
         return mWindow.isMWWindow();
     }
 
-    public void adjustDialog() {
-    }
+    public abstract void adjustDialog();
 
-    public void enableMultiWindowToWindowManager(Rect dialogRect) {
-    }
+    public abstract void enableMultiWindowToWindowManager(Rect dialogRect);
+
+    public abstract int getWindowHeaderPadding();
 
     public void setFromDialog(View dialogView, Window dialogParentWindow) {
         if ((dialogView == null) && (mDialogView != null) && (mDialogParentWindow != null)
