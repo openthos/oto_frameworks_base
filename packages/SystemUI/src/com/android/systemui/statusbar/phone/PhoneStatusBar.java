@@ -401,8 +401,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
-    private SharedPreferences presPkg;
-    private SharedPreferences.Editor editorPkg;
+    private SharedPreferences mPresPkg;
+    private SharedPreferences.Editor mEditorPkg;
+    private SharedPreferences mPresPkgRm;
+    private SharedPreferences.Editor mEditorPkgRm;
+    private Set<String> mSet = new HashSet<>();
 
     private MyVolumeReceiver mVolumeReceiver;
 
@@ -611,8 +614,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void start() {
-        presPkg = mContext.getSharedPreferences("pkg",Context.MODE_APPEND);
-        editorPkg = presPkg.edit();
+        mPresPkg = mContext.getSharedPreferences("pkg",Context.MODE_APPEND);
+        mEditorPkg = mPresPkg.edit();
+        mPresPkgRm = mContext.getSharedPreferences("pkgs",Context.MODE_APPEND);
+        mEditorPkgRm = mPresPkgRm.edit();
+
         mDisplay = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE))
                 .getDefaultDisplay();
         updateDisplaySize();
@@ -684,8 +690,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setBar(this);
         mStatusBarActivities = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_activity_contents);
-        loadDockedApk("com.cyanogenmod.filemanager");
-        loadDockedApk("com.android.browser");
         loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -2652,31 +2656,52 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         checkBarModes();
     }
-    private Set<String> set = new HashSet<>();
+
     private void loadPkg() {
-        Map<String,?> map = presPkg.getAll();
+        Map<String,?> map = mPresPkg.getAll();
         for (Map.Entry<String,?> entry : map.entrySet()) {
             String keyPkg = entry.getKey();
             loadDockedApk(keyPkg);
-            set.add(keyPkg);// add to set
+            mSet.add(keyPkg);// add to set
+        }
+        Set<String> sets = new HashSet<>();
+        Map<String, ?> maps = mPresPkgRm.getAll();
+        for (Map.Entry<String, ?> entrys : maps.entrySet()) {
+            String keys = entrys.getKey();
+            sets.add(keys);
+        }
+        //The first boot
+        if (mSet.size() == 0 && sets.size() == 0) {
+            loadDockedApk("com.cyanogenmod.filemanager");
+            loadDockedApk("com.android.browser");
         }
     }
+
     private void loadDocked(String str) {
         int count = 0 ;
-        set.add("com.cyanogenmod.filemanager");
-        set.add("com.android.browser");
-        for (String setStr : set) {
-            count ++ ;
+        for (String setStr : mSet) {
             if (setStr.equals(str)) {
                 break;
             }
+            count++;
         }
-        if (count >= set.size()) {
-            set.add(str);
-            editorPkg.putString(str,"");
-            editorPkg.commit();
+        if (count >= mSet.size()) {
+            mSet.add(str);
+            mEditorPkg.putString(str,"");
+            mEditorPkg.commit();
             loadDockedApk(str);
         }
+    }
+
+    private void removeApk(String packageName) {
+        mEditorPkgRm.putString(packageName, "");
+        mEditorPkgRm.commit();
+        mSet.remove(packageName);
+        mEditorPkg.clear();
+        for (String removeStr : mSet) {
+            mEditorPkg.putString(removeStr,"");
+        }
+        mEditorPkg.commit();
     }
 
     private void loadDockedApk(String pkg) {
@@ -3427,7 +3452,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 if (action.equals("com.android.systemui.activitykeyview")) {
                    String pkgName = intent.getStringExtra("rmIcon");
-                   set.remove(pkgName);
+                   removeApk(pkgName);
                 }
             }
         }
