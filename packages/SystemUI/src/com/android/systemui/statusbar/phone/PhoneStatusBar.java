@@ -192,6 +192,7 @@ import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.CalendarDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
+import com.android.systemui.statusbar.notificationbars.BatteryDialog;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -954,6 +955,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWifiPopupWindow = new WifiDialog(mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
         Window window = mWifiPopupWindow.getWindow();
+        mBatteryPopupWindow = new BatteryDialog(mContext);
         window.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = LayoutParams.WRAP_CONTENT;
@@ -1321,6 +1323,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         dismisTargetDialog(mWifiPopupWindow);
         mWifiPopupWindow.show(mWifiButton);
+    }
+
+    protected void  showBatteryPanelWork() {
+        super.showBatteryPanelWork();
+        if (mBatteryButton == null) {
+            return;
+        }
+        dismisTargetDialog(mBatteryPopupWindow);
+        mBatteryPopupWindow.show(mBatteryButton);
     }
 
     @Override

@@ -68,6 +68,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SHOW_STATUSBAR_VIEW_SUGGEST    = 26 << MSG_SHIFT;
     private static final int MSG_HIDE_STATUSBAR_VIEW_MARKLESS   = 27 << MSG_SHIFT;
     private static final int MSG_SETFOCUSED_STATUSBAR_ACTIVITY  = 28 << MSG_SHIFT;
+    private static final int MSG_SHOW_BATTERY_PANEL             = 29 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -105,6 +106,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void showRecentApps(boolean triggeredFromAltTab);
         public void showVolumePanel();
         public void showWifiPanel();
+        public void showBatteryPanel();
         public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey);
         public void toggleRecentApps();
         public void preloadRecentApps();
@@ -245,6 +247,14 @@ public class CommandQueue extends IStatusBar.Stub {
             mHandler.sendEmptyMessage(MSG_SHOW_WIFI_PANEL);
         }
     }
+
+    public void showBatteryPanel() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_BATTERY_PANEL);
+            mHandler.sendEmptyMessage(MSG_SHOW_BATTERY_PANEL);
+        }
+    }
+
     public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         synchronized (mList) {
             mHandler.removeMessages(MSG_HIDE_RECENT_APPS);
@@ -444,6 +454,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SHOW_WIFI_PANEL:
                     mCallbacks.showWifiPanel();
+                    break;
+                case MSG_SHOW_BATTERY_PANEL:
+                    mCallbacks.showBatteryPanel();
                     break;
             }
         }

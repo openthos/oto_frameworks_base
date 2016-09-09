@@ -134,6 +134,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected static final int MSG_DECAY_HEADS_UP = 1031;
     protected static final int MSG_SHOW_VOLUME_PANEL = 1032;
     protected static final int MSG_SHOW_WIFI_PANEL = 1033;
+    protected static final int MSG_SHOW_BATTERY_PANEL = 1034;
     protected static final boolean ENABLE_HEADS_UP = true;
     // scores above this threshold should be displayed in heads up mode.
     protected static final int INTERRUPTION_THRESHOLD = 10;
@@ -158,6 +159,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected BaseSettingDialog mWifiPopupWindow;
     protected BaseSettingDialog mVolumePopupWindow;
     protected BaseSettingDialog mCalendarDialog;
+    protected BaseSettingDialog mBatteryPopupWindow;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
@@ -990,6 +992,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected void showWifiPanelWork(){
         Log.d("umic","start show wifi panel");
     }
+    protected void showBatteryPanelWork() {
+         Log.d("umic","start show battery panel");
+    }
     protected void showVolumePanelWork(){
         Log.d("umic","start show panel of Volume");
     }
@@ -1003,6 +1008,12 @@ public abstract class BaseStatusBar extends SystemUI implements
     @Override
     public void showWifiPanel(){
         int msg = MSG_SHOW_WIFI_PANEL;
+        mHandler.removeMessages(msg);
+        mHandler.sendEmptyMessage(msg);
+    }
+    @Override
+    public void showBatteryPanel() {
+        int msg = MSG_SHOW_BATTERY_PANEL;
         mHandler.removeMessages(msg);
         mHandler.sendEmptyMessage(msg);
     }
@@ -1265,6 +1276,9 @@ public abstract class BaseStatusBar extends SystemUI implements
                  break;
              case MSG_SHOW_WIFI_PANEL:
                  showWifiPanelWork();
+                 break;
+             case MSG_SHOW_BATTERY_PANEL:
+                  showBatteryPanelWork();
                  break;
              case MSG_SHOW_RECENT_APPS:
                  showRecents(m.arg1 > 0);

@@ -134,6 +134,8 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_CO
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_UNCOVERED;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_COVERED;
 
+
+
 /**
  * WindowManagerPolicy implementation for the Android phone UI.  This
  * introduces a new method suffix, Lp, for an internal lock of the
@@ -1372,6 +1374,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startBatteryManager() {
+        try {
+            IStatusBarService statusbar = getStatusBarService();
+            if (statusbar != null) {
+                statusbar.showBatteryPanel();
+            }
+        } catch (RemoteException e) {
+            mStatusBarService = null;
+        }
         Log.e("com", "Battery: COMING SOON");
     }
 
