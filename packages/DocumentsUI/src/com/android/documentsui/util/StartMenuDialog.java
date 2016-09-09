@@ -212,7 +212,9 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     //Method of run phone mode
     private void runPhoneMode() {
         Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
     }
 

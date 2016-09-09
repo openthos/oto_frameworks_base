@@ -2674,6 +2674,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mSet.size() == 0 && sets.size() == 0) {
             loadDockedApk("com.cyanogenmod.filemanager");
             loadDockedApk("com.android.browser");
+            mSet.add("com.cyanogenmod.filemanager");
+            mSet.add("com.android.browser");
+            mEditorPkg.putString("com.cyanogenmod.filemanager", "");
+            mEditorPkg.putString("com.android.browser", "");
         }
     }
 
