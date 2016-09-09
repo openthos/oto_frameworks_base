@@ -122,6 +122,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static android.view.WindowManager.LayoutParams.*;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.LID_ABSENT;
@@ -651,6 +654,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_BATTERY = 21;
     private static final int MSG_STARTUP_WIFI = 22;
     private static final int MSG_STARTUP_SOUND = 23;
+
+    private boolean mIsMini;
+    private Map<Integer, Rect> mTreeMap = new TreeMap<>();
 
     private class PolicyHandler extends Handler {
         @Override
@@ -1285,8 +1291,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             ActivityInfo homeActivityInfo =
                 new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
                 .resolveActivityInfo(mPackageManager, 0);
-
-
             int index = 0;
             int numTasks = recentTasks.size();
             Log.d(TAG, "numTasks" + numTasks);
@@ -1316,20 +1320,41 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             Rect actualWindowSize = new Rect();
             Rect outOfScreen = new Rect();
-            for(int id : stackIdList){
-                try{
-                    mWindowManager.getStackBounds(id, actualWindowSize);
-                    if (actualWindowSize.left < metrics.widthPixels &&
-                        actualWindowSize.top < metrics.heightPixels) {
-                        outOfScreen.left = actualWindowSize.left + metrics.widthPixels;
-                        outOfScreen.top = actualWindowSize.top + metrics.heightPixels;
-                        outOfScreen.right = actualWindowSize.right + metrics.widthPixels;
-                        outOfScreen.bottom = actualWindowSize.bottom + metrics.heightPixels;
-                        ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(id, actualWindowSize);
-                        ActivityManagerNative.getDefault().relayoutWindow(id, outOfScreen);
+            if (mIsMini) {
+                Iterator iter = mTreeMap.entrySet().iterator();
+                while (iter.hasNext()) {
+                    try {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        Integer id = (Integer) entry.getKey();
+                        Rect rect = (Rect) entry.getValue();
+                        ActivityManagerNative.getDefault().relayoutWindow(id, rect);
+                        mIsMini = false;
+                    } catch (RemoteException e) {
+                        Log.e("umic", "Maxmize failed", e);
                     }
-                }catch(RemoteException e){
-                    Log.e("umic","Minimize failed",e);
+                }
+                mTreeMap.clear();
+            } else {
+                for (int id : stackIdList) {
+                    try {
+                        mWindowManager.getStackBounds(id, actualWindowSize);
+                        if (actualWindowSize.left < metrics.widthPixels &&
+                            actualWindowSize.top < metrics.heightPixels) {
+                            outOfScreen.left = actualWindowSize.left + metrics.widthPixels;
+                            outOfScreen.top = actualWindowSize.top + metrics.heightPixels;
+                            outOfScreen.right = actualWindowSize.right + metrics.widthPixels;
+                            outOfScreen.bottom = actualWindowSize.bottom + metrics.heightPixels;
+                            Rect r = new Rect(actualWindowSize.left, actualWindowSize.top,
+                                              actualWindowSize.right, actualWindowSize.bottom);
+                            mTreeMap.put(id, r);
+                            ActivityManagerNative.getDefault().saveInfoInStatusbarActivity(id,
+                                                                            actualWindowSize);
+                            ActivityManagerNative.getDefault().relayoutWindow(id, outOfScreen);
+                            mIsMini = true;
+                        }
+                    } catch (RemoteException e) {
+                        Log.e("umic", "Minimize failed", e);
+                    }
                 }
             }
         } catch (ActivityNotFoundException e) {
