@@ -56,6 +56,7 @@ public abstract class WindowDecorView extends FrameLayout {
     public abstract void enableMultiWindowToWindowManager(Rect dialogRect);
 
     public abstract int getWindowHeaderPadding();
+    public abstract int getWindowBorderPadding();
 
     public void setFromDialog(View dialogView, Window dialogParentWindow) {
         if ((dialogView == null) && (mDialogView != null) && (mDialogParentWindow != null)
