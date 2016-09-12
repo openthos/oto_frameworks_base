@@ -74,8 +74,8 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         }
         AppInfo appInfo = (AppInfo) getItem(position);
         holder.appIcon.setImageDrawable(appInfo.getAppIcon());
-        holder.tvAppLabel.setText(appInfo.getAppLabel());
-        // holder.tvPkgName.setText(appInfo.getPkgName());
+        String appName = appInfo.getAppLabel();
+        holder.tvAppLabel.setText(appInfo.limitNameLength(appName, mContext, appInfo));
         view.setOnGenericMotionListener(new View.OnGenericMotionListener() {
             @Override
             public boolean onGenericMotion(View view, MotionEvent motionEvent) {

@@ -130,4 +130,5 @@
     <string name="fixed_the_taskbar">Fixed To The Taskbar</string>
     <string name="my_uninstall">Uninstall</string>
     <string name="removed_the_list">Removed From The List</string>
+    <string name="omit">…</string>
 </resources>

@@ -1,11 +1,15 @@
 package com.android.documentsui.util;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.android.documentsui.R;
 
 public class AppInfo implements Parcelable {
 
@@ -19,6 +23,7 @@ public class AppInfo implements Parcelable {
     private long cachesize;
     private long datasize;
     private long codesieze;
+    static final int MAX_CHARACTER_COUNT = 9;
 
     protected AppInfo(Parcel in) {
         appLabel = in.readString();
@@ -140,4 +145,38 @@ public class AppInfo implements Parcelable {
         parcel.writeLong(datasize);
         parcel.writeLong(codesieze);
     }
+
+    public String limitNameLength(String appName, Context mContext, AppInfo appInfo) {
+        int mCharacterCount = 0;
+        int mInputNum = 0;
+        for (int i = 0; i<appName.length(); i++) {
+             String str = appName.substring(i, i + 1);
+             mInputNum++;
+             mCharacterCount += regexInput(str);
+             if (mCharacterCount > MAX_CHARACTER_COUNT) {
+                break;
+             }
+        }
+        if (mCharacterCount > MAX_CHARACTER_COUNT && (mCharacterCount % 2 == 0)) {
+            appName = appName.substring(0,mInputNum);
+            if (!appName.equals(appInfo.getAppLabel())) {
+                appName += mContext.getString(R.string.omit);
+            }
+
+        } else if (mCharacterCount > MAX_CHARACTER_COUNT && (mCharacterCount % 2 == 1)) {
+            appName = appName.substring(0, mInputNum - 1) + mContext.getString(R.string.omit);
+        }
+        return appName;
+    }
+
+    private int regexInput(String subString) {
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(subString);
+        if (m.matches()) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
 }
