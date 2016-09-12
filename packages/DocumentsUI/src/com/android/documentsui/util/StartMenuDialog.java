@@ -165,14 +165,17 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             editor.putString("type", type);
             editor.putInt("order", order);
             editor.commit();
+            dismiss();
             break;
         case R.id.tv_right_phone_run:
             runPhoneMode();
             addUsedNum();
+            dismiss();
             break;
         case R.id.tv_right_desktop_run:
             runPcMode();
             addUsedNum();
+            dismiss();
             break;
         case R.id.tv_right_fixed_taskbar:
             String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
@@ -180,6 +183,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             intentSend.putExtra("keyInfo",pkgInfo);
             intentSend.setAction("com.android.documentsui.util.startmenudialog");
             mContext.sendBroadcast(intentSend);
+            dismiss();
             break;
         case R.id.tv_right_uninstall:
             if (mListType == 0) {
@@ -191,6 +195,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
             intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intents);
+            dismiss();
             break;
         }
     }
