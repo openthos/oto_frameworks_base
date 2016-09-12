@@ -1334,6 +1334,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryPopupWindow.show(mBatteryButton);
     }
 
+    protected void  showHomePanelWork() {
+        super.showHomePanelWork();
+        dismisTargetDialog(mBatteryPopupWindow);
+        dismisTargetDialog(mBatteryPopupWindow);
+        dismisTargetDialog(mWifiPopupWindow);
+    }
+
     @Override
     protected void updateSearchPanel() {
         super.updateSearchPanel();

@@ -545,6 +545,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void showHomePanel() {
+        if (mBar != null) {
+            try {
+                mBar.showHomePanel();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
     public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         if (mBar != null) {
             try {

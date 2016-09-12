@@ -135,6 +135,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected static final int MSG_SHOW_VOLUME_PANEL = 1032;
     protected static final int MSG_SHOW_WIFI_PANEL = 1033;
     protected static final int MSG_SHOW_BATTERY_PANEL = 1034;
+    protected static final int MSG_SHOW_HOME_PANEL = 1035;
     protected static final boolean ENABLE_HEADS_UP = true;
     // scores above this threshold should be displayed in heads up mode.
     protected static final int INTERRUPTION_THRESHOLD = 10;
@@ -995,6 +996,9 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected void showBatteryPanelWork() {
          Log.d("umic","start show battery panel");
     }
+    protected void showHomePanelWork() {
+         Log.d("umic","start show home panel");
+    }
     protected void showVolumePanelWork(){
         Log.d("umic","start show panel of Volume");
     }
@@ -1014,6 +1018,12 @@ public abstract class BaseStatusBar extends SystemUI implements
     @Override
     public void showBatteryPanel() {
         int msg = MSG_SHOW_BATTERY_PANEL;
+        mHandler.removeMessages(msg);
+        mHandler.sendEmptyMessage(msg);
+    }
+    @Override
+    public void showHomePanel() {
+        int msg = MSG_SHOW_HOME_PANEL;
         mHandler.removeMessages(msg);
         mHandler.sendEmptyMessage(msg);
     }
@@ -1278,7 +1288,10 @@ public abstract class BaseStatusBar extends SystemUI implements
                  showWifiPanelWork();
                  break;
              case MSG_SHOW_BATTERY_PANEL:
-                  showBatteryPanelWork();
+                 showBatteryPanelWork();
+                 break;
+             case MSG_SHOW_HOME_PANEL:
+                 showHomePanelWork();
                  break;
              case MSG_SHOW_RECENT_APPS:
                  showRecents(m.arg1 > 0);

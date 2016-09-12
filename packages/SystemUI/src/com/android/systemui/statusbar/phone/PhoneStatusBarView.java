@@ -162,7 +162,7 @@ public class PhoneStatusBarView extends PanelBar {
             return false;
         }
 
-
+        mBar.showHomePanelWork();
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 
         if (DEBUG_GESTURES) {

@@ -67,4 +67,5 @@ interface IStatusBarService
     void showVolumePanel();
     void showWifiPanel();
     void showBatteryPanel();
+    void showHomePanel();
 }

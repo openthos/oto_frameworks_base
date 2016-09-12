@@ -51,6 +51,7 @@ oneway interface IStatusBar
     void showVolumePanel();
     void showWifiPanel();
     void showBatteryPanel();
+    void showHomePanel();
     void setFocusedStatusbarActivity(int stackId);
     void showStatusbarActivity(int stackId, String pkg);
     void saveInfoInStatusbarActivity(int stackId, in Rect rect);
