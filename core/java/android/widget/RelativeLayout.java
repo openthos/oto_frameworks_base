@@ -698,6 +698,9 @@ public class RelativeLayout extends ViewGroup {
     }
 
     private void measureChildHorizontal(View child, LayoutParams params, int myWidth, int myHeight) {
+        if (child.getClass().getName().compareTo(View.WECHAT_PLAY_TEXTUREVIEW) == 0) {
+            myWidth = -1; // Skip myWidth checking, for it will be checked  in View.
+        }
         int childWidthMeasureSpec = getChildMeasureSpec(params.mLeft,
                 params.mRight, params.width,
                 params.leftMargin, params.rightMargin,

@@ -694,6 +694,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         AccessibilityEventSource {
     private static final boolean DBG = false;
 
+    protected static final String WECHAT_PLAY_TEXTUREVIEW =
+                                      "com.tencent.mm.plugin.sight.decode.ui.SightPlayTextureView";
+
     /**
      * The logging tag used by this class with android.util.Log.
      */
@@ -3079,6 +3082,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      */
     @ViewDebug.ExportedProperty(category = "padding")
     protected int mPaddingBottom;
+
+    protected float mRatio = 0.0f;   // width / height
 
     /**
      * The layout insets in pixels, that is the distance in pixels between the
@@ -17664,8 +17669,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     private void setMeasuredDimensionRaw(int measuredWidth, int measuredHeight) {
 
         final float WECHAT_SIGHT_TEXTUREVIEW_HEIGHT_FACTOR = 0.60f;
-        final float WECHAT_TEXTUREVIEW_HEIGHT_FACTOR = 0.50f;
-        final float WECHAT_TEXTUREVIEW_WIDTH_HEIGHT_FACTOR = 0.54f; // TODO: need get from system.
+        final float WECHAT_TEXTUREVIEW_HEIGHT_FACTOR = 0.52f;
+        final int WECHAT_TEXTUREVIEW_WIDTH_PADDING = 120;
 
         if (getClass().getName().compareTo(
                "com.tencent.mm.plugin.sight.encode.ui.SightCameraTextureView") == 0) {
@@ -17680,14 +17685,31 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
             int h = (int) ((float) decor.getHeight() * WECHAT_TEXTUREVIEW_HEIGHT_FACTOR);
+            if (measuredWidth >= measuredHeight) {
+                mRatio = (float) measuredWidth / (float) measuredHeight;
+            }
+            if (mRatio <= 0.0f) {
+                mRatio = 1.0f;
+            }
             if (h <  measuredHeight) {
-                measuredWidth = (int) ((float) h / WECHAT_TEXTUREVIEW_WIDTH_HEIGHT_FACTOR);
+                measuredWidth = (int) ((float) h * mRatio);
                 measuredHeight = h;
             }
             if (measuredWidth > w) {
-                measuredHeight = (int) ((float) w * WECHAT_TEXTUREVIEW_WIDTH_HEIGHT_FACTOR);
+                measuredHeight = (int) ((float) w / mRatio);
                 measuredWidth = w;
             }
+        } else if (getClass().getName().compareTo(WECHAT_PLAY_TEXTUREVIEW) == 0) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding()
+                                     - WECHAT_TEXTUREVIEW_WIDTH_PADDING;
+            if (mRatio <= 0.0f) {
+                mRatio = (float) measuredWidth / (float) measuredHeight;
+            }
+            if (measuredWidth > w) {
+                measuredWidth = w;
+            }
+            measuredHeight = (int) ((float) measuredWidth / mRatio);
         }
 
         if (getViewRootImpl() != null) {
