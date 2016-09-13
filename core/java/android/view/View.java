@@ -17710,6 +17710,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = w;
             }
             measuredHeight = (int) ((float) measuredWidth / mRatio);
+        } else if (getClass().getName().compareTo(
+                           "com.tencent.mobileqq.activity.richmedia.view.CameraTextureView") == 0) {
+            if (measuredWidth < measuredHeight) {
+                measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
+                                       / (float) measuredWidth);
+            }
         }
 
         if (getViewRootImpl() != null) {

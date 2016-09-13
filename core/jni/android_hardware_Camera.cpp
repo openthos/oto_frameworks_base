@@ -871,6 +871,7 @@ static void android_hardware_Camera_setDisplayOrientation(JNIEnv *env, jobject t
         jint value)
 {
     ALOGV("setDisplayOrientation");
+    value = 0; // always horizontal orientation.
     sp<Camera> camera = get_native_camera(env, thiz, NULL);
     if (camera == 0) return;
 
