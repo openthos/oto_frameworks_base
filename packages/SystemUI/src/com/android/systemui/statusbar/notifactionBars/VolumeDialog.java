@@ -16,7 +16,7 @@ import com.android.systemui.R;
  * Created by Mingkai on 2016/6/22.
  */
 public class VolumeDialog extends BaseSettingDialog implements SeekBar.OnSeekBarChangeListener {
-    private SeekBar mediaVolume;
+    private VerticalSeekBar mediaVolume;
     private ImageView volView;
 
     public VolumeDialog(Context context) {
@@ -74,7 +74,7 @@ public class VolumeDialog extends BaseSettingDialog implements SeekBar.OnSeekBar
                                                                       Context.AUDIO_SERVICE);
         View mediaView = LayoutInflater.from(mContext).inflate(R.layout.ringer_volume, null);
         setContentView(mediaView);
-        mediaVolume = (SeekBar) mediaView.findViewById(R.id.media_volume_seekbar);
+        mediaVolume = (VerticalSeekBar) mediaView.findViewById(R.id.media_volume_seekbar);
         mediaVolume.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         mediaVolume.setOnSeekBarChangeListener(this);
         volView = (ImageView) mediaView.findViewById(R.id.media_volume_btn);

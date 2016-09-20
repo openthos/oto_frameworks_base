@@ -1352,10 +1352,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         mWindowManager.getStackBounds(id, actualWindowSize);
                         if (actualWindowSize.left < metrics.widthPixels &&
                             actualWindowSize.top < metrics.heightPixels) {
-                            outOfScreen.left = actualWindowSize.left + metrics.widthPixels;
-                            outOfScreen.top = actualWindowSize.top + metrics.heightPixels;
-                            outOfScreen.right = actualWindowSize.right + metrics.widthPixels;
-                            outOfScreen.bottom = actualWindowSize.bottom + metrics.heightPixels;
+                            outOfScreen.left = actualWindowSize.left + 2 * metrics.widthPixels;
+                            outOfScreen.top = actualWindowSize.top + 2 * metrics.heightPixels;
+                            outOfScreen.right = actualWindowSize.right + 2 * metrics.widthPixels;
+                            outOfScreen.bottom = actualWindowSize.bottom + 2 * metrics.heightPixels;
                             Rect r = new Rect(actualWindowSize.left, actualWindowSize.top,
                                               actualWindowSize.right, actualWindowSize.bottom);
                             mTreeMap.put(id, r);

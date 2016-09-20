@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="350dp"
-    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="350dp"
     android:background="#342464"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
+    <com.android.systemui.statusbar.notificationbars.VerticalSeekBar
+        android:id="@+id/media_volume_seekbar"
+        android:thumbOffset="0dp"
+        android:minHeight="40dp"
+        android:maxHeight="40dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="220dp" />
+
     <ImageView
         android:id="@+id/media_volume_btn"
         android:src="@android:drawable/ic_lock_silent_mode_off"
         android:layout_gravity="center"
         android:layout_width="40dp"
         android:layout_height="40dp" />
-    <SeekBar
-        android:id="@+id/media_volume_seekbar"
-        android:thumbOffset="0dp"
-        android:minHeight="40dp"
-        android:maxHeight="40dp"
-        android:layout_gravity="center"
-        android:layout_width="220dp"
-        android:layout_height="40dp" />
+
 </LinearLayout>
