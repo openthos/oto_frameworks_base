@@ -137,6 +137,11 @@ public abstract class Drawable {
 
     private int mLayoutDirection;
 
+    private int mPaddingLeft = 0;
+    private int mPaddingTop = 0;
+    private int mPaddingRight = 0;
+    private int mPaddingBottom = 0;
+
     /**
      * Draw in its bounds (set via setBounds) respecting optional effects such
      * as alpha (set via setAlpha) and color filter (set via setColorFilter).
@@ -145,12 +150,24 @@ public abstract class Drawable {
      */
     public abstract void draw(Canvas canvas);
 
+    public void setPadding(int left, int top, int right, int bottom) {
+        mPaddingLeft = left;
+        mPaddingTop = top;
+        mPaddingRight = right;
+        mPaddingBottom = bottom;
+    }
+
     /**
      * Specify a bounding rectangle for the Drawable. This is where the drawable
      * will draw when its draw() method is called.
      */
     public void setBounds(int left, int top, int right, int bottom) {
         Rect oldBounds = mBounds;
+
+        left += mPaddingLeft;
+        top += mPaddingTop;
+        right -= mPaddingRight;
+        bottom -= mPaddingBottom;
 
         if (oldBounds == ZERO_BOUNDS_RECT) {
             oldBounds = mBounds = new Rect();

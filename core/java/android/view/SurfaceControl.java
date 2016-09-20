@@ -18,6 +18,7 @@ package android.view;
 
 import dalvik.system.CloseGuard;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.IBinder;
@@ -274,6 +275,10 @@ public class SurfaceControl {
             throw new IllegalArgumentException("name must not be null");
         }
 
+        if (format == PixelFormat.OPAQUE) {
+            format = PixelFormat.TRANSLUCENT;  // Always use transparent surface
+        }
+        flags &= ~OPAQUE;  // Always use transparent surface
         if ((flags & SurfaceControl.HIDDEN) == 0) {
             Log.w(TAG, "Surfaces should always be created with the HIDDEN flag set "
                     + "to ensure that they are not made visible prematurely before "
@@ -445,6 +450,7 @@ public class SurfaceControl {
      * Surface with the {@link #OPAQUE} flag.
      */
     public void setOpaque(boolean isOpaque) {
+        isOpaque = false;  // Always use transparent surface.
         checkNotReleased();
         if (isOpaque) {
             nativeSetFlags(mNativeObject, SURFACE_OPAQUE, SURFACE_OPAQUE);

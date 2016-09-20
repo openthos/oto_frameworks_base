@@ -3010,47 +3010,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void setWindowBackground(Drawable drawable) {
-            if ((mDecorMW != null) && mDecorMW.hasShadow()) {
-                if ((drawable != null) && (drawable instanceof BackgroundDrawable)) {
-                    //Log.i(TAG, "============ gchen_tag: BackgroundDrawable.");
+            if ((mDecorMW != null) && mDecorMW.hasShadow() && (drawable != null)) {
+                if (drawable instanceof BackgroundDrawable) {
                     ((BackgroundDrawable) drawable).setDrawablePadding(getBorderPadding());
                 } else if (drawable instanceof ColorDrawable) {
-                    //Log.i(TAG, "============ gchen_tag: ColorDrawable.");
                     drawable = mDecorMW.getDrawableByColor(((ColorDrawable) drawable).getColor());
                 } else {
-                    if (drawable instanceof GradientDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: GradientDrawable.");
-                    } else if (drawable instanceof BitmapDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: BitmapDrawable.");
-                    } else if (drawable instanceof AnimatedRotateDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: AnimatedRotateDrawable.");
-                    } else if (drawable instanceof AnimatedVectorDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: AnimatedVectorDrawable.");
-                    } else if (drawable instanceof ClipDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: ClipDrawable.");
-                    } else if (drawable instanceof DrawableContainer) {
-                        // music
-                        //Log.i(TAG, "============ gchen_tag: DrawableContainer.");
-                    } else if (drawable instanceof InsetDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: InsertDrawable.");
-                    } else if (drawable instanceof LayerDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: LayerDrawable.");
-                    } else if (drawable instanceof NinePatchDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: NinePatchDrawable.");
-                    } else if (drawable instanceof PictureDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: PictureDrawable.");
-                    } else if (drawable instanceof RotateDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: RotateDrawable.");
-                    } else if (drawable instanceof ScaleDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: ScaleDrawable.");
-                    } else if (drawable instanceof ShapeDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: ShapeDrawable.");
-                    } else if (drawable instanceof TransitionDrawable) {
-                        //Log.i(TAG, "============ gchen_tag: TransitionDrawable.");
-                    } else {
-                        //Log.i(TAG, "============ gchen_tag: Others.");
-                    }
-                    drawable = mDecorMW.getDefaultDrawable();
+                    int padding = getBorderPadding();
+                    drawable.setPadding(padding, getTopBorderPadding(), padding, padding);
                 }
             }
             if (getBackground() != drawable) {
