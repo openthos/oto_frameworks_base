@@ -24,4 +24,14 @@
         android:background="@drawable/ic_background_mouse_click"
         android:visibility="gone"
         />
+    <View
+        android:id="@+id/activity_run"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="@drawable/ic_background_activity_run"
+        android:visibility="gone"
+        />
+
 </FrameLayout>

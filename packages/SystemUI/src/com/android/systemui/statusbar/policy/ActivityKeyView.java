@@ -48,6 +48,7 @@ public class ActivityKeyView extends ImageView {
     OnClickListener mUnDock;    /* Use to undock related StatusbarAcitivity from status bar. */
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
     View mFocusedView;
+    View mRunningView;
 
     private static final String TAG = "ActivityKeyView";
     private static Dialog mDialog = null;   /* Define a Singleton dialog as tools. */
@@ -238,6 +239,10 @@ public class ActivityKeyView extends ImageView {
         mFocusedView = view;
     }
 
+    public void setRunningView(View view) {
+        mRunningView = view;
+    }
+
     private void setFocusedStack() {
         try {
             if (ActivityManagerNative.getDefault().getFocusedStackId() != mActivity.mStackId) {
@@ -318,6 +323,13 @@ public class ActivityKeyView extends ImageView {
 
     public void setFocused(boolean focused) {
         mFocusedView.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
+        mRunningView.setVisibility(focused ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    public void setRunning(boolean focused) {
+        mRunningView.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
+        mFocusedView.setVisibility(focused ? View.VISIBLE : View.INVISIBLE);
+
     }
 
     private class HoverListener implements OnHoverListener {

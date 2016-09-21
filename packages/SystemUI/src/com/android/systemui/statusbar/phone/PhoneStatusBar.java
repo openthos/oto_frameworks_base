@@ -265,7 +265,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int LOCK_TO_APP_GESTURE_TOLERENCE = 200;
 
     PhoneStatusBarPolicy mIconPolicy;
-
+    private boolean mIsShowwing = true;
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothControllerImpl mBluetoothController;
     SecurityControllerImpl mSecurityController;
@@ -2739,6 +2739,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             ActivityKeyView akv = (ActivityKeyView) ll.getChildAt(0);
             akv.setStatusbarActivity(sa);
             akv.setFocusedView(ll.findViewById(R.id.activity_focused));
+            akv.setRunningView(ll.findViewById(R.id.activity_run));
             ((ImageView)akv).setImageDrawable(pkgicon);
             ll.setVisibility(View.VISIBLE);
             mStatusBarActivities.addView(ll);
@@ -2779,13 +2780,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void setFocusedStatusbarActivity(ActivityKeyView akv) {
-        if (mFocusedAKV != null) {
+        if (mFocusedAKV != null && mIsShowwing) {
             mFocusedAKV.setFocused(false);
+        }
+        if (mFocusedAKV != null && !mIsShowwing) {
+            mFocusedAKV.setRunning(false);
         }
         mFocusedAKV = akv;
         if (mFocusedAKV != null) {
             mFocusedAKV.setFocused(true);
         }
+        mIsShowwing = true;
     }
 
     @Override // CommandQueue
@@ -2805,7 +2810,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         int idxStack = findStatusbarActivityByStackId(stackId);
         int idxPkg = findStatusbarActivityByPkg(pkg);
         ActivityKeyView akv = null;
-
         LayoutInflater li =
                         (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (idxStack == -1) {
@@ -2828,6 +2832,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 StatusbarActivity sa = new StatusbarActivity(stackId, pkg, false, true);
                 akv.setStatusbarActivity(sa);
                 akv.setFocusedView(ll.findViewById(R.id.activity_focused));
+                akv.setRunningView(ll.findViewById(R.id.activity_run));
                 akv.setImageDrawable(pkgicon);
                 ll.setVisibility(View.VISIBLE);
                 mStatusBarActivities.addView(ll);
@@ -2868,6 +2873,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if(idx >= 0) {
             ActivityKeyView akv = getActivityKeyView(idx);
             if (akv == mFocusedAKV) {
+                mIsShowwing = false;
                 setFocusedStatusbarActivity(null);
             }
             if(!akv.getStatusbarActivity().mIsDocked) {
