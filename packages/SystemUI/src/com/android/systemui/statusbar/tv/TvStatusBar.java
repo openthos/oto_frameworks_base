@@ -76,6 +76,10 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override
+    public void showStatusBarViewPowerSleep() {
+    }
+
+    @Override
     public void hideStatusBarView() {
     }
 

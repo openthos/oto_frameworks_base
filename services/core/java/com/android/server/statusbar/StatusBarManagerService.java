@@ -246,6 +246,17 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void showStatusBarPowerSleep() {
+
+        if (mBar != null) {
+            try {
+                mBar.showStatusBarViewPowerSleep();
+            } catch (RemoteException ex) {
+            }
+        }
+    }
+
+    @Override
     public void hideStatusBar() {
 
         if (mBar != null) {

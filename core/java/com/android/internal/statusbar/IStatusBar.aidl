@@ -31,6 +31,7 @@ oneway interface IStatusBar
     void animateCollapsePanels();
     void showStatusBarView();
     void showStatusBarViewSuggest();
+    void showStatusBarViewPowerSleep();
     void hideStatusBarView();
     void hideStatusBarViewMarkless();
     void setSystemUiVisibility(int vis, int mask);

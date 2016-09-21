@@ -194,6 +194,7 @@ import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
 import com.android.systemui.statusbar.notificationbars.BatteryDialog;
 
+import java.io.IOException;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -2547,6 +2548,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public void showStatusBarViewSuggest() {
         if (mForceStatusBarHide == false) {
             showStatusBarViewMarkless();
+        }
+    }
+
+    private static final int WAIT_INTERVAL = 500; // wait for 0.5 second.
+    private void waitForAWhile() {
+        try {
+            Thread.sleep(WAIT_INTERVAL);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showStatusBarViewPowerSleep() {
+        try {
+            waitForAWhile();
+            String cmd = "/system/xbin/echo mem > /sys/power/state";
+            Runtime.getRuntime().exec(new String[] {"/system/bin/su", "-c", cmd});
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

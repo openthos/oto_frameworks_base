@@ -61,8 +61,15 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        showStatusBar();
+        finishStatusbarPwoerLayout();
         super.onDestroy();
+    }
+
+    private void finishStatusbarPwoerLayout() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_POWER_SLEEP);
+        intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+        sendBroadcast(intent);
     }
 
     private void showStatusBar() {
@@ -104,12 +111,11 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                     //System.exit(0);
                     //break;
                 case R.id.power_sleep:
-                    String cmd = "/system/xbin/echo mem > /sys/power/state";
-                    Runtime.getRuntime().exec(new String[] {"/system/bin/su", "-c", cmd});
-                    waitForAWhile();
+                    PowerSourceActivity.this.finish();
+                    break;
                 case R.id.power_close:
-                default:
                     System.exit(0);
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();

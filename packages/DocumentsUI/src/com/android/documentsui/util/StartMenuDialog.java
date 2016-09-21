@@ -36,7 +36,7 @@ import android.content.SharedPreferences.Editor;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
-    public static int STARTMENU_LOCATION = 300;
+    public static int STARTMENU_LOCATION = 30;
     private Context mContext;
     private boolean mFlag;
     private int mPosition;

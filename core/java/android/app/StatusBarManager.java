@@ -128,6 +128,18 @@ public class StatusBarManager {
         }
     }
 
+    public void showStatusBarPowerSleep() {
+        try {
+            final IStatusBarService svc = getService();
+            if (svc != null) {
+                svc.showStatusBarPowerSleep();
+            }
+        } catch (RemoteException ex) {
+            // system process is dead anyway.
+            throw new RuntimeException(ex);
+        }
+    }
+
     public void hideStatusBar() {
         try {
             final IStatusBarService svc = getService();

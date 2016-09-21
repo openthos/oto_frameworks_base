@@ -70,6 +70,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SETFOCUSED_STATUSBAR_ACTIVITY  = 28 << MSG_SHIFT;
     private static final int MSG_SHOW_BATTERY_PANEL             = 29 << MSG_SHIFT;
     private static final int MSG_SHOW_HOME_PANEL                = 30 << MSG_SHIFT;
+    private static final int MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP= 31 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -96,6 +97,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void animateExpandNotificationsPanel();
         public void showStatusBarView();
         public void showStatusBarViewSuggest();
+        public void showStatusBarViewPowerSleep();
         public void hideStatusBarView();
         public void hideStatusBarViewMarkless();
         public void animateCollapsePanels(int flags);
@@ -172,6 +174,13 @@ public class CommandQueue extends IStatusBar.Stub {
         synchronized (mList) {
             mHandler.removeMessages(MSG_SHOW_STATUSBAR_VIEW_SUGGEST);
             mHandler.sendEmptyMessage(MSG_SHOW_STATUSBAR_VIEW_SUGGEST);
+        }
+    }
+
+    public void showStatusBarViewPowerSleep() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP);
+            mHandler.sendEmptyMessage(MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP);
         }
     }
 
@@ -421,6 +430,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SHOW_STATUSBAR_VIEW_SUGGEST:
                     mCallbacks.showStatusBarViewSuggest();
+                    break;
+                case MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP:
+                    mCallbacks.showStatusBarViewPowerSleep();
                     break;
                 case MSG_HIDE_STATUSBAR_VIEW:
                     mCallbacks.hideStatusBarView();

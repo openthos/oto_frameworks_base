@@ -229,6 +229,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                      = new IntentFilter(Intent.STATUS_BAR_SHOW);
     private IntentFilter mAppChangeStatusBarFinishMarklessFilter
                      = new IntentFilter(Intent.STATUS_BAR_SHOW_SUGGEST);
+    private IntentFilter mAppChangeStatusBarPowerSleepFilter
+                     = new IntentFilter(Intent.STATUS_BAR_POWER_SLEEP);
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_HIDE.equals(intent.getAction())) {
@@ -264,6 +266,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (Intent.STATUS_BAR_SHOW_SUGGEST.equals(intent.getAction())) {
                 try {
                     mStatusBarService.showStatusBarSuggest();
+                } catch(Exception e) {
+                }
+            }
+        }
+    };
+
+    private BroadcastReceiver mAppChangeStatusBarPowerSleepReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.STATUS_BAR_POWER_SLEEP.equals(intent.getAction())) {
+                try {
+                    mStatusBarService.showStatusBarPowerSleep();
                 } catch(Exception e) {
                 }
             }
@@ -1516,6 +1529,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                   this.mAppChangeStatusBarFinishFilter);
         mContext.registerReceiver(this.mAppChangeStatusBarFinishMarklessReceiver,
                                   this.mAppChangeStatusBarFinishMarklessFilter);
+        mContext.registerReceiver(this.mAppChangeStatusBarPowerSleepReceiver,
+                                  this.mAppChangeStatusBarPowerSleepFilter);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
         mWindowManagerInternal = LocalServices.getService(WindowManagerInternal.class);
