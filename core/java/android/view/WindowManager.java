@@ -53,6 +53,10 @@ import android.util.Log;
  * @see android.content.Context#WINDOW_SERVICE
  */
 public interface WindowManager extends ViewManager {
+
+    public final static int MW_WINDOW_MIN_WIDTH = 250;
+    public final static int MW_WINDOW_MIN_HEIGHT = 180;
+
     /**
      * Exception that is thrown when trying to add view whose
      * {@link LayoutParams} {@link LayoutParams#token}
@@ -2383,9 +2387,6 @@ public interface WindowManager extends ViewManager {
         }
 
         public static class ResizeWindow {
-            private final static int MW_WINDOW_MIN_WIDTH = 250;
-            private final static int MW_WINDOW_MIN_HEIGHT = 180;
-
             public int mLastDx = 0;
             public int mLastDy = 0;
             protected Rect mTmpFrame = new Rect();

@@ -84,6 +84,7 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ScrollBarDrawable;
 import android.widget.WindowDecorView;
 
@@ -17716,6 +17717,37 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
                                        / (float) measuredWidth);
             }
+        } else if ((this instanceof SurfaceView)
+                   && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
+                   && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+            int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                      - decor.getWindowHeaderPadding();
+            if (mRatio <= 0.0f) {
+                mRatio = (float) measuredWidth / (float) measuredHeight;
+            }
+            if (h <  measuredHeight) {
+                measuredWidth = (int) ((float) h * mRatio);
+                measuredHeight = h;
+            }
+            if (measuredWidth > w) {
+                measuredWidth = w;
+            }
+            measuredHeight = (int) ((float) measuredWidth / mRatio);
+        } else if (blacklistIdForMeasure()
+                   && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
+                   && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+            int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                      - decor.getWindowHeaderPadding();
+            if (measuredHeight > h) {
+                measuredHeight = h;
+            }
+            if (measuredWidth > w) {
+                measuredWidth = w;
+            }
         }
 
         if (getViewRootImpl() != null) {
@@ -17731,6 +17763,16 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         mMeasuredHeight = measuredHeight;
 
         mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;
+    }
+
+    private boolean blacklistIdForMeasure() {
+        int id = getId();
+        if ((id == NO_ID) || (mResources == null) || !Resources.resourceHasPackage(id)
+            || ((id & 0xff000000) != 0x7f000000)) {
+            return false;
+        }
+        return (this instanceof FrameLayout)
+               && (mResources.getResourceEntryName(id).compareTo("player_surface_frame") == 0);
     }
 
     protected void setMayMSOfficeFirstSkipView(boolean mayMSOfficeFirstSkipView) {

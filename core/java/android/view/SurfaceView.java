@@ -291,6 +291,12 @@ public class SurfaceView extends View {
                 ? resolveSizeAndState(mRequestedHeight, heightMeasureSpec, 0)
                 : getDefaultSize(0, heightMeasureSpec);
         setMeasuredDimension(width, height);
+        if (mRequestedWidth > getMeasuredWidth()) {
+            mRequestedWidth =  getMeasuredWidth();
+        }
+        if (mRequestedHeight > getMeasuredHeight()) {
+            mRequestedHeight = getMeasuredHeight();
+        }
     }
 
     /** @hide */
