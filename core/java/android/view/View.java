@@ -17717,7 +17717,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
                                        / (float) measuredWidth);
             }
-        } else if ((this instanceof SurfaceView)
+        } else if ((this instanceof SurfaceView) && isDecorValid()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
@@ -17735,7 +17735,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = w;
             }
             measuredHeight = (int) ((float) measuredWidth / mRatio);
-        } else if (blacklistIdForMeasure()
+        } else if (isDecorValid() && blacklistIdForMeasure()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
@@ -17763,6 +17763,20 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         mMeasuredHeight = measuredHeight;
 
         mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;
+    }
+
+    private boolean isDecorValid() {
+        if (getViewRootImpl() == null) {
+            return false;
+        }
+
+        View decor = getViewRootImpl().getView();
+        if ((decor == null) || !(decor instanceof WindowDecorView)) {
+            return false;
+        }
+
+        return (((WindowDecorView) decor).getWidth() >= WindowManager.MW_WINDOW_MIN_WIDTH)
+               && (((WindowDecorView) decor).getHeight() >= WindowManager.MW_WINDOW_MIN_HEIGHT);
     }
 
     private boolean blacklistIdForMeasure() {
