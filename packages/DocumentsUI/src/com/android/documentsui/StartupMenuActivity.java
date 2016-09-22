@@ -744,18 +744,20 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
                         new String[] { pkgName });
                 cursor.moveToNext();
-                int numbers = cursor.getInt(cursor.getColumnIndex("int"));
-                if(appLabel.toLowerCase().indexOf(mEtext.toLowerCase()) != -1
-                        || TextUtils.isEmpty(mEtext)) {
-                    Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
-                    AppInfo appInfo = new AppInfo();
-                    appInfo.setAppLabel(appLabel);
-                    appInfo.setPkgName(pkgName);
-                    appInfo.setDate(systemDate);
-                    appInfo.setAppIcon(icon);
-                    appInfo.setNumber(numbers);
-                    appInfo.setIntent(intent);
-                    mlistAppInfo.add(appInfo);
+                if (cursor.moveToFirst()) {
+                    int numbers = cursor.getInt(cursor.getColumnIndex("int"));
+                    if (appLabel.toLowerCase().indexOf(mEtext.toLowerCase()) != -1
+                            || TextUtils.isEmpty(mEtext)) {
+                        Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
+                        AppInfo appInfo = new AppInfo();
+                        appInfo.setAppLabel(appLabel);
+                        appInfo.setPkgName(pkgName);
+                        appInfo.setDate(systemDate);
+                        appInfo.setAppIcon(icon);
+                        appInfo.setNumber(numbers);
+                        appInfo.setIntent(intent);
+                        mlistAppInfo.add(appInfo);
+                    }
                 }
             }
         }
