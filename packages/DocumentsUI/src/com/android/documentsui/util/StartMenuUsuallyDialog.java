@@ -30,6 +30,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.android.documentsui.util.MySqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 65;
@@ -151,11 +153,13 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             break;
 
         case R.id.tv_right_phone_usually_run:
-            Toast.makeText(mContext, "phone run: COMING SOON", 0).show();
+            runPhoneMode();
+            addUsedNum();
             dismiss();
             break;
         case R.id.tv_right_desktop_usually_run:
-            Toast.makeText(mContext, "desktop run: COMING SOON", 0).show();
+            runPcMode();
+            addUsedNum();
             dismiss();
             break;
         case R.id.tv_removed_list:
@@ -178,6 +182,59 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         }
     }
 
+    //Method of save used database
+    private void addUsedNum() {
+        String pkgName = "";
+        if (mListType == 0) {
+            pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+        } else {
+            pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+        }
+        Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
+                                     new String[] { pkgName });
+        cursor.moveToNext();
+        int numbers = cursor.getInt(cursor.getColumnIndex("int"));
+        numbers++;
+        int number = cursor.getInt(cursor.getColumnIndex("click"));
+        number++;
+        ContentValues values = new ContentValues();
+        values.put("int", numbers);
+        values.put("click", number);
+        mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+        SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
+                                                             Context.MODE_PRIVATE);
+        Editor editor = sharedPreference.edit();
+        editor.clear();
+        editor.putInt("isClick", 1);
+        editor.commit();
+    }
+
+    //Method of run pc mode
+    private void runPcMode() {
+        Intent intent;
+        if (mListType == 0) {
+            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        } else {
+            intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
+
+    //Method of run phone mode
+    private void runPhoneMode() {
+        Intent intent;
+        if (mListType == 0) {
+            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        } else {
+            intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mContext.startActivity(intent);
+    }
+
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
         public boolean onHover(View v, MotionEvent event) {
             int action = event.getAction();
@@ -192,5 +249,4 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             return false;
         }
     };
-
 }
