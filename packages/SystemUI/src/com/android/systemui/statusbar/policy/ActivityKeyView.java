@@ -255,6 +255,7 @@ public class ActivityKeyView extends ImageView {
 
     public void resizeStack(){
         if(mActivity.mHiden){
+            openAppBroadcast(mContext);
             try {
                 ActivityManagerNative.getDefault().relayoutWindow(mActivity.mStackId,
                                                                   mActivity.mRestoreRect);
@@ -271,9 +272,17 @@ public class ActivityKeyView extends ImageView {
             lanuch = manager.getLaunchIntentForPackage(mActivity.mPkgName);
             lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(lanuch);
+            openAppBroadcast(mContext);
         } catch(Exception exc) {
         }
     }
+
+    public void openAppBroadcast(Context context) {
+        Intent openAppIntent = new Intent();
+        openAppIntent.setAction(Intent.ACTION_OPEN_APPLICATION);
+        context.sendBroadcast(openAppIntent);
+    }
+
     //send broadCast; Matthew
     public void sendBroadcastMethod() {
         Intent intent = new Intent();

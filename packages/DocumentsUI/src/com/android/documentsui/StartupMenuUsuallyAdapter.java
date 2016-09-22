@@ -88,6 +88,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                                                             .get(position).getIntent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
+                        StartupMenuAdapter.openAppBroadcast(mContext);
                         Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                                 new String[] { pkgName });
                         c.moveToNext();

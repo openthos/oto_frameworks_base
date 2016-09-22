@@ -33,6 +33,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import com.android.documentsui.StartupMenuAdapter;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
@@ -143,7 +144,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
-
+            StartupMenuAdapter.openAppBroadcast(mContext);
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                                     new String[] { mPkgName });
             c.moveToNext();

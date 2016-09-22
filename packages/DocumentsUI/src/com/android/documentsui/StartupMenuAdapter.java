@@ -96,6 +96,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                     Intent intent = StartupMenuActivity.mlistAppInfo.get(position).getIntent();
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(intent);
+                    openAppBroadcast(mContext);
                     Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                                             new String[] { pkgName });
                     c.moveToNext();
@@ -134,6 +135,12 @@ public class StartupMenuAdapter extends BaseAdapter {
             });
         view.setOnHoverListener(hoverListener);
         return view;
+    }
+
+    public static void openAppBroadcast(Context context) {
+        Intent openAppIntent = new Intent();
+        openAppIntent.setAction(Intent.ACTION_OPEN_APPLICATION);
+        context.sendBroadcast(openAppIntent);
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {

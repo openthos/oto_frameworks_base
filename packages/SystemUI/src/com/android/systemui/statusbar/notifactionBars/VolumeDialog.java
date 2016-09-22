@@ -31,6 +31,7 @@ public class VolumeDialog extends BaseSettingDialog implements SeekBar.OnSeekBar
                                                                           Context.AUDIO_SERVICE);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
                                          progress, AudioManager.FLAG_PLAY_SOUND );
+            mediaVolume.setProgress(progress);
             if (progress > 0) {
                 volView.setImageDrawable(mContext.getDrawable(
                                                       android.R.drawable.ic_lock_silent_mode_off));

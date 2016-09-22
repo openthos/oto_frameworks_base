@@ -231,6 +231,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                      = new IntentFilter(Intent.STATUS_BAR_SHOW_SUGGEST);
     private IntentFilter mAppChangeStatusBarPowerSleepFilter
                      = new IntentFilter(Intent.STATUS_BAR_POWER_SLEEP);
+    private IntentFilter mAppMaxFilter = new IntentFilter(Intent.ACTION_OPEN_APPLICATION);
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_HIDE.equals(intent.getAction())) {
@@ -1360,6 +1361,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 mTreeMap.clear();
             } else {
+                mTreeMap.clear();
                 for (int id : stackIdList) {
                     try {
                         mWindowManager.getStackBounds(id, actualWindowSize);
@@ -1386,6 +1388,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             Slog.w(TAG, "No activity to handle assist action.", e);
         }
     }
+
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_OPEN_APPLICATION)) {
+                mIsMini = false;
+            }
+        }
+    };
 
     void startActionCenterManager() {
         Log.e("com", "ActionCenter: COMING SOON.");
@@ -1531,6 +1542,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                   this.mAppChangeStatusBarFinishMarklessFilter);
         mContext.registerReceiver(this.mAppChangeStatusBarPowerSleepReceiver,
                                   this.mAppChangeStatusBarPowerSleepFilter);
+        mContext.registerReceiver(mBroadcastReceiver, mAppMaxFilter);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
         mWindowManagerInternal = LocalServices.getService(WindowManagerInternal.class);
