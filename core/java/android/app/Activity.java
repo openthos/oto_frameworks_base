@@ -5926,8 +5926,7 @@ public class Activity extends ContextThemeWrapper
         if ((mIntent != null) &&
                 (((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) ||
                  ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) ||
-                 ((mIntent.getFlags() & Intent.FLAG_RUN_FULLSCREEN) != 0) ||
-                 ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) != 0))) {
+                 ((mIntent.getFlags() & Intent.FLAG_RUN_FULLSCREEN) != 0))) {
             return -1;
         }
         try {
@@ -5951,6 +5950,36 @@ public class Activity extends ContextThemeWrapper
     private void setWindowAttributes() {
         mWindow.setTaskId(getTaskId());
         mWindow.setStackId(getStackId());
+        mWindow.setShadow(isNeedShadow());
+        mWindow.setHeader(isNeedHeader());
+        mWindow.setOuterBorder(isNeedOuterBorder());
+    }
+
+    private boolean isNeedShadow() {
+       if ((mIntent != null) &&
+            ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) != 0)) {
+           return false;
+       } else {
+           return true;
+       }
+    }
+
+    private boolean isNeedHeader() {
+       if ((mIntent != null) &&
+            ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) != 0)) {
+           return false;
+       } else {
+           return true;
+       }
+    }
+
+    private boolean isNeedOuterBorder() {
+       if ((mIntent != null) &&
+            ((mIntent.getFlags() & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) != 0)) {
+           return false;
+       } else {
+           return true;
+       }
     }
 
     final void attach(Context context, ActivityThread aThread,

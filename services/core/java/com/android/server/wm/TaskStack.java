@@ -108,16 +108,16 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                 mBounds.right, mBounds.bottom);
     }
 
-    private boolean isOnBorder(int x, int y) {
-        return (x <= mMultiWindow.mFramePadding) || (y <= mMultiWindow.mFramePadding)
-               || (x >= (mBounds.width() - mMultiWindow.mFramePadding))
-               || (y >= (mBounds.height() - mMultiWindow.mFramePadding));
+    private boolean isOnFrame(int x, int y) {
+        return (x <= mMultiWindow.getFramePadding()) || (y <= mMultiWindow.getTopFramePadding())
+               || (x >= (mBounds.width() - mMultiWindow.getFramePadding()))
+               || (y >= (mBounds.height() - mMultiWindow.getFramePadding()));
     }
 
     private boolean isOnHeader(int x, int y) {
-        return (x > mMultiWindow.mFramePadding) && (y > mMultiWindow.mFramePadding)
-               && (x < (mBounds.width() - mMultiWindow.mFramePadding))
-               && (y < (mMultiWindow.mFramePadding + mMultiWindow.mHeaderHeight));
+        return (x > mMultiWindow.getFramePadding()) && (y > mMultiWindow.getTopFramePadding())
+               && (x < (mBounds.width() - mMultiWindow.getFramePadding()))
+               && (y < (mMultiWindow.getTopFramePadding() + mMultiWindow.mHeaderHeight));
     }
 
     private boolean isOnRect(Rect rect, int x, int y) {
@@ -158,7 +158,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         switch (what) {
             case MotionEvent.ACTION_DOWN:
                 mCurrentWindow = null;
-                if (isOnBorder(x, y)) {
+                if (isOnFrame(x, y)) {
                     mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
                                                mBounds, mResizeWindow);
                     mCurrentWindow = mResizeWindow;
@@ -187,7 +187,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                     mCurrentWindow = null;
                     break;
                 }
-                if (isOnBorder(x, y)) {
+                if (isOnFrame(x, y)) {
                     ; // Skip, at present.
                 } else if (isOnHeader(x, y)) {
                     int w = mBounds.width();
@@ -245,7 +245,10 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         mMultiWindow.mStackId = mStackId;
         mMultiWindow.mCallback = this;
 
-        mMultiWindow.mFramePadding = mw.mFramePadding;
+        mMultiWindow.mShadowPadding = mw.mShadowPadding;
+        mMultiWindow.mTopShadowPadding = mw.mTopShadowPadding;
+        mMultiWindow.mBorderPadding = mw.mBorderPadding;
+        mMultiWindow.mTopBorderPadding = mw.mTopBorderPadding;
         mMultiWindow.mHeaderHeight = mw.mHeaderHeight;
 
         mMultiWindow.mBack.set(mw.mBack);

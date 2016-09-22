@@ -2071,8 +2071,10 @@ public interface WindowManager extends ViewManager {
 
         public int mStackId = -1;
 
-        public int mFramePadding = 0;
-        public int mFrameTopPadding = 0;
+        public int mBorderPadding = 0;
+        public int mTopBorderPadding = 0;
+        public int mShadowPadding = 0;
+        public int mTopShadowPadding = 0;
         public int mHeaderHeight = 0;
 
         public Rect  mBack;
@@ -2086,6 +2088,9 @@ public interface WindowManager extends ViewManager {
         public Rect mRightDockFrame;
 
         public Callback mCallback;
+        public boolean mShadow;
+        public boolean mHeader;
+        public boolean mOuterBorder;
         private int mResizeWays = MW_WINDOW_RESIZE_NONE;
 
         private long mLastMilliSeconds = 0;
@@ -2138,6 +2143,9 @@ public interface WindowManager extends ViewManager {
             mMin = new AlignRight();
             mMax = new AlignRight();
             mClose = new AlignRight();
+            mShadow = true;
+            mHeader = true;
+            mOuterBorder = true;
 
             if (context != null) {
                 final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -2158,8 +2166,10 @@ public interface WindowManager extends ViewManager {
 
         public void writeToParcel(Parcel out, int flags) {
             out.writeInt(mStackId);
-            out.writeInt(mFramePadding);
-            out.writeInt(mFrameTopPadding);
+            out.writeInt(mBorderPadding);
+            out.writeInt(mTopBorderPadding);
+            out.writeInt(mShadowPadding);
+            out.writeInt(mTopShadowPadding);
             out.writeInt(mHeaderHeight);
             out.writeInt(mBack.left);
             out.writeInt(mBack.top);
@@ -2193,12 +2203,17 @@ public interface WindowManager extends ViewManager {
             out.writeInt(mRightDockFrame.top);
             out.writeInt(mRightDockFrame.right);
             out.writeInt(mRightDockFrame.bottom);
+            out.writeInt((mShadow == true ? 1:0));
+            out.writeInt((mHeader == true ? 1:0));
+            out.writeInt((mOuterBorder == true ? 1:0));
         }
 
         public void readFromParcel(Parcel in) {
             mStackId = in.readInt();
-            mFramePadding = in.readInt();
-            mFrameTopPadding = in.readInt();
+            mBorderPadding = in.readInt();
+            mTopBorderPadding = in.readInt();
+            mShadowPadding = in.readInt();
+            mTopShadowPadding = in.readInt();
             mHeaderHeight = in.readInt();
             mBack.left = in.readInt();
             mBack.top = in.readInt();
@@ -2232,16 +2247,28 @@ public interface WindowManager extends ViewManager {
             mRightDockFrame.top = in.readInt();
             mRightDockFrame.right = in.readInt();
             mRightDockFrame.bottom = in.readInt();
+            mShadow = (in.readInt() == 1) ? true:false;
+            mHeader = (in.readInt() == 1) ? true:false;
+            mOuterBorder = (in.readInt() == 1) ? true:false;
         }
 
         public String toString() {
-            return "padding: " + mFramePadding + "; height " + mHeaderHeight + ";  back: "
+            return "padding: " + getFramePadding() + "; height " + mHeaderHeight + ";  back: "
                    + mBack + ";  min: " + mMin.mOffRight + ", " + mMin.mOffTop + " - " + mMin.mWidth
                    + ", " + mMin.mHeight + ";  max: " + mMax.mOffRight + ", " + mMax.mOffTop
                    + " - " + mMax.mWidth + ", " + mMax.mHeight + ";  close: " + mClose.mOffRight
                    + ", " + mClose.mOffTop + " - " + mClose.mWidth + ", " + mClose.mHeight
                    + "; full: " + mFullScreen + "; left: " + mLeftDockFrame + "; right: "
-                   + mRightDockFrame + "; old: " + mOldSize + ";  top padding: " + mFrameTopPadding;
+                   + mRightDockFrame + "; old: " + mOldSize + ";  top padding: "
+                   + getTopFramePadding();
+        }
+
+        public int getFramePadding() {
+            return mShadowPadding + mBorderPadding;
+        }
+
+        public int getTopFramePadding() {
+            return mTopShadowPadding + mTopBorderPadding;
         }
 
         public Rect toggleFullScreen(Rect frame) {
@@ -2286,12 +2313,13 @@ public interface WindowManager extends ViewManager {
         }
 
         public void updateScreenFrame(DisplayMetrics m) {
-            mFullScreen.set(0 - mFramePadding, 0 - mFrameTopPadding, m.widthPixels + mFramePadding,
-                            m.heightPixels + mFramePadding);
+            mFullScreen.set(0 - getFramePadding(), 0 - getTopFramePadding(),
+                            m.widthPixels + getFramePadding(), m.heightPixels + getFramePadding());
             mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
-                               mFullScreen.right / 2 - mFramePadding- MW_WINDOW_RESIZE_LINE_WIDTH,
+                               mFullScreen.right / 2 - getFramePadding()
+                                                     - MW_WINDOW_RESIZE_LINE_WIDTH,
                                mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
-            mRightDockFrame.set(mFullScreen.right / 2 - mFramePadding, mFullScreen.top,
+            mRightDockFrame.set(mFullScreen.right / 2 - getFramePadding(), mFullScreen.top,
                                 mFullScreen.right - MW_WINDOW_RESIZE_LINE_WIDTH,
                                 mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
         }
@@ -2306,8 +2334,8 @@ public interface WindowManager extends ViewManager {
         }
 
         private int getResizeWaysInternal(Rect frame, int x, int y) {
-            int padding = (mFramePadding < MW_WINDOW_RESIZE_PADDING_MIN)
-                          ? MW_WINDOW_RESIZE_PADDING_MIN : mFramePadding;
+            int padding = (getFramePadding() < MW_WINDOW_RESIZE_PADDING_MIN)
+                          ? MW_WINDOW_RESIZE_PADDING_MIN : getFramePadding();
 
             if (frame.equals(mFullScreen)) {
                 return MW_WINDOW_RESIZE_NONE;
@@ -2382,8 +2410,10 @@ public interface WindowManager extends ViewManager {
         }
 
         public void sendNewFrame(int flags) {
-            sendFrame(flags, mNewFrame.left + mFramePadding, mNewFrame.top + mFrameTopPadding,
-                      mNewFrame.right - mFramePadding, mNewFrame.bottom - mFramePadding);
+            sendFrame(flags, mNewFrame.left + getFramePadding(),
+                      mNewFrame.top + getTopFramePadding(),
+                      mNewFrame.right - getFramePadding(),
+                      mNewFrame.bottom - getFramePadding());
         }
 
         public static class ResizeWindow {
@@ -2567,10 +2597,10 @@ public interface WindowManager extends ViewManager {
                 Rect r = resizeWindow.resize(mFrame, dx, dy, mResizeWays);
                 if (fitWindowInScreen(r)) {
                     // fullscreen.left + padding is the left screen real border.
-                    if (x <= mFullScreen.left + 2 * mFramePadding) {
+                    if (x <= mFullScreen.left + 2 * getFramePadding()) {
                         mNewFrame = mLeftDockFrame;
                     // fullscreen.right - padding is the right screen real border.
-                    } else if (x >= mFullScreen.right - 2 * mFramePadding) {
+                    } else if (x >= mFullScreen.right - 2 * getFramePadding()) {
                         mNewFrame = mRightDockFrame;
                     } else {
                         if ((mNewFrame == mLeftDockFrame) || (mNewFrame == mRightDockFrame)) {

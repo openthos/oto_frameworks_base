@@ -94,6 +94,7 @@ import android.service.voice.IVoiceInteractionSession;
 import android.util.ArraySet;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
+import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
 
@@ -181,6 +182,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
                                         = "com.android.systemui/.recents.RecentsActivity";
     private final static String SINGLEWINDOW_ACTIVITY_RESOLVER
                                         = "android/com.android.internal.app.ResolverActivity";
+    private final static String PACKAGENAME_WPS_POWER_POINT
+                                        = "cn.wps.moffice.presentation.multiactivity.Presentation";
+    private final static int PACKAGENAME_POWERPOINT_CUTOUT_LENGTH = 54;
 
     private static final String LOCK_TASK_TAG = "Lock-to-App";
 
@@ -1633,7 +1637,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
                 r.intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
             }
-
+            if (r.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
+                if (r.info.name.substring(0, PACKAGENAME_POWERPOINT_CUTOUT_LENGTH).equals(
+                                                             PACKAGENAME_WPS_POWER_POINT)) {
+                    r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                    hideStatusbarBroadcast();
+                } else {
+                    showStatusbarBroadcast();
+                }
+            } else {
+                showStatusbarBroadcast();
+            }
             intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
             boolean isMultiwindow = (intentFlags & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) != 0;
             boolean runFullScreen = (intentFlags
@@ -1792,6 +1806,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         mLastFocusedStack = mFocusedStack;
                         mFocusedStack = stack;
                         mService.setFocusedStatusbarActivity(stack.mStackId);
+                        setFocusedTotalFullScreen(stack.topTask());
                         if (findMenu == true) {
                             return;
                         }
@@ -1804,6 +1819,36 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         }
                         findMenu = true;
                     }
+                }
+            }
+        }
+    }
+
+    void hideStatusbarBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_HIDE);
+        mService.mContext.sendBroadcast(intent);
+    }
+
+    void showStatusbarBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_SHOW);
+        mService.mContext.sendBroadcast(intent);
+    }
+
+    void setFocusedTotalFullScreen(TaskRecord currentTask) {
+        if (currentTask != null) {
+            ActivityRecord currentActivity = currentTask.getTopActivity();
+            if (currentActivity != null) {
+                if (currentActivity.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
+                    if (currentActivity.info.name.substring(0, PACKAGENAME_POWERPOINT_CUTOUT_LENGTH)
+                                                    .equals(PACKAGENAME_WPS_POWER_POINT)) {
+                        hideStatusbarBroadcast();
+                    } else {
+                        showStatusbarBroadcast();
+                    }
+                } else {
+                    showStatusbarBroadcast();
                 }
             }
         }

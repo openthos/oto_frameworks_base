@@ -130,6 +130,9 @@ public class TaskSwitchAdapter extends BaseAdapter {
                     if (ActivityManagerNative.getDefault().isInHomeStack(taskInfo.info.id)) {
                         ((InputManager)mc.getSystemService(Context.INPUT_SERVICE))
                                               .sendKeyEvent(KeyEvent.KEYCODE_CUSTOMIZE_HOME);
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.STATUS_BAR_SHOW);
+                        mc.sendBroadcast(intent);
                     } else {
                         ActivityManagerNative.getDefault().focusRecentStack(stackId);
                     }

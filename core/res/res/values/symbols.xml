@@ -2181,6 +2181,7 @@
   <java-symbol type="id" name="mwLaunchBtn" />
   <java-symbol type="id" name="mwMaximizeBtn" />
   <java-symbol type="id" name="mwMinimizeBtn" />
+  <java-symbol type="id" name="mw_shadow" />
   <java-symbol type="id" name="mw_decor_header" />
   <java-symbol type="id" name="mw_cover_view" />
   <java-symbol type="id" name="mw_dialog_header" />
