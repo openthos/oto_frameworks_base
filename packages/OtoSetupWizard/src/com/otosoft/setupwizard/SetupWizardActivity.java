@@ -21,7 +21,6 @@ import com.android.internal.app.LocalePicker;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.TimeZone;
 
 public class SetupWizardActivity extends BaseActivity {
     private TextView mNext;
@@ -34,7 +33,6 @@ public class SetupWizardActivity extends BaseActivity {
     private static final String CHINA_TIME_ZONE = "GMT+8:00";
     private int noSelectedBg;
     private int selectedBg;
-    private TimeZone defualtTimeZone;
     private final Runnable mRequestFocus = new Runnable() {
         public void run() {
             if (SetupWizardActivity.this.mNext != null) {
@@ -63,9 +61,8 @@ public class SetupWizardActivity extends BaseActivity {
         Settings.System.putInt(getContentResolver(),
                 android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);
         //set default timezone
-        defualtTimeZone = TimeZone.getTimeZone(CHINA_TIME_ZONE);
         final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setTimeZone(defualtTimeZone.getID());
+        alarm.setTimeZone("Asia/Shanghai"); // TODO: need a time zone picker page.
         //set time 24 hour
         Settings.System.putString(getContentResolver(), Settings.System.TIME_12_24, HOURS_24);
         this.mChinese = (TextView) findViewById(R.id.tv_chinese);
