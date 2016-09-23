@@ -64,6 +64,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_TOGIC_LIVEVIDEO = "com.togic.livevideo";
     public static final String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
     public static final String APPNAME_TAOBAO_APAD = "com.taobao.apad";
+    public static final String APPNAME_EMINDSOFT_OPENTHOS = "cn.com.emindsoft.openthos";
 
     public static final String APPNAME_KINGSOFT_EMAIL = "com.kingsoft.email";
     public static final String APPNAME_ANDROID_EMAIL = "com.android.email";
@@ -86,6 +87,9 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_NETEASE_CLOUDMUSIC = "com.netease.cloudmusic";
     public static final String APPNAME_WANDOUJIA_PHOENIX = "com.wandoujia.phoenix2";
     public static final String APPNAME_JINGDONG_APP_MALL = "com.jingdong.app.mall";
+    public static final String APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT
+                                                  = "com.github.openthos.printer.localprint";
+    public static final String APPNAME_EMINDSOFT_EMINDSTORE = "cn.com.emindsoft.emindstore";
 
     /**
      * Default task affinity of all activities in this application. See 
@@ -667,6 +671,9 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_NETEASE_CLOUDMUSIC) == 0)
                                      || (pkgName.compareTo(APPNAME_WANDOUJIA_PHOENIX) == 0)
                                      || (pkgName.compareTo(APPNAME_JINGDONG_APP_MALL) == 0)
+                                     || (pkgName.compareTo
+                                        (APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT) == 0)
+                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
 
     }
@@ -691,6 +698,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_TOGIC_LIVEVIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
+                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
