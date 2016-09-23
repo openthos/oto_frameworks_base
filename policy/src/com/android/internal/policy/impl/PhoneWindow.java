@@ -3581,15 +3581,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     private class TouchListener implements OnTouchListener {
 
         private WindowManager.MultiWindow.ResizeWindow mResizeWindow;
+        private boolean mSupportDouble;
 
-        public TouchListener(WindowManager.MultiWindow.ResizeWindow rw) {
+        public TouchListener(WindowManager.MultiWindow.ResizeWindow rw, boolean supportDouble) {
             mResizeWindow = rw;
+            mSupportDouble = supportDouble;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             Rect ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
-                                     (int) event.getRawY(),  getActivityFrame(), mResizeWindow);
+                                     (int) event.getRawY(),  getActivityFrame(),
+                                     mResizeWindow, mSupportDouble);
             if(ret != null) {
                 syncFrame(ret);
             }
@@ -3831,9 +3834,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             mOuterBorder.setOnHoverListener(new HoverListener());
             mOuterBorder.setOnTouchListener(new TouchListener(
-                                                    new WindowManager.MultiWindow.ResizeWindow()));
+                                             new WindowManager.MultiWindow.ResizeWindow(), false));
             mHeader.setOnTouchListener(new TouchListener(
-                                                    new WindowManager.MultiWindow.MoveWindow()));
+                                             new WindowManager.MultiWindow.MoveWindow(), true));
 
             mCloseBtn.setOnClickListener(new OnClickListener() {
                 @Override

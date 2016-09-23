@@ -2562,13 +2562,13 @@ public interface WindowManager extends ViewManager {
             return mResizeWays != MW_WINDOW_RESIZE_NONE;
         }
 
-        public Rect onTouchWindow(int what, int x, int y, Rect frame, ResizeWindow resizeWindow) {
-
+        public Rect onTouchWindow(int what, int x, int y, Rect frame,
+                                      ResizeWindow resizeWindow, boolean supportDouble) {
             if ((frame == null) || (frame.width() <= 0) || (frame.height() <= 0)) {
                 return null;
             }
 
-            if (onDoubleClick(what, x, y, frame)) {
+            if (supportDouble && onDoubleClick(what, x, y, frame)) {
                 return mFrame;
             }
 

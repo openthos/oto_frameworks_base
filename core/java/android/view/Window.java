@@ -2095,8 +2095,9 @@ public abstract class Window {
     }
 
     public Rect onTouchWindow(int what, int x, int y, Rect frame,
-                              WindowManager.MultiWindow.ResizeWindow resizeWindow) {
-        return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow);
+                              WindowManager.MultiWindow.ResizeWindow resizeWindow,
+                              boolean supportDouble) {
+        return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow, supportDouble);
     }
 
     public abstract void showCover(boolean show);

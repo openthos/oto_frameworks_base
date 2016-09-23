@@ -160,7 +160,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                 mCurrentWindow = null;
                 if (isOnFrame(x, y)) {
                     mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
-                                               mBounds, mResizeWindow);
+                                               mBounds, mResizeWindow, false);
                     mCurrentWindow = mResizeWindow;
                 } else if (isOnHeader(x, y)) {
                     int w = mBounds.width();
@@ -169,7 +169,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                         && !isOnRect(mMultiWindow.mMax.toRect(w, mTmpRect), x, y)
                         && !isOnRect(mMultiWindow.mClose.toRect(w, mTmpRect), x, y)) {
                         mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
-                                                   mBounds, mMoveWindow);
+                                                   mBounds, mMoveWindow, true);
                         mCurrentWindow = mMoveWindow;
                     }
                 }
@@ -177,13 +177,13 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
             case MotionEvent.ACTION_MOVE:
                 if (mCurrentWindow != null) {
                     mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
-                                               mBounds, mCurrentWindow);
+                                            mBounds, mCurrentWindow, mCurrentWindow == mMoveWindow);
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if (mCurrentWindow != null) {
                     mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
-                                               mBounds, mCurrentWindow);
+                                            mBounds, mCurrentWindow, mCurrentWindow == mMoveWindow);
                     mCurrentWindow = null;
                     break;
                 }
