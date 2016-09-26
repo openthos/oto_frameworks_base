@@ -91,6 +91,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                                   = "com.github.openthos.printer.localprint";
     public static final String APPNAME_EMINDSOFT_EMINDSTORE = "cn.com.emindsoft.emindstore";
 
+    public static final String APPNAME_TOGIC_VIDEO = "com.togic.livevideo";
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 

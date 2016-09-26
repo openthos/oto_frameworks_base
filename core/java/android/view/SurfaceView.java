@@ -19,9 +19,11 @@ package android.view;
 import com.android.internal.view.BaseIWindow;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.CompatibilityInfo.Translator;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
@@ -334,6 +336,17 @@ public class SurfaceView extends View {
         return opaque;
     }
 
+    private void refreshSurfaceBackground() {
+        Canvas c = mSurfaceHolder.lockCanvas();
+        if (c == null) {
+            return;
+        }
+        c.save();
+        c.drawColor(Color.BLACK, PorterDuff.Mode.SRC);
+        c.restore();
+        mSurfaceHolder.unlockCanvasAndPost(c);
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if (mWindowType != WindowManager.LayoutParams.TYPE_APPLICATION_PANEL) {
@@ -598,6 +611,10 @@ public class SurfaceView extends View {
                             }
                         }
                         if (redrawNeeded) {
+                            if (getContext().getApplicationInfo().packageName.compareTo(
+                                                        ApplicationInfo.APPNAME_TOGIC_VIDEO) == 0) {
+                                refreshSurfaceBackground();
+                            }
                             if (DEBUG) Log.i(TAG, "surfaceRedrawNeeded");
                             if (callbacks == null) {
                                 callbacks = getSurfaceCallbacks();
