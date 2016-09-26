@@ -61,7 +61,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
     public static final String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
     public static final String APPNAME_DUOWAN_PAD = "com.duowan.pad";
-    public static final String APPNAME_TOGIC_LIVEVIDEO = "com.togic.livevideo";
     public static final String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
     public static final String APPNAME_TAOBAO_APAD = "com.taobao.apad";
     public static final String APPNAME_EMINDSOFT_OPENTHOS = "cn.com.emindsoft.openthos";
@@ -697,7 +696,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_CYANOGENMOD_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHAOZHUO_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_DUOWAN_PAD) == 0)
-                                     || (pkgName.compareTo(APPNAME_TOGIC_LIVEVIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)

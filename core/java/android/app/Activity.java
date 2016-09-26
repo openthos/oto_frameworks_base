@@ -45,6 +45,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
@@ -3984,6 +3985,12 @@ public class Activity extends ContextThemeWrapper
      */
     @Override
     public void startActivity(Intent intent) {
+        if (getPackageName().equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+            Intent intent1 = new Intent();
+            intent1.setAction(Intent.STATUS_BAR_HIDE);
+            this.sendBroadcast(intent1);
+        }
         this.startActivity(intent, null);
     }
 
