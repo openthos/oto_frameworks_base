@@ -98,7 +98,6 @@
                     android:gravity="left|center_vertical"
                     android:hint="Software search"
                     android:textSize="12sp"
-                    android:maxLength="10"
                     android:minLines="1"
                     android:textCursorDrawable="@null"
                     android:background="#ffffff"

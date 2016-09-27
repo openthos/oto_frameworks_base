@@ -178,6 +178,7 @@ public final class WifiDialog extends BaseSettingDialog {
             }
         });
         netList = new ArrayList<>();
+        createNetList();
         mNetInfoAdapter = new NetInfoAdapter(netList);
         netListView.setAdapter(mNetInfoAdapter);
         container.addView(netListView);

@@ -99,6 +99,7 @@ import android.os.Bundle;
 
 import java.util.Comparator;
 import java.text.Collator;
+import java.io.UnsupportedEncodingException;
 
 public class StartupMenuActivity extends Activity implements OnClickListener,
                  OnEditorActionListener, View.OnHoverListener {
@@ -106,6 +107,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_ALL_APP = 1;
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
+        public static final int EDITTEXT_LENGTH_MAX = 10;
 
         public static StartMenuDialog mStartMenuDialog;
         public static StartMenuUsuallyDialog mStartMenuUsuallyDialog;
@@ -157,6 +159,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private int mGetValueFlag = 1;
         private int mGridViewFlag = 2;
         private int mIsClick;
+        private int mStrCount;
         @Override
         protected void onNewIntent(Intent intent) {
             super.onNewIntent(intent);
@@ -509,7 +512,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private TextWatcher watcher = new TextWatcher() {
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mStrCount = before + count;
+                if (mStrCount > EDITTEXT_LENGTH_MAX) {
+                    mEditText.setSelection(mEditText.length());
+                }
+                try {
+                     mStrCount = mEditText.getText().toString().getBytes("GBK").length;
+                } catch (UnsupportedEncodingException e) {
+                     e.printStackTrace();
+                }
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
@@ -528,6 +541,22 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                                                            mlistAppInfo ,isCheckedMap);
                 gv_view.setAdapter(mBrowseAppAdapter);
+                if (mStrCount > EDITTEXT_LENGTH_MAX) {
+                    CharSequence subSequence = null;
+                    for (int i = 0; i < s.length(); i++) {
+                        subSequence = s.subSequence(0, i);
+                        try {
+                            if (subSequence.toString().getBytes("GBK").length == mStrCount) {
+                                mEditText.setText(subSequence.toString());
+                                break;
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    mEditText.setText(subSequence.toString());
+                }
+
             }
         };
 
