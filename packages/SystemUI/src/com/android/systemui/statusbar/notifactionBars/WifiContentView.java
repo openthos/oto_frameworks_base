@@ -17,12 +17,10 @@
 package com.android.systemui.statusbar.notifactionBars;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
-import android.provider.Settings;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
@@ -44,8 +42,12 @@ public class WifiContentView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            mBar.mContext.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS)
-                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName ("com.android.settings",
+                                                    "com.android.settings.wifi.WifiSettings");
+            intent.setComponent(comp);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mBar.mContext.startActivity(intent);
         }
         return true;
     }
