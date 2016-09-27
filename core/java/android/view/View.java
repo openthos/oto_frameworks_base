@@ -17748,6 +17748,25 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             if (measuredWidth > w) {
                 measuredWidth = w;
             }
+
+            if (this instanceof FrameLayout) {
+                int width = 0;
+                int height = 0;
+                for (int i = 0; i < ((ViewGroup) this).getChildCount(); i++) {
+                    View child = ((ViewGroup) this).getChildAt(i);
+                    if (child instanceof SurfaceView) {
+                        if (child.getWidth() > width) {
+                            width = child.getWidth();
+                        }
+                        if (child.getHeight() > height) {
+                            height = child.getHeight();
+                        }
+                    }
+                }
+                int padW = (width == 0) ? 0 : (measuredWidth - width) / 2;
+                int padH = (height == 0) ? 0 : (measuredHeight - height) / 2;
+                setPadding(padW, padH, padW, padH);
+            }
         }
 
         if (getViewRootImpl() != null) {
