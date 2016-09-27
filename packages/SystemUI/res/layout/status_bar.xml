@@ -48,7 +48,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_vertical">
 
-        <com.android.systemui.statusbar.policy.KeyButtonView
+        <ImageView
             android:id="@+id/status_bar_startup_menu"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="4dp"
@@ -56,11 +56,8 @@
             android:layout_height="@dimen/status_bar_icon_size_big"
             android:layout_marginStart="2dip"
             android:layout_marginBottom="2dip"
-            android:background="@drawable/tasker_app_getfocus"
             android:src="@drawable/ic_sysbar_menu"
             android:scaleType="centerInside"
-            systemui:keyCode="2000000"
-            systemui:keyRepeat="true"
             />
         <HorizontalScrollView
             android:id="@+id/status_bar_scroll_view"

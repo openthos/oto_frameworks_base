@@ -193,6 +193,7 @@ import com.android.systemui.statusbar.notificationbars.CalendarDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
 import com.android.systemui.statusbar.notificationbars.BatteryDialog;
+import android.content.ComponentName;
 
 import java.io.IOException;
 import java.io.FileDescriptor;
@@ -304,7 +305,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
     private PointF mScreenOnTouchLocation;
-    private KeyButtonView mStartupMenu;
+    private ImageView mStartupMenu;
     private KeyButtonView mActionButton;
     private KeyButtonView mInputButton;
     private KeyButtonView mBatteryButton;
@@ -946,7 +947,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         resetUserSetupObserver();
 
         startGlyphRasterizeHack();
-        // mStartupMenu = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
+        mStartupMenu = (ImageView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
         mActionButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_action_center);
         mInputButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_input_method);
         mBatteryButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_battery);
@@ -964,6 +965,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         lp.gravity = Gravity.BOTTOM;
         lp.y = 0;
         window.setAttributes(lp);
+        mStartupMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.android.documentsui",
+                                    "com.android.documentsui.StartupMenuActivity"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                 | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU
+                                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                mContext.startActivity(intent);
+                dismissSystemDilog();
+            }
+        });
+
         // mStartupMenu.setOnHoverListener(startupMenuListener);
         mActionButton.setOnHoverListener(hoverListeners);
         mInputButton.setOnHoverListener(hoverListeners);
@@ -1337,6 +1352,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     protected void  showHomePanelWork() {
         super.showHomePanelWork();
+        dismissSystemDilog();
+    }
+
+    private void dismissSystemDilog() {
         dismisTargetDialog(mBatteryPopupWindow);
         dismisTargetDialog(mBatteryPopupWindow);
         dismisTargetDialog(mWifiPopupWindow);

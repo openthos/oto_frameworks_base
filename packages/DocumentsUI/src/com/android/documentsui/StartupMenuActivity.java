@@ -129,6 +129,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private int CLICKS = 0;
         private boolean mListViewOpen = false;
         private boolean mIsHasReayDb;
+        private static boolean mFocus;
         private String mEtext;
 
         private GridView gv_view;
@@ -234,6 +235,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             // selectAppShow();
             LinearLayout ll = (LinearLayout) findViewById(R.id.ll_layout);
             ll.setOnHoverListener(this);
+            mFocus = false;
         }
 
         @Override
@@ -634,6 +636,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 clickSort();
                 break;
             case R.id.iv_arrow_white:
+                mFocus = true;
                 sortShow();
                 break;
             }
@@ -905,7 +908,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-                killStartupMenu();
+                //killStartupMenu();
+                finish();
             }
 
             // Delegate everything else to Activity.
@@ -919,4 +923,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             super.onSaveInstanceState(outState);
         }
 
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            if (!hasFocus) {
+                if (!mFocus) {
+                    finish();
+                }
+            }
+            super.onWindowFocusChanged(hasFocus);
+        }
+
+        public static void setFocus(boolean hFocus) {
+            mFocus = hFocus;
+        }
 }

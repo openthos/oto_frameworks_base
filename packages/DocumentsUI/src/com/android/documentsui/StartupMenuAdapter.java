@@ -90,6 +90,7 @@ public class StartupMenuAdapter extends BaseAdapter {
             @Override
             public boolean onGenericMotion(View view, MotionEvent motionEvent) {
                 int what = motionEvent.getButtonState();
+                StartupMenuActivity.setFocus(true);
                 switch (what) {
                 case MotionEvent.BUTTON_PRIMARY:
                     String pkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
@@ -128,6 +129,9 @@ public class StartupMenuAdapter extends BaseAdapter {
                     if (position < 0 || position >= mlistAppInfo.size())
                         return false;
                     showMenuDialog1(position,motionEvent);
+                    break;
+                default :
+                    StartupMenuActivity.setFocus(false);
                     break;
                 }
                 return false;

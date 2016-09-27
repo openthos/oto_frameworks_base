@@ -151,18 +151,18 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             values.put("int", numbers);
             values.put("click", number);
             mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
-            dismiss();
+            dialogDismiss();
             break;
 
         case R.id.tv_right_phone_usually_run:
             runPhoneMode();
             addUsedNum();
-            dismiss();
+            dialogDismiss();
             break;
         case R.id.tv_right_desktop_usually_run:
             runPcMode();
             addUsedNum();
-            dismiss();
+            dialogDismiss();
             break;
         case R.id.tv_removed_list:
             mPkgName = StartupMenuActivity.mListViewEight.get(mPosition).getPkgName();
@@ -179,7 +179,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             ContentValues value = new ContentValues();
             value.put("click", numClick);
             mdb.update("perpo", value, "pkname = ?", new String[] { mPkgName });
-            dismiss();
+            dialogDismiss();
             break;
         }
     }
@@ -251,4 +251,9 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             return false;
         }
     };
+
+    private void dialogDismiss() {
+        dismiss();
+        StartupMenuActivity.setFocus(false);
+    }
 }
