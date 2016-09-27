@@ -4669,6 +4669,11 @@ public class Activity extends ContextThemeWrapper
      * onActivityResult().
      */
     public void finish() {
+        if (mActivityInfo.name.equals(ApplicationInfo.APPNAME_TOGIC_LAUNCHER_MAINACTIVITY)) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.STATUS_BAR_SHOW);
+            this.sendBroadcast(intent);
+        }
         finish(false);
     }
 
