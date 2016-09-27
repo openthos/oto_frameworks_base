@@ -2743,7 +2743,9 @@ public class Activity extends ContextThemeWrapper
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             onUserInteraction();
         }
-        if (getWindow().superDispatchTouchEvent(ev)) {
+        if (getWindow().superDispatchTouchEvent(ev)
+            && (getApplicationInfo().packageName.compareTo(
+                                                     ApplicationInfo.APPNAME_VLC_VIDEO) != 0)) {
             return true;
         }
         return onTouchEvent(ev);
