@@ -94,6 +94,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_VLC_VIDEO = "org.videolan.vlc";
     public static final String APPNAME_TOGIC_LAUNCHER_MAINACTIVITY
                                                  = "com.togic.launcher.MainActivity";
+    public static final String APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY
+                                                 = "com.togic.launcher.SplashActivity";
 
     /**
      * Default task affinity of all activities in this application. See 
