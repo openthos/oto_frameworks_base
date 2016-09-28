@@ -297,6 +297,16 @@ public class Dialog implements DialogInterface, Window.Callback,
             mActionBar = new WindowDecorActionBar(this);
         }
 
+        Activity activity = (mOwnerActivity != null) ? mOwnerActivity : mContextActivity;
+        Window parent = (activity != null) ? activity.getWindow() : null;
+        if (parent != null) {
+            if (!isActivityNotShowCover(activity)) {
+                parent.setChildWindow(mWindow);
+                parent.showCover(true);
+            }
+            parent.adjustDialog(mWindow);
+        }
+
         WindowManager.LayoutParams l = mWindow.getAttributes();
         if ((l.softInputMode
                 & WindowManager.LayoutParams.SOFT_INPUT_IS_FORWARD_NAVIGATION) == 0) {
@@ -308,12 +318,6 @@ public class Dialog implements DialogInterface, Window.Callback,
         }
 
         try {
-            Activity activity = (mOwnerActivity != null) ? mOwnerActivity : mContextActivity;
-            Window parent = (activity != null) ? activity.getWindow() : null;
-            if ((parent != null) && !isActivityNotShowCover(activity)) {
-                parent.setChildWindow(mWindow);
-                parent.showCover(true);
-            }
             mWindowManager.addView(mDecor, l);
             mDecor.setFromDialog(mDecor, parent);
             mShowing = true;

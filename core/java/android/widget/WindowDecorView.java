@@ -51,8 +51,6 @@ public abstract class WindowDecorView extends FrameLayout {
         return mWindow.isMWWindow();
     }
 
-    public abstract void adjustDialog();
-
     public abstract void enableMultiWindowToWindowManager(Rect dialogRect);
 
     public abstract int getWindowHeaderPadding();
@@ -68,9 +66,6 @@ public abstract class WindowDecorView extends FrameLayout {
         mDialogParentWindow = dialogParentWindow;
         mDialogParentDecor = (mDialogParentWindow != null) ? mDialogParentWindow.getDecorView()
                              : null;
-        if (isDialogFromMWParent()) {
-            adjustDialog();
-        }
     }
 
     public boolean isDialogFromMWParent() {

@@ -867,12 +867,16 @@ public abstract class Window {
      * @param a The new window attributes, which will completely override any
      *          current values.
      */
-    public void setAttributes(WindowManager.LayoutParams a) {
+    public void setAttributesWithoutSync(WindowManager.LayoutParams a) {
         mWindowAttributes.copyFrom(a);
         if (isMWWindow()
             && (mWindowAttributes.width != WindowManager.LayoutParams.MATCH_PARENT)) {
             mWindowAttributes.width = WindowManager.LayoutParams.MATCH_PARENT;
         }
+    }
+
+    public void setAttributes(WindowManager.LayoutParams a) {
+        setAttributesWithoutSync(a);
         dispatchWindowAttributesChanged(mWindowAttributes);
     }
 
@@ -2100,5 +2104,6 @@ public abstract class Window {
         return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow, supportDouble);
     }
 
+    public abstract void adjustDialog(Window dialog);
     public abstract void showCover(boolean show);
 }

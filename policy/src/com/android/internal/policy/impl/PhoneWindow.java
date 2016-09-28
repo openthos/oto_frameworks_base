@@ -2341,11 +2341,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public Rect getContentRectForCenter() {
-            int h = getContext().getResources().getDimensionPixelSize(
-                                                    com.android.internal.R.dimen.mw_header_border);
+            int header = getHeaderHeight();
             int padding = getFramePadding();
             int paddingTop = getTopFramePadding();
-            if ((getWidth() <= 2 * padding) || (getHeight() <= padding + paddingTop + h)) {
+            if ((getWidth() <= 2 * padding) || (getHeight() <= padding + paddingTop + header)) {
                 return null;
             }
 
@@ -2354,37 +2353,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
              *    border + header + Height/2 - (Height + 2*border + header)/2
              *  +1 is for the foating roundup.
              */
-            return new Rect(0, h / 2, getWidth() - 2 * padding + 1,
-                            getHeight() - padding - paddingTop - h / 2);
-        }
-
-        @Override
-        public void adjustDialog() {
-            Rect rect = getActivityContentRectForCenter();
-            if (rect == null) {
-                return;
-            }
-
-            WindowManager.LayoutParams l = getAttributes();
-
-            if ((l.width == MATCH_PARENT) || (l.width > rect.width())
-                || ((l.gravity & Gravity.FILL_HORIZONTAL) == Gravity.FILL_HORIZONTAL)) {
-                l.x = rect.left;
-                l.width = rect.width();
-            }
-            l.gravity &= ~Gravity.FILL_HORIZONTAL;
-            l.gravity |= Gravity.CENTER_HORIZONTAL;
-
-            if ((l.height == MATCH_PARENT)
-                || (l.height > rect.height())
-                || ((l.gravity & Gravity.FILL_VERTICAL) == Gravity.FILL_VERTICAL)) {
-                l.y = rect.top;
-                l.height = rect.height();
-            }
-            l.gravity &= ~Gravity.FILL_VERTICAL;
-            l.gravity |= Gravity.CENTER_VERTICAL;
-
-            setAttributes(l);
+            return new Rect(0, header / 2, getWidth() - 2 * padding + 1,
+                            getHeight() - padding - paddingTop - header / 2);
         }
 
         @Override
@@ -2740,13 +2710,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (widthMode == AT_MOST) {
                 final TypedValue tvw = isPortrait ? mFixedWidthMinor : mFixedWidthMajor;
                 if (tvw != null && tvw.type != TypedValue.TYPE_NULL) {
-                    final int w;
+                    int w;
                     if (tvw.type == TypedValue.TYPE_DIMENSION) {
                         w = (int) tvw.getDimension(metrics);
                     } else if (tvw.type == TypedValue.TYPE_FRACTION) {
                         w = (int) tvw.getFraction(metrics.widthPixels, metrics.widthPixels);
                     } else {
                         w = 0;
+                    }
+
+                    if (isDialogFromMWParent()) {
+                        w = adjustDialogWidth(w);
                     }
 
                     if (w > 0) {
@@ -2761,7 +2735,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (heightMode == AT_MOST) {
                 final TypedValue tvh = isPortrait ? mFixedHeightMajor : mFixedHeightMinor;
                 if (tvh != null && tvh.type != TypedValue.TYPE_NULL) {
-                    final int h;
+                    int h;
                     if (tvh.type == TypedValue.TYPE_DIMENSION) {
                         h = (int) tvh.getDimension(metrics);
                     } else if (tvh.type == TypedValue.TYPE_FRACTION) {
@@ -2769,6 +2743,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     } else {
                         h = 0;
                     }
+
+                    if (isDialogFromMWParent()) {
+                        h = adjustDialogHeight(h);
+                    }
+
                     if (h > 0) {
                         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
                         heightMeasureSpec = MeasureSpec.makeMeasureSpec(
@@ -2796,13 +2775,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (!fixedWidth && widthMode == AT_MOST) {
                 final TypedValue tv = isPortrait ? mMinWidthMinor : mMinWidthMajor;
                 if (tv.type != TypedValue.TYPE_NULL) {
-                    final int min;
+                    int min;
                     if (tv.type == TypedValue.TYPE_DIMENSION) {
                         min = (int)tv.getDimension(metrics);
                     } else if (tv.type == TypedValue.TYPE_FRACTION) {
                         min = (int)tv.getFraction(metrics.widthPixels, metrics.widthPixels);
                     } else {
                         min = 0;
+                    }
+
+                    if (isDialogFromMWParent()) {
+                        min = adjustDialogWidth(min);
                     }
 
                     if (width < min) {
@@ -2819,7 +2802,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
 
             if ((getWidth() > 0) && (getHeight() > 0)) {
-                SyncChildWindow();
+                //SyncChildWindow();
                 if (!mHeaderChecked) {
                     if ((mDecorMW != null) && mDecorMW.isEmpty()) {
                         mContentRoot.setVisibility(View.INVISIBLE);
@@ -2831,6 +2814,25 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     mHeaderChecked = true;
                 }
             }
+        }
+
+        private int adjustDialogWidth(int width) {
+            WindowDecorView parent = (WindowDecorView) getParentDecor();
+            int maxWidth = parent.getWidth() - 2 * parent.getWindowBorderPadding();
+            if (width > maxWidth) {
+                return maxWidth;
+            }
+            return width;
+        }
+
+        private int adjustDialogHeight(int height) {
+            WindowDecorView parent = (WindowDecorView) getParentDecor();
+            int maxHeight = parent.getHeight() - parent.getWindowHeaderPadding()
+                                               - parent.getWindowBorderPadding();
+            if (height > maxHeight) {
+                return maxHeight;
+            }
+            return height;
         }
 
         private void adjustChildView(ViewGroup parent) {
@@ -3646,6 +3648,35 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private Rect getActivityContentRect() {
         return getActivityDecor().getContentRect();
+    }
+
+    @Override
+    public void adjustDialog(Window dialog) {
+        Rect rect = getActivityContentRectForCenter();
+        if (rect == null) {
+            return;
+        }
+
+        WindowManager.LayoutParams l = dialog.getAttributes();
+
+        if ((l.width == MATCH_PARENT) || (l.width > rect.width())
+            || ((l.gravity & Gravity.FILL_HORIZONTAL) == Gravity.FILL_HORIZONTAL)) {
+            l.x = rect.left;
+            l.width = rect.width();
+            l.gravity &= ~Gravity.FILL_HORIZONTAL;
+            l.gravity |= Gravity.CENTER_HORIZONTAL;
+        }
+
+        if ((l.height == MATCH_PARENT)
+            || (l.height > rect.height())
+            || ((l.gravity & Gravity.FILL_VERTICAL) == Gravity.FILL_VERTICAL)) {
+            l.y = rect.top;
+            l.height = rect.height();
+            l.gravity &= ~Gravity.FILL_VERTICAL;
+            l.gravity |= Gravity.CENTER_VERTICAL;
+        }
+
+        dialog.setAttributesWithoutSync(l);
     }
 
     private void invalidateByForce() {
