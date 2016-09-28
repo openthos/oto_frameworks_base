@@ -409,7 +409,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private SharedPreferences mPresPkgRm;
     private SharedPreferences.Editor mEditorPkgRm;
     private Set<String> mSet = new HashSet<>();
-
+    private int mRemoveCount = 0;
     private MyVolumeReceiver mVolumeReceiver;
 
     // ensure quick settings is disabled until the current user makes it through the setup wizard
@@ -2902,24 +2902,52 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override // CommandQueue
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
         int idx = findStatusbarActivityByStackId(stackId);
-        if(idx >= 0) {
+        if (idx >= 0) {
             getActivityKeyView(idx).saveStackInfo(rect);
         }
     }
 
     @Override // CommandQueue
     public void removeStatusbarActivity(int stackId) {
+        mRemoveCount = stackId;
         int idx = findStatusbarActivityByStackId(stackId);
-        if(idx >= 0) {
+        if (idx >= 0) {
             ActivityKeyView akv = getActivityKeyView(idx);
             if (akv == mFocusedAKV) {
                 mIsShowwing = false;
                 setFocusedStatusbarActivity(null);
             }
-            if(!akv.getStatusbarActivity().mIsDocked) {
+            if (!akv.getStatusbarActivity().mIsDocked) {
                 mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(idx));
             } else {
                 akv.activityClosed();
+            }
+        }
+    }
+
+    public void removeStatusbar(int stackId, String pkg) {
+        int idx = findStatusbarActivityByStackId(stackId);
+        if (idx >= 0) {
+            ActivityKeyView akv = getActivityKeyView(idx);
+            if (akv == mFocusedAKV && !akv.getStatusbarActivity().mApkRun) {
+                mIsShowwing = false;
+                setFocusedStatusbarActivity(null);
+            }
+            if (!akv.getStatusbarActivity().mApkRun &&
+                akv.getStatusbarActivity().mPkgName.equals(pkg)) {  // no run
+                mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(idx));
+            }
+        }
+    }
+
+    public void removeLockedView(String pkg) {
+        for (int i = 0; i < mStatusBarActivities.getChildCount(); i++) {
+            ActivityKeyView kbv = getActivityKeyView(i);
+            if (kbv.getVisibility() == View.GONE &&
+                kbv.getStatusbarActivity().mPkgName.equals(pkg)) {
+                // mStatusBarActivities.removeView(kbv);
+                mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(i));
+                break;
             }
         }
     }
@@ -3519,8 +3547,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     loadDocked(apkInfo);
                 }
                 if (action.equals("com.android.systemui.activitykeyview")) {
-                   String pkgName = intent.getStringExtra("rmIcon");
-                   removeApk(pkgName);
+                    String pkgName = intent.getStringExtra("rmIcon");
+                    removeStatusbar(mRemoveCount, pkgName);
+                    removeLockedView(pkgName);
+                    removeApk(pkgName);
                 }
             }
         }

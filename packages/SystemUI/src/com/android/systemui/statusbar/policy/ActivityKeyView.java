@@ -94,7 +94,9 @@ public class ActivityKeyView extends ImageView {
         mDock = new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mActivity.mIsDocked = true;
+                if (!mActivity.mIsDocked) {
+                    mActivity.mIsDocked = true;
+                }
                 dismissDialog();
             }
         };
@@ -112,14 +114,20 @@ public class ActivityKeyView extends ImageView {
     }
 
     public void removeFromRoot() {
-        if(!mActivity.mApkRun) {
+        if (!mActivity.mApkRun) { //no run
             this.setVisibility(View.GONE);
             // use to tell phoneStartmenu reduce one
-            Intent intentIcon = new Intent();
-            intentIcon.putExtra("rmIcon",mActivity.mPkgName);
-            intentIcon.setAction("com.android.systemui.activitykeyview");
-            mContext.sendBroadcast(intentIcon);
+            sendRemoveInfo();
+        } else {  // run
+            sendRemoveInfo();
         }
+    }
+
+    public void sendRemoveInfo() {
+        Intent intentIcon = new Intent();
+        intentIcon.putExtra("rmIcon",mActivity.mPkgName);
+        intentIcon.setAction("com.android.systemui.activitykeyview");
+        mContext.sendBroadcast(intentIcon);
     }
 
     public void activityStart(int stackId) {
