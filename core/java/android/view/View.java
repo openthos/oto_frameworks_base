@@ -17735,6 +17735,11 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = w;
             }
             measuredHeight = (int) ((float) measuredWidth / mRatio);
+            if (getClass().getName().compareTo(
+                           "com.tencent.mm.plugin.voip.video.OpenGlView") == 0) {
+                ((View) getParent()).setPadding((w - measuredWidth) / 2,
+                                  (h - measuredHeight) / 2 + decor.getWindowHeaderPadding(), 0, 0);
+            }
         } else if (isDecorValid() && blacklistIdForMeasure()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
