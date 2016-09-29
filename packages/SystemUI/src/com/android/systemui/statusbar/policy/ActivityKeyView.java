@@ -96,6 +96,7 @@ public class ActivityKeyView extends ImageView {
             public void onClick(View v) {
                 if (!mActivity.mIsDocked) {
                     mActivity.mIsDocked = true;
+                    sendLockedInfo();
                 }
                 dismissDialog();
             }
@@ -128,6 +129,13 @@ public class ActivityKeyView extends ImageView {
         intentIcon.putExtra("rmIcon",mActivity.mPkgName);
         intentIcon.setAction("com.android.systemui.activitykeyview");
         mContext.sendBroadcast(intentIcon);
+    }
+
+    public void sendLockedInfo() {
+        Intent intentlock = new Intent();
+        intentlock.putExtra("lockIcon", mActivity.mPkgName);
+        intentlock.setAction("com.android.systemui.lockicon");
+        mContext.sendBroadcast(intentlock);
     }
 
     public void activityStart(int stackId) {

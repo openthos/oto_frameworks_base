@@ -16,7 +16,7 @@
 
 package com.android.systemui.statusbar.phone;
 
-
+import android.app.ActivityManagerNative;
 import static android.app.StatusBarManager.NAVIGATION_HINT_BACK_ALT;
 import static android.app.StatusBarManager.NAVIGATION_HINT_IME_SHOWN;
 import static android.app.StatusBarManager.WINDOW_STATE_HIDDEN;
@@ -119,6 +119,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -412,6 +413,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mRemoveCount = 0;
     private MyVolumeReceiver mVolumeReceiver;
 
+    private HorizontalScrollView mStatusBarHorizontalScrollView;
+
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
@@ -691,8 +694,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }});
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
+        mStatusBarActivities = (LinearLayout) mStatusBarView
+                                .findViewById(R.id.status_bar_activity_contents);
         mStatusBarView.setBar(this);
-        mStatusBarActivities = (LinearLayout)mStatusBarView.findViewById(R.id.status_bar_activity_contents);
+        /*
+        mStatusBarView.setFocusable(false);
+        mStatusBarActivities.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event){
+                return true;
+            }
+        });
+        mStatusBarView.setFocusable(false);
+        mStatusBarHorizontalScrollView = (HorizontalScrollView)mStatusBarView
+                                          .findViewById(R.id.status_bar_scroll_view);
+        mStatusBarHorizontalScrollView.setOnTouchListener(new View.OnTouchListener(){
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        */
+
         loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -941,6 +962,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(ACTION_DEMO);
         filter.addAction("com.android.documentsui.util.startmenudialog");
         filter.addAction("com.android.systemui.activitykeyview");
+        filter.addAction("com.android.systemui.lockicon");
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -1429,8 +1451,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mHandler.removeCallbacks(mShowSearchPanel);
                 awakenDreams();
             break;
-        }
-        return false;
+            }
+            return false;
         }
     };
 
@@ -2764,6 +2786,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mEditorPkg.putString(removeStr,"");
         }
         mEditorPkg.commit();
+        //clear All
+        int countNum = 0;
+        for (int i = 0; i < mStatusBarActivities.getChildCount(); i ++) {
+            ActivityKeyView kbv = getActivityKeyView(i);
+            if (!kbv.getStatusbarActivity().mApkRun) {
+                countNum++;
+            }
+        }
+        if (countNum >= mStatusBarActivities.getChildCount() && mSet.size() == 0) {
+            mStatusBarActivities.removeAllViews();
+        }
     }
 
     private void loadDockedApk(String pkg) {
@@ -3544,7 +3577,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else {
                 String apkInfo = intent.getStringExtra("keyInfo");
                 if (action.equals("com.android.documentsui.util.startmenudialog")) {
-                    loadDocked(apkInfo);
+                    findRunApp(apkInfo);
                 }
                 if (action.equals("com.android.systemui.activitykeyview")) {
                     String pkgName = intent.getStringExtra("rmIcon");
@@ -3552,9 +3585,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     removeLockedView(pkgName);
                     removeApk(pkgName);
                 }
+                if (action.equals("com.android.systemui.lockicon")) {
+                    mSet.add(intent.getStringExtra("lockIcon"));
+                }
             }
         }
     };
+
+    // find already run app at statusBar
+    public void findRunApp (String apkInfo) {
+        int countNumber = 0;
+        for (int i = 0; i < mStatusBarActivities.getChildCount(); i++) {
+            ActivityKeyView kbv = getActivityKeyView(i);
+            if (kbv.getStatusbarActivity().mPkgName.equals(apkInfo) &&
+                !kbv.getStatusbarActivity().mIsDocked && kbv.getStatusbarActivity().mApkRun) {
+                kbv.getStatusbarActivity().mIsDocked = true;
+                break;
+            }
+            countNumber++;
+        }
+        if (countNumber >= mStatusBarActivities.getChildCount()) {
+            loadDocked(apkInfo);
+        }
+    }
 
     private void resetUserExpandedStates() {
         ArrayList<Entry> activeNotifications = mNotificationData.getActiveNotifications();
