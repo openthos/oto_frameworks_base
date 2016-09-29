@@ -35,7 +35,7 @@ public class PhoneStatusBarView extends PanelBar {
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
     private static final boolean DEBUG_GESTURES = false;
 
-    private static final int STATUSBAR_VALID_PART_CLICK_AREA = 8;
+    private static final int STATUSBAR_VALID_PART_CLICK_AREA = 10;
 
     PhoneStatusBar mBar;
 
