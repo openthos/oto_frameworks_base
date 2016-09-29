@@ -32,7 +32,7 @@
 
     <string name="status_bar_maxmize">最大化窗口</string>
     <string name="status_bar_minimize">最小化窗口</string>
-    <string name="status_bar_dock">固定到状态栏</string>
+    <string name="status_bar_dock">固定到任务栏</string>
     <string name="status_bar_undock">解除固定</string>
     <string name="status_bar_open">打开应用</string>
     <string name="status_bar_close">关闭应用</string>

@@ -1061,9 +1061,9 @@ class WindowStateAnimator {
             }
             final AppWindowAnimator wpAppAnimator = wallpaperTarget.mAppToken == null ?
                     null : wallpaperTarget.mAppToken.mAppAnimator;
-                if (wpAppAnimator != null && wpAppAnimator.hasTransformation
-                    && wpAppAnimator.animation != null
-                    && !wpAppAnimator.animation.getDetachWallpaper()) {
+            if (wpAppAnimator != null && wpAppAnimator.hasTransformation
+                && wpAppAnimator.animation != null
+                && !wpAppAnimator.animation.getDetachWallpaper()) {
                 appTransformation = wpAppAnimator.transformation;
                 if (WindowManagerService.DEBUG_WALLPAPER && appTransformation != null) {
                     Slog.v(TAG, "WP target app xform: " + appTransformation);
