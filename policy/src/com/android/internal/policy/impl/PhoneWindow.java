@@ -3652,6 +3652,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     @Override
     public void adjustDialog(Window dialog) {
+        if (mDecor == null) {
+            return;
+        }
         Rect rect = getActivityContentRectForCenter();
         if (rect == null) {
             return;
