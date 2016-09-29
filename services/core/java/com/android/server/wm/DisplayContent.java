@@ -116,7 +116,6 @@ class DisplayContent {
 
     /** Remove this display when animation on it has completed. */
     boolean mDeferredRemoval;
-    private boolean mHomeHasFocus = false;
 
     /**
      * @param display May not be null.
@@ -209,8 +208,6 @@ class DisplayContent {
                 throw new IllegalArgumentException("attachStack: HOME_STACK_ID (0) not first.");
             }
             mHomeStack = stack;
-        } else {
-            mHomeHasFocus = false;
         }
         mStacks.add(stack);
         layoutNeeded = true;
@@ -256,27 +253,13 @@ class DisplayContent {
                  * be always on bottom
                  */
                 if (stack.mStackId != HOME_STACK_ID) {
-                    mHomeHasFocus = false;
-                    /**
-                     * multidisplay!!! see inside this method
-                     */
-                    mService.rebuildAppWindowListLocked();
-                    mService.prepareAppTransition(AppTransition.TRANSIT_TASK_TO_FRONT, true);
-                    mService.executeAppTransition();
                     return stack.mStackId;
                 } else {
                     homeId = HOME_STACK_ID;
                 }
             }
         }
-        if (homeId != -1) {
-            mHomeHasFocus = true;
-        }
         return homeId;
-    }
-
-    public boolean isHomeFocused() {
-        return mHomeHasFocus;
     }
 
     void setTouchExcludeRegion(TaskStack focusedStack) {
