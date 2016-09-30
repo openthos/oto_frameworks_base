@@ -224,10 +224,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     // additional instrumentation for testing purposes; intended to be left on during development
     public static final boolean CHATTY = DEBUG;
-
     public static final String ACTION_STATUSBAR_START
             = "com.android.internal.policy.statusbar.START";
-
+    public static final String DOCUMENTUI_SEND_INFO_LOCK
+            = "com.android.documentsui.util.startmenudialog";
+    public static final String SYSTEMUI_SEND_INFO_UNLOCK
+            = "com.android.systemui.activitykeyview";
+    public static final String SYSTEMUI_SEND_INFO_LOCK
+            = "com.android.systemui.lockicon";
+    public static final String ANDROID_DOCUMENTUI
+            = "com.android.documentsui";
+    public static final String ANDROID_DOCUMENTUI_STARTUPMENU
+            = "com.android.documentsui.StartupMenuActivity";
+    public static final String MEDIA_VOLUME_CHANGED
+            = "android.media.VOLUME_CHANGED_ACTION";
+    public static final String PRINTER_LOCALPRINT_MANAGER
+            = "com.github.openthos.printer.localprint.jobmanager";
+    public static final String CYANOGENMOD_FILEMANAGER
+            = "com.cyanogenmod.filemanager";
+    public static final String ANDROID_BROWSER
+            = "com.android.browser";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
@@ -960,9 +976,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             filter.addAction("fake_artwork");
         }
         filter.addAction(ACTION_DEMO);
-        filter.addAction("com.android.documentsui.util.startmenudialog");
-        filter.addAction("com.android.systemui.activitykeyview");
-        filter.addAction("com.android.systemui.lockicon");
+        filter.addAction(DOCUMENTUI_SEND_INFO_LOCK);
+        filter.addAction(SYSTEMUI_SEND_INFO_UNLOCK);
+        filter.addAction(SYSTEMUI_SEND_INFO_LOCK);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -991,8 +1007,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             @Override
             public void onClick(View v) {
                 final Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.documentsui",
-                                    "com.android.documentsui.StartupMenuActivity"));
+                intent.setComponent(new ComponentName(ANDROID_DOCUMENTUI,
+                                    ANDROID_DOCUMENTUI_STARTUPMENU));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                                  | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU
                                  | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -1014,14 +1030,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private void myRegisterReceiver(){
         mVolumeReceiver = new MyVolumeReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction("android.media.VOLUME_CHANGED_ACTION");
+        filter.addAction(MEDIA_VOLUME_CHANGED);
         mContext.registerReceiver(mVolumeReceiver, filter);
     }
 
     private class MyVolumeReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("android.media.VOLUME_CHANGED_ACTION")) {
+            if (intent.getAction().equals(MEDIA_VOLUME_CHANGED)) {
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(
                                              Context.AUDIO_SERVICE);
                 if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
@@ -1103,7 +1119,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         buttonPrinterManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent("com.github.openthos.printer.localprint.jobmanager");
+                Intent intent = new Intent(PRINTER_LOCALPRINT_MANAGER);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             }
@@ -2752,12 +2768,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         //The first boot
         if (mSet.size() == 0 && sets.size() == 0) {
-            loadDockedApk("com.cyanogenmod.filemanager");
-            loadDockedApk("com.android.browser");
-            mSet.add("com.cyanogenmod.filemanager");
-            mSet.add("com.android.browser");
-            mEditorPkg.putString("com.cyanogenmod.filemanager", "");
-            mEditorPkg.putString("com.android.browser", "");
+            loadDockedApk(CYANOGENMOD_FILEMANAGER);
+            loadDockedApk(ANDROID_BROWSER);
+            mSet.add(CYANOGENMOD_FILEMANAGER);
+            mSet.add(ANDROID_BROWSER);
+            mEditorPkg.putString(CYANOGENMOD_FILEMANAGER, "");
+            mEditorPkg.putString(ANDROID_BROWSER, "");
         }
     }
 

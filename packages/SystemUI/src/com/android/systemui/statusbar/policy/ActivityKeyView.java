@@ -35,6 +35,7 @@ import android.content.pm.PackageManager;
 import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
+import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 public class ActivityKeyView extends ImageView {
 
@@ -127,14 +128,14 @@ public class ActivityKeyView extends ImageView {
     public void sendRemoveInfo() {
         Intent intentIcon = new Intent();
         intentIcon.putExtra("rmIcon",mActivity.mPkgName);
-        intentIcon.setAction("com.android.systemui.activitykeyview");
+        intentIcon.setAction(PhoneStatusBar.SYSTEMUI_SEND_INFO_UNLOCK);
         mContext.sendBroadcast(intentIcon);
     }
 
     public void sendLockedInfo() {
         Intent intentlock = new Intent();
         intentlock.putExtra("lockIcon", mActivity.mPkgName);
-        intentlock.setAction("com.android.systemui.lockicon");
+        intentlock.setAction(PhoneStatusBar.SYSTEMUI_SEND_INFO_LOCK);
         mContext.sendBroadcast(intentlock);
     }
 
@@ -303,9 +304,10 @@ public class ActivityKeyView extends ImageView {
     public void sendBroadcastMethod() {
         Intent intent = new Intent();
         intent.putExtra("keyAddInfo", mActivity.mPkgName);
-        intent.setAction("com.android.action.PACKAGE_SEND");
+        intent.setAction(Intent.ACTION_SEND_CLICK_INFO);
         mContext.sendBroadcast(intent);
     }
+
     //Wait one second; Matthew
     private void waitTimer() {
         Timer timer = new Timer();
