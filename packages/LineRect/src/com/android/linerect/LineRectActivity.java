@@ -31,18 +31,20 @@ public class LineRectActivity extends Activity {
         setContentView(R.layout.line_rect_activity);
         mView = (LineRectView)findViewById(R.id.line_rect);
         invalidateRect();
-        Animation animation;
-        if (getIntent().getIntExtra(Intent.EXTRA_RECT_LEFT, 0) == 0){
-            animation = new ScaleAnimation(0, 1f, 0, 1f,
-                                           Animation.RELATIVE_TO_SELF, 0f,
-                                           Animation.RELATIVE_TO_SELF, 0.5f);
-        } else {
-            animation = new ScaleAnimation(0, 1f, 0, 1f,
-                                           Animation.RELATIVE_TO_SELF, 1f,
-                                           Animation.RELATIVE_TO_SELF, 0.5f);
+        if (getIntent().getBooleanExtra(Intent.EXTRA_RECT_ANIMATION, false)) {
+            Animation animation;
+            if (getIntent().getIntExtra(Intent.EXTRA_RECT_LEFT, 0) == 0){
+                animation = new ScaleAnimation(0, 1f, 0, 1f,
+                                               Animation.RELATIVE_TO_SELF, 0f,
+                                               Animation.RELATIVE_TO_SELF, 0.5f);
+            } else {
+                animation = new ScaleAnimation(0, 1f, 0, 1f,
+                                               Animation.RELATIVE_TO_SELF, 1f,
+                                               Animation.RELATIVE_TO_SELF, 0.5f);
+            }
+            animation.setDuration(ANIMATION_TIME);
+            mView.startAnimation(animation);
         }
-        animation.setDuration(ANIMATION_TIME);
-        mView.startAnimation(animation);
         mThread = new Thread("Line Rect Monitor Thread") {
             @Override
             public void run() {
@@ -77,11 +79,13 @@ public class LineRectActivity extends Activity {
         r.top = intent.getIntExtra(Intent.EXTRA_RECT_TOP, 0);
         r.right = intent.getIntExtra(Intent.EXTRA_RECT_RIGHT, 0);
         r.bottom = intent.getIntExtra(Intent.EXTRA_RECT_BOTTOM, 0);
+        boolean hasBackground = intent.getBooleanExtra(Intent.EXTRA_RECT_ANIMATION, false);
         if ((r.left == -1) && (r.top == -1) && (r.right == -1) && (r.bottom == -1)) {
             System.exit(0);
             return;
         }
         mView.mRect.set(r);
+        mView.mHasBackground = hasBackground;
         mView.invalidate();
     }
 }

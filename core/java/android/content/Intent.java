@@ -716,7 +716,6 @@ public class Intent implements Parcelable, Cloneable {
     public static final String ACTION_CREATE_SHORTCUT = "android.intent.action.CREATE_SHORTCUT";
 
     public static final String ACTION_OPEN_APPLICATION = "android.intent.action.OPEN_APPLICATION";
-
     /**
      * The name of the extra used to define the Intent of a shortcut.
      *
@@ -3520,6 +3519,8 @@ public class Intent implements Parcelable, Cloneable {
     public static final String EXTRA_RECT_TOP = "android.intent.extra.rect_top";
     public static final String EXTRA_RECT_RIGHT = "android.intent.extra.rect_right";
     public static final String EXTRA_RECT_BOTTOM = "android.intent.extra.rect_bottom";
+    public static final String EXTRA_RECT_ANIMATION = "android.intent.extra.rect_animation";
+
 
     /**
      * For status bar

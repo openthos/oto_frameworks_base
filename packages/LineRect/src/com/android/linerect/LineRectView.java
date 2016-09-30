@@ -16,8 +16,9 @@ public class LineRectView extends FrameLayout {
     private static final String TAG = "LineRectView";
 
     private static final float LINERECT_LINE_WIDTH = 5.0f;
-
+    private static final int LINERECT_BACKGROUND_COLOR = 0x7F251A4B;
     public Rect mRect = new Rect();
+    public boolean mHasBackground = false;
 
     public LineRectView(Context context) {
         super(context);
@@ -31,6 +32,10 @@ public class LineRectView extends FrameLayout {
     protected void onDraw(Canvas c) {
         Paint paint = new Paint();
         super.onDraw(c);
+        if (mHasBackground) {
+            paint.setColor(LINERECT_BACKGROUND_COLOR);
+            c.drawRect(mRect, paint);
+        }
 
         paint.setColor(Color.GRAY);
         paint.setStrokeWidth(LINERECT_LINE_WIDTH);

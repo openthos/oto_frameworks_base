@@ -2395,6 +2395,12 @@ public interface WindowManager extends ViewManager {
             return false;
         }
 
+        private void sendFrame(int flags, int left, int top, int right, int bottom,
+                                                                    boolean supportAnimation) {
+            mIntent.putExtra(Intent.EXTRA_RECT_ANIMATION, supportAnimation);
+            sendFrame(flags, left, top, right, bottom);
+        }
+
         private void sendFrame(int flags, int left, int top, int right, int bottom) {
             mIntent.setFlags(flags | Intent.FLAG_ACTIVITY_NO_ANIMATION
                              | Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
@@ -2406,14 +2412,22 @@ public interface WindowManager extends ViewManager {
         }
 
         public void sendFrameEnd() {
-            sendFrame(0, -1, -1, -1, -1);
+            sendFrame(0, -1, -1, -1, -1, false);
         }
 
         public void sendNewFrame(int flags) {
             sendFrame(flags, mNewFrame.left + getFramePadding(),
                       mNewFrame.top + getTopFramePadding(),
                       mNewFrame.right - getFramePadding(),
-                      mNewFrame.bottom - getFramePadding());
+                      mNewFrame.bottom - getFramePadding(), false);
+        }
+
+        public void sendNewFrame(int flags, boolean supportAnimation) {
+            sendFrame(flags, mNewFrame.left + getFramePadding(),
+                      mNewFrame.top + getTopFramePadding(),
+                      mNewFrame.right - getFramePadding(),
+                      mNewFrame.bottom - getFramePadding(),
+                      supportAnimation);
         }
 
         public static class ResizeWindow {
@@ -2608,9 +2622,10 @@ public interface WindowManager extends ViewManager {
                         }
                         mNewFrame = r;
                     }
-                    if (isResizing()
-                        || mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
-                        sendNewFrame(0);
+                    if (mNewFrame == mLeftDockFrame || mNewFrame == mRightDockFrame) {
+                        sendNewFrame(0, true);
+                    } else if (isResizing()) {
+                        sendNewFrame(0, false);
                     } else if (mCallback != null) {
                         mCallback.relayoutWindow(mStackId, mNewFrame);
                     }
