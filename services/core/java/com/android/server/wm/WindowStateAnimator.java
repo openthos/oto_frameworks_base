@@ -1035,7 +1035,7 @@ class WindowStateAnimator {
     }
 
     void computeShownFrameLocked() {
-        if (mWin.getStack().isFloating()) {
+        if (mWin.getStack().isFloating() && mWin.mAttrs.type != mWin.mAttrs.TYPE_SYSTEM_DIALOG) {
             computeShownFrameDefault();
             return;
         }
