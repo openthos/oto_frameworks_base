@@ -2104,6 +2104,10 @@ public abstract class Window {
         return mMultiWindow.onTouchWindow(what, x, y, frame, resizeWindow, supportDouble);
     }
 
+    public boolean isResizing() {
+        return mMultiWindow.isResizing();
+    }
+
     public abstract void adjustDialog(Window dialog);
     public abstract void showCover(boolean show);
 }

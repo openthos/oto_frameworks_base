@@ -91,7 +91,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_EMINDSOFT_EMINDSTORE = "cn.com.emindsoft.emindstore";
 
     public static final String APPNAME_TOGIC_VIDEO = "com.togic.livevideo";
-    public static final String APPNAME_VLC_VIDEO = "org.videolan.vlc";
     public static final String APPNAME_TOGIC_LAUNCHER_MAINACTIVITY
                                                  = "com.togic.launcher.MainActivity";
     public static final String APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY

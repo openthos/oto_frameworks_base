@@ -3583,20 +3583,23 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     private class TouchListener implements OnTouchListener {
 
         private WindowManager.MultiWindow.ResizeWindow mResizeWindow;
-        private boolean mSupportDouble;
+        private boolean mHeader;
 
-        public TouchListener(WindowManager.MultiWindow.ResizeWindow rw, boolean supportDouble) {
+        public TouchListener(WindowManager.MultiWindow.ResizeWindow rw, boolean header) {
             mResizeWindow = rw;
-            mSupportDouble = supportDouble;
+            mHeader = header;
         }
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             Rect ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
                                      (int) event.getRawY(),  getActivityFrame(),
-                                     mResizeWindow, mSupportDouble);
+                                     mResizeWindow, mHeader);
             if(ret != null) {
                 syncFrame(ret);
+            }
+            if ((event.getAction() == MotionEvent.ACTION_DOWN) && !isResizing() && !mHeader) {
+                return false;
             }
             return true;
         }
