@@ -67,6 +67,7 @@ interface IStatusBarService
     void cancelPreloadRecentApps();
     void showVolumePanel();
     void showWifiPanel();
+    void showInputMethodPanel();
     void showBatteryPanel();
     void showHomePanel();
 }

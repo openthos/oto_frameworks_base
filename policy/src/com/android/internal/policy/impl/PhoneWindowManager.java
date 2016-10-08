@@ -1403,8 +1403,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startInputMenthodManager() {
-        mContext.startActivity(new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        try {
+            IStatusBarService statusbar = getStatusBarService();
+            if (statusbar != null) {
+                statusbar.showInputMethodPanel();
+            }
+        } catch (RemoteException e) {
+             mStatusBarService = null;
+        }
+        /*mContext.startActivity(new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));*/
     }
 
     void startBatteryManager() {
@@ -1416,7 +1424,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } catch (RemoteException e) {
             mStatusBarService = null;
         }
-        Log.e("com", "Battery: COMING SOON");
     }
 
     void startWifiManager() {

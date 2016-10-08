@@ -51,6 +51,7 @@ oneway interface IStatusBar
     void showScreenPinningRequest();
     void showVolumePanel();
     void showWifiPanel();
+    void showInputMethodPanel();
     void showBatteryPanel();
     void showHomePanel();
     void setFocusedStatusbarActivity(int stackId);

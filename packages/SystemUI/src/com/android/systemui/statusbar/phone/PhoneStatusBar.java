@@ -194,6 +194,7 @@ import com.android.systemui.statusbar.notificationbars.CalendarDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
 import com.android.systemui.statusbar.notificationbars.BatteryDialog;
+import com.android.systemui.statusbar.notificationbars.InputMethodDialog;
 import android.content.ComponentName;
 
 import java.io.IOException;
@@ -1003,6 +1004,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         lp.gravity = Gravity.BOTTOM;
         lp.y = 0;
         window.setAttributes(lp);
+        mInputMethodPopupWindow = new InputMethodDialog(mContext);
         mStartupMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1388,6 +1390,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryPopupWindow.show(mBatteryButton);
     }
 
+    protected void  showInputMethodPanelWork() {
+        super.showInputMethodPanelWork();
+        if (mInputButton == null) {
+            return;
+        }
+        dismisTargetDialog(mInputMethodPopupWindow);
+        mInputMethodPopupWindow.show(mInputButton);
+    }
+
     protected void  showHomePanelWork() {
         super.showHomePanelWork();
         dismissSystemDilog();
@@ -1395,7 +1406,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void dismissSystemDilog() {
         dismisTargetDialog(mBatteryPopupWindow);
-        dismisTargetDialog(mBatteryPopupWindow);
+        dismisTargetDialog(mInputMethodPopupWindow);
         dismisTargetDialog(mWifiPopupWindow);
     }
 

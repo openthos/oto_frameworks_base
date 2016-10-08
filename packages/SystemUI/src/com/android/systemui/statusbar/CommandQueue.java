@@ -71,6 +71,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SHOW_BATTERY_PANEL             = 29 << MSG_SHIFT;
     private static final int MSG_SHOW_HOME_PANEL                = 30 << MSG_SHIFT;
     private static final int MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP= 31 << MSG_SHIFT;
+    private static final int MSG_SHOW_INPUT_METHOD_PANEL        = 32 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -110,6 +111,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void showVolumePanel();
         public void showWifiPanel();
         public void showBatteryPanel();
+        public void showInputMethodPanel();
         public void showHomePanel();
         public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey);
         public void toggleRecentApps();
@@ -266,6 +268,12 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
+    public void showInputMethodPanel() {
+        synchronized (mList) {
+            mHandler.removeMessages(MSG_SHOW_INPUT_METHOD_PANEL);
+            mHandler.sendEmptyMessage(MSG_SHOW_INPUT_METHOD_PANEL);
+        }
+    }
     public void showHomePanel() {
         synchronized (mList) {
             mHandler.removeMessages(MSG_SHOW_HOME_PANEL);
@@ -478,6 +486,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SHOW_BATTERY_PANEL:
                     mCallbacks.showBatteryPanel();
+                    break;
+                case MSG_SHOW_INPUT_METHOD_PANEL:
+                    mCallbacks.showInputMethodPanel();
                     break;
                 case MSG_SHOW_HOME_PANEL:
                     mCallbacks.showHomePanel();

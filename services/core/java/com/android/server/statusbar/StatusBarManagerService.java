@@ -556,6 +556,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void showInputMethodPanel() {
+        if (mBar != null) {
+            try {
+                mBar.showInputMethodPanel();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
     public void showHomePanel() {
         if (mBar != null) {
             try {
