@@ -40,7 +40,8 @@ public final class NavigationBarTransitions extends BarTransitions {
     private int mRequestedMode;
 
     public NavigationBarTransitions(NavigationBarView view) {
-        super(view, R.drawable.nav_background);
+        //super(view, R.drawable.nav_background);
+        super(view, R.drawable.status_background_for_launcher);
         mView = view;
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
