@@ -175,6 +175,9 @@ public class NetworkInfo implements Parcelable {
      */
     public int getType() {
         synchronized (this) {
+            if (mNetworkType == ConnectivityManager.TYPE_ETHERNET) {
+                return ConnectivityManager.TYPE_WIFI;
+            }
             return mNetworkType;
         }
     }
