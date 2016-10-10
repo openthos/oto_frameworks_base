@@ -170,7 +170,6 @@
                    android:layout_marginRight="10dp"
                    android:src="@drawable/statusbar_battery"
                    systemui:keyCode="100006"
-                   android:visibility="gone"
                    systemui:keyRepeat="true" />
 
 

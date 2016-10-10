@@ -396,4 +396,6 @@
     <string name="quick_settings_screenshot_label">"截屏"</string>
     <string name="quick_settings_projection_label">"投影"</string>
     <string name="quick_settings_isolation_mode_label">"隔离模式"</string>
+    <string name="battery_percent_full">"已充满"</string>
+    <string name="battery_remaining">"剩余时间<xliff:g id="HOUR">%1$s</xliff:g>小时<xliff:g id="MINUTE">%2$s</xliff:g>分钟"</string>
 </resources>

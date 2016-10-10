@@ -959,6 +959,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
                 mBatteryController);
+        final BatteryMeterView battery = (BatteryMeterView)
+                                         mStatusBarView.findViewById(R.id.battery);
+        mBatteryPopupWindow = new BatteryDialog(mContext);
+        battery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (battery == null) {
+                    return;
+                }
+                dismisTargetDialog(mBatteryPopupWindow);
+                mBatteryPopupWindow.show(battery);
+            }
+        });
         mKeyguardStatusBar.setBatteryController(mBatteryController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
@@ -996,7 +1009,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWifiPopupWindow = new WifiDialog(mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
         Window window = mWifiPopupWindow.getWindow();
-        mBatteryPopupWindow = new BatteryDialog(mContext);
         window.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.width = LayoutParams.WRAP_CONTENT;

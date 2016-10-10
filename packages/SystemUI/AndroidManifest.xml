@@ -119,6 +119,8 @@
     <!-- Change Configuration -->
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
 
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
