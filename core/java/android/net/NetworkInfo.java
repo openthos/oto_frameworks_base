@@ -219,6 +219,9 @@ public class NetworkInfo implements Parcelable {
      */
     public String getTypeName() {
         synchronized (this) {
+            if (mTypeName.compareTo("Ethernet") == 0) { // TODO: try "ETHERNET" ??
+                return "WIFI";
+            }
             return mTypeName;
         }
     }
