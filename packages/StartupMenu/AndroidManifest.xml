@@ -1,0 +1,48 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.android.startupmenu"
+        android:sharedUserId="android.uid.system">
+
+    <uses-permission android:name="android.permission.REMOVE_TASKS" />
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    <uses-permission android:name="android.permission.INJECT_EVENTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SHUTDOWN" />
+
+    <application
+        android:name=".StartupMenuApplication"
+        android:label="@string/app_label"
+        android:supportsRtl="true">
+        <activity
+            android:name=".StartupMenuActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+       <!--  <receiver android:name=".PackageReceiver">
+             <intent-filter>
+                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
+                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
+                 <data android:scheme="package" />
+             </intent-filter>
+         </receiver> -->
+
+         <receiver android:name=".service.MyInstalledReceiver">
+             <intent-filter>
+                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                 <action android:name="android.intent.action.PACKAGE_ADDED" />
+                 <data android:scheme="package" />
+             </intent-filter>
+         </receiver>
+
+         <receiver
+             android:name=".service.MySQLReceiver"
+             android:enabled="true">
+             <intent-filter>
+                 <action android:name="com.android.startupmenu.SQLITE_CHANGE" />
+                 <action android:name="com.android.action.PACKAGE_SEND"/>
+             </intent-filter>
+         </receiver>
+
+    </application>
+</manifest>

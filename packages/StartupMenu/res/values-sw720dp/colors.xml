@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="appBackgroundColor">#e4dfdf</color>
+    <color name="appUsuallyBackground">#5a41a2</color>
+    <color name="inRightMenuFocus">#e9edf0</color>
+    <color name="rightMenuFocus">#5a41a2</color>
+    <color name="showSortBackground">#ffffff</color>
+    <color name="appUsualFocusBackground">#301678</color>
+    <color name="app_background">#e9edf0</color>
+</resources>

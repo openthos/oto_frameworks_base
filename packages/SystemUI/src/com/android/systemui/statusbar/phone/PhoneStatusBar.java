@@ -234,9 +234,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public static final String SYSTEMUI_SEND_INFO_LOCK
             = "com.android.systemui.lockicon";
     public static final String ANDROID_DOCUMENTUI
-            = "com.android.documentsui";
+            = "com.android.startupmenu";
     public static final String ANDROID_DOCUMENTUI_STARTUPMENU
-            = "com.android.documentsui.StartupMenuActivity";
+            = "com.android.startupmenu.StartupMenuActivity";
     public static final String MEDIA_VOLUME_CHANGED
             = "android.media.VOLUME_CHANGED_ACTION";
     public static final String PRINTER_LOCALPRINT_MANAGER

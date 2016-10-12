@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2013 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">StartupMenu</string>
+    <string name="share_via">Share via</string>
+    <string name="file_manager">File Manager</string>
+    <string name="power_source">Power Source</string>
+    <string name="power_off">Power Offe</string>
+    <string name="system_setting">Setting</string>
+    <string name="system_restart">Restart</string>
+    <string name="system_sleep">Sleep</string>
+    <string name="system_lock">Lock</string>
+    <string name="app_name">StartupMenu</string>
+    <string name="action_settings">Settings</string>
+    <string name="name_sort">A-Z</string>
+    <string name="time_sort">Time</string>
+    <string name="type_sort">Type</string>
+    <string name="system_loading">Loading...</string>
+    <string name="common_software">Common_software</string>
+    <string name="click_sort">Click</string>
+    <string name="common_application">Common Application</string>
+    <string name="software_search">Software search</string>
+    <string name="my_open">Open</string>
+    <string name="my_desktop_run">Desktop Mode Run</string>
+    <string name="fixed_the_taskbar">Fixed To The Taskbar</string>
+    <string name="my_uninstall">Uninstall</string>
+    <string name="removed_the_list">Removed From The List</string>
+    <string name="omit">…</string>
+    <string name="my_mobile_phone_mode_run">Mobile Phone Mode Run</string>
+
+</resources>

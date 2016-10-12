@@ -1462,7 +1462,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
 
         final Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.android.documentsui", "com.android.documentsui.StartupMenuActivity"));
+        intent.setComponent(new ComponentName("com.android.startupmenu",
+                                              "com.android.startupmenu.StartupMenuActivity"));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU
                         | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
