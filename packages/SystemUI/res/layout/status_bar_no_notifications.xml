@@ -28,6 +28,8 @@
         <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginBottom="12dp">
 
         <TextView
@@ -36,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/notification_center"
+            android:textColor="#99ffffff"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -44,7 +47,7 @@
             android:layout_width="42dp"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/clearAll"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:layout_centerVertical="true"
             android:background="@null"
             android:text="@string/notification_manager"
@@ -54,7 +57,8 @@
             android:id="@+id/clearAll"
             android:layout_width="42dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"

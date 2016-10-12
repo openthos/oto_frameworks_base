@@ -62,7 +62,7 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="360dp"
+            android:layout_height="370dp"
             android:orientation="vertical">
 
             <FrameLayout
@@ -79,6 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|center"
+                    android:layout_marginTop="1dp"
                     android:layout_marginBottom="@dimen/close_handle_underlap"
                     android:importantForAccessibility="no" />
 
@@ -96,14 +97,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:padding="8dp"
-                android:background="#1affffff">
+                android:background="#1Affffff">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="16dp"
                     android:layout_centerVertical="true"
                     android:text="@string/print_message"
+                    android:textColor="#99ffffff"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -112,6 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
                     android:layout_centerVertical="true"
                     android:paddingRight="8dp"
                     android:background="@null"
@@ -123,13 +126,16 @@
             <!-- printer job layout -->
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_margin="8dp"
-                android:layout_height="210dp" >
+                android:layout_marginTop="8dp"
+                android:layout_height="200dp" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
             </ScrollView>
 
         </LinearLayout>

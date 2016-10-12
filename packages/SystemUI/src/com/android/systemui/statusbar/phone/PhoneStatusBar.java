@@ -211,6 +211,8 @@ import android.content.SharedPreferences;
 import java.util.Iterator;
 import android.media.AudioManager;
 import android.view.Window;
+import android.graphics.Color;
+import android.text.TextPaint;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -1141,7 +1143,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         final LinearLayout printerJobLayout
                 = (LinearLayout) mStatusBarWindow.findViewById(R.id.printer_job_layout);
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(BROADCAST_REFRESH_JOBS);
 
@@ -1172,56 +1173,66 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 for (PrinterJobStatus item : remoteList) {
 
                     if(!lastPrinterName.equals(item.getPrinter())){
-                        TextView textViewPrinterName = new TextView(mContext);
-                        textViewPrinterName.setText(item.getPrinter());
-                        printerJobLayout.addView(textViewPrinterName);
+                        TextView tvStartPrinterVersion = new TextView(mContext);
+                        tvStartPrinterVersion.setText(item.getPrinter());
+                        tvStartPrinterVersion.setGravity(Gravity.CENTER);
+                        TextPaint tpText = tvStartPrinterVersion.getPaint();
+                        tpText.setFakeBoldText(true);
+                        printerJobLayout.addView(tvStartPrinterVersion);
                         lastPrinterName = item.getPrinter();
                     }
+                    final View itemView = View.inflate(mContext,
+                                          R.layout.status_bar_item_view, null);
+                    //item layout
+                    itemView.setBackgroundColor(Color.WHITE);
+                    itemView.getBackground().setAlpha(23);
+                    final TextView mTextViewName = (TextView) itemView.
+                                                   findViewById(R.id.textView_document_name);
+                    final TextView mTextViewStatus = (TextView) itemView.
+                                                     findViewById(R.id.textView_document_status);
+                    ImageView mImageViewClose = (ImageView) itemView.
+                                                findViewById(R.id.imageView_close);
+                    // add onClick to close
+                    mImageViewClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                            itemView.setVisibility(View.GONE);
+                        }
+                    });
+                    itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(mContext, mTextViewStatus+"",
+                                                     Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-                    RelativeLayout itemLayout = new RelativeLayout(mContext);
-                    printerJobLayout.addView(itemLayout);
-                    LinearLayout.LayoutParams params
-                        = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT
-                                                        , LinearLayout.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(8, 8, 8, 8);
-                    itemLayout.setLayoutParams(params);
-                    TextView textViewFileName = new TextView(mContext);
-                    textViewFileName.setText(item.getFileName());
-                    TextView textViewStatus = new TextView(mContext);
-                    RelativeLayout.LayoutParams textParams
-                        = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT
-                                                , RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    textParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                    textViewStatus.setLayoutParams(textParams);
-                    itemLayout.addView(textViewFileName);
-                    itemLayout.addView(textViewStatus);
-
+                    mTextViewName.setText(item.getFileName());
                     int status = item.getStatus();
                     switch (status) {
                         case PrinterJobStatus.STATUS_ERROR:
-                            textViewStatus
+                            mTextViewStatus
                                     .setText(R.string.print_error);
                             break;
                         case PrinterJobStatus.STATUS_HOLDING:
-                            textViewStatus.setText(R.string.print_pause);
+                            mTextViewStatus.setText(R.string.print_pause);
                             break;
                         case PrinterJobStatus.STATUS_PRINTING:
-                            textViewStatus.setText(R.string.printing);
+                            mTextViewStatus.setText(R.string.printing);
                             break;
                         case PrinterJobStatus.STATUS_READY:
-                            textViewStatus.setText(R.string.print_ready);
+                            mTextViewStatus.setText(R.string.print_ready);
                             break;
                         case PrinterJobStatus.STATUS_WAITING_FOR_PRINTER:
-                            textViewStatus.setText(R.string.waiting_for_printer);
+                            mTextViewStatus.setText(R.string.waiting_for_printer);
                             break;
                         default:
-                            textViewStatus.setText(R.string.print_unknown);
+                            mTextViewStatus.setText(R.string.print_unknown);
                             break;
                     }
-
+                    printerJobLayout.addView(itemView);
                 }
-
-
             }
         };
 

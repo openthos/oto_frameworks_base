@@ -146,7 +146,7 @@
 
     <!-- Width for the notification panel and related windows -->
     <dimen name="match_parent">-1px</dimen>
-    <dimen name="standard_notification_panel_width">280dp</dimen><!-- includes notification_side_padding on each side -->
+    <dimen name="standard_notification_panel_width">350dp</dimen><!-- includes notification_side_padding on each side -->
     <dimen name="notification_panel_width">@dimen/match_parent</dimen>
 
     <!-- Gravity for the notification panel -->

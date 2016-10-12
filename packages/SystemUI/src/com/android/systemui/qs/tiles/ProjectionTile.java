@@ -18,6 +18,8 @@ import com.android.systemui.statusbar.phone.QSTileHost;
 public class ProjectionTile extends QSTile<QSTile.BooleanState> {
     private static final String TAG = "ProjectionTile";
     private QSTileHost mHost;
+    private Boolean mBoolean = false;
+    private BooleanState mBooleanState;
 
     public ProjectionTile(Host host) {
         super(host);
@@ -35,13 +37,20 @@ public class ProjectionTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleClick() {
+        mBoolean = true;
+        mBooleanState.icon = ResourceIcon.get(R.drawable.ic_notification_projection_on);
     }
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+        mBooleanState = state;
         state.label = mContext.getResources().getString(R.string.quick_settings_projection_label);
         state.visible = true;
         state.value = true;
-        state.icon = ResourceIcon.get(R.drawable.ic_notification_projection_on);
+        if (mBoolean) {
+            state.icon = ResourceIcon.get(R.drawable.ic_notification_projection_on);
+        } else {
+            state.icon = ResourceIcon.get(R.drawable.ic_notification_projection_off);
+        }
     }
 }
