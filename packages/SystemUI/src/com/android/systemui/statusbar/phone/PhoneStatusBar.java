@@ -213,6 +213,7 @@ import android.media.AudioManager;
 import android.view.Window;
 import android.graphics.Color;
 import android.text.TextPaint;
+import android.os.BatteryManager;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -1047,6 +1048,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumeReceiver = new MyVolumeReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MEDIA_VOLUME_CHANGED);
+        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         mContext.registerReceiver(mVolumeReceiver, filter);
     }
 
@@ -1062,6 +1064,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } else {
                     mVolumeButton.setImageDrawable(mContext.getDrawable(
                                                                 R.drawable.statusbar_sound));
+                }
+            } else if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
+                int level = (int)(100f * intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
+                             / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
+                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+                boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                                     status == BatteryManager.BATTERY_STATUS_FULL;
+                if (isCharging) {
+                    mBatteryButton.setImageDrawable(mContext.getDrawable(
+                                                    R.drawable.statusbar_battery));
+                } else {
+                    if (level >= 10) {
+                        mBatteryButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.statusbar_battery_high));
+                    } else {
+                        mBatteryButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.statusbar_battery_low));
+                    }
                 }
             }
         }

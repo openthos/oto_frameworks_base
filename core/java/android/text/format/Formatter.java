@@ -146,9 +146,6 @@ public final class Formatter {
                 return context.getString(com.android.internal.R.string.durationDayHour, days, hours);
             }
             return context.getString(com.android.internal.R.string.durationDayHours, days, hours);
-        } else if (hours >= 2) {
-            hours += (minutes+30)/60;
-            return context.getString(com.android.internal.R.string.durationHours, hours);
         } else if (hours > 0) {
             if (minutes == 1) {
                 return context.getString(com.android.internal.R.string.durationHourMinute, hours,

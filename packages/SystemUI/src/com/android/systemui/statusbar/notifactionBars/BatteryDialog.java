@@ -20,10 +20,12 @@ import android.os.UserManager;
 import java.util.List;
 import android.os.UserHandle;
 import android.os.SystemClock;
+import android.text.format.Formatter;
 
 public class BatteryDialog extends BaseSettingDialog {
     private static final String BATTERY_HISTORY_FILE = "tmp_bat_history.bin";
-    private static final String BATTERY_PERCENT_TITLE = "电池";
+    private static final int REMAIN_HOUR_DEFAULT = 3;
+    private static final int REMAIN_MINUTE_DEFAULT = 30;
     private TextView mBatteryPercentage;
     private TextView mBatteryRemaining;
     private BatteryReceive batteryReceive;
@@ -56,11 +58,8 @@ public class BatteryDialog extends BaseSettingDialog {
         mBatteryRemaining = (TextView) mediaView.findViewById(R.id.battery_time_remaining);
         mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
         mBatteryStatsHelper = new BatteryStatsHelper(mContext);
-        BatteryStatsHelper.dropFile(mContext, BATTERY_HISTORY_FILE);
-        final List<UserHandle> profiles = mUserManager.getUserProfiles();
         mBatteryStatsHelper.create(new Bundle());
-        mBatteryStats =  mBatteryStatsHelper.getStats();
-        mBatteryStatsHelper.refreshStats(BatteryStats.STATS_SINCE_CHARGED, profiles);
+        updataBatteryRemaining();
         mContentView = mediaView;
     }
 
@@ -72,20 +71,59 @@ public class BatteryDialog extends BaseSettingDialog {
             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int level = (int)(100f * intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
                             / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
-                if (level == 100) {
+                updataBatteryRemaining();
+                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+                if (status == BatteryManager.BATTERY_STATUS_FULL) {
                     mBatteryPercentage.setText(R.string.battery_percent_full);
+                    mBatteryRemaining.setVisibility(View.GONE);
                 } else {
-                    mBatteryPercentage.setText(BATTERY_PERCENT_TITLE + level + "%");
+                    mBatteryRemaining.setVisibility(View.VISIBLE);
+                    mBatteryPercentage.setText(mContext.getResources().getString(
+                                               R.string.battery_percent, level) + "%");
+                    String strBatteryRemaining;
+                    long elapsedRealtime = SystemClock.elapsedRealtime() * 1000;
+                    boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
+                    if (isCharging) {
+                        long chargeTimeRemaining = mBatteryStats.
+                                                  computeChargeTimeRemaining(elapsedRealtime);
+                        if (chargeTimeRemaining < 0) {
+                            strBatteryRemaining = mContext.getResources().getString(
+                                                  R.string.charge_remaining,
+                                                  REMAIN_HOUR_DEFAULT,
+                                                  REMAIN_MINUTE_DEFAULT);
+                        } else {
+                            String chargeString = Formatter.formatShortElapsedTime(getContext(),
+                                                  chargeTimeRemaining / 1000);
+                            strBatteryRemaining = mContext.getResources().getString(
+                                                  R.string.charge_remaining_string, chargeString);
+                        }
+                    } else {
+                        long batteryTimeRemaining = mBatteryStats.
+                                                    computeBatteryTimeRemaining(elapsedRealtime);
+                        if (batteryTimeRemaining < 0) {
+                            strBatteryRemaining = mContext.getResources().getString(
+                                                  R.string.battery_remaining,
+                                                  REMAIN_HOUR_DEFAULT,
+                                                  REMAIN_MINUTE_DEFAULT);
+                        } else {
+                            String batteryString = Formatter.formatShortElapsedTime(getContext(),
+                                                   batteryTimeRemaining / 1000);
+                            strBatteryRemaining = mContext.getResources().getString(
+                                                  R.string.battery_remaining_string, batteryString);
+                        }
+                    }
+                    mBatteryRemaining.setText(strBatteryRemaining);
                 }
-                long batteryRemaining = mBatteryStats.computeBatteryRealtime(
-                        SystemClock.elapsedRealtime() * 1000, BatteryStats.STATS_SINCE_CHARGED);
-                long hours = (batteryRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
-                long minutes = (batteryRemaining % (1000 * 60 * 60)) / (1000 * 60);
-                String strBatteryRemaining = mContext.getResources().getString(
-                                             R.string.battery_remaining, hours, minutes);
-                mBatteryRemaining.setText(strBatteryRemaining);
             }
         }
+    }
+
+    private void updataBatteryRemaining () {
+        BatteryStatsHelper.dropFile(mContext, BATTERY_HISTORY_FILE);
+        List<UserHandle> profiles = mUserManager.getUserProfiles();
+        mBatteryStatsHelper.clearStats();
+        mBatteryStats = mBatteryStatsHelper.getStats();
+        mBatteryStatsHelper.refreshStats(BatteryStats.STATS_SINCE_CHARGED, profiles);
     }
 
     @Override

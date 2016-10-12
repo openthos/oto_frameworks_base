@@ -46,17 +46,17 @@
 
     <!-- [CHAR_LIMIT=10] Suffix added to signify duration of one day with one hours -->
     <string name="durationDayHour"><xliff:g id="days">%1$d</xliff:g> day
-            <xliff:g id="hours">%2$d</xliff:g> hr</string>
+            <xliff:g id="hours">%2$d</xliff:g> hrs</string>
 
     <!-- [CHAR_LIMIT=10] Suffix added to signify duration in hours -->
     <string name="durationHours"><xliff:g id="hours">%1$d</xliff:g> hrs</string>
 
     <!-- [CHAR_LIMIT=10] Suffix added to signify duration of one hour with minutes -->
-    <string name="durationHourMinutes"><xliff:g id="hours">%1$d</xliff:g> hr
+    <string name="durationHourMinutes"><xliff:g id="hours">%1$d</xliff:g> hrs
             <xliff:g id="minutes">%2$d</xliff:g> mins</string>
 
     <!-- [CHAR_LIMIT=10] Suffix added to signify duration of one hour with one minute -->
-    <string name="durationHourMinute"><xliff:g id="hours">%1$d</xliff:g> hr
+    <string name="durationHourMinute"><xliff:g id="hours">%1$d</xliff:g> hrs
             <xliff:g id="minutes">%2$d</xliff:g> min</string>
 
     <!-- [CHAR_LIMIT=10] Suffix added to signify duration in minutes -->
