@@ -1934,7 +1934,7 @@ public abstract class Window {
         return (mMultiWindow.mStackId > 0) && (mDialog == null);
     }
 
-    public boolean hasShadow() {
+    public boolean isShadow() {
         return mMultiWindow.mShadow;
     }
 

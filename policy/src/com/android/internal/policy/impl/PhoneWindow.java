@@ -3013,7 +3013,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void setWindowBackground(Drawable drawable) {
-            if ((mDecorMW != null) && hasShadow() && (drawable != null)) {
+            if ((mDecorMW != null) && isShadow() && (drawable != null)) {
                 if (drawable instanceof BackgroundDrawable) {
                     ((BackgroundDrawable) drawable).setDrawablePadding(getFramePadding());
                 } else if (drawable instanceof ColorDrawable) {
@@ -3912,7 +3912,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         private void setFramePaddingPolicy() {
-            boolean useShadow = hasShadow();
+            boolean useShadow = isShadow();
             boolean useBorder = hasOuterBorder();
             boolean useHeader = hasHeader();
             setHeaderHeight(getContext().getResources().getDimensionPixelSize(
