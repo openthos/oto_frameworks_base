@@ -16,52 +16,49 @@
 
 package com.android.systemui.settings;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
+import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.R;
 
 /** A dialog that provides controls for adjusting the screen brightness. */
-public class BrightnessDialog extends Activity {
+public class BrightnessDialog extends BaseSettingDialog {
 
-    private BrightnessController mBrightnessController;
+    public BrightnessDialog(Context context) {
+        super(context);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final Window window = getWindow();
-
-        window.setGravity(Gravity.TOP);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        window.requestFeature(Window.FEATURE_NO_TITLE);
-
-        setContentView(R.layout.quick_settings_brightness_dialog);
-
-        final ImageView icon = (ImageView) findViewById(R.id.brightness_icon);
-        final ToggleSlider slider = (ToggleSlider) findViewById(R.id.brightness_slider);
-        mBrightnessController = new BrightnessController(this, icon, slider);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mBrightnessController.registerCallbacks();
+    public void show(View v) {
+        super.show(v);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        mBrightnessController.unregisterCallbacks();
+    protected void initViews() {
+        View brightnessView = LayoutInflater.from(mContext)
+                                  .inflate(R.layout.quick_settings_brightness_dialog, null);
+        setContentView(brightnessView);
+        ImageView icon = (ImageView) findViewById(R.id.brightness_icon);
+        ToggleSlider slider = (ToggleSlider) findViewById(R.id.brightness_slider);
+        BrightnessController BrightnessController = new BrightnessController(mContext, icon, slider);
+        BrightnessController.registerCallbacks();
+        mContentView = brightnessView;
     }
 
     @Override
@@ -69,7 +66,7 @@ public class BrightnessDialog extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
                 || keyCode == KeyEvent.KEYCODE_VOLUME_UP
                 || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE) {
-            finish();
+            dismiss();
         }
 
         return super.onKeyDown(keyCode, event);

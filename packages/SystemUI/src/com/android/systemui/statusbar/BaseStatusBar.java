@@ -102,6 +102,7 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.taskview.TaskViewDialog;
 import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
+import com.android.systemui.settings.BrightnessDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,6 +164,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected BaseSettingDialog mCalendarDialog;
     protected BaseSettingDialog mBatteryPopupWindow;
     protected BaseSettingDialog mInputMethodPopupWindow;
+    protected BaseSettingDialog mBrightnessDialog;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;

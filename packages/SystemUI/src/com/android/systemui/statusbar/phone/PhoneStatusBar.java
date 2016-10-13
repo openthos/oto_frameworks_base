@@ -195,6 +195,7 @@ import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import com.android.systemui.statusbar.notificationbars.WifiDialog;
 import com.android.systemui.statusbar.notificationbars.BatteryDialog;
 import com.android.systemui.statusbar.notificationbars.InputMethodDialog;
+import com.android.systemui.settings.BrightnessDialog;
 import android.content.ComponentName;
 
 import java.io.IOException;
@@ -996,8 +997,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(DOCUMENTUI_SEND_INFO_LOCK);
         filter.addAction(SYSTEMUI_SEND_INFO_UNLOCK);
         filter.addAction(SYSTEMUI_SEND_INFO_LOCK);
+        filter.addAction(Intent.ACTION_SHOW_BRIGHTNESS_DIALOG);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
-
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
 
@@ -1010,6 +1011,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
+        mBrightnessDialog = new BrightnessDialog (mContext);
         ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
         Window window = mWifiPopupWindow.getWindow();
         window.setGravity(Gravity.BOTTOM);
@@ -1451,6 +1453,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         dismisTargetDialog(mBatteryPopupWindow);
         dismisTargetDialog(mInputMethodPopupWindow);
         dismisTargetDialog(mWifiPopupWindow);
+        dismisTargetDialog(mBrightnessDialog);
     }
 
     @Override
@@ -3644,6 +3647,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (DEBUG_MEDIA_FAKE_ARTWORK) {
                     updateMediaMetaData(true);
                 }
+            } else if (Intent.ACTION_SHOW_BRIGHTNESS_DIALOG.equals(action)){
+                dismisTargetDialog(mBrightnessDialog);
+                mBrightnessDialog.show(mInputButton);
             } else {
                 String apkInfo = intent.getStringExtra("keyInfo");
                 if (action.equals("com.android.documentsui.util.startmenudialog")) {
