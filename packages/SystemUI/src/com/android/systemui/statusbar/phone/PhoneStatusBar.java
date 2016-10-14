@@ -249,6 +249,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             = "com.cyanogenmod.filemanager";
     public static final String ANDROID_BROWSER
             = "com.android.browser";
+    public static final String NOTIFICATION_CLOSE_ITEM
+            = "com.android.systemui.notification.close.info";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
@@ -1191,7 +1193,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 printerJobLayout.removeAllViews();
 
                 String lastPrinterName = "";
-
                 for (PrinterJobStatus item : remoteList) {
 
                     if(!lastPrinterName.equals(item.getPrinter())){
@@ -1205,6 +1206,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     }
                     final View itemView = View.inflate(mContext,
                                           R.layout.status_bar_item_view, null);
+                    final PrinterJobStatus closeItem = item;
                     //item layout
                     itemView.setBackgroundColor(Color.WHITE);
                     itemView.getBackground().setAlpha(23);
@@ -1218,8 +1220,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mImageViewClose.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            android.os.Process.killProcess(android.os.Process.myPid());
                             itemView.setVisibility(View.GONE);
+                            Intent intentCloseInfo = new Intent();
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("CloseItem", closeItem);
+                            intentCloseInfo.putExtras(bundle);
+                            intentCloseInfo.setAction(NOTIFICATION_CLOSE_ITEM);
+                            mContext.sendBroadcast(intentCloseInfo);
                         }
                     });
                     itemView.setOnClickListener(new View.OnClickListener() {
