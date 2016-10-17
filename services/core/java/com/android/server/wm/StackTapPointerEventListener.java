@@ -21,6 +21,8 @@ import android.graphics.Region;
 import android.view.DisplayInfo;
 import android.view.MotionEvent;
 import android.view.WindowManagerPolicy.PointerEventListener;
+import android.view.WindowManager;
+import android.content.Context;
 
 import com.android.server.wm.WindowManagerService.H;
 
@@ -89,6 +91,9 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 if (mPointerId == motionEvent.getPointerId(index)) {
                     final int x = (int)motionEvent.getX(index);
                     final int y = (int)motionEvent.getY(index);
+                    WindowManager wm =  (WindowManager) mService.mContext
+                                                         .getSystemService(Context.WINDOW_SERVICE);
+                    int height = wm.getDefaultDisplay().getHeight();
                     /**
                      * Date: Apr 3, 2014
                      * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -97,10 +102,11 @@ public class StackTapPointerEventListener implements PointerEventListener {
                      * on different screen.
                      */
                     if ((motionEvent.getEventTime() - motionEvent.getDownTime())
-                            < TAP_TIMEOUT_MSEC
+                               < TAP_TIMEOUT_MSEC
                             && (x - mDownX) < mMotionSlop && (y - mDownY) < mMotionSlop
                             && (!mTouchExcludeRegion.contains(x, y)
-                               || DisplayContent.sCurrentTouchedDisplay != mDisplayContent.getDisplayId())) {
+                               || DisplayContent.sCurrentTouchedDisplay != mDisplayContent.getDisplayId())
+                            && (y < height)) {
                         DisplayContent.sCurrentTouchedDisplay = mDisplayContent.getDisplayId();
                         mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, x, y,
                                 mDisplayContent).sendToTarget();
