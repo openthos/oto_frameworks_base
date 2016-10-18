@@ -47,6 +47,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.IPowerManager;
+import android.os.ServiceManager;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
@@ -2102,6 +2103,15 @@ public final class PowerManagerService extends SystemService
             Trace.traceBegin(Trace.TRACE_TAG_POWER, "setHalAutoSuspend(" + enable + ")");
             try {
                 nativeSetAutoSuspend(enable);
+                if (enable) {
+                    IPowerManager pm = IPowerManager.Stub.asInterface(
+                                             ServiceManager.getService(Context.POWER_SERVICE));
+                    try {
+                        pm.wakeUp(SystemClock.uptimeMillis());
+                    } catch(RemoteException e) {
+                        System.err.println("Fail to wake up: "+ e);
+                    }
+                }
             } finally {
                 Trace.traceEnd(Trace.TRACE_TAG_POWER);
             }
