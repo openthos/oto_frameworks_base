@@ -91,6 +91,9 @@
     <!-- Height of a the summary ("more card") notification on keyguard. -->
     <dimen name="notification_summary_height">44dp</dimen>
 
+    <!-- Height of notification show informtion total heigth -->
+    <dimen name="notification_info_height">800px</dimen>
+
     <!-- size at which Notification icons will be drawn in the status bar -->
     <dimen name="status_bar_icon_drawing_size">17dip</dimen>
 

@@ -77,7 +77,7 @@
                 <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
                     android:id="@+id/notification_stack_scroller"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="370dp"
                     android:layout_gravity="top|center"
                     android:layout_marginTop="@dimen/systemui_size_one"
                     android:layout_marginBottom="@dimen/close_handle_underlap"

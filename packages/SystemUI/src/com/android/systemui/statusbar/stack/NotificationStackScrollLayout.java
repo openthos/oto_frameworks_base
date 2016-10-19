@@ -108,6 +108,7 @@ public class NotificationStackScrollLayout extends ViewGroup
     private int mPaddingBetweenElementsNormal;
     private int mTopPadding;
     private int mCollapseSecondCardPadding;
+    private int mNotificationInfoHeight;
 
     /**
      * The algorithm which calculates the properties for our children
@@ -296,6 +297,8 @@ public class NotificationStackScrollLayout extends ViewGroup
                 R.dimen.notifications_top_padding);
         mCollapseSecondCardPadding = getResources().getDimensionPixelSize(
                 R.dimen.notification_collapse_second_card_padding);
+        mNotificationInfoHeight = context.getResources().getDimensionPixelSize(
+                R.dimen.notification_info_height);
     }
 
     private void updatePadding(boolean dimmed) {
@@ -331,6 +334,9 @@ public class NotificationStackScrollLayout extends ViewGroup
             View child = getChildAt(i);
             float width = child.getMeasuredWidth();
             float height = child.getMeasuredHeight();
+            if (height <= 0) {
+                continue;
+            }
             child.layout((int) (centerX - width / 2.0f),
                     0,
                     (int) (centerX + width / 2.0f),
@@ -463,7 +469,7 @@ public class NotificationStackScrollLayout extends ViewGroup
      * @param height the new height of the stack
      */
     public void setStackHeight(float height) {
-        height = 300.0f;  // FIXME: need read from xml config file, next.
+        height = (float)mNotificationInfoHeight;
         mLastSetStackHeight = height;
         setIsExpanded(height > 0.0f);
         int newStackHeight = (int) height;
