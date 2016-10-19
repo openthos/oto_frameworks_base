@@ -33,7 +33,7 @@
     <!-- Height of the status bar -->
     <dimen name="status_bar_height">1dp</dimen> <!-- no status bar for outside, e.g QQ -->
     <!-- Real height of the status bar, if it is changed, also need sync navigation bar below -->
-    <dimen name="status_bar_height_real">30dp</dimen>
+    <dimen name="status_bar_height_real">40dp</dimen>
     <!-- Height of the bottom navigation / system bar. -->
     <!-- It has gone, but applications may still care about its room on screen -->
     <dimen name="navigation_bar_height">30dp</dimen>
@@ -44,7 +44,7 @@
     <dimen name="navigation_bar_width">42dp</dimen>
     <!-- Height of icons in the status bar -->
     <dimen name="status_bar_icon_size">24dip</dimen>
-    <dimen name="status_bar_icon_size_big">26dip</dimen>
+    <dimen name="status_bar_icon_size_big">32dip</dimen>
     <!-- Size of the giant number (unread count) in the notifications -->
     <dimen name="status_bar_content_number_size">30sp</dimen>
     <!-- Margin at the edge of the screen to ignore touch events for in the windowshade. -->

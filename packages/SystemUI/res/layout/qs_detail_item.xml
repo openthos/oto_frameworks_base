@@ -24,14 +24,14 @@
 
     <ImageView
         android:id="@android:id/icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="12dp" />
+        android:layout_width="@dimen/systemui_size_twentyfour"
+        android:layout_height="@dimen/systemui_size_twentyfour"
+        android:layout_marginEnd="@dimen/systemui_size_twelve" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="@dimen/systemui_size_zero"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/systemui_size_twelve"
         android:layout_weight="1"
         android:orientation="vertical" >
 
@@ -46,15 +46,15 @@
             android:id="@android:id/summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/systemui_size_two"
             android:textAppearance="@style/TextAppearance.QS.DetailItemSecondary" />
     </LinearLayout>
 
     <ImageView
         android:id="@android:id/icon2"
         style="@style/QSBorderlessButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/systemui_size_fortyeight"
+        android:layout_height="@dimen/systemui_size_fortyeight"
         android:clickable="true"
         android:scaleType="center"
         android:src="@drawable/ic_qs_cancel" />

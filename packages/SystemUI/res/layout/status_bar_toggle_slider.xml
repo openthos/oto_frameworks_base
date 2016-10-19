@@ -22,8 +22,8 @@
     >
     <CheckBox
         android:id="@+id/toggle"
-        android:layout_width="48dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/systemui_size_fortyeight"
+        android:layout_height="@dimen/systemui_size_zero"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
@@ -33,31 +33,31 @@
         />
     <com.android.systemui.settings.ToggleSeekBar
         android:id="@+id/slider"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/systemui_size_zero"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/toggle"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingStart="@dimen/systemui_size_twenty"
+        android:paddingEnd="@dimen/systemui_size_twenty"
+        android:paddingTop="@dimen/systemui_size_sixteen"
+        android:paddingBottom="@dimen/systemui_size_sixteen"
         android:thumb="@drawable/ic_brightness_thumb"
         android:splitTrack="false"
         android:contentDescription="@string/accessibility_brightness"
         />
     <TextView
         android:id="@+id/label"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/systemui_size_zero"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/toggle"
         android:layout_alignEnd="@id/toggle"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:paddingTop="26dp"
+        android:paddingTop="@dimen/systemui_size_twentysix"
         android:textColor="#666666"
-        android:textSize="12sp"
+        android:textSize="@dimen/systemui_textsize_twelve"
         android:visibility="gone"
         />
 </merge>

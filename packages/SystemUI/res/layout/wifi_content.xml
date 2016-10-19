@@ -4,40 +4,39 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    android:padding="10dp"
     android:orientation="vertical">
     <LinearLayout
         android:id="@+id/wifi_content_main"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/systemui_size_twentyfour">
         <ImageView
             android:id="@+id/wifi_content_is_cnted"
             android:src="@android:drawable/checkbox_off_background"
-            android:layout_width="30dp"
+            android:layout_width="@dimen/systemui_size_thirty"
             android:layout_gravity="center"
             android:layout_height="match_parent" />
         <TextView
             android:id="@+id/wifi_content_name"
-            android:layout_width="100dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center_vertical"
             android:focusable="false"
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:text="@string/wifi_test"
-            android:textAlignment="center"
-            android:textSize="10pt" />
+            android:textSize="@dimen/systemui_textsize_twelve" />
         <ImageView
             android:id="@+id/wifi_has_psw"
-            android:layout_width="35dp"
+            android:layout_width="@dimen/systemui_size_sixteen"
             android:layout_gravity="center"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
         <ImageView
             android:id="@+id/wifi_content_level"
-            android:layout_width="35dp"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/systemui_size_sixteen"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/systemui_size_eight"
             android:focusable="false" />
     </LinearLayout>
     <FrameLayout
@@ -53,7 +52,7 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="5pt"
+            android:textSize="@dimen/systemui_textsize_five_pt"
             android:textColor="@android:color/white"
             android:text="@string/wifi_try_cnt"
             />
@@ -63,7 +62,7 @@
             android:id="@+id/wifi_connecting"
             android:visibility="gone"
             android:text="@string/wifi_cnting"
-            android:textSize="5pt"
+            android:textSize="@dimen/systemui_textsize_five"
             android:textColor="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

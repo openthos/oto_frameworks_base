@@ -20,7 +20,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:gravity="center"
-    android:textSize="16sp"
+    android:textSize="@dimen/systemui_textsize_sixteen"
     android:textColor="#ffffffff"
     android:text="@string/recents_empty_message"
     android:fontFamily="sans-serif"

@@ -51,13 +51,13 @@
                 android:layout_width="@dimen/navigation_extra_key_width"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:layout_marginEnd="2dp" >
+                android:layout_marginEnd="@dimen/systemui_size_two" >
                 <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/menu"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_sysbar_menu"
                     android:scaleType="centerInside"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="@dimen/systemui_size_two"
                     systemui:keyCode="82"
                     android:visibility="invisible"
                     android:contentDescription="@string/accessibility_menu"
@@ -66,7 +66,7 @@
                     android:id="@+id/ime_switcher"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="@dimen/systemui_size_two"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_ime_switcher_default"
                     android:visibility="invisible"
@@ -88,23 +88,29 @@
                 android:layout_weight="1"
                 />
             <ImageView
-                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
+                android:layout_width="@dimen/navigation_lights_width"
+                android:paddingStart="@dimen/systemui_size_twentyfive"
+                android:paddingEnd="@dimen/systemui_size_twentyfive"
                 android:layout_height="match_parent"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="@dimen/systemui_size_forty"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
                 android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
-                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
+                android:layout_width="@dimen/navigation_lights_width"
+                android:paddingStart="@dimen/systemui_size_twentyfive"
+                android:paddingEnd="@dimen/systemui_size_twentyfive"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
                 android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
-                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
-                android:layout_marginEnd="40dp"
+                android:layout_width="@dimen/navigation_lights_width"
+                android:paddingStart="@dimen/systemui_size_twentyfive"
+                android:paddingEnd="@dimen/systemui_size_twentyfive"
+                android:layout_marginEnd="@dimen/systemui_size_forty"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
                 android:scaleType="center"
@@ -134,7 +140,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:paddingTop="0dp"
+        android:paddingTop="@dimen/systemui_size_zero"
         >
 
         <LinearLayout
@@ -152,7 +158,7 @@
                 android:layout_width="@dimen/navigation_extra_key_width"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:layout_marginStart="2dp"
+                android:layout_marginStart="@dimen/systemui_size_two"
                 android:visibility="invisible"
                 />
             <Space
@@ -161,7 +167,9 @@
                 android:layout_weight="1"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/back"
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_back"
                 android:scaleType="centerInside"
@@ -170,7 +178,9 @@
                 android:contentDescription="@string/accessibility_back"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/home"
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_home"
                 android:scaleType="centerInside"
@@ -180,7 +190,9 @@
                 android:contentDescription="@string/accessibility_home"
                 />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/recent_apps"
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_recent"
                 android:scaleType="centerInside"
@@ -195,12 +207,12 @@
             <FrameLayout
                 android:layout_width="@dimen/navigation_extra_key_width"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/systemui_size_two"
                 android:layout_weight="0" >
                 <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/menu"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="@dimen/systemui_size_two"
                     android:src="@drawable/ic_sysbar_menu"
                     android:scaleType="centerInside"
                     systemui:keyCode="82"
@@ -210,7 +222,7 @@
                     android:id="@+id/ime_switcher"
                     android:layout_width="@dimen/navigation_extra_key_width"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="2dp"
+                    android:layout_marginEnd="@dimen/systemui_size_two"
                     android:src="@drawable/ic_ime_switcher_default"
                     android:visibility="invisible"
                     android:contentDescription="@string/accessibility_ime_switch_button"
@@ -232,23 +244,29 @@
                 android:layout_weight="1"
                 />
             <ImageView
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
                 android:layout_height="match_parent"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="@dimen/systemui_size_forty"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
                 android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_large"
                 android:scaleType="center"
                 android:layout_weight="0"
                 />
             <ImageView
-                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
-                android:layout_marginEnd="40dp"
+                android:layout_width="@dimen/navigation_controls_key_width"
+                android:paddingStart="@dimen/systemui_size_fortytwo"
+                android:paddingEnd="@dimen/systemui_size_fortytwo"
+                android:layout_marginEnd="@dimen/systemui_size_forty"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sysbar_lights_out_dot_small"
                 android:scaleType="center"

@@ -25,9 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/system_secondary_color"
-        android:paddingTop="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
+        android:paddingTop="@dimen/systemui_size_eight"
+        android:paddingLeft="@dimen/systemui_size_eight"
+        android:paddingRight="@dimen/systemui_size_eight"
         android:clipChildren="false" />
 
      <include

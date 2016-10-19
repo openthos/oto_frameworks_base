@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dp"
+    android:layout_width="@dimen/systemui_size_twohundred"
     android:layout_height="wrap_content"
     android:background="#342464"
     android:orientation="vertical"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingTop="@dimen/systemui_size_ten"
+    android:paddingBottom="@dimen/systemui_size_ten"
+    android:paddingLeft="@dimen/systemui_size_twenty"
+    android:paddingRight="@dimen/systemui_size_twenty">
 
     <TextView
         android:id="@+id/input_method_time_percentage"
         android:layout_gravity="center"
-        android:textSize="18sp"
+        android:textSize="@dimen/systemui_textsize_eighteen"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         android:id="@+id/input_method_time_remaining"
         android:layout_gravity="center"
         android:text="@string/wifi_enable"
-        android:textSize="12sp"
+        android:textSize="@dimen/systemui_textsize_twelve"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:layout_width="wrap_content"

@@ -9,18 +9,18 @@
     >
     <com.android.systemui.statusbar.policy.ActivityKeyView
         android:id="@+id/activity_key_view"
-        android:layout_width="38dp"
+        android:layout_width="@dimen/systemui_size_sixtyfour"
         android:layout_height="match_parent"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
+        android:layout_marginLeft="@dimen/systemui_size_one"
+        android:layout_marginRight="@dimen/systemui_size_one"
         android:background="@drawable/tasker_app_getfocus"
         android:scaleType="centerInside" />
     <View
         android:id="@+id/activity_focused"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
+        android:layout_marginLeft="@dimen/systemui_size_one"
+        android:layout_marginRight="@dimen/systemui_size_one"
         android:background="@drawable/ic_background_mouse_click"
         android:visibility="gone"
         />
@@ -28,8 +28,8 @@
         android:id="@+id/activity_run"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="1dp"
-        android:layout_marginRight="1dp"
+        android:layout_marginLeft="@dimen/systemui_size_one"
+        android:layout_marginRight="@dimen/systemui_size_one"
         android:background="@drawable/ic_background_activity_run"
         android:visibility="gone"
         />

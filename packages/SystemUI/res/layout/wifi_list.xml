@@ -4,12 +4,16 @@
     android:layout_height="wrap_content"
     android:background="#342464"
     android:orientation="vertical"
+    android:paddingLeft="@dimen/systemui_size_sixteen"
+    android:paddingRight="@dimen/systemui_size_sixteen"
+    android:paddingTop="@dimen/systemui_size_eight"
+    android:paddingBottom="@dimen/systemui_size_eight"
     android:showDividers="middle">
 
     <LinearLayout
         android:id="@+id/net_list_container"
-        android:layout_width="220dp"
-        android:layout_height="400dp"
+        android:layout_width="@dimen/net_dialog_width"
+        android:layout_height="@dimen/systemui_size_fourhundred"
         android:orientation="vertical"
         android:scrollbars="vertical">
     </LinearLayout>
@@ -17,21 +21,21 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
-        android:padding="10dp"
-        android:layout_height="50dp">
+        android:padding="@dimen/systemui_size_ten"
+        android:layout_height="@dimen/systemui_size_fifty">
         <TextView
             android:id="@+id/wifi_enable"
             android:layout_gravity="center"
             android:text="@string/wifi_enable"
-            android:textSize="8pt"
+            android:textSize="@dimen/systemui_textsize_eight_pt"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:layout_width="100dp"
+            android:layout_width="@dimen/systemui_size_hundred"
             android:layout_height="wrap_content" />
         <Switch
             android:id="@+id/wifi_enable_btn"
             android:layout_gravity="right|center_vertical"
-            android:layout_width="100dp"
+            android:layout_width="@dimen/systemui_size_hundred"
             android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

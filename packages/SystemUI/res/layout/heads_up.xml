@@ -27,7 +27,7 @@
                 android:layout_gravity="@integer/notification_panel_layout_gravity"
                 android:paddingStart="@dimen/notification_side_padding"
                 android:paddingEnd="@dimen/notification_side_padding"
-                android:elevation="8dp"
+                android:elevation="@dimen/systemui_size_eight"
                 android:id="@+id/content_holder" />
 
 </com.android.systemui.statusbar.policy.HeadsUpNotificationView>

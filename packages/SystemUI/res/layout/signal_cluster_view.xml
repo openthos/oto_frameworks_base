@@ -30,7 +30,7 @@
         android:id="@+id/vpn"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:paddingEnd="6dp"
+        android:paddingEnd="@dimen/systemui_size_six"
         android:src="@drawable/stat_sys_vpn_ic"
         />
     <FrameLayout
@@ -46,8 +46,8 @@
     </FrameLayout>
     <View
         android:id="@+id/wifi_signal_spacer"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/systemui_size_four"
+        android:layout_height="@dimen/systemui_size_four"
         android:visibility="gone"
         />
     <LinearLayout
@@ -64,8 +64,8 @@
         />
     <View
         android:id="@+id/wifi_airplane_spacer"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
+        android:layout_width="@dimen/systemui_size_four"
+        android:layout_height="@dimen/systemui_size_four"
         android:visibility="gone"
         />
     <ImageView

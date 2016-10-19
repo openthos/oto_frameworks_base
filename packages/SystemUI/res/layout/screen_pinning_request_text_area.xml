@@ -27,54 +27,54 @@
         android:id="@+id/screen_pinning_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="48dp"
-        android:paddingStart="48dp"
-        android:paddingTop="43dp"
+        android:paddingEnd="@dimen/systemui_size_fortyeight"
+        android:paddingStart="@dimen/systemui_size_fortyeight"
+        android:paddingTop="@dimen/systemui_size_fortythree"
         android:text="@string/screen_pinning_title"
         android:textColor="@color/screen_pinning_primary_text"
-        android:textSize="24sp" />
+        android:textSize="@dimen/systemui_textsize_twentyfour" />
 
     <TextView
         android:id="@+id/screen_pinning_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/screen_pinning_title"
-        android:paddingEnd="48dp"
-        android:paddingStart="48dp"
-        android:paddingTop="12.6dp"
+        android:paddingEnd="@dimen/systemui_size_fortyeight"
+        android:paddingStart="@dimen/systemui_size_fortyeight"
+        android:paddingTop="@dimen/systemui_size_twelvepoint"
         android:text="@string/screen_pinning_description"
         android:textColor="@color/screen_pinning_primary_text"
-        android:textSize="16sp" />
+        android:textSize="@dimen/systemui_textsize_sixteen" />
 
     <Button
         android:id="@+id/screen_pinning_ok_button"
         style="@android:style/Widget.Material.Button"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="@dimen/systemui_size_thirtysix"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/screen_pinning_description"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginEnd="@dimen/systemui_size_forty"
+        android:layout_marginTop="@dimen/systemui_size_eighteen"
         android:background="@null"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
+        android:paddingEnd="@dimen/systemui_size_eight"
+        android:paddingStart="@dimen/systemui_size_eight"
         android:text="@string/screen_pinning_positive"
         android:textColor="@android:color/white"
-        android:textSize="14sp" />
+        android:textSize="@dimen/systemui_textsize_forteen" />
 
     <Button
         android:id="@+id/screen_pinning_cancel_button"
         style="@android:style/Widget.Material.Button"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
+        android:layout_height="@dimen/systemui_size_thirtysix"
         android:layout_alignTop="@id/screen_pinning_ok_button"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="@dimen/systemui_size_four"
         android:layout_toStartOf="@id/screen_pinning_ok_button"
         android:background="@null"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
+        android:paddingEnd="@dimen/systemui_size_eight"
+        android:paddingStart="@dimen/systemui_size_eight"
         android:text="@string/screen_pinning_negative"
         android:textColor="@android:color/white"
-        android:textSize="14sp" />
+        android:textSize="@dimen/systemui_textsize_forteen" />
 
 </RelativeLayout>

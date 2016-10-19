@@ -18,19 +18,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/qs_detail_background"
-        android:paddingBottom="16dp"
+        android:paddingBottom="@dimen/systemui_size_sixteen"
         android:orientation="vertical">
 
     <FrameLayout
             android:id="@android:id/content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/systemui_size_zero"
             android:layout_weight="1" />
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="16dp"
+            android:paddingEnd="@dimen/systemui_size_sixteen"
             android:gravity="end">
 
         <TextView
@@ -38,8 +38,8 @@
                 style="@style/QSBorderlessButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:minWidth="132dp"
+                android:layout_marginEnd="@dimen/systemui_size_eight"
+                android:minWidth="@dimen/systemui_minwidth_hundred"
                 android:textAppearance="@style/TextAppearance.QS.DetailButton"
                 android:focusable="true" />
 
@@ -48,7 +48,7 @@
                 style="@style/QSBorderlessButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="88dp"
+                android:minWidth="@dimen/systemui_minwidth_eighty"
                 android:textAppearance="@style/TextAppearance.QS.DetailButton"
                 android:focusable="true"/>
 

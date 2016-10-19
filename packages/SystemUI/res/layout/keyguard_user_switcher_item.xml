@@ -22,8 +22,8 @@
         xmlns:sysui="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_marginEnd="8dp"
+        android:padding="@dimen/systemui_size_eight"
+        android:layout_marginEnd="@dimen/systemui_size_eight"
         android:gravity="center_vertical"
         android:clickable="true"
         android:background="@drawable/ripple_drawable"
@@ -33,7 +33,7 @@
     <TextView android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/systemui_size_sixteen"
             android:textAppearance="@style/TextAppearance.StatusBar.Expanded.UserSwitcher.UserName"
             />
     <com.android.systemui.statusbar.phone.UserAvatarView android:id="@+id/user_picture"
@@ -41,6 +41,6 @@
             android:layout_height="@dimen/max_avatar_size"
             android:contentDescription="@null"
             sysui:frameWidth="@dimen/keyguard_user_switcher_border_thickness"
-            sysui:framePadding="6dp"
+            sysui:framePadding="@dimen/systemui_size_six"
             sysui:activeFrameColor="@color/current_user_border_color" />
 </com.android.systemui.qs.tiles.UserDetailItemView>

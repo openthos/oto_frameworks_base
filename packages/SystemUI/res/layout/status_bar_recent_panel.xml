@@ -38,7 +38,7 @@
             android:id="@+id/recents_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="@dimen/systemui_size_zero"
             android:divider="@null"
             android:stackFromBottom="true"
             android:fadingEdge="vertical"

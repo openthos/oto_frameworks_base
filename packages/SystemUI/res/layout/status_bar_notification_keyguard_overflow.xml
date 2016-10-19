@@ -37,16 +37,16 @@
         android:layout_height="match_parent">
         <TextView
             android:id="@+id/more_text"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="@dimen/systemui_size_thirtytwo"
+            android:layout_height="@dimen/systemui_size_thirtytwo"
+            android:layout_marginStart="@dimen/systemui_size_sixteen"
+            android:layout_marginEnd="@dimen/systemui_size_twelve"
             android:layout_gravity="center_vertical"
             android:background="@drawable/keyguard_overflow_number_background"
             android:gravity="center"
             android:textColor="#ff686868"
             android:textStyle="bold"
-            android:textSize="14dp"
+            android:textSize="@dimen/systemui_textsize_forteen"
             />
         <com.android.systemui.statusbar.StatusBarIconView
             android:id="@+id/more_icon_overflow"
@@ -59,7 +59,7 @@
         <com.android.systemui.statusbar.NotificationOverflowIconsView
             android:id="@+id/overflow_icons_view"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/systemui_size_eight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />

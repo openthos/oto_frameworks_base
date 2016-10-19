@@ -9,26 +9,26 @@
     <RelativeLayout
         android:id="@+id/relative_print_document"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginLeft="16dp"
+        android:layout_height="@dimen/systemui_size_fiftysix"
+        android:layout_marginLeft="@dimen/systemui_size_sixteen"
         android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/textView_document_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/systemui_textsize_forteen"
             android:textStyle="bold"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="@dimen/systemui_size_sixteen"
             android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/textView_document_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="1dp"
-            android:textSize="12px"
-            android:layout_marginLeft="16dp"
+            android:paddingTop="@dimen/systemui_size_one"
+            android:textSize="@dimen/systemui_textsize_twelve_px"
+            android:layout_marginLeft="@dimen/systemui_size_sixteen"
             android:textColor="#80ffffff"
             android:layout_below="@id/textView_document_name" />
 
@@ -36,7 +36,7 @@
             android:id="@+id/imageView_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="@dimen/systemui_size_sixteen"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             android:layout_alignParentRight="true" />
 
@@ -44,7 +44,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="@dimen/systemui_size_one"
         android:background="#33ffffff"/>
 
 </LinearLayout>

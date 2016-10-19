@@ -43,13 +43,13 @@
 
     <Button
         android:id="@+id/veto"
-        android:layout_width="48dp"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/systemui_size_fortyeight"
+        android:layout_height="@dimen/systemui_size_zero"
         android:gravity="end"
-        android:layout_marginEnd="-80dp"
+        android:layout_marginEnd="@dimen/systemui_size_subeighty"
         android:background="@null"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
+        android:paddingEnd="@dimen/systemui_size_eight"
+        android:paddingStart="@dimen/systemui_size_eight"
         />
 
     <ViewStub

@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/package_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/systemui_size_fifty"
+        android:layout_height="@dimen/systemui_size_fifty"
         android:src="@drawable/ic_launcher"/>
     <TextView
         android:id="@+id/package_name"

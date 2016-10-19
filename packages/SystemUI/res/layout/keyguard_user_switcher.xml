@@ -26,6 +26,6 @@
             android:layout_marginTop="@dimen/status_bar_header_height_keyguard"
             android:layout_gravity="end"
             android:gravity="end"
-            android:paddingTop="4dp">
+            android:paddingTop="@dimen/systemui_size_four">
     </com.android.keyguard.AlphaOptimizedLinearLayout>
 </view>

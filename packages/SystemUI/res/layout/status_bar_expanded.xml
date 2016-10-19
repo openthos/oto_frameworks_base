@@ -45,7 +45,7 @@
         android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Network.EmergencyOnly"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:padding="4dp"
+        android:padding="@dimen/systemui_size_four"
         android:gravity="center"
         android:visibility="gone"/>
 
@@ -62,7 +62,7 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="370dp"
+            android:layout_height="@dimen/notification_panel_height"
             android:orientation="vertical">
 
             <FrameLayout
@@ -72,14 +72,14 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="48dp" />
+                    android:layout_height="@dimen/systemui_size_fortyeight" />
 
                 <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
                     android:id="@+id/notification_stack_scroller"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|center"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginTop="@dimen/systemui_size_one"
                     android:layout_marginBottom="@dimen/close_handle_underlap"
                     android:importantForAccessibility="no" />
 
@@ -95,39 +95,39 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:padding="8dp"
+                android:layout_height="@dimen/systemui_size_fortyeight"
+                android:padding="@dimen/systemui_size_eight"
                 android:background="#1Affffff">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="@dimen/systemui_size_sixteen"
                     android:layout_centerVertical="true"
                     android:text="@string/print_message"
                     android:textColor="#99ffffff"
                     android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/systemui_textsize_sixteen" />
 
                 <Button
                     android:id="@+id/printManager"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginRight="@dimen/systemui_size_sixteen"
                     android:layout_centerVertical="true"
-                    android:paddingRight="8dp"
+                    android:paddingRight="@dimen/systemui_size_eight"
                     android:background="@null"
                     android:text="@string/print_manager"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/systemui_textsize_twelve" />
 
             </RelativeLayout>
 
             <!-- printer job layout -->
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_height="200dp" >
+                android:layout_marginTop="@dimen/systemui_size_eight"
+                android:layout_height="@dimen/systemui_size_twohundred" >
                 <LinearLayout
                     android:id="@+id/printer_job_layout"
                     android:layout_width="match_parent"
@@ -150,19 +150,19 @@
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_height="100dp" />
+                android:layout_height="@dimen/systemui_size_hundred" />
 
             <!-- A view to reserve space for the collapsed stack -->
             <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->
             <View
                 android:id="@+id/reserve_notification_space"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/systemui_size_zero"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/notifications_top_padding"
                 android:visibility="gone" />
 
             <View
-                android:layout_height="0dp"
+                android:layout_height="@dimen/systemui_size_zero"
                 android:layout_width="match_parent"
                 android:visibility="gone" />
         </LinearLayout>
@@ -171,7 +171,7 @@
         <com.android.systemui.statusbar.phone.ObservableScrollView
             android:id="@+id/scroll_view"
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/systemui_size_zero"
             android:layout_gravity="bottom|center"
             android:scrollbars="none"
             android:overScrollMode="never"
@@ -182,7 +182,7 @@
         <ViewStub
             android:id="@+id/keyguard_user_switcher"
             android:layout="@layout/keyguard_user_switcher"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/systemui_size_zero"
             android:layout_width="match_parent"
             android:visibility="gone" />
 
@@ -198,7 +198,7 @@
 
     <com.android.systemui.statusbar.AlphaOptimizedView
         android:id="@+id/qs_navbar_scrim"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/systemui_size_zero"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
         android:visibility="gone"

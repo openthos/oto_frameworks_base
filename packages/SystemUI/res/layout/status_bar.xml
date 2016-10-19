@@ -35,8 +35,8 @@
         android:id="@+id/notification_lights_out"
         android:layout_width="@dimen/status_bar_icon_size_big"
         android:layout_height="@dimen/status_bar_icon_size_big"
-        android:paddingStart="6dip"
-        android:paddingBottom="2dip"
+        android:paddingStart="@dimen/systemui_size_six"
+        android:paddingBottom="@dimen/systemui_size_two"
         android:src="@drawable/ic_sysbar_lights_out_dot_small"
         android:scaleType="center"
         android:visibility="gone"
@@ -51,19 +51,18 @@
         <ImageView
             android:id="@+id/status_bar_startup_menu"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="4dp"
-            android:layout_width="38dp"
+            android:layout_marginTop="@dimen/systemui_size_four"
+            android:layout_width="@dimen/systemui_size_sixtyfour"
             android:layout_height="@dimen/status_bar_icon_size_big"
-            android:layout_marginStart="2dip"
-            android:layout_marginBottom="2dip"
+            android:layout_marginStart="@dimen/systemui_size_two"
+            android:layout_marginBottom="@dimen/systemui_size_two"
             android:src="@drawable/ic_sysbar_menu"
             android:scaleType="centerInside"
             />
         <HorizontalScrollView
             android:id="@+id/status_bar_scroll_view"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="4dp"
-            android:paddingBottom="4dp"
+            android:layout_marginTop="@dimen/systemui_size_four"
             android:layout_width="match_parent"
             android:layout_height="@dimen/status_bar_icon_size_big"
             android:layout_toRightOf="@+id/status_bar_startup_menu"
@@ -73,7 +72,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingEnd="8dp"
+                android:paddingEnd="@dimen/systemui_size_eight"
                 android:orientation="horizontal"
                 >
 
@@ -84,15 +83,15 @@
         <LinearLayout android:id="@+id/status_bar_contents"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingStart="6dp"
-            android:paddingEnd="8dp"
+            android:paddingStart="@dimen/systemui_size_six"
+            android:paddingEnd="@dimen/systemui_size_eight"
             android:layout_alignParentRight="true"
             android:orientation="horizontal"
             >
 
             <com.android.systemui.statusbar.AlphaOptimizedFrameLayout
                 android:id="@+id/notification_icon_area"
-                android:layout_width="0dip"
+                android:layout_width="@dimen/systemui_size_zero"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="horizontal"
@@ -102,7 +101,7 @@
                 <com.android.keyguard.AlphaOptimizedLinearLayout
                     android:id="@+id/notification_icon_area_inner"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="4dp"
+                    android:layout_marginTop="@dimen/systemui_size_four"
                     android:layout_height="@dimen/status_bar_icon_size_big"
                     >
                     <com.android.systemui.statusbar.StatusBarIconView android:id="@+id/moreIcon"
@@ -119,8 +118,8 @@
                         android:orientation="horizontal"/>
                 </com.android.keyguard.AlphaOptimizedLinearLayout>
                 <View
-                    android:layout_marginTop="4dp"
-                    android:layout_width="5dp"
+                    android:layout_marginTop="@dimen/systemui_size_four"
+                    android:layout_width="@dimen/systemui_size_five"
                     android:layout_height="match_parent"
                 />
             </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>
@@ -133,12 +132,12 @@
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_action_center"
-                   android:layout_width="wrap_content"
+                   android:layout_width="@dimen/systemui_size_thirtytwo"
                    android:layout_height="match_parent"
-                   android:paddingLeft="3dp"
-                   android:paddingRight="3dp"
-                   android:layout_gravity="center_vertical"
-                   android:layout_marginRight="10dp"
+                   android:paddingLeft="@dimen/systemui_size_three"
+                   android:paddingRight="@dimen/systemui_size_three"
+                   android:layout_gravity="center"
+                   android:layout_marginRight="@dimen/systemui_size_ten"
                    android:src="@drawable/statusbar_action_center"
                    systemui:keyCode="100004"
                    android:visibility="gone"
@@ -146,12 +145,11 @@
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/status_bar_input_method"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/systemui_size_thirtytwo"
                     android:layout_height="match_parent"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="10dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/systemui_size_eight"
+                    android:paddingRight="@dimen/systemui_size_eight"
                     android:src="@drawable/statusbar_switch_input_method"
                     systemui:keyCode="100005"
                     systemui:keyRepeat="true" />
@@ -161,13 +159,11 @@
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_battery"
-                   android:layout_width="wrap_content"
+                   android:layout_width="@dimen/systemui_size_thirtytwo"
                    android:layout_height="match_parent"
-                   android:paddingLeft="3dp"
-                   android:paddingRight="3dp"
-                   android:layout_gravity="center_vertical"
-                   android:layout_marginLeft="10dp"
-                   android:layout_marginRight="10dp"
+                   android:layout_gravity="center"
+                   android:paddingLeft="@dimen/systemui_size_eight"
+                   android:paddingRight="@dimen/systemui_size_eight"
                    android:src="@drawable/statusbar_battery"
                    systemui:keyCode="100006"
                    systemui:keyRepeat="true" />
@@ -175,44 +171,42 @@
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_wifi"
-                   android:layout_width="wrap_content"
+                   android:layout_width="@dimen/systemui_size_thirtytwo"
                    android:layout_height="match_parent"
-                   android:paddingLeft="3dp"
-                   android:paddingRight="3dp"
-                   android:layout_gravity="center_vertical"
-                   android:layout_marginLeft="10dp"
-                   android:layout_marginRight="10dp"
+                   android:layout_gravity="center"
+                   android:paddingLeft="@dimen/systemui_size_eight"
+                   android:paddingRight="@dimen/systemui_size_eight"
                    android:src="@drawable/statusbar_wifi"
                    systemui:keyCode="100007"
                    systemui:keyRepeat="true" />
 
                 <com.android.systemui.statusbar.policy.KeyButtonView
                    android:id="@+id/status_bar_sound"
-                   android:layout_width="wrap_content"
+                   android:layout_width="@dimen/systemui_size_thirtytwo"
                    android:layout_height="match_parent"
-                   android:paddingLeft="3dp"
-                   android:paddingRight="3dp"
-                   android:layout_gravity="center_vertical"
-                   android:layout_marginRight="10dp"
+                   android:layout_gravity="center"
+                   android:paddingLeft="@dimen/systemui_size_eight"
+                   android:paddingRight="@dimen/systemui_size_eight"
                    android:src="@drawable/statusbar_sound"
                    systemui:keyCode="100008"
                    systemui:keyRepeat="true" />
 
 
                 <ImageView
-                    android:layout_marginLeft="10dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="@dimen/systemui_size_thirtytwo"
                     android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/systemui_size_eight"
+                    android:paddingRight="@dimen/systemui_size_eight"
                     android:src="@drawable/statusbar_action_center" />
 
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"
                     android:textAppearance="@style/TextAppearance.StatusBar.Clock"
-                    android:layout_width="72dp"
+                    android:layout_width="@dimen/systemui_width_big"
                     android:layout_height="match_parent"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/systemui_textsize_twelve"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="@dimen/systemui_size_five"
                     android:gravity="center" />
 
             </com.android.keyguard.AlphaOptimizedLinearLayout>
@@ -229,11 +223,11 @@
         />
 
     <com.android.systemui.statusbar.policy.KeyButtonView
-        android:layout_width="1dp"
+        android:layout_width="@dimen/systemui_size_one"
         android:layout_height="match_parent"
         android:src="#64ffffff"
         android:layout_gravity="right"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="@dimen/systemui_size_ten"
         android:layout_alignLeft="@+id/status_bar_home"
         systemui:keyCode="100003"
         systemui:keyRepeat="true"/>

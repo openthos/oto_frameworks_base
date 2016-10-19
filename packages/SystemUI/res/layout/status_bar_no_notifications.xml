@@ -22,15 +22,15 @@
         >
     <LinearLayout
         android:layout_width="@dimen/notification_panel_width"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/systemui_size_fortyeight"
         android:orientation="horizontal">
 
         <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginBottom="12dp">
+                android:layout_marginRight="@dimen/systemui_size_sixteen"
+                android:layout_marginLeft="@dimen/systemui_size_sixteen"
+                android:layout_marginBottom="@dimen/systemui_size_twelve">
 
         <TextView
             android:id="@+id/notification_center"
@@ -40,30 +40,30 @@
             android:text="@string/notification_center"
             android:textColor="#99ffffff"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="@dimen/systemui_textsize_sixteen" />
 
         <Button
             android:id="@+id/notificationManager"
-            android:layout_width="42dp"
+            android:layout_width="@dimen/systemui_size_fortytwo"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/clearAll"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="@dimen/systemui_size_sixteen"
             android:layout_centerVertical="true"
             android:background="@null"
             android:text="@string/notification_manager"
-            android:textSize="12sp" />
+            android:textSize="@dimen/systemui_textsize_twelve" />
 
         <Button
             android:id="@+id/clearAll"
-            android:layout_width="42dp"
+            android:layout_width="@dimen/systemui_size_fortytwo"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginRight="@dimen/systemui_size_sixteen"
+            android:layout_marginLeft="@dimen/systemui_size_sixteen"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@null"
             android:text="@string/clear_all"
-            android:textSize="12sp" />
+            android:textSize="@dimen/systemui_textsize_twelve" />
 
         </RelativeLayout>
 

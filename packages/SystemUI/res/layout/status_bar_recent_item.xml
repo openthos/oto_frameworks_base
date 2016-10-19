@@ -42,7 +42,7 @@
             android:scrollHorizontally="true"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/app_icon"
-            android:paddingTop="2dp"
+            android:paddingTop="@dimen/systemui_size_two"
             android:layout_marginStart="@dimen/status_bar_recents_app_label_left_margin"
             android:singleLine="true"
             android:ellipsize="marquee"
@@ -71,8 +71,8 @@
             android:layout_marginStart="@dimen/status_bar_recents_app_label_left_margin"
             android:layout_toStartOf="@id/app_thumbnail"
             android:layout_below="@id/app_label"
-            android:layout_marginEnd="3dip"
-            android:layout_marginTop="3dip"
+            android:layout_marginEnd="@dimen/systemui_size_three"
+            android:layout_marginTop="@dimen/systemui_size_three"
             android:background="@drawable/recents_callout_line"
         />
 
@@ -99,7 +99,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="@dimen/status_bar_recents_app_label_left_margin"
             android:layout_below="@id/recents_callout_line"
-            android:layout_marginTop="3dip"
+            android:layout_marginTop="@dimen/systemui_size_three"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textAlignment="viewStart"

@@ -22,6 +22,6 @@
         xmlns:sysui="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        sysui:verticalSpacing="4dp"
-        sysui:horizontalSpacing="4dp"
+        sysui:verticalSpacing="@dimen/systemui_size_four"
+        sysui:horizontalSpacing="@dimen/systemui_size_four"
         style="@style/UserDetailView" />

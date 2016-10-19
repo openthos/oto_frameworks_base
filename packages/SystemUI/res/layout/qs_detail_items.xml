@@ -18,9 +18,9 @@
 <com.android.systemui.qs.QSDetailItems xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingTop="@dimen/systemui_size_sixteen"
+    android:paddingStart="@dimen/systemui_size_sixteen"
+    android:paddingEnd="@dimen/systemui_size_sixteen">
 
     <LinearLayout
         android:id="@android:id/list"
@@ -38,19 +38,19 @@
 
         <ImageView
             android:id="@android:id/icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp" />
+            android:layout_width="@dimen/systemui_size_fiftysix"
+            android:layout_height="@dimen/systemui_size_fiftysix" />
 
         <TextView
             android:id="@android:id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/systemui_size_twenty"
             android:textAppearance="@style/TextAppearance.QS.DetailEmpty" />
     </LinearLayout>
 
     <View
         android:id="@+id/min_height_spacer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="@dimen/systemui_size_zero"/>
 </com.android.systemui.qs.QSDetailItems>

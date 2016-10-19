@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="296dp"
+    android:layout_width="@dimen/systemui_size_calendar"
     android:layout_height="wrap_content"
     android:background="#342464"
     android:orientation="vertical" >
@@ -9,80 +9,80 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="@dimen/systemui_size_sixteen"
+        android:layout_marginRight="@dimen/systemui_size_sixteen"
+        android:layout_marginTop="@dimen/systemui_size_eight"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/calendar_time"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="@dimen/systemui_size_thirtytwo"
             android:layout_centerVertical="true"
-            android:textSize="24sp"
+            android:textSize="@dimen/systemui_textsize_twentyfour"
             android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/calendar_date"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="@dimen/systemui_size_twentyfour"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:textSize="12sp"
+            android:layout_marginRight="@dimen/systemui_size_twenty"
+            android:textSize="@dimen/systemui_textsize_twelve"
             android:textColor="#ffffff"/>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="16dp"/>
+        android:layout_height="@dimen/systemui_size_sixteen"/>
 
     <LinearLayout
         android:id="@+id/ll_popup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/systemui_size_sixteen"
+        android:layout_marginRight="@dimen/systemui_size_sixteen"
         android:orientation="vertical" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="@dimen/systemui_size_twentyfour"
             android:background="#3f2d76" >
 
             <RelativeLayout
                 android:id="@+id/popupwindow_calendar_last_month"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/systemui_size_twentyfour"
+                android:layout_height="@dimen/systemui_size_twentyfour"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="@dimen/systemui_size_eight"
                 android:layout_centerVertical="true">
                 <TextView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="@dimen/systemui_size_twelve"
+                    android:layout_height="@dimen/systemui_size_twelve"
                     android:layout_centerInParent="true"
                     android:background="@drawable/calendar_left" />
             </RelativeLayout>
 
             <TextView
                 android:id="@+id/popupwindow_calendar_month"
-                android:layout_width="100dp"
+                android:layout_width="@dimen/systemui_size_hundred"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:gravity="center"
                 android:background="#3f2d76"
-                android:textSize="12sp"
+                android:textSize="@dimen/systemui_textsize_twelve"
                 android:textColor="#ffffff"/>
 
             <RelativeLayout
                 android:id="@+id/popupwindow_calendar_next_month"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/systemui_size_twentyfour"
+                android:layout_height="@dimen/systemui_size_twentyfour"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="8dp"
                 android:layout_centerVertical="true">
                 <TextView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="@dimen/systemui_size_twelve"
+                    android:layout_height="@dimen/systemui_size_twelve"
                     android:layout_centerInParent="true"
                     android:background="@drawable/calendar_right" />
             </RelativeLayout>
@@ -91,22 +91,22 @@
 
         <com.android.systemui.statusbar.notificationbars.CalendarView
             android:id="@+id/popupwindow_calendar"
-            android:layout_width="224dp"
-            android:layout_height="144dp"
+            android:layout_width="@dimen/systemui_width_calendarview"
+            android:layout_height="@dimen/systemui_height_calendarview"
             android:background="#3f2d76" >
         </com.android.systemui.statusbar.notificationbars.CalendarView>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="16dp"/>
+            android:layout_height="@dimen/systemui_size_sixteen"/>
         <TextView
             android:id="@+id/popupwindow_calendar_bt_enter"
             android:layout_width="wrap_content"
-            android:layout_height="24dp"
+            android:layout_height="@dimen/systemui_size_twentyfour"
             android:text="@string/set_date_and_time"
             android:textColor="#ffffff"
-            android:layout_marginBottom="8dp"
-            android:textSize="12sp" />
+            android:layout_marginBottom="@dimen/systemui_size_eight"
+            android:textSize="@dimen/systemui_textsize_twelve" />
     </LinearLayout>
 
 </LinearLayout>
