@@ -95,6 +95,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                                  = "com.togic.launcher.MainActivity";
     public static final String APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY
                                                  = "com.togic.launcher.SplashActivity";
+    public static final String APPNAME_JACKPAL_ANDROIDTERM_TERM
+                                                 = "jackpal.androidterm.Term";
 
     /**
      * Default task affinity of all activities in this application. See 
@@ -663,7 +665,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_EXAMPLE_ANDROID_NOTEPAD) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_CALCULATOR) == 0)
                                      || (pkgName.compareTo(APPNAME_AUTONAVI_MINIMAP) == 0)
-                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
                                      || (pkgName.compareTo(APPNAME_COM_TERMUX) == 0)
                                      || (pkgName.compareTo(APPNAME_XUETANGX_MOBILE) == 0)
                                      || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
