@@ -1229,11 +1229,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             mContext.sendBroadcast(intentCloseInfo);
                         }
                     });
+
                     itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(mContext, mTextViewStatus+"",
-                                                     Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(PRINTER_LOCALPRINT_MANAGER);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            mContext.startActivity(intent);
                         }
                     });
 
