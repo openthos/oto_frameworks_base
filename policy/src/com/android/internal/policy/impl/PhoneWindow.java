@@ -2365,6 +2365,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         @Override
+        public void syncMultiWindowToWindowManager() {
+            if (mDecorMW != null) {
+                mDecorMW.syncMultiWindowToWindowManager();
+            }
+        }
+
+        @Override
         public void addView(View child, int index) {
             if (isWhiteList() && (child instanceof ViewGroup)) {
                 adjustChildView((ViewGroup) child);
@@ -2812,6 +2819,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                                            new Rect(0, 0, getWidth(), getHeight()));
                     }
                     mHeaderChecked = true;
+                }
+                if (mDecorMW != null) {
+                    mDecorMW.syncMultiWindowToWindowManager();
                 }
             }
         }
@@ -3828,6 +3838,16 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mWMSEnabled = true;
             } catch (RemoteException e) {
                 Log.e(TAG, "call enableMultiWindowToWindowManager failed", e);
+            }
+        }
+
+        public void syncMultiWindowToWindowManager() {
+            setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
+            try {
+                ActivityManagerNative.getDefault().syncMultiWindowToWindowManager(
+                                                  getActivityWindow().getMultiWindow());
+            } catch (RemoteException e) {
+                Log.e(TAG, "call syncMultiWindowToWindowManager failed", e);
             }
         }
 

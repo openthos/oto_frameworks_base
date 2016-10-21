@@ -11928,4 +11928,11 @@ public class WindowManagerService extends IWindowManager.Stub
             stack.enableMultiWindow(mw, dialogRect);
         }
     }
+
+    public void syncMultiWindowToWindowManager(WindowManager.MultiWindow mw) {
+        final TaskStack stack = mStackIdToStack.get(mw.mStackId);
+        if (stack != null) {
+            stack.syncMultiWindow(mw);
+        }
+    }
 }

@@ -2501,6 +2501,16 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             reply.writeNoException();
             return true;
         }
+
+        case SYNC_MULTI_WINDOW_WMS_TRANSACTION: {
+            data.enforceInterface(IActivityManager.descriptor);
+            WindowManager.MultiWindow mw = new WindowManager.MultiWindow(null);
+            mw.readFromParcel(data);
+            syncMultiWindowToWindowManager(mw);
+            reply.writeNoException();
+            return true;
+        }
+
         }
 
         return super.onTransact(code, data, reply, flags);
@@ -5767,6 +5777,18 @@ class ActivityManagerProxy implements IActivityManager
         mw.writeToParcel(data, 0);
         dialogRect.writeToParcel(data, 0);
         mRemote.transact(ENABLE_MULTI_WINDOW_WMS_TRANSACTION, data, reply, 0);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
+
+    public void syncMultiWindowToWindowManager(WindowManager.MultiWindow mw)
+                                                                            throws RemoteException {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        mw.writeToParcel(data, 0);
+        mRemote.transact(SYNC_MULTI_WINDOW_WMS_TRANSACTION, data, reply, 0);
         reply.readException();
         data.recycle();
         reply.recycle();

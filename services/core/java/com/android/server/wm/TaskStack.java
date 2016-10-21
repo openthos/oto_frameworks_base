@@ -232,6 +232,10 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         }
         mDialogRect.set(dialogRect); // Now, only consider about center dialog.
 
+        syncMultiWindow(mw);
+    }
+
+    public void syncMultiWindow(WindowManager.MultiWindow mw) {
         if (mResizeWindow == null) {
             mResizeWindow = new WindowManager.MultiWindow.ResizeWindow();
         }

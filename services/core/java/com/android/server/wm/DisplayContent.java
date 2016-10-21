@@ -24,10 +24,12 @@ import static com.android.server.wm.WindowManagerService.TAG;
 
 import android.graphics.Rect;
 import android.graphics.Region;
+import android.os.Parcel;
 import android.util.Slog;
 import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.Surface;
+import android.view.WindowManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -244,10 +246,21 @@ class DisplayContent {
 
     int stackIdFromPoint(int x, int y) {
         int homeId = -1;
+        int framePadding = 0;
+        int topFramePadding = 0;
+
         for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
             final TaskStack stack = mStacks.get(stackNdx);
             stack.getBounds(mTmpRect);
-            if (mTmpRect.contains(x, y)) {
+            if (stack.mMultiWindow != null) {
+                framePadding = stack.mMultiWindow.mShadowPadding;
+                topFramePadding = stack.mMultiWindow.mTopShadowPadding;
+            }
+            if (mTmpRect.contains(x, y)
+                         && mTmpRect.contains(x + framePadding, y)
+                         && mTmpRect.contains(x - framePadding, y)
+                         && mTmpRect.contains(x, y + framePadding)
+                         && mTmpRect.contains(x, y - topFramePadding)) {
                 /**
                  * get clicked task in stack to top, except home stack. Should
                  * be always on bottom

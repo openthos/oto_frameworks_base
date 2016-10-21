@@ -20035,4 +20035,14 @@ public final class ActivityManagerService extends ActivityManagerNative
             Binder.restoreCallingIdentity(ident);
         }
     }
+
+    @Override
+    public void syncMultiWindowToWindowManager(WindowManager.MultiWindow mw) {
+        long ident = Binder.clearCallingIdentity();
+        try {
+            mWindowManager.syncMultiWindowToWindowManager(mw);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+    }
 }

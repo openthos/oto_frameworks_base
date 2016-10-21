@@ -596,6 +596,9 @@ public interface IActivityManager extends IInterface {
     public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect)
                                                                              throws RemoteException;
 
+    public void syncMultiWindowToWindowManager(WindowManager.MultiWindow mw)
+                                                                             throws RemoteException;
+
     public Rect getStackBounds(int stackId) throws RemoteException;
 
     String descriptor = "android.app.IActivityManager";
@@ -786,6 +789,7 @@ public interface IActivityManager extends IInterface {
     int CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+187;
     int DISABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
     int ENABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
+    int SYNC_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+244;
 
     int GET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+190;
 

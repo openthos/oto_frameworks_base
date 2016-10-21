@@ -53,6 +53,8 @@ public abstract class WindowDecorView extends FrameLayout {
 
     public abstract void enableMultiWindowToWindowManager(Rect dialogRect);
 
+    public abstract void syncMultiWindowToWindowManager();
+
     public abstract int getWindowHeaderPadding();
     public abstract int getWindowBorderPadding();
 
