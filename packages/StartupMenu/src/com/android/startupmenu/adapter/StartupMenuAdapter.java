@@ -56,7 +56,6 @@ public class StartupMenuAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        System.out.println("size" + mlistAppInfo.size());
         return mlistAppInfo.size();
     }
 

@@ -131,4 +131,12 @@
     <color name="volume_panel_divider">#1FFFFFFF</color><!-- 12% white -->
     <color name="transparent_black">#60000000</color>
     <color name="transparent_white">#30FFFFFF</color>
+    <color name="appBackgroundColor">#e4dfdf</color>
+    <color name="appUsuallyBackground">#5a41a2</color>
+    <color name="inRightMenuFocus">#e9edf0</color>
+    <color name="inputmethodfocus">#5b41a2</color>
+    <color name="showSortBackground">#ffffff</color>
+    <color name="app_background">#e9edf0</color>
+    <color name="appUsualFocusBackground">#301678</color>
+
 </resources>
