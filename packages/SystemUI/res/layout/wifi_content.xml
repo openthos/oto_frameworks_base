@@ -20,7 +20,7 @@
             android:id="@+id/wifi_content_name"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:focusable="false"
             android:singleLine="true"
             android:textColor="@android:color/white"

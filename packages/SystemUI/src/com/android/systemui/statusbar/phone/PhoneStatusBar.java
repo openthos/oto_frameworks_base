@@ -741,12 +741,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
         mClock = mStatusBarView.findViewById(R.id.clock);
-        mClock.setOnClickListener(new View.OnClickListener() {
+        mCalendarDialog = new CalendarDialog(context);
+        mClock.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mCalendarDialog = new CalendarDialog(context);
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mClock == null) {
+                    return true;
+                }
                 dismisTargetDialog(mCalendarDialog);
                 mCalendarDialog.show(mClock);
+                return true;
             }
         });
         mClock.setOnHoverListener(hoverListener);
@@ -1462,6 +1466,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         dismisTargetDialog(mBatteryPopupWindow);
         dismisTargetDialog(mInputMethodPopupWindow);
         dismisTargetDialog(mWifiPopupWindow);
+        dismisTargetDialog(mCalendarDialog);
         dismisTargetDialog(mBrightnessDialog);
     }
 
