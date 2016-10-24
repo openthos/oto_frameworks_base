@@ -141,8 +141,10 @@ public interface IActivityManager extends IInterface {
     public StackInfo getStackInfo(int stackId) throws RemoteException;
     public boolean isInHomeStack(int taskId) throws RemoteException;
     public void setFocusedStack(int stackId) throws RemoteException;
+    public void setFocusedStackAsync(int stackId) throws RemoteException;
     public void focusRecentStack(int stackId) throws RemoteException;
     public void unsetFocusedStack(int stackId) throws RemoteException;
+    public void unsetFocusedStackAsync(int stackId) throws RemoteException;
     public int getFocusedStackId() throws RemoteException;
     public void registerTaskStackListener(ITaskStackListener listener) throws RemoteException;
     public int getTaskForActivity(IBinder token, boolean onlyRoot) throws RemoteException;
@@ -789,7 +791,6 @@ public interface IActivityManager extends IInterface {
     int CLOSE_ACTIVITY_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+187;
     int DISABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+188;
     int ENABLE_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+189;
-    int SYNC_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+244;
 
     int GET_FOCUSED_STACK_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+190;
 
@@ -803,6 +804,11 @@ public interface IActivityManager extends IInterface {
     int CLOSE_ACTIVITY_FOCUSED_WITH_WINDOW_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+196;
     int CLOSE_ACTIVITY_WITH_WINDOW_ASYNC_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+197;
     int GET_STACK_BOUNDS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+198;
+
+    int SYNC_MULTI_WINDOW_WMS_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+199;
+
+    int SET_FOCUSED_STACK_TRANSACTION_ASYNC = IBinder.FIRST_CALL_TRANSACTION+200;
+    int UNSET_FOCUSED_STACK_TRANSACTION_ASYNC = IBinder.FIRST_CALL_TRANSACTION+201;
 
     // Start of L transactions
     int GET_TAG_FOR_INTENT_SENDER_TRANSACTION = IBinder.FIRST_CALL_TRANSACTION+210;

@@ -796,6 +796,14 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             return true;
         }
 
+        case SET_FOCUSED_STACK_TRANSACTION_ASYNC: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            setFocusedStackAsync(stackId);
+            reply.writeNoException();
+            return true;
+        }
+
         case FOCUS_RECENT_STACK_TRANSACTION: {
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
@@ -808,6 +816,14 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
             data.enforceInterface(IActivityManager.descriptor);
             int stackId = data.readInt();
             unsetFocusedStack(stackId);
+            reply.writeNoException();
+            return true;
+        }
+
+        case UNSET_FOCUSED_STACK_TRANSACTION_ASYNC: {
+            data.enforceInterface(IActivityManager.descriptor);
+            int stackId = data.readInt();
+            unsetFocusedStackAsync(stackId);
             reply.writeNoException();
             return true;
         }
@@ -3448,6 +3464,18 @@ class ActivityManagerProxy implements IActivityManager
         reply.recycle();
     }
     @Override
+    public void setFocusedStackAsync(int stackId) throws RemoteException
+    {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        mRemote.transact(SET_FOCUSED_STACK_TRANSACTION_ASYNC, data, reply, IBinder.FLAG_ONEWAY);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
+    @Override
     public void unsetFocusedStack(int stackId) throws RemoteException
     {
         Parcel data = Parcel.obtain();
@@ -3455,6 +3483,18 @@ class ActivityManagerProxy implements IActivityManager
         data.writeInterfaceToken(IActivityManager.descriptor);
         data.writeInt(stackId);
         mRemote.transact(UNSET_FOCUSED_STACK_TRANSACTION, data, reply, IBinder.FLAG_ONEWAY);
+        reply.readException();
+        data.recycle();
+        reply.recycle();
+    }
+    @Override
+    public void unsetFocusedStackAsync(int stackId) throws RemoteException
+    {
+        Parcel data = Parcel.obtain();
+        Parcel reply = Parcel.obtain();
+        data.writeInterfaceToken(IActivityManager.descriptor);
+        data.writeInt(stackId);
+        mRemote.transact(UNSET_FOCUSED_STACK_TRANSACTION_ASYNC, data, reply, IBinder.FLAG_ONEWAY);
         reply.readException();
         data.recycle();
         reply.recycle();

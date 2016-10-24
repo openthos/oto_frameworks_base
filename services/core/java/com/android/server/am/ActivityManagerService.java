@@ -408,6 +408,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     private boolean mFocusJustChanged = false;
 
     private int mClosingStackId = -1;
+    private int mSetFocusedStack = -1;
+    private int mUnsetFocusedStack = -1;
 
      /**
      * Date: Aug 29, 2014
@@ -2205,7 +2207,14 @@ public final class ActivityManagerService extends ActivityManagerNative
                                     ret = killUselessStatusbarActivity();
                                 }
 
-                                if (mClosingStackId > 0) {
+                                // Each time, only process one operation.
+                                if (mUnsetFocusedStack > 0) {
+                                    unsetFocusedStack(mUnsetFocusedStack);
+                                    mUnsetFocusedStack = -1;
+                                } else if (mSetFocusedStack > 0) {
+                                    setFocusedStack(mSetFocusedStack);
+                                    mSetFocusedStack = -1;
+                                } else if (mClosingStackId > 0) {
                                     closeActivity(mClosingStackId);
                                     mClosingStackId = -1;
                                 }
@@ -2494,6 +2503,13 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
+    @Override
+    public void setFocusedStackAsync(int stackId) {
+        synchronized (mSBAThread) {
+            mSetFocusedStack = stackId;
+        }
+    }
+
     public void setFocusJustChanged() {
         mFocusJustChanged = true;
     }
@@ -2511,6 +2527,13 @@ public final class ActivityManagerService extends ActivityManagerNative
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void unsetFocusedStackAsync(int stackId) {
+        synchronized (mSBAThread) {
+            mUnsetFocusedStack = stackId;
         }
     }
 

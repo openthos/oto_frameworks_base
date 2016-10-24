@@ -621,10 +621,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
     }
 
     public void relayoutWindow(int stackId, Rect rect) {
-        try {
-            mService.mActivityManager.relayoutWindow(stackId, rect);
-        } catch (RemoteException e) {
-        }
+        mService.relayoutWindowLocked(stackId, rect);
     }
 
     public void saveInfoInStatusbarActivity(int stackId, Rect rect) {
@@ -644,14 +641,14 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
 
     public void setFocusedStack(int stackId) {
         try {
-            mService.mActivityManager.setFocusedStack(stackId);
+            mService.mActivityManager.setFocusedStackAsync(stackId);
         } catch (RemoteException e) {
         }
     }
 
     public void unsetFocusedStack(int stackId) {
         try {
-            mService.mActivityManager.setFocusedStack(stackId);
+            mService.mActivityManager.unsetFocusedStackAsync(stackId);
         } catch (RemoteException e) {
         }
     }

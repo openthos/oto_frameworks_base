@@ -7667,9 +7667,7 @@ public class WindowManagerService extends IWindowManager.Stub
             switch (what) {
                 case POINTER_EVENT_ACTION_DOWN:
                     mActionDown = true;
-                    synchronized (mWindowMap) {
-                        mCurrentStackId = dc.stackIdFromPoint(x, y);
-                    }
+                    mCurrentStackId = dc.stackIdFromPoint(x, y);
                     if (mCurrentStackId > 0) {
                         mStack = mStackIdToStack.get(mCurrentStackId);
                         mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y);
@@ -8159,7 +8157,9 @@ public class WindowManagerService extends IWindowManager.Stub
                 case POINTER_EVENT_ACTION_DOWN:
                 case POINTER_EVENT_ACTION_MOVE:
                 case POINTER_EVENT_ACTION_UP:
-                    onPointerEvent(msg.what, msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                    synchronized (mWindowMap) {
+                        onPointerEvent(msg.what, msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                    }
                     break;
                 case NOTIFY_ACTIVITY_DRAWN:
                     try {
@@ -11896,17 +11896,21 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
-    public boolean relayoutWindow(int stackId, Rect pos) {
-        synchronized (mWindowMap) {
-            final int numDisplays = mDisplayContents.size();
-            for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
-                if (mDisplayContents.valueAt(displayNdx).relayoutStack(stackId, pos)) {
-                    performLayoutAndPlaceSurfacesLocked();
-                    return true;
-                }
+    public boolean relayoutWindowLocked(int stackId, Rect pos) {
+        final int numDisplays = mDisplayContents.size();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            if (mDisplayContents.valueAt(displayNdx).relayoutStack(stackId, pos)) {
+                performLayoutAndPlaceSurfacesLocked();
+                return true;
             }
         }
         return false;
+    }
+
+    public boolean relayoutWindow(int stackId, Rect pos) {
+        synchronized (mWindowMap) {
+            return relayoutWindowLocked(stackId, pos);
+        }
     }
 
     public int getStatusbarHeight() {
@@ -11915,24 +11919,30 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public Rect disableMultiWindowToWindowManager(int stackId) {
-        final TaskStack stack = mStackIdToStack.get(stackId);
-        if (stack != null) {
-            return stack.disableMultiWindow();
+        synchronized (mWindowMap) {
+            final TaskStack stack = mStackIdToStack.get(stackId);
+            if (stack != null) {
+                return stack.disableMultiWindow();
+            }
         }
         return new Rect();
     }
 
     public void enableMultiWindowToWindowManager(WindowManager.MultiWindow mw, Rect dialogRect) {
-        final TaskStack stack = mStackIdToStack.get(mw.mStackId);
-        if (stack != null) {
-            stack.enableMultiWindow(mw, dialogRect);
+        synchronized (mWindowMap) {
+            final TaskStack stack = mStackIdToStack.get(mw.mStackId);
+            if (stack != null) {
+                stack.enableMultiWindow(mw, dialogRect);
+            }
         }
     }
 
     public void syncMultiWindowToWindowManager(WindowManager.MultiWindow mw) {
-        final TaskStack stack = mStackIdToStack.get(mw.mStackId);
-        if (stack != null) {
-            stack.syncMultiWindow(mw);
+        synchronized (mWindowMap) {
+            final TaskStack stack = mStackIdToStack.get(mw.mStackId);
+            if (stack != null) {
+                stack.syncMultiWindow(mw);
+            }
         }
     }
 }
