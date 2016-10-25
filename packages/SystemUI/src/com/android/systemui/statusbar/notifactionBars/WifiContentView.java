@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import com.android.systemui.statusbar.notificationbars.WifiDialog;
 
 public class WifiContentView extends LinearLayout {
 
@@ -42,6 +43,7 @@ public class WifiContentView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            ((WifiDialog)PhoneStatusBar.getWifiDialog()).dismiss();
             Intent intent = new Intent();
             ComponentName comp = new ComponentName ("com.android.settings",
                                                     "com.android.settings.wifi.WifiSettings");

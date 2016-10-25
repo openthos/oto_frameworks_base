@@ -159,7 +159,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected IStatusBarService mBarService;
     protected H mHandler = createHandler();
     private TaskViewDialog mTaskViewDialog;
-    protected BaseSettingDialog mWifiPopupWindow;
+    protected static BaseSettingDialog mWifiPopupWindow;
     protected BaseSettingDialog mVolumePopupWindow;
     protected BaseSettingDialog mCalendarDialog;
     protected BaseSettingDialog mBatteryPopupWindow;

@@ -822,7 +822,35 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         appInfo.setNumber(numbers);
                         appInfo.setIntent(intent);
                         mlistAppInfo.add(appInfo);
+                        querySort();
                     }
+                }
+            }
+        }
+
+        private void querySort() {
+            String tvSortShow = mTvSortShow.getText().toString();
+            if (tvSortShow.equals(mClickSortText)) {
+                Collections.sort(mlistAppInfo, new Comparator<AppInfo>() {
+                    public int compare(AppInfo lhs, AppInfo rhs) {
+                        Double rScore = (double) rhs.getNumber();
+                        Double iScore = (double) lhs.getNumber();
+                        return (rScore.compareTo(iScore));
+                    }
+                });
+                if (mClickSortStatus == -1) {
+                    Collections.reverse(mlistAppInfo);
+                }
+            } else if (tvSortShow.equals(mTimeSortText)) {
+                Collections.sort(mlistAppInfo, new Comparator<Object>() {
+                    public int compare(Object lhs, Object rhs) {
+                        AppInfo p1 = (AppInfo) lhs;
+                        AppInfo p2 = (AppInfo) rhs;
+                        return p2.getDate().compareTo(p1.getDate());
+                    }
+                });
+                if (mTimeSortStatus == -1) {
+                    Collections.reverse(mlistAppInfo);
                 }
             }
         }

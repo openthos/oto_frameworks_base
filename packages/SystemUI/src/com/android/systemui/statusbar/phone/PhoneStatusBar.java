@@ -1052,6 +1052,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return mStatusBarView;
     }
 
+    public static BaseSettingDialog getWifiDialog() {
+        return mWifiPopupWindow;
+    }
+
     private void myRegisterReceiver(){
         mVolumeReceiver = new MyVolumeReceiver();
         IntentFilter filter = new IntentFilter();
