@@ -1000,9 +1000,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             filter.addAction("fake_artwork");
         }
         filter.addAction(ACTION_DEMO);
-        filter.addAction(DOCUMENTUI_SEND_INFO_LOCK);
-        filter.addAction(SYSTEMUI_SEND_INFO_UNLOCK);
-        filter.addAction(SYSTEMUI_SEND_INFO_LOCK);
+        filter.addAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
+        filter.addAction(Intent.ACTION_SYSTEMUI_SEND_INFO_UNLOCK);
+        filter.addAction(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK);
         filter.addAction(Intent.ACTION_SHOW_BRIGHTNESS_DIALOG);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         // listen for USER_SETUP_COMPLETE setting (per-user)
@@ -3670,16 +3670,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mBrightnessDialog.show(mInputButton);
             } else {
                 String apkInfo = intent.getStringExtra("keyInfo");
-                if (action.equals("com.android.documentsui.util.startmenudialog")) {
+                if (action.equals(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK)) {
                     findRunApp(apkInfo);
                 }
-                if (action.equals("com.android.systemui.activitykeyview")) {
+                if (action.equals(Intent.ACTION_SYSTEMUI_SEND_INFO_UNLOCK)) {
                     String pkgName = intent.getStringExtra("rmIcon");
                     removeStatusbar(mRemoveCount, pkgName);
                     removeLockedView(pkgName);
                     removeApk(pkgName);
                 }
-                if (action.equals("com.android.systemui.lockicon")) {
+                if (action.equals(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK)) {
                     mSet.add(intent.getStringExtra("lockIcon"));
                 }
             }

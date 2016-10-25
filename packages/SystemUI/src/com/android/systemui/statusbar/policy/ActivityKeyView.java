@@ -128,14 +128,14 @@ public class ActivityKeyView extends ImageView {
     public void sendRemoveInfo() {
         Intent intentIcon = new Intent();
         intentIcon.putExtra("rmIcon",mActivity.mPkgName);
-        intentIcon.setAction(PhoneStatusBar.SYSTEMUI_SEND_INFO_UNLOCK);
+        intentIcon.setAction(Intent.ACTION_SYSTEMUI_SEND_INFO_UNLOCK);
         mContext.sendBroadcast(intentIcon);
     }
 
     public void sendLockedInfo() {
         Intent intentlock = new Intent();
         intentlock.putExtra("lockIcon", mActivity.mPkgName);
-        intentlock.setAction(PhoneStatusBar.SYSTEMUI_SEND_INFO_LOCK);
+        intentlock.setAction(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK);
         mContext.sendBroadcast(intentlock);
     }
 

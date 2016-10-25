@@ -182,7 +182,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
             Intent intentSend = new Intent();
             intentSend.putExtra("keyInfo",pkgInfo);
-            intentSend.setAction("com.android.startupmenu.dialog.startmenudialog");
+            intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
             mContext.sendBroadcast(intentSend);
             dialogDismiss();
             break;

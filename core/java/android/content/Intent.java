@@ -653,6 +653,18 @@ public class Intent implements Parcelable, Cloneable {
     @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
     public static final String ACTION_SEND_CLICK_INFO = "com.android.action.PACKAGE_SEND";
 
+    @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
+    public static final String ACTION_STARTUPMENU_SEND_INFO_LOCK
+                         = "com.android.action.STARTMENU_INFO_SEND";
+
+    @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
+    public static final String ACTION_SYSTEMUI_SEND_INFO_UNLOCK
+                         = "com.android.action.SYSTEMUI_INFO_UNLOCK_SEND";
+
+    @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
+    public static final String ACTION_SYSTEMUI_SEND_INFO_LOCK
+                         = "com.android.action.SYSTEMUI_INFO_LOCK_SEND";
+
     /**
      * A synonym for {@link #ACTION_VIEW}, the "standard" action that is
      * performed on a piece of data.
