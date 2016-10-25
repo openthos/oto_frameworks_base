@@ -178,6 +178,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private int mNameSortStatus = 1;
         private boolean mOnlyNameSort = false;
         private LinearLayout mSelectLayout;
+        private LinearLayout mSortClickView;
         private View mSelectView;
         private SharedPreferences sharedPreference;
         private String mNameSortText;
@@ -221,6 +222,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
             //gv_view.setOnItemClickListener(this);
 
+            mSortClickView = (LinearLayout) findViewById(R.id.sort_click_view);
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
             my_computer = (TextView) findViewById(R.id.my_computer);
             TextView powerOff = (TextView) findViewById(R.id.power_off);
@@ -934,21 +936,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                                           .getDimensionPixelSize(R.dimen.sort_layout_width);
             int mSortLyoutHeight = mContext.getResources()
                                           .getDimensionPixelSize(R.dimen.sort_layout_height);
-            int mSortLyoutWidthX = mContext.getResources()
-                                          .getDimensionPixelSize(R.dimen.sort_layout_width_x);
-            int mSortLyoutHeightY = mContext.getResources()
-                                          .getDimensionPixelSize(R.dimen.sort_layout_height_y);
             mPopupWindow = new PopupWindow(mSelectLayout, mSortLyoutWidth, mSortLyoutHeight);
             mPopupWindow.setFocusable(true);
             mPopupWindow.setOutsideTouchable(true);
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 
             int[] location = new int[2];
-            mTvSortShow.getLocationOnScreen(location);
-            //popupWindow.showAtLocation(v, Gravity.NO_GRAVITY,location[0] + v.getWidth(),
-            //                           location[1]);
-            mPopupWindow.showAtLocation(mTvSortShow, Gravity.BOTTOM, mSortLyoutWidthX,
-                                                                     mSortLyoutHeightY);
+            mSortClickView.getLocationOnScreen(location);
+            mPopupWindow.showAsDropDown(mSortClickView);
         }
 
         private void dismisTargetDialog(BaseSettingDialog newDialog){

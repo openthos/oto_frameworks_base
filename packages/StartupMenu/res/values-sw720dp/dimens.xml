@@ -17,12 +17,12 @@
 <resources>
     <bool name="show_as_dialog">true</bool>
 
-    <dimen name="sort_layout_width_x">173dp</dimen>
-    <dimen name="sort_layout_height_y">563dp</dimen>
+    <!--<dimen name="sort_layout_width_x">173dp</dimen>
+    <dimen name="sort_layout_height_y">800dp</dimen>
 
     <dimen name="sort_layout_width">104dp</dimen>
     <dimen name="sort_layout_height">83dp</dimen>
-
+    -->
     <dimen name="start_menu_app_width">133dp</dimen>
     <dimen name="start_menu_app_height">120dp</dimen>
 

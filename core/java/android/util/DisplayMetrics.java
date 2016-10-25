@@ -45,8 +45,8 @@ public class DisplayMetrics {
     private static final int WINDOW_OFFSET_MAX = 4 * WINDOW_OFFSET_STEP;
 
     /* For initializing startup menu window positon */
-    public static final int WINDOW_STARTUP_MENU_WIDTH = 770;
-    public static final int WINDOW_STARTUP_MENU_WIDTH_LAND = 513;
+    public static final int WINDOW_STARTUP_MENU_WIDTH = 565;
+    public static final int WINDOW_STARTUP_MENU_WIDTH_LAND = 455;
     public static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3;
 
     /**

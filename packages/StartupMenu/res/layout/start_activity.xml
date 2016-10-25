@@ -14,7 +14,7 @@
         android:orientation="horizontal" >
 
         <RelativeLayout
-            android:layout_width="@dimen/dp180"
+            android:layout_width="@dimen/startupmenu_layout_size_one_hundred_and_eighty"
             android:layout_height="match_parent"
             android:background="#5a41a2" >
 
@@ -22,14 +22,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/startupmenu_layout_size_sixteen"
                 android:orientation="vertical" >
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:textSize="12sp"
-                android:paddingLeft="16dp"
+                android:layout_height="@dimen/startupmenu_layout_size_forty"
+                android:textSize="@dimen/startupmenu_text_size_twelve"
+                android:paddingLeft="@dimen/startupmenu_layout_size_sixteen"
                 android:text="@string/common_application" />
 
             <ListView
@@ -67,7 +67,7 @@
         </RelativeLayout>
 
         <ImageView
-            android:layout_width="1dp"
+            android:layout_width="@dimen/startupmenu_layout_size_one"
             android:layout_height="match_parent"
             android:src="#808080" />
 
@@ -81,23 +81,23 @@
                android:background="@drawable/search_background"
             -->
             <RelativeLayout
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_marginTop="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_marginLeft="@dimen/startupmenu_layout_size_thirty_two"
+                android:layout_marginRight="@dimen/startupmenu_layout_size_thirty_two"
                 android:layout_width="match_parent"
-                android:layout_height="28dp"
+                android:layout_height="@dimen/startupmenu_layout_size_twenty_eight"
                 android:background="#ffffff" >
 
                 <EditText
                     style="?android:attr/textViewStyle"
                     android:id="@+id/et_text"
                     android:imeOptions="actionSend"
-                    android:layout_width="192dp"
-                    android:layout_height="28dp"
-                    android:paddingLeft="8dp"
+                    android:layout_width="@dimen/startupmenu_layout_one_hundred_and_ninety_two"
+                    android:layout_height="@dimen/startupmenu_layout_size_twenty_eight"
+                    android:paddingLeft="@dimen/startupmenu_layout_size_eight"
                     android:gravity="left|center_vertical"
                     android:hint="Software search"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/startupmenu_text_size_twelve"
                     android:minLines="1"
                     android:textCursorDrawable="@null"
                     android:background="#ffffff"
@@ -107,9 +107,9 @@
                     android:id="@+id/iv_view"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_width="@dimen/startupmenu_layout_size_twelve"
+                    android:layout_height="@dimen/startupmenu_layout_size_twelve"
+                    android:layout_marginRight="@dimen/startupmenu_layout_size_eight"
                     android:layout_toRightOf="@id/et_text"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_starter_search" />
@@ -117,52 +117,59 @@
                 <View
                     android:id="@+id/line_view"
                     android:layout_toRightOf="@id/iv_view"
-                    android:layout_width="4dp"
+                    android:layout_width="@dimen/startupmenu_layout_size_four"
                     android:layout_height="match_parent"
                     android:background="#f2e9edf0" />
 
-                <ImageView
-                    android:id="@+id/iv_arrow_gray"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginLeft="8dp"
+                <LinearLayout
+                    android:id="@+id/sort_click_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/startupmenu_layout_size_twenty_eight"
                     android:layout_toRightOf="@id/line_view"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_starter_down_arrow_gray" />
-
-                <TextView
-                    android:id="@+id/tv_sort_show"
-                    android:onClick="SortShow"
-                    android:layout_width="@dimen/px100"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/iv_arrow_gray"
-                    android:layout_centerVertical="true"
-                    android:text="@string/click_sort"
                     android:gravity="center"
-                    android:textColor="#939aa3"
-                    android:textSize="12sp"  />
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:id="@+id/iv_arrow_gray"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_width="@dimen/startupmenu_layout_size_twelve"
+                        android:layout_height="@dimen/startupmenu_layout_size_twelve"
+                        android:layout_marginLeft="@dimen/startupmenu_layout_size_eight"
+                        android:gravity="center"
+                        android:src="@drawable/ic_starter_down_arrow_gray" />
+
+                    <TextView
+                        android:id="@+id/tv_sort_show"
+                        android:onClick="SortShow"
+                        android:layout_width="@dimen/startupmenu_layout_size_fifty"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/click_sort"
+                        android:textColor="#939aa3"
+                        android:textSize="@dimen/startupmenu_text_size_twelve"  />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/iv_arrow_white"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="@dimen/startupmenu_layout_size_twenty_eight"
+                    android:layout_height="@dimen/startupmenu_layout_size_twenty_eight"
                     android:layout_alignParentRight="true"
                     android:background="@drawable/ic_starter_top_arrow_white" >
                 </LinearLayout>
-
             </RelativeLayout>
 
             <!-- android:verticalSpacing="10dip"
                 android:horizontalSpacing="10dip"  -->
             <GridView
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/startupmenu_layout_size_sixteen"
                 android:id="@+id/gv_view"
                 android:listSelector="@android:color/transparent"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_width="352dp"
+                android:layout_marginRight="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_marginLeft="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_width="@dimen/startupmenu_layout_size_Three_hundred_fifty_two"
                 android:layout_height="match_parent"
                 android:numColumns="4"
                 android:scrollbars="none" />
