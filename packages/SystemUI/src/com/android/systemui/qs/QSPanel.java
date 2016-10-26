@@ -98,10 +98,11 @@ public class QSPanel extends ViewGroup {
         addView(mFooter.getView());
         mClipper = new QSDetailClipper(mDetail);
         updateResources();
-
+        View brightnessView = LayoutInflater.from(mContext)
+                                   .inflate(R.layout.quick_settings_brightness_dialog, null);
         mBrightnessController = new BrightnessController(getContext(),
-                (ImageView) findViewById(R.id.brightness_icon),
-                (ToggleSlider) findViewById(R.id.brightness_slider));
+                (ImageView) brightnessView.findViewById(R.id.brightness_icon),
+                (ToggleSlider) brightnessView.findViewById(R.id.brightness_slider));
 
         mDetailDoneButton.setOnClickListener(new OnClickListener() {
             @Override
