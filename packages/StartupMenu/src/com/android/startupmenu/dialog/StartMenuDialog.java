@@ -37,7 +37,6 @@ import com.android.startupmenu.adapter.StartupMenuAdapter;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
-    public static int STARTMENU_LOCATION = 30;
     private Context mContext;
     private boolean mFlag;
     private int mPosition;
@@ -118,10 +117,17 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         } else {
             lp.x = x;
         }
-        if (y > (d.getHeight() - dialogWindow.getAttributes().height)) {
-            lp.y = d.getHeight() - dialogWindow.getAttributes().height - STARTMENU_LOCATION;
+        int statusBarHeight = mContext.getResources()
+                .getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
+        if (dialogWindow.getAttributes().height < 0
+                && y > (d.getHeight() - height)) {
+            lp.y = d.getHeight() - height - statusBarHeight;
         } else {
-            lp.y = y - STARTMENU_WIDTH;
+            if (y > (d.getHeight() - dialogWindow.getAttributes().height)) {
+                lp.y = d.getHeight() - dialogWindow.getAttributes().height - statusBarHeight;
+            } else {
+                lp.y = y - STARTMENU_WIDTH;
+            }
         }
         lp.width = width;
         lp.height = height;
