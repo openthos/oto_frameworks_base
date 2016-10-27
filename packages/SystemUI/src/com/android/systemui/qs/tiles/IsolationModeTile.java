@@ -18,6 +18,7 @@ import com.android.systemui.qs.QSTile;
 import com.android.systemui.qs.QSTile.BooleanState;
 import com.android.systemui.qs.QSTile.Host;
 import com.android.systemui.statusbar.phone.QSTileHost;
+import android.net.EthernetManager;
 
 public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
     private QSTileHost mHost;
@@ -48,7 +49,14 @@ public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
     private void setEnabled(boolean enabled) {
         final ConnectivityManager mgr = (ConnectivityManager) mContext
                                      .getSystemService(Context.CONNECTIVITY_SERVICE);
+        final EthernetManager ethManager = (EthernetManager)mContext
+                                     .getSystemService(Context.ETHERNET_SERVICE);
         mgr.setAirplaneMode(enabled);
+        if (enabled) {
+            ethManager.stop();
+        } else {
+            ethManager.start();
+        }
     }
 
     @Override
