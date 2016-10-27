@@ -245,10 +245,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             = "android.media.VOLUME_CHANGED_ACTION";
     public static final String PRINTER_LOCALPRINT_MANAGER
             = "com.github.openthos.printer.localprint.jobmanager";
-    public static final String CYANOGENMOD_FILEMANAGER
-            = "com.cyanogenmod.filemanager";
-    public static final String ANDROID_BROWSER
-            = "com.android.browser";
     public static final String NOTIFICATION_CLOSE_ITEM
             = "com.android.systemui.notification.close.info";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
@@ -2843,12 +2839,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         //The first boot
         if (mSet.size() == 0 && sets.size() == 0) {
-            loadDockedApk(CYANOGENMOD_FILEMANAGER);
-            loadDockedApk(ANDROID_BROWSER);
-            mSet.add(CYANOGENMOD_FILEMANAGER);
-            mSet.add(ANDROID_BROWSER);
-            mEditorPkg.putString(CYANOGENMOD_FILEMANAGER, "");
-            mEditorPkg.putString(ANDROID_BROWSER, "");
+            loadDockedApk(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
+            loadDockedApk(ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            mSet.add(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
+            mSet.add(ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            mEditorPkg.putString(ApplicationInfo.APPNAME_OTO_FILEMANAGER, "");
+            mEditorPkg.putString(ApplicationInfo.APPNAME_ANDROID_BROWSER, "");
         }
     }
 

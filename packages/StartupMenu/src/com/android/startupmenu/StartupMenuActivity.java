@@ -39,6 +39,7 @@ import com.android.startupmenu.adapter.StartupMenuAdapter;
 import com.android.startupmenu.adapter.StartupMenuUsuallyAdapter;
 
 import android.content.ActivityNotFoundException;
+import android.content.pm.ApplicationInfo;
 import android.util.Slog;
 import android.R.layout;
 import android.os.Bundle;
@@ -606,7 +607,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     AppInfo appInfo = mlistAppInfo.get(i);
                     PackageManager pm = this.getPackageManager();
                     String packName  = appInfo.getPkgName();
-                    if (packName.compareTo("com.cyanogenmod.filemanager") == 0) {
+                    if (packName.compareTo(ApplicationInfo.APPNAME_OTO_FILEMANAGER) == 0) {
                         Intent intent = appInfo.getIntent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

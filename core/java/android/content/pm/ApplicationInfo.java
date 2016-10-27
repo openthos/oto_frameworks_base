@@ -59,6 +59,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ROVIO_ANGRYBIRDSSEASONS = "com.rovio.angrybirdsseasons";
     public static final String APPNAME_EMINDSOFT_FILEMANAGER = "com.emindsoft.filemanager";
     public static final String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
+    public static final String APPNAME_OTO_FILEMANAGER = "com.openthos.filemanager";
     public static final String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
     public static final String APPNAME_DUOWAN_PAD = "com.duowan.pad";
     public static final String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
@@ -699,6 +700,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_DIGIPLEX_GAME) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_CYANOGENMOD_FILEMANAGER) == 0)
+                                     || (pkgName.compareTo(APPNAME_OTO_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHAOZHUO_FILEMANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_DUOWAN_PAD) == 0)
                                      || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
