@@ -35,11 +35,11 @@
     <string name="common_application">Common Application</string>
     <string name="software_search">Software search</string>
     <string name="my_open">Open</string>
-    <string name="my_desktop_run">Desktop Mode Run</string>
-    <string name="fixed_the_taskbar">Fixed To The Taskbar</string>
+    <string name="my_desktop_run">Desktop Mode</string>
+    <string name="fixed_the_taskbar">Lock The Taskbar</string>
     <string name="my_uninstall">Uninstall</string>
-    <string name="removed_the_list">Removed From The List</string>
+    <string name="removed_the_list">Removed Out</string>
     <string name="omit">…</string>
-    <string name="my_mobile_phone_mode_run">Mobile Phone Mode Run</string>
+    <string name="my_mobile_phone_mode_run">Phone Mode</string>
 
 </resources>
