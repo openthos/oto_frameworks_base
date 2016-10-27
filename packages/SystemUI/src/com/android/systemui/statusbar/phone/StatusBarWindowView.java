@@ -134,16 +134,16 @@ public class StatusBarWindowView extends FrameLayout {
                 if (!down) {
                     return mService.onSpacePressed();
                 }
-            case KeyEvent.KEYCODE_ENTER:
-                if (!down) {
-                    return mService.onSpacePressed();
-                }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (mService.isDozing()) {
                     MediaSessionLegacyHelper.getHelper(mContext).sendVolumeKeyEvent(event, true);
                     return true;
+                }
+            default:
+                if (!down) {
+                    return mService.onSpacePressed();
                 }
                 break;
         }
