@@ -467,6 +467,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 appInfo.setIntent(launchIntent);
                 mlistAppInfo.add(appInfo);
             }
+            if (!TextUtils.isEmpty(mEtext)) {
+                List<AppInfo> list = new ArrayList<>();
+                for (AppInfo app : mlistAppInfo) {
+                    if (app.getAppLabel().toLowerCase().indexOf(mEtext.toLowerCase()) != -1) {
+                        list.add(app);
+                    }
+                }
+                mlistAppInfo.clear();
+                mlistAppInfo.addAll(list);
+            }
+
         }
 
         // Used left numbers
@@ -537,6 +548,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
+                querySort();
                 isCheckedMap = new HashMap<Integer, Boolean>();
                 mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo ,isCheckedMap);
                 //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
@@ -573,6 +585,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
+                querySort();
                 //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                 //                                           mlistAppInfo);
                 isCheckedMap = new HashMap<Integer, Boolean>();
@@ -629,6 +642,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mBrowseAppAdapter.notifyDataSetChanged();
                 mlistAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
+                querySort();
                 //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                 //                                           mlistAppInfo);
                 isCheckedMap = new HashMap<Integer, Boolean>();
@@ -825,7 +839,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         appInfo.setNumber(numbers);
                         appInfo.setIntent(intent);
                         mlistAppInfo.add(appInfo);
-                        querySort();
                     }
                 }
             }
@@ -853,6 +866,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     }
                 });
                 if (mTimeSortStatus == -1) {
+                    Collections.reverse(mlistAppInfo);
+                }
+            } else {
+                queryAppInfo();
+                if (mNameSortStatus == -1) {
                     Collections.reverse(mlistAppInfo);
                 }
             }
