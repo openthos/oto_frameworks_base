@@ -1731,16 +1731,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
             DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
-            int h = metrics.heightPixels;
-            if (h > WINDOW_HEIGHT) {
-                return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH,
-                    mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
-                        - mWindowManager.getStatusbarHeight());
-            } else {
-                return new Rect(0, 0, DisplayMetrics.WINDOW_STARTUP_MENU_WIDTH_LAND,
-                    mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
-                        - mWindowManager.getStatusbarHeight());
-            }
+            return new Rect(0, 0, DisplayMetrics.getStartupMenuWidth(mService.mContext),
+                             mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
+                                                 - mWindowManager.getStatusbarHeight());
         }
 
         // run phone mode

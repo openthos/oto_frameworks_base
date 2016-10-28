@@ -18,6 +18,9 @@
 */
 -->
 <resources>
+    <!-- The width of StartupMenu-->
+    <dimen name="window_startup_menu_width">564dp</dimen>
+
     <!-- The width that is used when creating thumbnails of applications. -->
     <dimen name="thumbnail_width">192dp</dimen>
     <!-- The height that is used when creating thumbnails of applications. -->

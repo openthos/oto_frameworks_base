@@ -2196,6 +2196,7 @@
   <java-symbol type="color" name="mw_gray_decor" />
   <java-symbol type="color" name="mw_transparent_gray" />
   <java-symbol type="color" name="mw_gray_border" />
+  <java-symbol type="dimen" name="window_startup_menu_width" />
   <java-symbol type="dimen" name="mw_outer_border" />
   <java-symbol type="dimen" name="mw_shadow_outside_border" />
   <java-symbol type="dimen" name="mw_shadow_middle_border" />

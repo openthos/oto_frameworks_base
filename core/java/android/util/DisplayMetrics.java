@@ -433,4 +433,8 @@ public class DisplayMetrics {
         return oldSize;
     }
 
+    public static int getStartupMenuWidth(Context context) {
+        return context.getResources().getDimensionPixelSize(
+                                        com.android.internal.R.dimen.window_startup_menu_width);
+    }
 }
