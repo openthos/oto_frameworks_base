@@ -710,6 +710,7 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
     public void safelyStartActivity(Intent intent) {
         // If needed, show that intent is forwarded
         // from managed profile to owner or other way around.
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (mProfileSwitchMessageId != -1) {
             Toast.makeText(this, getString(mProfileSwitchMessageId), Toast.LENGTH_LONG).show();
         }
