@@ -19,11 +19,13 @@ import com.android.systemui.qs.QSTile.BooleanState;
 import com.android.systemui.qs.QSTile.Host;
 import com.android.systemui.statusbar.phone.QSTileHost;
 import android.net.EthernetManager;
+import com.android.systemui.statusbar.policy.BluetoothController;
 
 public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
     private QSTileHost mHost;
     private boolean mListening;
     private final GlobalSetting mSetting;
+    private final BluetoothController mController;
 
     public IsolationModeTile(Host host) {
         super(host);
@@ -33,6 +35,7 @@ public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
                 handleRefreshState(value);
             }
         };
+        mController = host.getBluetoothController();
     }
 
     @Override
@@ -44,6 +47,7 @@ public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
     protected void handleClick() {
         setEnabled(!mState.value);
         handleUpdateState(mState, null);
+        mController.setBluetoothEnabled(!mState.value);
     }
 
     private void setEnabled(boolean enabled) {
