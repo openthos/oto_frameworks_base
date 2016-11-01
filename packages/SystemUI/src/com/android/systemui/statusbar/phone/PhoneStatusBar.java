@@ -331,6 +331,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private KeyButtonView mBatteryButton;
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
+    private ImageView mNotification;
     private View mClock;
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -1011,6 +1012,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_battery);
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
+        mNotification = (ImageView)mStatusBarView.findViewById(R.id.status_bar_notification);
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         mBrightnessDialog = new BrightnessDialog (mContext);
@@ -1044,6 +1046,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryButton.setOnHoverListener(hoverListeners);
         mVolumeButton.setOnHoverListener(hoverListeners);
         mWifiButton.setOnHoverListener(hoverListeners);
+        mNotification.setOnHoverListener(hoverListeners);
         myRegisterReceiver();
         return mStatusBarView;
     }

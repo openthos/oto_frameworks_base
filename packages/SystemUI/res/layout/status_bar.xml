@@ -193,6 +193,7 @@
 
 
                 <ImageView
+                    android:id="@+id/status_bar_notification"
                     android:layout_width="@dimen/systemui_size_thirtytwo"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/systemui_size_eight"
