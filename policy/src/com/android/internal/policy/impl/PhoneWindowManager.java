@@ -133,7 +133,7 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.LID_CLOSED;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_COVER_ABSENT;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_UNCOVERED;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_COVERED;
-
+import android.content.pm.ApplicationInfo;
 
 
 /**
@@ -3148,7 +3148,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             mSkipFocus = true;
                             try {
                                 ActivityManagerNative.getDefault().closeActivityFocused();
+                                if (win.getOwningPackage().equals(
+                                                               ApplicationInfo.APPNAME_TOGIC_VIDEO)
+                                        || win.getOwningPackage().equals(
+                                                    ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)) {
+                                    Intent intent = new Intent();
+                                    intent.setAction(Intent.STATUS_BAR_SHOW);
+                                    mContext.sendBroadcast(intent);
+                                }
                             } catch (RemoteException e) {
+                              e.printStackTrace();
                             }
                             return -1;
                         default:
