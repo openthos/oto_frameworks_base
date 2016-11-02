@@ -60,7 +60,8 @@
                 <EditText
                     android:id="@+id/edittext_openthos_id"
                     style="@style/common_editview_style"
-                    android:inputType="textNoSuggestions" />
+                    android:inputType="textNoSuggestions"
+                    android:maxLength="128" />
 
             </LinearLayout>
             <LinearLayout
@@ -76,7 +77,8 @@
                 <EditText
                     android:id="@+id/edittext_openthos_password"
                     style="@style/common_editview_style"
-                    android:inputType="textPassword"/>
+                    android:inputType="textPassword"
+                    android:maxLength="128"/>
 
             </LinearLayout>
 
