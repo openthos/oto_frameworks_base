@@ -45,6 +45,17 @@ import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import android.widget.PopupWindow;
+import android.view.LayoutInflater;
+import android.widget.Button;
+import android.widget.Toast;
+import android.view.Gravity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.os.UserHandle;
+
 /** View that represents the quick settings tile panel. **/
 public class QSPanel extends ViewGroup {
     private static final float TILE_ASPECT = 0.75f;
@@ -77,6 +88,7 @@ public class QSPanel extends ViewGroup {
 
     private QSFooter mFooter;
     private boolean mGridContentVisible = true;
+    private View mView;
 
     public QSPanel(Context context) {
         this(context, null);
@@ -110,6 +122,10 @@ public class QSPanel extends ViewGroup {
                 closeDetail();
             }
         });
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_NOTIFICATION_PROJECTION);
+        context.registerReceiverAsUser(mBroadcastReceiver,
+                                UserHandle.ALL, filter, null, null);
     }
 
     private void updateDetailText() {
@@ -280,6 +296,7 @@ public class QSPanel extends ViewGroup {
         final View.OnClickListener click = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mView = v;
                 r.tile.click();
             }
         };
@@ -560,4 +577,37 @@ public class QSPanel extends ViewGroup {
         void onToggleStateChanged(boolean state);
         void onScanStateChanged(boolean state);
     }
+
+    // accept info from projectionTile
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_NOTIFICATION_PROJECTION)) {
+                PopupWindow popupWindow;
+                View popupView;
+                Button mButtonCom;
+                popupView = LayoutInflater.from(mContext)
+                            .inflate(R.layout.projection_popup, null);
+                int widthPw = mContext.getResources().getDimensionPixelSize
+                               (R.dimen.popupwindow_width);
+                int heightPw = mContext.getResources().getDimensionPixelSize
+                               (R.dimen.popupwindow_height);
+                popupWindow = new PopupWindow(popupView, widthPw, heightPw);
+                popupWindow.setTouchable(true);
+                popupWindow.setOutsideTouchable(true);
+                popupWindow.setBackgroundDrawable(new
+                            BitmapDrawable(mContext.getResources(), (Bitmap) null));
+                mButtonCom = (Button) popupView.findViewById(R.id.button_com);
+                mButtonCom.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, "click", Toast.LENGTH_LONG).show();
+                    }
+                });
+                int[] location = new int[2];
+                popupView.getLocationOnScreen(location);
+                popupWindow.showAsDropDown(mView);
+            }
+        }
+    };
 }

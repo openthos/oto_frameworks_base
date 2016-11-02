@@ -36,6 +36,10 @@
     <!-- Name of print manager -->
     <string name="print_manager">Print Manager</string>
 
+    <string name="button_com">computer</string>
+    <string name="button_pro">projection</string>
+    <string name="button_extend">extend</string>
+
     <!-- Name of the status bar as seen in the applications info settings page. [CHAR LIMIT=12] -->
     <string name="app_label">System UI</string>
 

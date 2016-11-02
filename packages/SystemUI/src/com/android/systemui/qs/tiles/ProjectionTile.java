@@ -37,6 +37,7 @@ public class ProjectionTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleClick() {
+        sendInfoPopup();
         mBoolean = true;
         mBooleanState.icon = ResourceIcon.get(R.drawable.ic_notification_projection_on);
     }
@@ -52,5 +53,11 @@ public class ProjectionTile extends QSTile<QSTile.BooleanState> {
         } else {
             state.icon = ResourceIcon.get(R.drawable.ic_notification_projection_off);
         }
+    }
+
+    public void sendInfoPopup() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_NOTIFICATION_PROJECTION);
+        mContext.sendBroadcast(intent);
     }
 }
