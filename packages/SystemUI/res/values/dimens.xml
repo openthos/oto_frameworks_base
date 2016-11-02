@@ -149,7 +149,7 @@
 
     <!-- Width for the notification panel and related windows -->
     <dimen name="match_parent">-1px</dimen>
-    <dimen name="standard_notification_panel_width">350dp</dimen><!-- includes notification_side_padding on each side -->
+    <dimen name="standard_notification_panel_width">360dp</dimen><!-- includes notification_side_padding on each side -->
     <dimen name="notification_panel_width">@dimen/match_parent</dimen>
 
     <!-- Gravity for the notification panel -->
@@ -621,7 +621,8 @@
     <dimen name="systemui_size_sixtyfour">64dp</dimen>
     <dimen name="systemui_size_seventy">70dp</dimen>
     <dimen name="systemui_size_hundred">100dp</dimen>
-    <dimen name="systemui_size_twohundred">200dp</dimen>
+    <dimen name="systemui_size_twohundred">268dp</dimen>
+    <dimen name="qspanel_margin_top">20dp</dimen>
     <dimen name="systemui_size_fourhundred">400dp</dimen>
     <dimen name="systemui_size_subeighty">-80dp</dimen>
     <dimen name="systemui_width_small">38dp</dimen>
@@ -633,7 +634,7 @@
     <dimen name="systemui_width_calendarview">224dp</dimen>
     <dimen name="systemui_height_calendarview">144dp</dimen>
     <dimen name="screen_pinning_width">360dp</dimen>
-    <dimen name="notification_panel_height">370dp</dimen>
+    <dimen name="notification_panel_height">560dp</dimen>
     <dimen name="net_dialog_width">216dp</dimen>
     <dimen name="navigation_lights_width">128dp</dimen>
     <dimen name="navigation_controls_key_width">132dp</dimen>

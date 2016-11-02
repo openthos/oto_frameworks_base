@@ -77,7 +77,7 @@
                 <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
                     android:id="@+id/notification_stack_scroller"
                     android:layout_width="match_parent"
-                    android:layout_height="370dp"
+                    android:layout_height="@dimen/notification_panel_height"
                     android:layout_gravity="top|center"
                     android:layout_marginTop="@dimen/systemui_size_one"
                     android:layout_marginBottom="@dimen/close_handle_underlap"
@@ -145,11 +145,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="bottom|center"
             android:orientation="vertical">
             <include
                 android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
+                android:layout_gravity="bottom|center"
                 android:layout_height="@dimen/systemui_size_hundred" />
 
             <!-- A view to reserve space for the collapsed stack -->
