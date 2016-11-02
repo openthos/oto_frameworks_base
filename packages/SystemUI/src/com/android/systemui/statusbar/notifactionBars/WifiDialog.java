@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import android.view.Gravity;
 import android.view.Window;
+import android.text.TextUtils;
 
 /**
  * Created by Mingkai on 2016/6/22.
@@ -240,7 +241,7 @@ public final class WifiDialog extends BaseSettingDialog {
         List<ScanResult> tmp = new ArrayList<>();
         HashSet<String> ssidSet = new HashSet<>();
         for (ScanResult result : netManager.getScanResults()) {
-            if (!ssidSet.contains(result.SSID)) {
+            if (!ssidSet.contains(result.SSID) && !TextUtils.isEmpty(result.SSID)) {
                 tmp.add(result);
                 ssidSet.add(result.SSID);
             }
