@@ -3869,6 +3869,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public DecorMW(ViewGroup root) {
+            boolean useShadow = isShadow();
+            boolean useBorder = hasOuterBorder();
+            boolean useHeader = hasHeader();
+
             mHeader = (LinearLayout)root.findViewById(com.android.internal.R.id.mw_decor_header);
             mShadow = (RelativeLayout)root.findViewById(com.android.internal.R.id.mw_shadow);
             mHeader.setBackgroundResource(com.android.internal.R.color.mw_gray_decor);
@@ -3887,60 +3891,60 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 Log.e(TAG, "create statusbar activity failed", e);
             }
 
-            setFramePaddingPolicy();
+            setFramePaddingPolicy(useShadow, useBorder, useHeader);
 
-            mOuterBorder.setOnHoverListener(new HoverListener());
-            mOuterBorder.setOnTouchListener(new TouchListener(
-                                             new WindowManager.MultiWindow.ResizeWindow(), false));
-            mHeader.setOnTouchListener(new TouchListener(
-                                             new WindowManager.MultiWindow.MoveWindow(), true));
+            if (useBorder) {
+                mOuterBorder.setOnHoverListener(new HoverListener());
+                mOuterBorder.setOnTouchListener(new TouchListener(
+                                              new WindowManager.MultiWindow.ResizeWindow(), false));
+            }
 
-            mCloseBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            if (useHeader) {
+                mHeader.setOnTouchListener(new TouchListener(
+                                              new WindowManager.MultiWindow.MoveWindow(), true));
 
-                    try {
-                        ActivityManagerNative.getDefault().closeActivity(getStackId());
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Close button failes", e);
+                mCloseBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            ActivityManagerNative.getDefault().closeActivity(getStackId());
+                        } catch (RemoteException e) {
+                            Log.e(TAG, "Close button failes", e);
+                        }
                     }
-                }
-            });
+                });
 
-            mLaunchBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    KeyEvent.sendKeyEventBack();
-                }
-            });
+                mLaunchBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        KeyEvent.sendKeyEventBack();
+                    }
+                });
 
-            mMaximizeBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    syncFrame(toggleFullScreen(getActivityFrame()));
-                }
-            });
+                mMaximizeBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        syncFrame(toggleFullScreen(getActivityFrame()));
+                    }
+                });
 
-            mMinimizeBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onMinimize(getActivityFrame());
-                }
-            });
+                mMinimizeBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onMinimize(getActivityFrame());
+                    }
+                });
+            }
 
             setFocusedStack();
         }
 
-        private void setFramePaddingPolicy() {
-            boolean useShadow = isShadow();
-            boolean useBorder = hasOuterBorder();
-            boolean useHeader = hasHeader();
-            setHeaderHeight(getContext().getResources().getDimensionPixelSize(
-                                                    com.android.internal.R.dimen.mw_header_border));
+        private void setFramePaddingPolicy(boolean useShadow,
+                                           boolean useBorder, boolean useHeader) {
             setTopShadowPadding(useShadow);
             setShadowPadding(useShadow);
             setBorderPadding(useBorder);
-            setTopBorderPadding(useHeader);
+            setTopBorderPadding(useBorder);
             if (!useShadow) {
                 View shadowInside = (View) mOuterBorder.getParent();
                 View shadowMiddle = (View) shadowInside.getParent();
@@ -3951,7 +3955,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mShadow.setVisibility(View.GONE);
             }
 
-            if (!useHeader) {
+            if (useHeader) {
+                setHeaderHeight(getContext().getResources().getDimensionPixelSize(
+                                                    com.android.internal.R.dimen.mw_header_border));
+            } else {
                 mHeader.setVisibility(View.GONE);
             }
 

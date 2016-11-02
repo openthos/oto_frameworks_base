@@ -4669,7 +4669,8 @@ public class Activity extends ContextThemeWrapper
     public void finish() {
         if (mActivityInfo.name.equals(ApplicationInfo.APPNAME_TOGIC_LAUNCHER_MAINACTIVITY)
             || mActivityInfo.name.equals(ApplicationInfo.APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY)
-            || mActivityInfo.name.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM_TERM)) {
+            || mActivityInfo.name.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM_TERM)
+            || mActivityInfo.name.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY)) {
             Intent intent = new Intent();
             intent.setAction(Intent.STATUS_BAR_SHOW);
             this.sendBroadcast(intent);

@@ -1638,7 +1638,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 r.intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
             }
             if (r.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
-                || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)) {
+                || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
+                || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                 hideStatusbarBroadcast();
             } else if (r.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
@@ -1839,7 +1840,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (currentActivity != null) {
                 if (currentActivity.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
                     || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)) {
+                           ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
+                    || currentActivity.packageName.equals(
+                           ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
                     hideStatusbarBroadcast();
                 } else if (currentActivity.info.name.length() >
                                                      PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {

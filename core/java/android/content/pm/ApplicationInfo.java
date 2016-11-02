@@ -99,6 +99,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_JACKPAL_ANDROIDTERM_TERM
                                                  = "jackpal.androidterm.Term";
 
+    public static final String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
+    public static final String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY
+                                               = "com.android.otovirtualgui.MainActivity";
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 
