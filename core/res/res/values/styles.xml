@@ -1316,6 +1316,7 @@ please see styles_device_defaults.xml.
 
     <!-- Pointer styles -->
     <style name="Pointer">
+        <item name="pointerIconHideNULL">#00000000</item>
         <item name="pointerIconArrow">@drawable/pointer_arrow_icon</item>
         <item name="pointerIconArrowUpDown">@drawable/pointer_arrow_updown</item>
         <item name="pointerIconArrowLeftRight">@drawable/pointer_arrow_leftright</item>

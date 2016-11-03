@@ -2333,6 +2333,26 @@ public interface WindowManager extends ViewManager {
             return mResizeWays;
         }
 
+        public int wayToIcon(int ways) {
+            switch (ways) {
+                case MW_WINDOW_RESIZE_TOP:
+                case MW_WINDOW_RESIZE_BOTTOM:
+                    return PointerIcon.STYLE_ARROW_UPDOWN;
+                case MW_WINDOW_RESIZE_LEFT:
+                case MW_WINDOW_RESIZE_RIGHT:
+                    return PointerIcon.STYLE_ARROW_LEFTRIGHT;
+                case MW_WINDOW_RESIZE_TOPLEFT:
+                case MW_WINDOW_RESIZE_BOTTOMRIGHT:
+                    return PointerIcon.STYLE_ARROW_ONEFOUR;
+                case MW_WINDOW_RESIZE_TOPRIGHT:
+                case MW_WINDOW_RESIZE_BOTTOMLEFT:
+                    return PointerIcon.STYLE_ARROW_TWOTHREE;
+                case MW_WINDOW_RESIZE_NONE:
+                default:
+                    return PointerIcon.STYLE_ARROW;
+            }
+        }
+
         private int getResizeWaysInternal(Rect frame, int x, int y) {
             int padding = (getFramePadding() < MW_WINDOW_RESIZE_PADDING_MIN)
                           ? MW_WINDOW_RESIZE_PADDING_MIN : getFramePadding();

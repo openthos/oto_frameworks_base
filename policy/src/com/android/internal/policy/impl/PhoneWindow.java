@@ -106,6 +106,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -3573,14 +3574,23 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
+    private boolean needHidePointer() {
+        return getContext().getApplicationInfo().packageName.compareTo(
+                                            ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI) == 0;
+    }
+
     private class HoverListener implements OnHoverListener {
         @Override
         public boolean onHover(View v, MotionEvent event){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
                 case MotionEvent.ACTION_HOVER_MOVE:
-                    syncResizingIcon(getResizeWays(getActivityFrame(),
-                                               (int) event.getRawX(), (int) event.getRawY()));
+                    if (needHidePointer()) {
+                        InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_NULL);
+                    } else {
+                        syncResizingIcon(getResizeWays(getActivityFrame(),
+                                           (int) event.getRawX(), (int) event.getRawY()));
+                    }
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
                     syncResizingIcon(getResizeWays(null, 0, 0));
@@ -3893,10 +3903,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             setFramePaddingPolicy(useShadow, useBorder, useHeader);
 
-            if (useBorder) {
+            if (useBorder || needHidePointer()) {
                 mOuterBorder.setOnHoverListener(new HoverListener());
-                mOuterBorder.setOnTouchListener(new TouchListener(
+                if (useBorder) {
+                    mOuterBorder.setOnTouchListener(new TouchListener(
                                               new WindowManager.MultiWindow.ResizeWindow(), false));
+                }
             }
 
             if (useHeader) {
@@ -5507,6 +5519,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     }
 
     public void syncResizingIcon(int ways) {
-        InputManager.getInstance().setPointerIcon(ways);
+        InputManager.getInstance().setPointerIcon(wayToIcon(ways));
     }
 }

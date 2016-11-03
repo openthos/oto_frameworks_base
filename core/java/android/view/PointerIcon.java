@@ -437,6 +437,8 @@ public final class PointerIcon implements Parcelable {
 
     private static int getSystemIconStyleIndex(int style) {
         switch (style) {
+            case STYLE_NULL:
+                return com.android.internal.R.styleable.Pointer_pointerIconHideNULL;
             case STYLE_ARROW:
                 return com.android.internal.R.styleable.Pointer_pointerIconArrow;
             case STYLE_ARROW_UPDOWN:

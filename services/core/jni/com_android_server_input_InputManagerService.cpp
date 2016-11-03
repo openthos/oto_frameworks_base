@@ -1001,6 +1001,8 @@ bool NativeInputManager::checkInjectEventsPermissionNonReentrant(
 void NativeInputManager::loadPointerResources(PointerResources* outResources) {
     JNIEnv* env = jniEnv();
 
+    loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_NULL,
+            &outResources->hideNULL);
     loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_SPOT_HOVER,
             &outResources->spotHover);
     loadSystemIconAsSprite(env, mContextObj, POINTER_ICON_STYLE_SPOT_TOUCH,
@@ -1358,10 +1360,30 @@ static void nativeMonitor(JNIEnv* env, jclass clazz, jlong ptr) {
 
 //SetPointerIcon By System Icon Type
 static void nativeSetPointerIcon(JNIEnv* env, jclass clazz, jlong ptr, int type){
-    //ALOGD("nativeSetPointerIcon is being calling");
     NativeInputManager* im = reinterpret_cast<NativeInputManager*>(ptr);
     sp<PointerControllerInterface> pc = im->obtainPointerController(0);
-    pc->pointerIconChange(type);
+
+    switch(type){
+    case POINTER_ICON_STYLE_ARROW_UPDOWN:
+        pc->pointerIconChange(POINTER_RESOURCES_ARROWUPDOWN);
+        break;
+    case POINTER_ICON_STYLE_ARROW_LEFTRIGHT:
+        pc->pointerIconChange(POINTER_RESOURCES_ARROWLEFTRIGHT);
+        break;
+    case POINTER_ICON_STYLE_ARROW_ONEFOUR:
+        pc->pointerIconChange(POINTER_RESOURCES_ARROWONEFOUR);
+        break;
+    case POINTER_ICON_STYLE_ARROW_TWOTHREE:
+        pc->pointerIconChange(POINTER_RESOURCES_ARROWTWOTHREE);
+        break;
+    case POINTER_ICON_STYLE_NULL:
+        pc->pointerIconChange(POINTER_RESOURCES_HIDENULL);
+        break;
+    case POINTER_ICON_STYLE_ARROW:
+    default:
+        pc->pointerIconChange(POINTER_RESOURCES_ARROWNORMAL);
+        break;
+    }
 }
 
 // ----------------------------------------------------------------------------

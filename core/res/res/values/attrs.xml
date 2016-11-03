@@ -7268,6 +7268,7 @@
 
     <declare-styleable name="Pointer">
         <!-- Reference to a pointer icon drawable with STYLE_ARROW -->
+        <attr name="pointerIconHideNULL" format="color" />
         <attr name="pointerIconArrow" format="reference" />
         <attr name="pointerIconArrowUpDown" format="reference" />
         <attr name="pointerIconArrowLeftRight" format="reference" />

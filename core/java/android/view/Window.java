@@ -2098,6 +2098,10 @@ public abstract class Window {
         return mMultiWindow.getResizeWays(frame, x, y);
     }
 
+    public int wayToIcon(int ways) {
+        return mMultiWindow.wayToIcon(ways);
+    }
+
     public Rect onTouchWindow(int what, int x, int y, Rect frame,
                               WindowManager.MultiWindow.ResizeWindow resizeWindow,
                               boolean supportDouble) {

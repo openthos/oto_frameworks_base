@@ -31,10 +31,23 @@
 
 namespace android {
 
+enum {
+    POINTER_RESOURCES_HIDENULL = 0,
+    POINTER_RESOURCES_SPOTHOVER,
+    POINTER_RESOURCES_SPOTTOUCH,
+    POINTER_RESOURCES_SPOTANCHOR,
+    POINTER_RESOURCES_ARROWNORMAL,
+    POINTER_RESOURCES_ARROWUPDOWN,
+    POINTER_RESOURCES_ARROWLEFTRIGHT,
+    POINTER_RESOURCES_ARROWONEFOUR,
+    POINTER_RESOURCES_ARROWTWOTHREE,
+};
+
 /*
  * Pointer resources.
  */
 struct PointerResources {
+    SpriteIcon hideNULL;
     SpriteIcon spotHover;
     SpriteIcon spotTouch;
     SpriteIcon spotAnchor;
@@ -44,7 +57,6 @@ struct PointerResources {
     SpriteIcon arrowOnefour;
     SpriteIcon arrowTwothree;
 };
-
 
 /*
  * Pointer controller policy interface.
