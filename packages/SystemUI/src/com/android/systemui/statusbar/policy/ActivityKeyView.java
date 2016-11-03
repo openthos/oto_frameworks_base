@@ -43,10 +43,15 @@ public class ActivityKeyView extends ImageView {
     private static final int DIALOG_PADDING_TIPS = 10; // divide 3
     private static final int TIMER_NUMBERS = 1000;
 
-    OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
-    OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
-    OnClickListener mDock;      /* Use to dock related StatusbarActivity in status bar. */
-    OnClickListener mUnDock;    /* Use to undock related StatusbarAcitivity from status bar. */
+    //OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
+    //OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
+    //OnClickListener mDock;      /* Use to dock related StatusbarActivity in status bar. */
+    //OnClickListener mUnDock;    /* Use to undock related StatusbarAcitivity from status bar. */
+    OnTouchListener mOpen;
+    OnTouchListener mClose;
+    OnTouchListener mDock;
+    OnTouchListener mUnDock;
+
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
     View mFocusedView;
     View mRunningView;
@@ -71,7 +76,51 @@ public class ActivityKeyView extends ImageView {
     }
 
     public void initListener() {
-        mOpen = new OnClickListener() {
+        mOpen = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                waitTimer();
+                runApkByPkg();
+                dismissDialog();
+                return true;
+            }
+        };
+
+        mClose = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                try {
+                    ActivityManagerNative.getDefault().closeActivity(mActivity.mStackId);
+                } catch (RemoteException e) {
+                    Log.e(TAG, "Close button failes", e);
+                }
+                dismissDialog();
+                return true;
+            }
+        };
+
+        mDock = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (!mActivity.mIsDocked) {
+                    mActivity.mIsDocked = true;
+                    sendLockedInfo();
+                }
+                dismissDialog();
+                return true;
+            }
+        };
+
+        mUnDock = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mActivity.mIsDocked = false;
+                dismissDialog();
+                removeFromRoot();
+                return true;
+            }
+        };
+        /* mOpen = new OnClickListener() {
             @Override
             public void onClick(View v) {
                 waitTimer();
@@ -110,7 +159,7 @@ public class ActivityKeyView extends ImageView {
                 dismissDialog();
                 removeFromRoot();
             }
-        };
+        };*/
 
         setOnHoverListener(new HoverListener());
     }
@@ -174,28 +223,37 @@ public class ActivityKeyView extends ImageView {
 
     public View buildRbmDocked(LayoutInflater li) {
         View rbmDocked = li.inflate(R.layout.right_button_menu_docked, null, false);
+        rbmDocked.setFocusable(true);
         TextView open = (TextView) rbmDocked.findViewById(R.id.rbm_open);
-        open.setOnClickListener(mOpen);
+        //open.setOnClickListener(mOpen);
+        open.setOnTouchListener(mOpen);
         TextView undock = (TextView) rbmDocked.findViewById(R.id.rbm_undock);
-        undock.setOnClickListener(mUnDock);
+        //undock.setOnClickListener(mUnDock);
+        undock.setOnTouchListener(mUnDock);
         return rbmDocked;
     }
 
     public View buildRbmDockedRun(LayoutInflater li) {
         View rbmDockedRun = li.inflate(R.layout.right_button_menu_docked_run, null, false);
+        rbmDockedRun.setFocusable(true);
         TextView close = (TextView) rbmDockedRun.findViewById(R.id.rbm_close);
-        close.setOnClickListener(mClose);
+        //close.setOnClickListener(mClose);
+        close.setOnTouchListener(mClose);
         TextView undock = (TextView) rbmDockedRun.findViewById(R.id.rbm_undock);
-        undock.setOnClickListener(mUnDock);
+        //undock.setOnClickListener(mUnDock);
+        undock.setOnTouchListener(mUnDock);
         return rbmDockedRun;
     }
 
     public View buildRbmRun(LayoutInflater li) {
         View rbmRun = li.inflate(R.layout.right_button_menu_run, null, false);
+        rbmRun.setFocusable(true);
         TextView close = (TextView) rbmRun.findViewById(R.id.rbm_close);
-        close.setOnClickListener(mClose);
+        //close.setOnClickListener(mClose);
+        close.setOnTouchListener(mClose);
         TextView dock = (TextView) rbmRun.findViewById(R.id.rbm_dock);
-        dock.setOnClickListener(mDock);
+        //dock.setOnClickListener(mDock);
+        dock.setOnTouchListener(mDock);
         return rbmRun;
     }
 
@@ -223,6 +281,7 @@ public class ActivityKeyView extends ImageView {
             mDialog = new Dialog(mContext);
             mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
+            mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
         mDialog.setContentView(view);
 
