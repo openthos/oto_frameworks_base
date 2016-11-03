@@ -207,8 +207,6 @@ public class QSPanel extends ViewGroup {
         }
         if (listening) {
             mBrightnessController.registerCallbacks();
-        } else {
-            mBrightnessController.unregisterCallbacks();
         }
     }
 
