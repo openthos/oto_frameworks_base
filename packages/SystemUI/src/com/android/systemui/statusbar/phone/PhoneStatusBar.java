@@ -3044,6 +3044,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(idx));
             } else {
                 akv.activityClosed();
+                akv.setRunning(false);
             }
         }
     }
