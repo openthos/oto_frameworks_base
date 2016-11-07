@@ -22,10 +22,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
-
+import android.content.Intent;
 import android.widget.Button;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import android.content.ComponentName;
 
 public class EmptyShadeView extends StackScrollerDecorView {
 
@@ -59,18 +60,21 @@ public class EmptyShadeView extends StackScrollerDecorView {
         btnNotificationManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent display = new Intent();
+                ComponentName cDisplay = new ComponentName("com.android.settings",
+                                         "com.android.settings.NotificationAppList");
+                display.setComponent(cDisplay);
+                display.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(display);
             }
         });
 
         Button btnClearAll = (Button) findViewById(R.id.clearAll);
         btnClearAll.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 mBar.clearAllNotifications();
-             }
-       });
-
+            @Override
+            public void onClick(View v) {
+                mBar.clearAllNotifications();
+            }
+        });
     }
-
-
 }
