@@ -710,6 +710,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
+                                     || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
