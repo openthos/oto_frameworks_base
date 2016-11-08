@@ -103,7 +103,6 @@
             android:id="@+id/popupwindow_calendar_bt_enter"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/systemui_size_twentyfour"
-            android:text="@string/set_date_and_time"
             android:textColor="#ffffff"
             android:layout_marginBottom="@dimen/systemui_size_eight"
             android:textSize="@dimen/systemui_textsize_twelve" />

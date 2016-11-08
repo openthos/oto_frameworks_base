@@ -46,8 +46,15 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     private CalendarView mCalendar;
     private Handler mHandler;
     public static final int TIME_CUT_BEGIN = 11;
-    public static final int WEEK_CUT_BEGIN = 22;
-    public static final int WEEK_CUT_END = 24;
+    public static final int TIME_CUT_THIRTEEN = 13;
+    public static final int TIME_CUT_EIGHTEEN = 22;
+    public static final int WEEK_CUT_BEGIN = 21;
+    public static final int YEAR_BREAK_NUMBER = -11;// Across the years
+    public static final int NEXT_DATE = 1;// year, month, and day to add 1
+    public static final int THREAD_SEND_MESSAGE = 100;// send message to handler
+    public static final int UPDATE_DATE_INTERVAL = 1000;// per 1 second
+    public String mYear, mMonth, mDay;
+
     public CalendarDialog(Context context) {
         super(context);
     }
@@ -65,30 +72,29 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                                             .inflate(R.layout.popupwindows_calendar, null);
         setContentView(mediaView);
         final TextView calendarTime = (TextView) mediaView.findViewById(R.id.calendar_time);
-        TextView calendarDate = (TextView) mediaView.findViewById(R.id.calendar_date);
+        final TextView calendarDate = (TextView) mediaView.findViewById(R.id.calendar_date);
         final TextView popupwindow_calendar_month = (TextView)
                                          mediaView.findViewById(R.id.popupwindow_calendar_month);
         mCalendar = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
-        TextView popupwindow_calendar_bt_enter = (TextView)
+        final TextView popupwindow_calendar_bt_enter = (TextView)
                                                mediaView.findViewById(R.id.popupwindow_calendar_bt_enter);
-        popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + "年"
-                                           + mCalendar.getCalendarMonth() + "月");
-        SimpleDateFormat formatter = new SimpleDateFormat
-                                           ("yyyy年MM月dd日  HH:mm:s EEEE" , Locale.getDefault());
-        mStr = formatter.format(new Date());
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
-                calendarTime.setText((String)msg.obj);
+                mStr = (String)msg.obj;
+                calendarTime.setText(showTime(mStr));
+                calendarDate.setText(showMonth(mStr));
+                popupwindow_calendar_bt_enter.setText(R.string.set_date_and_time);
+                popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + mYear
+                                           + mCalendar.getCalendarMonth());
             }
         };
         new Thread(this).start();
-        calendarDate.setText(showMonth(mStr));
 
         if (null != mDate) {
             int years = Integer.parseInt(mDate.substring(0, mDate.indexOf("-")));
-            int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + 1,
+            int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + NEXT_DATE,
                                                          mDate.lastIndexOf("-")));
-            popupwindow_calendar_month.setText(years + "年" + month +"月");
+            popupwindow_calendar_month.setText(years + mYear  + month);
             mCalendar.showCalendar(years, month);
             mCalendar.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
         }
@@ -101,13 +107,13 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         mCalendar.setOnCalendarClickListener(new OnCalendarClickListener() {
             public void onCalendarClick(int row, int col, String dateFormat) {
                 int month = Integer.parseInt(dateFormat.substring(
-                                             dateFormat.indexOf("-") + 1,
+                                             dateFormat.indexOf("-") + NEXT_DATE,
                                              dateFormat.lastIndexOf("-")));
-                if (mCalendar.getCalendarMonth() - month == 1
-                    || mCalendar.getCalendarMonth() - month == -11) {
+                if (mCalendar.getCalendarMonth() - month == NEXT_DATE
+                    || mCalendar.getCalendarMonth() - month == YEAR_BREAK_NUMBER) {
                     mCalendar.lastMonth();
-                } else if (month - mCalendar.getCalendarMonth() == 1
-                           || month - mCalendar.getCalendarMonth() == -11) {
+                } else if (month - mCalendar.getCalendarMonth() == NEXT_DATE
+                           || month - mCalendar.getCalendarMonth() == YEAR_BREAK_NUMBER) {
                     mCalendar.nextMonth();
                 } else {
                     mCalendar.removeAllBgColor();
@@ -120,7 +126,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
 
         mCalendar.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
             public void onCalendarDateChanged(int year, int month) {
-                popupwindow_calendar_month.setText(year + "年" + month +"月");
+                popupwindow_calendar_month.setText(year + mYear + month);
             }
         });
 
@@ -154,20 +160,31 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         String week = str.substring(WEEK_CUT_BEGIN, str.length());
         return str.substring(0, TIME_CUT_BEGIN) + " " + week;
     }
+
     public String showTime(String str) {
-        String hh = str.substring(8, 10);
-        String mm = str.substring(10, 12);
-        return hh + ":" + mm;
+        Locale locale = mContext.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        if (language.endsWith("zh")) {
+            return str.substring(TIME_CUT_THIRTEEN, TIME_CUT_EIGHTEEN);
+        } else {
+            return str.substring(TIME_CUT_THIRTEEN - NEXT_DATE,
+                                          TIME_CUT_EIGHTEEN - NEXT_DATE);
+        }
     }
 
     @Override
     public void run() {
         try {
             while(true) {
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                mYear = mContext.getString(R.string.year);
+                mMonth = mContext.getString(R.string.month);
+                mDay = mContext.getString(R.string.day);
+                SimpleDateFormat formatter = new SimpleDateFormat
+                                              ("yyyy" + mYear + "MM" + mMonth + "dd" +
+                                               mDay +"  "+ "HH:mm:ss EEEE" , Locale.getDefault());
                 String str = formatter.format(new Date());
-                mHandler.sendMessage(mHandler.obtainMessage(100, str));
-                Thread.sleep(1000);
+                mHandler.sendMessage(mHandler.obtainMessage(THREAD_SEND_MESSAGE, str));
+                Thread.sleep(UPDATE_DATE_INTERVAL);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

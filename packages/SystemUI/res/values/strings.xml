@@ -987,4 +987,8 @@
     <string name="battery_remaining_string">"Remaining Time <xliff:g id="TIME">%1$s</xliff:g>"</string>
     <string name="charge_remaining_string">"Charging Time <xliff:g id="TIME">%1$s</xliff:g>"</string>
     <string name="battery_percent">"Battery <xliff:g id="TIME">%1$d</xliff:g>"</string>
+
+   <string name="year">-</string>
+   <string name="month">-</string>
+   <string name="day"></string>
 </resources>

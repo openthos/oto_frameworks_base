@@ -409,4 +409,8 @@
     <string name="button_pro">仅投影</string>
 
     <string name="button_extend">扩展</string>
+
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
 </resources>
