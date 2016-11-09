@@ -47,6 +47,7 @@ import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.hardware.input.InputManager;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.IAudioService;
@@ -94,6 +95,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyCharacterMap.FallbackAction;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.PointerIcon;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -732,6 +734,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_HOME:
                     startHomeManager();
+                    InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
                     break;
                 case MSG_STARTUP_ACTION_CENTER:
                     startActionCenterManager();

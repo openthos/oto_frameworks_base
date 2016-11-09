@@ -102,6 +102,7 @@ import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.InputEvent;
+import android.view.PointerIcon;
 import android.view.Surface;
 import com.android.internal.app.HeavyWeightSwitcherActivity;
 import com.android.internal.app.IVoiceInteractor;
@@ -447,6 +448,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStack(boolean toFront, String reason) {
+        InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
         ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
         final int topNdx = stacks.size() - 1;
         if (topNdx <= 0) {
@@ -1785,6 +1787,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void setFocusedStack(int stackId) {
+        InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
         if (stackId == HOME_STACK_ID) {
             return;
         }
