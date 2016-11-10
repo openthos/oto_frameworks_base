@@ -11,7 +11,7 @@
     <string name="openthos_id_password">Password</string>
     <string name="str_verify">Verify</string>
     <string name="str_skip">Skip</string>
-    <string name="str_register">register openthosID</string>
+    <string name="str_register">Register</string>
     <string name="title_username_password">About this device</string>
     <string name="str_computer">Computer Name</string>
     <string name="str_screen_password">Screen Password</string>
@@ -31,4 +31,9 @@
     <string name="toast_network_not_connect">you can not connect the openthos web</string>
     <string name="toast_openthos_register_cancel">you have canceled</string>
     <string name="toast_openthos_register_password_wrong">you have null input or the twice password was not the same</string>
+    <string name="str_email">Input a valid email address</string>
+    <string name="enter_password_again">Enter password again</string>
+    <string name="register_openthos_title">Register Openthos ID</string>
+    <string name="register_openthos_summary">Openthos ID is your only certificate for you to use the openthos services,please remember you ID and password</string>
+
 </resources>

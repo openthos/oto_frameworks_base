@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/firstboot_bg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    <LinearLayout
+        android:layout_width="800dp"
+        android:layout_height="550dp"
+        android:layout_gravity="center"
+        android:gravity ="center_vertical"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/title"
+            layout="@layout/common_title"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            android:background="#259b24"
+            android:orientation="vertical">
+            //title
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:textColor="#ffffff"
+                android:textSize="28sp"
+                android:paddingLeft="76dp"
+                android:paddingTop="20dp"
+                android:text="@string/register_openthos_title"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="5dp"/>
+            //summary
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                android:paddingLeft="72dp"
+                android:paddingBottom="13dp"
+                android:text="@string/register_openthos_summary"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="361dp"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/common_textview_style"
+                    android:text="@string/openthos_id_name"
+                    />
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/edittext_openthos_id"
+                    style="@style/common_editview_style"
+                    android:inputType="textNoSuggestions"
+                    android:hint="@string/str_email"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/common_textview_style"
+                    android:text="@string/openthos_id_password"/>
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/edittext_openthos_password"
+                    style="@style/common_editview_style"
+                    android:inputType="textPassword"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/common_textview_style"
+                    android:text="@string/enter_password_again"/>
+                <TextView
+                    android:layout_width="76dp"
+                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/enter_password_again"
+                    style="@style/common_editview_style"
+                    android:inputType="textPassword"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#888888"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#FFFFFF"
+            android:orientation="horizontal">
+
+            //back
+            <TextView
+                android:id="@+id/tv_prev"
+                style="@style/common_button_style"
+                android:textColor="#888888"
+                android:text="@string/str_prev"
+                android:layout_marginLeft="16dp"/>
+
+            //register
+            <TextView
+                android:id="@+id/tv_register"
+                android:text="@string/str_register"
+                android:textColor="#888888"
+                style="@style/common_button_style"
+                android:layout_marginRight="16dp"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+</FrameLayout>

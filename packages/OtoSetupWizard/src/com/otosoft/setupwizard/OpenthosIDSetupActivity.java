@@ -117,7 +117,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction("com.android.wizard.REGISTER");
-                startActivityForResult(intent,RG_REQUEST);
+                // startActivityForResult(intent,RG_REQUEST);
+                startActivity(intent);
             }
         });
     }

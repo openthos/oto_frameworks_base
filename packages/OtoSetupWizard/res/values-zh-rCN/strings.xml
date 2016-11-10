@@ -10,7 +10,7 @@
     <string name="openthos_id_password">密码</string>
     <string name="str_verify">验证</string>
     <string name="str_skip">跳过</string>
-    <string name="str_register">注册openthos ID</string>
+    <string name="str_register">注册</string>
     <string name="title_username_password">本机设置</string>
     <string name="str_computer">本机名称</string>
     <string name="str_screen_password">锁屏密码</string>
@@ -31,4 +31,8 @@
     <string name="toast_network_not_connect">无法链接openthos网址，请检查网络链接</string>
     <string name="toast_openthos_register_cancel">取消openthos　Id注册</string>
     <string name="toast_openthos_register_password_wrong">您的密码未输入或者两次输入密码不一致</string>
+    <string name="str_email">输入有效邮箱地址</string>
+    <string name="enter_password_again">再次输入密码</string>
+    <string name="register_openthos_title">注册 Openthos ID</string>
+    <string name="register_openthos_summary">Openthos ID 是您获得openthos服务的唯一凭证,请牢记你的ID名称和密码.</string>
 </resources>
