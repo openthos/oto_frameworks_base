@@ -207,6 +207,7 @@ public class GestureDetector {
     private static final int SHOW_PRESS = 1;
     private static final int LONG_PRESS = 2;
     private static final int TAP = 3;
+    private static final int RIGHT_PRESS = 4;
 
     private final Handler mHandler;
     private final OnGestureListener mListener;
@@ -263,6 +264,7 @@ public class GestureDetector {
                 break;
                 
             case LONG_PRESS:
+            case RIGHT_PRESS:
                 dispatchLongPress();
                 break;
                 
@@ -540,6 +542,12 @@ public class GestureDetector {
             mStillDown = true;
             mInLongPress = false;
             mDeferConfirmSingleTap = false;
+
+            if (ev.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
+                mHandler.removeMessages(RIGHT_PRESS);
+                mHandler.sendEmptyMessageAtTime(RIGHT_PRESS, mCurrentDownEvent.getDownTime()
+                                                             + TAP_TIMEOUT);
+            }
             
             if (mIsLongpressEnabled) {
                 mHandler.removeMessages(LONG_PRESS);
