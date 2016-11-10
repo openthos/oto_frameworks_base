@@ -102,6 +102,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
     public static final String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY
                                                = "com.android.otovirtualgui.MainActivity";
+    public static final String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
+    public static final String PACKAGENAME_TAG = "package";
 
     /**
      * Default task affinity of all activities in this application. See 
