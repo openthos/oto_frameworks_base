@@ -6,9 +6,13 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/systemui_size_ten" >
 
-    <GridView
-        android:id="@+id/input_gv_view"
-        android:layout_width="100dp"
+    <ListView
+        android:id="@+id/input_lv_view"
+        android:layout_width="150dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

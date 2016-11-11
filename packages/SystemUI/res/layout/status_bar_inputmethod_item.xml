@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="24dp"
     android:background="#342464"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
     android:orientation="horizontal" >
 
-    <ImageView
+    <CheckBox
         android:id="@+id/input_method_checkbox"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="8dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/input_method_focus_true" />
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:button="@drawable/checkbox_style" />
 
     <TextView
         android:id="@+id/input_method_name"
         android:layout_gravity="center"
         android:textSize="12sp"
         android:textColor="#FFFFFF"
+        android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

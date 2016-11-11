@@ -14,24 +14,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.MotionEvent;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.TextView;
-
+import android.provider.Settings;
 import android.os.UserHandle;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodInfo;
 
 public class InputMethodAdapter extends BaseAdapter {
     private List<InputAppInfo> mListAppInfo = null;
     LayoutInflater mInfater = null;
     private Context mContext;
+    private List mBeSelectedData;
+    private Map<Integer, Boolean> mBsSelected;
+    private InputMethodManager input_method;
+    private final String currentInputMethodId;
+    private final List<InputMethodInfo> inputMethodList;
 
-    public InputMethodAdapter(Context context, List<InputAppInfo> apps) {
+    public InputMethodAdapter(Context context, List<InputAppInfo> apps,
+                      Map<Integer, Boolean> isSelected, List mBeSelectedData) {
         mInfater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListAppInfo = apps;
         mContext = context;
+        input_method = (InputMethodManager) context.getSystemService("input_method");
+        inputMethodList = input_method.getInputMethodList();
+        currentInputMethodId = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.DEFAULT_INPUT_METHOD);
+        mBeSelectedData = mBeSelectedData;
+        mIsSelected = isSelected;
     }
 
     @Override
@@ -46,7 +61,7 @@ public class InputMethodAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -65,6 +80,27 @@ public class InputMethodAdapter extends BaseAdapter {
         String appName = appInfo.getName();
         holder.tvAppLabel.setText(appName);
         view.setOnHoverListener(hoverListener);
+        String imiId = inputMethodList.get(position).getId();
+        mIsSelected.put(position,imiId.equals(currentInputMethodId));
+        view.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (mIsSelected.get(position)) {
+                    return;
+                }
+                boolean cu = !mIsSelected.get(position);
+                for (Integer p : mIsSelected.keySet()) {
+                    mIsSelected.put(p, false);
+                }
+                mIsSelected.put(position, cu);
+                InputMethodAdapter.this.notifyDataSetChanged();
+                mBeSelectedData.clear();
+                if (cu) {
+                    mBeSelectedData.add(mListAppInfo.get(position));
+                }
+                input_method.showInputMethodPicker();
+            }
+        });
+        holder.checkBox.setChecked(mIsSelected.get(position));
         return view;
     }
 
@@ -84,11 +120,11 @@ public class InputMethodAdapter extends BaseAdapter {
     };
 
     class ViewHolder {
-        ImageView appIcon;
+        CheckBox checkBox;
         TextView tvAppLabel;
 
         public ViewHolder(View view) {
-            this.appIcon = (ImageView) view.findViewById(R.id.input_method_checkbox);
+            this.checkBox = (CheckBox) view.findViewById(R.id.input_method_checkbox);
             this.tvAppLabel = (TextView) view.findViewById(R.id.input_method_name);
         }
     }

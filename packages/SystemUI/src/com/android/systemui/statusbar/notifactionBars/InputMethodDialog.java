@@ -12,8 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.AdapterView;
 import android.content.pm.PackageManager;
 import android.view.inputmethod.InputMethodInfo;
@@ -22,21 +21,56 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.android.systemui.util.InputAppInfo;
 import com.android.systemui.adapter.InputMethodAdapter;
 import com.android.systemui.R;
+import java.util.Map;
+import java.util.HashMap;
+import android.content.Intent;
+import android.util.Log;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.widget.Toast;
 
 public class InputMethodDialog extends BaseSettingDialog {
-    private GridView mInputGridView;
+    private ListView mInputListView;
     private String mFirstInputName, mLastInputName;
     private InputMethodAdapter mInputMethodAdapter;
     private CharSequence mCharName;
-    public static ArrayList<InputAppInfo> mGridViewAppInfo = null;
+    private Map<Integer,Boolean> mIsSelected;
+    private List mBeSelectedData = new ArrayList();
+    private List<InputMethodInfo> mMethodList;
+    public static ArrayList<InputAppInfo> mListViewAppInfo = null;
+    private ResetInputMethodReceiver mResetInputMethodReceiver;
 
     public InputMethodDialog(Context context) {
         super(context);
+        if (mResetInputMethodReceiver == null) {
+            mResetInputMethodReceiver = new ResetInputMethodReceiver();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) {
+            dismiss();
+            if (mResetInputMethodReceiver != null) {
+                try {
+                    mContext.unregisterReceiver(mResetInputMethodReceiver);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -46,37 +80,67 @@ public class InputMethodDialog extends BaseSettingDialog {
 
     @Override
     protected void initViews() {
+        mContext.registerReceiver(mResetInputMethodReceiver,
+                                   new IntentFilter("com.android.UPDATE_INPUTMETHOD"));
+        if (mIsSelected != null) {
+            mIsSelected = null;
+        }
+        mIsSelected = new HashMap<Integer, Boolean>();
         final AudioManager audioManager = (AudioManager) mContext.getSystemService(
                                                                       Context.AUDIO_SERVICE);
         View mediaView = LayoutInflater.from(mContext)
                                        .inflate(R.layout.status_bar_input_method, null);
         setContentView(mediaView);
-        mInputGridView = (GridView) mediaView.findViewById(R.id.input_gv_view);
+        mInputListView = (ListView) mediaView.findViewById(R.id.input_lv_view);
         mContentView = mediaView;
-        mGridViewAppInfo = new ArrayList<InputAppInfo>();
+        mListViewAppInfo = new ArrayList<InputAppInfo>();
         inputMethond();
-        mInputMethodAdapter = new InputMethodAdapter(mContext, mGridViewAppInfo);
-        mInputGridView.setAdapter(mInputMethodAdapter);
-        mInputGridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                ((InputMethodManager)mContext.getSystemService("input_method"))
-                                                       .showInputMethodPicker();
+        for (int i = 0; i < mListViewAppInfo.size(); i++) {
+            mIsSelected.put(i, false);
+        }
+        if (mBeSelectedData.size() > 0) {
+            mBeSelectedData.clear();
+        }
+        mInputMethodAdapter = new InputMethodAdapter(mContext, mListViewAppInfo,
+                                                     mIsSelected, mBeSelectedData);
+        mInputListView.setAdapter(mInputMethodAdapter);
+        mInputListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        String currentInputMethodId = Settings.Secure.getString(mContext.getContentResolver(),
+                Settings.Secure.DEFAULT_INPUT_METHOD);
+        for (InputMethodInfo imi : mMethodList) {
+            String imiId = imi.getId();
+            if (imiId.equals(currentInputMethodId)) {
+                mInputMethodAdapter.notifyDataSetChanged();
             }
-        });
+        }
     }
 
     public void inputMethond() {
         InputMethodManager imm = (InputMethodManager)
                                  mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-        List<InputMethodInfo> methodList = imm.getInputMethodList();
+        mMethodList = imm.getInputMethodList();
         PackageManager pm = mContext.getPackageManager();
-        for (InputMethodInfo mi : methodList ) {
+        for (InputMethodInfo mi : mMethodList ) {
             mCharName = mi.loadLabel(pm);
             String name = (String) mCharName;
             InputAppInfo appInfo = new InputAppInfo();
             appInfo.setName(name);
-            mGridViewAppInfo.add(appInfo);
+            mListViewAppInfo.add(appInfo);
+        }
+        String enabledInputMethodsStr = Settings.Secure.getString(
+                mContext.getContentResolver(), Settings.Secure.ENABLED_INPUT_METHODS);
+        try {
+            int selectedInputMethodSubtype = Settings.Secure.getInt(
+                mContext.getContentResolver(), Settings.Secure.SELECTED_INPUT_METHOD_SUBTYPE);
+        } catch (SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class ResetInputMethodReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mInputMethodAdapter.notifyDataSetChanged();
         }
     }
 }
