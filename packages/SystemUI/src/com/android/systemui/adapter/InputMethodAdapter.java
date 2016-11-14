@@ -30,7 +30,7 @@ public class InputMethodAdapter extends BaseAdapter {
     LayoutInflater mInfater = null;
     private Context mContext;
     private List mBeSelectedData;
-    private Map<Integer, Boolean> mBsSelected;
+    private Map<Integer, Boolean> mIsSelected;
     private InputMethodManager input_method;
     private final String currentInputMethodId;
     private final List<InputMethodInfo> inputMethodList;
