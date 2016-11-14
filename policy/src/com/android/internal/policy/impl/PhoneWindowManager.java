@@ -257,10 +257,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private BroadcastReceiver mAppChangeStatusBarFinishReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_SHOW.equals(intent.getAction())) {
-                try {
-                    mStatusBarService.showStatusBar();
-                } catch(Exception e) {
-                }
+                showStatusBar();
             }
         }
     };
@@ -2825,110 +2822,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // can never break it, although if keyguard is on, we do let
         // it handle it, because that gives us the correct 5 second
         // timeout.
-        if (keyCode == KeyEvent.KEYCODE_HOME) {
-
-            // If we have released the home key, and didn't do anything else
-            // while it was pressed, then it is time to go home!
-            if (!down) {
-                cancelPreloadRecentApps();
-
-                mHomePressed = false;
-                if (mHomeConsumed) {
-                    mHomeConsumed = false;
-                    return -1;
-                }
-
-                if (canceled) {
-                    Log.i(TAG, "Ignoring HOME; event canceled.");
-                    return -1;
-                }
-
-                // If an incoming call is ringing, HOME is totally disabled.
-                // (The user is already on the InCallUI at this point,
-                // and his ONLY options are to answer or reject the call.)
-                TelecomManager telecomManager = getTelecommService();
-                if (telecomManager != null && telecomManager.isRinging()) {
-                    Log.i(TAG, "Ignoring HOME; there's a ringing incoming call.");
-                    return -1;
-                }
-
-                // Delay handling home if a double-tap is possible.
-                if (mDoubleTapOnHomeBehavior != DOUBLE_TAP_HOME_NOTHING) {
-                    mHandler.removeCallbacks(mHomeDoubleTapTimeoutRunnable); // just in case
-                    mHomeDoubleTapPending = true;
-                    mHandler.postDelayed(mHomeDoubleTapTimeoutRunnable,
-                            ViewConfiguration.getDoubleTapTimeout());
-                    return -1;
-                }
-
-                handleShortPressOnHome();
-                return -1;
-            }
-
-            // If a system window has focus, then it doesn't make sense
-            // right now to interact with applications.
-            WindowManager.LayoutParams attrs = win != null ? win.getAttrs() : null;
-            if (attrs != null) {
-                final int type = attrs.type;
-                if (type == WindowManager.LayoutParams.TYPE_KEYGUARD_SCRIM
-                        || type == WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG
-                        || (attrs.privateFlags & PRIVATE_FLAG_KEYGUARD) != 0) {
-                    // the "app" is keyguard, so give it the key
-                    return 0;
-                }
-                final int typeCount = WINDOW_TYPES_WHERE_HOME_DOESNT_WORK.length;
-                for (int i=0; i<typeCount; i++) {
-                    if (type == WINDOW_TYPES_WHERE_HOME_DOESNT_WORK[i]) {
-                        // don't do anything, but also don't pass it to the app
-                        return -1;
-                    }
-                }
-            }
-
-            // Remember that home is pressed and handle special actions.
-            if (repeatCount == 0) {
-                mHomePressed = true;
-                if (mHomeDoubleTapPending) {
-                    mHomeDoubleTapPending = false;
-                    mHandler.removeCallbacks(mHomeDoubleTapTimeoutRunnable);
-                    handleDoubleTapOnHome();
-                } else if (mLongPressOnHomeBehavior == LONG_PRESS_HOME_RECENT_SYSTEM_UI
-                        || mDoubleTapOnHomeBehavior == DOUBLE_TAP_HOME_RECENT_SYSTEM_UI) {
-                    preloadRecentApps();
-                }
-            } else if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
-                if (!keyguardOn) {
-                    handleLongPressOnHome();
-                }
-            }
-            return -1;
-        } else if (keyCode == KeyEvent.KEYCODE_STARTUPMENU) {
-            // Hijack modified menu keys for debugging features
-            final int chordBug = KeyEvent.META_SHIFT_ON;
-
+        if ((keyCode == KeyEvent.KEYCODE_HOME)
+            || (keyCode == KeyEvent.KEYCODE_STARTUPMENU)) {
             if (down && repeatCount == 0) {
                 startupMenu();
-                //if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
-                //    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
-                //    mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
-                //            null, null, null, 0, null, null);
-                //    return -1;
-                //} else if (SHOW_PROCESSES_ON_ALT_MENU &&
-                //        (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
-                //    Intent service = new Intent();
-                //    service.setClassName(mContext, "com.android.server.LoadAverageService");
-                //    ContentResolver res = mContext.getContentResolver();
-                //    boolean shown = Settings.Global.getInt(
-                //            res, Settings.Global.SHOW_PROCESSES, 0) != 0;
-                //    if (!shown) {
-                //        mContext.startService(service);
-                //    } else {
-                //        mContext.stopService(service);
-                //    }
-                //    Settings.Global.putInt(
-                //            res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
-                //    return -1;
-                //}
+                showStatusBar();
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
             if (down) {
@@ -3155,9 +3053,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                                                ApplicationInfo.APPNAME_TOGIC_VIDEO)
                                         || win.getOwningPackage().equals(
                                                     ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)) {
-                                    Intent intent = new Intent();
-                                    intent.setAction(Intent.STATUS_BAR_SHOW);
-                                    mContext.sendBroadcast(intent);
+                                    showStatusBar();
                                 }
                             } catch (RemoteException e) {
                               e.printStackTrace();
@@ -6857,5 +6753,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     @Override
     public boolean willSkipFocus() {
         return mSkipFocus;
+    }
+
+    private void showStatusBar() {
+        try {
+            mStatusBarService.showStatusBar();
+        } catch(Exception e) {
+        }
     }
 }
