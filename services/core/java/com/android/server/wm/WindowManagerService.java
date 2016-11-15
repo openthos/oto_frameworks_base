@@ -655,6 +655,7 @@ public class WindowManagerService extends IWindowManager.Stub
 
     int mStatusBarHeight = 0;
     boolean mStatusBarAutoHide = true;
+    boolean mStatusBarLock = false;
 
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
@@ -7651,8 +7652,12 @@ public class WindowManagerService extends IWindowManager.Stub
 
         private void onCheckingStatusBar(int y, DisplayContent dc) {
             DisplayInfo displayInfo = dc.getDisplayInfo();
-            if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT)
-                || !isStatusBarAutoHide()) {
+            if (y >= displayInfo.logicalHeight - getStatusBarHeight(true)) {
+                mStatusBarLock = true;
+            } else {
+                mStatusBarLock = false;
+            }
+            if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT) || !mStatusBarAutoHide) {
                 return;
             }
             showStatusbarBroadcast();
@@ -11933,7 +11938,7 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public int getStatusBarHeight(boolean force) {
-        if (!force && isStatusBarAutoHide()) {
+        if (!force && mStatusBarAutoHide) {
             return 0;
         }
         if (mStatusBarHeight == 0) {
@@ -11972,6 +11977,9 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public void hideStatusbarBroadcast() {
+        if (mStatusBarLock) {
+            return;
+        }
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_HIDE);
         mContext.sendBroadcast(intent);
@@ -11988,6 +11996,6 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public boolean isStatusBarAutoHide() {
-        return mStatusBarAutoHide;
+        return mStatusBarAutoHide && !mStatusBarLock;
     }
 }
