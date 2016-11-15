@@ -272,6 +272,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             LinearLayout ll = (LinearLayout) findViewById(R.id.ll_layout);
             ll.setOnHoverListener(this);
             mFocus = false;
+
+            showStatusBar();
+        }
+
+        private void showStatusBar() {
+            Intent intent = new Intent();
+            intent.setAction(Intent.STATUS_BAR_SHOW_SUGGEST);
+            sendBroadcast(intent);
         }
 
         @Override

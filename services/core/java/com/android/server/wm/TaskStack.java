@@ -657,8 +657,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         InputManager.getInstance().setPointerIcon(mMultiWindow.wayToIcon(ways));
     }
 
-    public Rect prepareOldSize(Rect oldSize) {
-        return mService.mContext.getResources().getDisplayMetrics()
-                       .prepareSize(mService.mContext, oldSize, mBounds);
+    public int getScreenHeight(int stackId) {
+        return mDisplayContent.getDisplayInfo().logicalHeight;
     }
 }

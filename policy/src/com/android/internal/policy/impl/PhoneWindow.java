@@ -3773,11 +3773,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
-    public Rect prepareOldSize(Rect oldSize) {
-        return getContext().getResources().getDisplayMetrics().prepareSize(getContext(),
-                                                                       oldSize, getActivityFrame());
-    }
-
     public void syncFrame(Rect r) {
         setActivityFrame(r);
         mDecor.invalidate();
@@ -3906,6 +3901,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (useBorder || needHidePointer()) {
                 mOuterBorder.setOnHoverListener(new HoverListener());
                 if (useBorder) {
+                    if (ApplicationInfo.isFullScreenStyleWindow(mPackageName)) {
+                        toggleFullScreen(getContext().getResources().getDisplayMetrics()
+                              .getDefaultFrameRect(
+                                    getContext().getApplicationInfo().isPhoneStyleWindow()));
+                    }
                     mOuterBorder.setOnTouchListener(new TouchListener(
                                               new WindowManager.MultiWindow.ResizeWindow(), false));
                 }
@@ -5520,5 +5520,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     public void syncResizingIcon(int ways) {
         InputManager.getInstance().setPointerIcon(wayToIcon(ways));
+    }
+
+    public int getScreenHeight(int stackId) {
+        try {
+            return ActivityManagerNative.getDefault().getScreenHeight(stackId);
+        } catch (RemoteException e) {
+        }
+        return getContext().getResources().getDisplayMetrics().heightPixels;
     }
 }

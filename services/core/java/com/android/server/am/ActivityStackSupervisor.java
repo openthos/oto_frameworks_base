@@ -448,7 +448,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void moveHomeStack(boolean toFront, String reason) {
+
         InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
+        mayAutoHideStatusBar();
+
         ArrayList<ActivityStack> stacks = mHomeStack.mStacks;
         final int topNdx = stacks.size() - 1;
         if (topNdx <= 0) {
@@ -1643,17 +1646,17 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
                 || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
-                hideStatusbarBroadcast();
+                mWindowManager.hideStatusbarBroadcast();
             } else if (r.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
                 if (r.info.name.substring(0, PACKAGENAME_POWERPOINT_CUTOUT_LENGTH).equals(
                                                              PACKAGENAME_WPS_POWER_POINT)) {
                     r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
-                    hideStatusbarBroadcast();
+                    mWindowManager.hideStatusbarBroadcast();
                 } else {
-                    showStatusbarBroadcast();
+                    mWindowManager.showStatusbarBroadcast();
                 }
             } else {
-                showStatusbarBroadcast();
+                mWindowManager.showStatusbarBroadcast();
             }
             intentFlags = (r.intent != null) ? r.intent.getFlags() : 0;
             boolean isMultiwindow = (intentFlags & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) != 0;
@@ -1711,7 +1714,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     ActivityDisplay display = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
                     int height = display.mDisplayInfo.logicalHeight;
                     if ((intentFlags & Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN) == 0) {
-                        height -= mWindowManager.getStatusbarHeight();
+                        height -= mWindowManager.getStatusBarHeight();
                     }
                     Rect rectFullScreen = new Rect(0, 0, display.mDisplayInfo.logicalWidth, height);
                     mService.relayoutWindow(stackId, rectFullScreen);
@@ -1733,10 +1736,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
-            DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
             return new Rect(0, 0, DisplayMetrics.getStartupMenuWidth(mService.mContext),
                              mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
-                                                 - mWindowManager.getStatusbarHeight());
+                                                 - mWindowManager.getStatusBarHeight(true));
         }
 
         // run phone mode
@@ -1750,12 +1752,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         //run default mode
-        if (ApplicationInfo.isFullScreenStyleWindow(pkgName)) {
-            return mWindowManager.getDisplayMetrics().getFullScreenRect(mService.mContext);
-        } else {
-            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+        return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
                                  !ApplicationInfo.isDesktopStyleWindow(pkgName));
-        }
     }
 
     boolean isHomeActivity(ActivityRecord r) {
@@ -1789,6 +1787,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     void setFocusedStack(int stackId) {
         InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
         if (stackId == HOME_STACK_ID) {
+            mayAutoHideStatusBar();
             return;
         }
 
@@ -1807,7 +1806,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         mLastFocusedStack = mFocusedStack;
                         mFocusedStack = stack;
                         mService.setFocusedStatusbarActivity(stack.mStackId);
-                        setFocusedTotalFullScreen(stack.topTask());
+                        adjustStatusBar(stack.topTask());
                         if (findMenu == true) {
                             return;
                         }
@@ -1825,39 +1824,40 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
     }
 
-    void hideStatusbarBroadcast() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.STATUS_BAR_HIDE);
-        mService.mContext.sendBroadcast(intent);
+    public boolean mayAutoHideStatusBar() {
+        if (getFocusedStack().isStartupMenuStack()) {
+            return false;
+        }
+        if (mWindowManager.isStatusBarAutoHide()) {
+            mWindowManager.hideStatusbarBroadcast();
+            return true;
+        }
+        return false;
     }
 
-    void showStatusbarBroadcast() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.STATUS_BAR_SHOW);
-        mService.mContext.sendBroadcast(intent);
-    }
+    void adjustStatusBar(TaskRecord currentTask) {
+        if (mayAutoHideStatusBar() || (currentTask == null)) {
+            return;
+        }
 
-    void setFocusedTotalFullScreen(TaskRecord currentTask) {
-        if (currentTask != null) {
-            ActivityRecord currentActivity = currentTask.getTopActivity();
-            if (currentActivity != null) {
-                if (currentActivity.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
-                    || currentActivity.packageName.equals(
-                           ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
-                    || currentActivity.packageName.equals(
-                           ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
-                    hideStatusbarBroadcast();
-                } else if (currentActivity.info.name.length() >
-                                                     PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
-                    if (currentActivity.info.name.substring(0, PACKAGENAME_POWERPOINT_CUTOUT_LENGTH)
-                                                    .equals(PACKAGENAME_WPS_POWER_POINT)) {
-                        hideStatusbarBroadcast();
-                    } else {
-                        showStatusbarBroadcast();
-                    }
+        ActivityRecord currentActivity = currentTask.getTopActivity();
+        if (currentActivity != null) {
+            if (currentActivity.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
+                || currentActivity.packageName.equals(
+                       ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
+                || currentActivity.packageName.equals(
+                       ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
+                mWindowManager.hideStatusbarBroadcast();
+            } else if (currentActivity.info.name.length() >
+                                                 PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
+                if (currentActivity.info.name.substring(0, PACKAGENAME_POWERPOINT_CUTOUT_LENGTH)
+                                                .equals(PACKAGENAME_WPS_POWER_POINT)) {
+                    mWindowManager.hideStatusbarBroadcast();
                 } else {
-                    showStatusbarBroadcast();
+                    mWindowManager.showStatusbarBroadcast();
                 }
+            } else {
+                mWindowManager.showStatusbarBroadcast();
             }
         }
     }
@@ -1871,6 +1871,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     ActivityStack stack = stacks.get(stackNdx);
                     if (stack.isStartupMenuStack()) {
                         stacks.remove(stack);
+                        mService.closeActivity(stack.mStackId);
                         return true;
                     }
                 }
@@ -4434,5 +4435,22 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         return onLeanbackOnly;
+    }
+
+    public int getScreenHeight(int stackId) {
+        int numDisplays = mActivityDisplays.size();
+        for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
+            ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
+            if ((stacks != null) && (stacks.size() > 0)) {
+                for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
+                    ActivityStack stack = stacks.get(stackNdx);
+                    if (stack.mStackId == stackId) {
+                        return mActivityDisplays.get(displayNdx).mDisplayInfo.logicalHeight;
+                    }
+                }
+            }
+        }
+
+        return mActivityDisplays.get(Display.DEFAULT_DISPLAY).mDisplayInfo.logicalHeight;
     }
 }

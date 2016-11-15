@@ -2109,7 +2109,7 @@ public interface WindowManager extends ViewManager {
             public void setFocusedStack(int stackId);
             public void unsetFocusedStack(int stackId);
             public void syncResizingIcon(int ways);
-            public Rect prepareOldSize(Rect rect);
+            public int getScreenHeight(int stackId);
         }
 
         public class AlignRight {
@@ -2272,7 +2272,7 @@ public interface WindowManager extends ViewManager {
         }
 
         public Rect toggleFullScreen(Rect frame) {
-            if (!frame.equals(mFullScreen)){
+            if (!frame.equals(mFullScreen)) {
                 mOldSize.set(frame);
                 if (mCallback != null) {
                     mCallback.relayoutWindow(mStackId, mFullScreen);
@@ -2280,12 +2280,24 @@ public interface WindowManager extends ViewManager {
                 }
             } else {
                 if (mCallback != null) {
-                    mOldSize = mCallback.prepareOldSize(mOldSize);
+                    prepareOldSize(frame);
                     mCallback.relayoutWindow(mStackId, mOldSize);
                     mFrame.set(mOldSize);
                 }
             }
             return mFrame;
+        }
+
+        private void prepareOldSize(Rect frame) {
+            if (mOldSize.width() == 0) {
+                Rect rect = frame;
+                if (rect.equals(mFullScreen)) {
+                    rect.set(mContext.getResources().getDisplayMetrics().
+                                 getDefaultFrameRect(mContext.getApplicationInfo()
+                                                                  .isPhoneStyleWindow()));
+                }
+                mOldSize.set(rect);
+            }
         }
 
         public void onMinimize(Rect orig) {
@@ -2313,8 +2325,13 @@ public interface WindowManager extends ViewManager {
         }
 
         public void updateScreenFrame(DisplayMetrics m) {
+            int height = m.heightPixels;
+
+            if (mCallback != null) {
+                height = mCallback.getScreenHeight(mStackId);
+            }
             mFullScreen.set(0 - getFramePadding(), 0 - getTopFramePadding(),
-                            m.widthPixels + getFramePadding(), m.heightPixels + getFramePadding());
+                            m.widthPixels + getFramePadding(), height + getFramePadding());
             mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
                                mFullScreen.right / 2 - getFramePadding()
                                                      - MW_WINDOW_RESIZE_LINE_WIDTH,

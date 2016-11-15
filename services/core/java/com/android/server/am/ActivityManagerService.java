@@ -19959,10 +19959,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean killStartupMenu() {
-            mStackSupervisor.moveHomeStack(true,"killStartupMenu");
-            boolean ksm = mStackSupervisor.killStartupMenu();
-            mStackSupervisor.moveHomeStack(false,"killStartupMenu");
-            return ksm;
+            return mStackSupervisor.killStartupMenu();
     }
 
     @Override
@@ -20014,7 +20011,9 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean closeActivity(int stackId) {
-        return closeActivity(stackId, true, 0);
+        synchronized (ActivityManagerService.this) {
+            return closeActivity(stackId, true, 0);
+        }
     }
 
     @Override
@@ -20066,6 +20065,13 @@ public final class ActivityManagerService extends ActivityManagerNative
             mWindowManager.syncMultiWindowToWindowManager(mw);
         } finally {
             Binder.restoreCallingIdentity(ident);
+        }
+    }
+
+    @Override
+    public int getScreenHeight(int stackId) {
+        synchronized (ActivityManagerService.this) {
+            return mStackSupervisor.getScreenHeight(stackId);
         }
     }
 }

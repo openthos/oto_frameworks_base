@@ -311,6 +311,8 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private static final String PROPERTY_EMULATOR_CIRCULAR = "ro.emulator.circular";
 
+    private static final int STATUS_BAR_CHK_HEIGHT = 5;
+
     final private KeyguardDisableHandler mKeyguardDisableHandler;
 
     final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -650,6 +652,9 @@ public class WindowManagerService extends IWindowManager.Stub
 
     // For frozen screen animations.
     int mExitAnimId, mEnterAnimId;
+
+    int mStatusBarHeight = 0;
+    boolean mStatusBarAutoHide = true;
 
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
@@ -7644,6 +7649,15 @@ public class WindowManagerService extends IWindowManager.Stub
             mCurrentStackId = -1;
         }
 
+        private void onCheckingStatusBar(int y, DisplayContent dc) {
+            DisplayInfo displayInfo = dc.getDisplayInfo();
+            if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT)
+                || !isStatusBarAutoHide()) {
+                return;
+            }
+            showStatusbarBroadcast();
+        }
+
         private void onHoverMove(int x, int y, DisplayContent dc) {
             if (mActionDown) {
                 return;
@@ -8151,6 +8165,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 }
                 break;
                 case POINTER_EVENT_ACTION_HOVER_MOVE:
+                    onCheckingStatusBar(msg.arg2, (DisplayContent)msg.obj);
                     // There are issues to let WMS crash.
                     //onHoverMove(msg.arg1, msg.arg2, (DisplayContent)msg.obj);
                     break;
@@ -11913,9 +11928,19 @@ public class WindowManagerService extends IWindowManager.Stub
         }
     }
 
-    public int getStatusbarHeight() {
-        return mContext.getResources().getDimensionPixelSize(
+    public int getStatusBarHeight() {
+        return getStatusBarHeight(false);
+    }
+
+    public int getStatusBarHeight(boolean force) {
+        if (!force && isStatusBarAutoHide()) {
+            return 0;
+        }
+        if (mStatusBarHeight == 0) {
+            mStatusBarHeight = mContext.getResources().getDimensionPixelSize(
                                            com.android.internal.R.dimen.status_bar_height_real);
+        }
+        return mStatusBarHeight;
     }
 
     public Rect disableMultiWindowToWindowManager(int stackId) {
@@ -11944,5 +11969,25 @@ public class WindowManagerService extends IWindowManager.Stub
                 stack.syncMultiWindow(mw);
             }
         }
+    }
+
+    public void hideStatusbarBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_HIDE);
+        mContext.sendBroadcast(intent);
+        try {
+            mActivityManager.killStartupMenu();
+        } catch (RemoteException e) {
+        }
+    }
+
+    public void showStatusbarBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_SHOW);
+        mContext.sendBroadcast(intent);
+    }
+
+    public boolean isStatusBarAutoHide() {
+        return mStatusBarAutoHide;
     }
 }

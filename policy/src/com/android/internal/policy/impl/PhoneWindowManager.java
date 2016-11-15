@@ -1294,16 +1294,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startHomeManager() {
-       try {
-            IStatusBarService statusbar = getStatusBarService();
-            if (statusbar != null) {
-                  statusbar.showHomePanel();
-            }
-        } catch (RemoteException e) {
-             Slog.e(TAG, "RemoteException when showing recent apps", e);
-             // re-acquire status bar service next time it is needed.
-             mStatusBarService = null;
-        }
         try {
             final Context context = mContext;
             final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -2826,7 +2816,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             || (keyCode == KeyEvent.KEYCODE_STARTUPMENU)) {
             if (down && repeatCount == 0) {
                 startupMenu();
-                showStatusBar();
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
             if (down) {
