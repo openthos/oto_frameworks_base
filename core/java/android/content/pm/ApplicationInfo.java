@@ -103,6 +103,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY
                                                = "com.android.otovirtualgui.MainActivity";
     public static final String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
+    public static final String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
+    public static final String APPNAME_CHROMIUM = "org.chromium.chrome";
     public static final String PACKAGENAME_TAG = "package";
 
     /**
@@ -713,6 +715,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
+                                     || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
