@@ -32,8 +32,8 @@ public class InputMethodAdapter extends BaseAdapter {
     private List mBeSelectedData;
     private Map<Integer, Boolean> mIsSelected;
     private InputMethodManager input_method;
-    private final String currentInputMethodId;
-    private final List<InputMethodInfo> inputMethodList;
+    private final String mCurrentInputMethodId;
+    private final List<InputMethodInfo> mInputMethodList;
 
     public InputMethodAdapter(Context context, List<InputAppInfo> apps,
                       Map<Integer, Boolean> isSelected, List beSelectedData) {
@@ -42,8 +42,8 @@ public class InputMethodAdapter extends BaseAdapter {
         mListAppInfo = apps;
         mContext = context;
         input_method = (InputMethodManager) context.getSystemService("input_method");
-        inputMethodList = input_method.getInputMethodList();
-        currentInputMethodId = Settings.Secure.getString(context.getContentResolver(),
+        mInputMethodList = input_method.getInputMethodList();
+        mCurrentInputMethodId = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.DEFAULT_INPUT_METHOD);
         mBeSelectedData = beSelectedData;
         mIsSelected = isSelected;
@@ -80,6 +80,8 @@ public class InputMethodAdapter extends BaseAdapter {
         String appName = appInfo.getName();
         holder.tvAppLabel.setText(appName);
         view.setOnHoverListener(hoverListener);
+        String imiId = mInputMethodList.get(position).getId();
+        mIsSelected.put(position, imiId.equals(mCurrentInputMethodId));
         view.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (mIsSelected.get(position)) {

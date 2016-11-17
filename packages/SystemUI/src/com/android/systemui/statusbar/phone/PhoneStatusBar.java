@@ -197,6 +197,8 @@ import com.android.systemui.statusbar.notificationbars.BatteryDialog;
 import com.android.systemui.statusbar.notificationbars.InputMethodDialog;
 import com.android.systemui.settings.BrightnessDialog;
 import android.content.ComponentName;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.InputMethodInfo;
 
 import java.io.IOException;
 import java.io.FileDescriptor;
@@ -247,6 +249,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             = "com.github.openthos.printer.localprint.jobmanager";
     public static final String NOTIFICATION_CLOSE_ITEM
             = "com.android.systemui.notification.close.info";
+    public static final String SYSTEM_INPUT_METHOD_ID
+            = "com.android.inputmethod.latin/.LatinIME";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
@@ -274,6 +278,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * The delay to reset the hint text when the hint animation is finished running.
      */
     private static final int HINT_RESET_DELAY_MS = 1200;
+    private static final int INPUTMETHOD_SEND_MESSAGE = 100;
+    private static final int INPUTMETHOD_MESSAGE_WHAT = 0;
 
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -1048,8 +1054,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWifiButton.setOnHoverListener(hoverListeners);
         mNotification.setOnHoverListener(hoverListeners);
         myRegisterReceiver();
+        mInputMethodIcon.sendEmptyMessage(INPUTMETHOD_MESSAGE_WHAT);
         return mStatusBarView;
     }
+
+    Handler mInputMethodIcon = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            InputMethodManager imm = (InputMethodManager)
+                          mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+            List<InputMethodInfo> inputMethodList = imm.getInputMethodList();
+            PackageManager pm = mContext.getPackageManager();
+            String currentInputMethodId = Settings.Secure.getString(
+                   mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+            for (InputMethodInfo im : inputMethodList) {
+                if (im.getId().equals(currentInputMethodId)) {
+                    if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {
+                        mInputButton.setImageResource(
+                                        R.drawable.statusbar_switch_input_method);
+                    } else {
+                        Drawable inputMethodIcon = im.loadIcon(pm);
+                        mInputButton.setImageDrawable(inputMethodIcon);
+                    }
+                }
+            }
+            mInputMethodIcon.sendEmptyMessageDelayed(INPUTMETHOD_MESSAGE_WHAT,
+                                                       INPUTMETHOD_SEND_MESSAGE);
+        }
+    };
 
     public static BaseSettingDialog getWifiDialog() {
         return mWifiPopupWindow;
