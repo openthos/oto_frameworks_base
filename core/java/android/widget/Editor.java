@@ -538,7 +538,7 @@ public class Editor {
                 mSpellChecker = new SpellChecker(mTextView);
             }
             if (mSpellChecker != null) {
-                mSpellChecker.spellCheck(start, end);
+                //mSpellChecker.spellCheck(start, end);
             }
         }
     }
