@@ -20,7 +20,7 @@
     <string name="file_manager">File Manager</string>
     <string name="power_source">Power Source</string>
     <string name="power_off">Power Offe</string>
-    <string name="system_setting">Setting</string>
+    <string name="system_setting">Settings</string>
     <string name="system_restart">Restart</string>
     <string name="system_sleep">Sleep</string>
     <string name="system_lock">Lock</string>
