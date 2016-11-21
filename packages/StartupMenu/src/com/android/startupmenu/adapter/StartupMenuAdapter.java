@@ -52,6 +52,7 @@ public class StartupMenuAdapter extends BaseAdapter {
         this.isCheckedMap = isCheckedMap;
         mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
+        mStartupMenuActivity = getStartupMenuActivity();
     }
 
     @Override
@@ -121,6 +122,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                         editor.putInt("isSql", 1);
                         editor.commit();
                     }
+                    mStartupMenuActivity.killStartupMenu();
                     break;
                 case MotionEvent.BUTTON_TERTIARY:
                     break;
@@ -180,5 +182,9 @@ public class StartupMenuAdapter extends BaseAdapter {
             this.tvAppLabel = (TextView) view.findViewById(R.id.package_name);
         //  this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
+    }
+
+    public StartupMenuActivity getStartupMenuActivity() {
+        return (StartupMenuActivity) mContext;
     }
 }

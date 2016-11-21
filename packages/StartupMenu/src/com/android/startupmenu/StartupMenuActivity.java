@@ -980,7 +980,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             targetDialog = newDialog;
         }
 
-        private void killStartupMenu() {
+        public void killStartupMenu() {
             try {
                 ActivityManagerNative.getDefault().killStartupMenu();
                 System.exit(0);
