@@ -759,6 +759,8 @@ public class Intent implements Parcelable, Cloneable {
     public static final String EXTRA_SHORTCUT_ICON_RESOURCE =
             "android.intent.extra.shortcut.ICON_RESOURCE";
 
+    public static final String EXTRA_DESKTOP_PATH_TAG = "path";
+
     /**
      * Represents a shortcut/live folder icon resource.
      *
