@@ -52,6 +52,7 @@
     <LinearLayout
         android:layout_width="@dimen/notification_panel_width"
         android:layout_height="match_parent"
+        android:weightSum="3"
         android:layout_gravity="@integer/global_notification_panel_layout_gravity"
         android:id="@+id/notification_container_parent"
         android:orientation="vertical"
@@ -62,7 +63,8 @@
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="@dimen/notification_panel_height"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:orientation="vertical">
 
             <FrameLayout
@@ -78,8 +80,6 @@
                     android:id="@+id/notification_stack_scroller"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/notification_panel_height"
-                    android:layout_gravity="top|center"
-                    android:layout_marginTop="@dimen/systemui_size_one"
                     android:layout_marginBottom="@dimen/close_handle_underlap"
                     android:importantForAccessibility="no" />
 
@@ -90,7 +90,8 @@
         <!-- start of print panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -144,14 +145,13 @@
         <!-- start of quick setting panel -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|center"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
             android:orientation="vertical">
             <include
-                android:layout_marginTop="@dimen/status_bar_header_height_expanded"
                 layout="@layout/qs_panel"
                 android:layout_width="match_parent"
-                android:layout_gravity="bottom|center"
+                android:gravity="bottom"
                 android:layout_height="@dimen/systemui_size_hundred" />
 
             <!-- A view to reserve space for the collapsed stack -->
@@ -160,13 +160,12 @@
                 android:id="@+id/reserve_notification_space"
                 android:layout_height="@dimen/systemui_size_zero"
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/notifications_top_padding"
                 android:visibility="gone" />
 
-            <View
+            <!--<View
                 android:layout_height="@dimen/systemui_size_zero"
                 android:layout_width="match_parent"
-                android:visibility="gone" />
+                android:visibility="gone" /> -->
         </LinearLayout>
         <!-- end of quick setting panel -->
 
