@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.DataOutputStream;
 
 import com.otosoft.tools.ChangeBuildPropTools;
+import com.android.internal.widget.LockPatternUtils;
 
 public class UserSetupActivity extends BaseActivity {
     private TextView mFinish;
@@ -36,6 +37,7 @@ public class UserSetupActivity extends BaseActivity {
     private EditText mNewPassword;
     private String screenPassword;
     private DevicePolicyManager devicePolicyManager;
+    private LockPatternUtils mLockPatternUtils;
     private TextView mSkip;
     private String defaultComputerName;
     private String computerName;
@@ -64,7 +66,7 @@ public class UserSetupActivity extends BaseActivity {
         this.mOldPassword = (EditText) findViewById(R.id.edittext_screen_password);
         this.mNewPassword = (EditText) findViewById(R.id.edittext_screen_password_confirm);
         mSkip = (TextView) findViewById(R.id.tv_skip);
-
+        mLockPatternUtils = new LockPatternUtils(this);
         defaultComputerName = SystemProperties.get("ro.build.host");
         this.mComputername.setText(defaultComputerName);
         userName = SystemProperties.get(RO_PROPERTY_USER);
@@ -127,11 +129,8 @@ public class UserSetupActivity extends BaseActivity {
                     UserManager.get(UserSetupActivity.this).setUserName(UserHandle.myUserId(), newUserName);
                 }
                 if (!TextUtils.isEmpty(oldPassword) && !TextUtils.isEmpty(newPassword) && oldPassword.equals(newPassword)) {
-                    //reset password
-                    //FIXME: it did not work well
-                    //devicePolicyManager.resetPassword(oldPassword,
-                    //                            DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-
+                    mLockPatternUtils.saveLockPassword(newPassword,
+                                         DevicePolicyManager.PASSWORD_QUALITY_NUMERIC, false);
                     ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
                     Intent intent = new Intent();
                     intent.setAction("com.android.wizard.STARTUSE");
