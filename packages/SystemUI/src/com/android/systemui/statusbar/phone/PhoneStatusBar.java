@@ -745,7 +745,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView.setPanelHolder(holder);
         mClock = mStatusBarView.findViewById(R.id.clock);
         mCalendarDialog = new CalendarDialog(context);
-        mClock.setOnTouchListener(new View.OnTouchListener() {
+        /*mClock.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (mClock == null) {
@@ -754,6 +754,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 dismisTargetDialog(mCalendarDialog);
                 mCalendarDialog.show(mClock);
                 return true;
+            }
+        });*/
+        mClock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mClock == null) {
+                    return;
+                }
+                dismisTargetDialog(mCalendarDialog);
+                mCalendarDialog.show(mClock);
             }
         });
         mClock.setOnHoverListener(hoverListener);
