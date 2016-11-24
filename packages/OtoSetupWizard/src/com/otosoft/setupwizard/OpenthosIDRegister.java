@@ -23,6 +23,8 @@ import java.util.Map;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import android.util.Log;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
@@ -32,6 +34,10 @@ import com.otosoft.tools.DatabaseHelper;
 import android.content.Context;
 import android.content.ContentResolver;
 import android.net.Uri;
+
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 //Rewrite Register function
 public class OpenthosIDRegister extends BaseActivity {
@@ -49,6 +55,11 @@ public class OpenthosIDRegister extends BaseActivity {
     private final String encode = "utf-8";
     static final int RG_REQUEST = 0;
     private ContentResolver mResolver;
+    private String mCookie = "";
+    public static final int MSG_GET_CSRF = 0x1001;
+    public static final int MSG_GET_CSRF_OK = 0x1002;
+    public static final int MSG_REGIST_SEAFILE = 0x1003;
+    public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +88,7 @@ public class OpenthosIDRegister extends BaseActivity {
                               && result.equals(getText(R.string.toast_register_successful))) {
                             Toast.makeText(OpenthosIDRegister.this,result,
                                     Toast.LENGTH_SHORT).show();
-                            OpenthosIDRegister.this.onBackPressed();
-
+                            mHandler.sendEmptyMessage(MSG_GET_CSRF);
                             Uri uriInsert =
                                   Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
                             ContentValues values = new ContentValues();
@@ -89,7 +99,19 @@ public class OpenthosIDRegister extends BaseActivity {
                             Toast.makeText(OpenthosIDRegister.this,result,
                                 Toast.LENGTH_SHORT).show();
                         }
-
+                        break;
+                    case MSG_GET_CSRF:
+                        getCsrf();
+                        break;
+                    case MSG_GET_CSRF_OK:
+                        mCookie = (String) msg.obj;
+                        mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
+                        break;
+                    case MSG_REGIST_SEAFILE:
+                        registSeafile();
+                        break;
+                    case MSG_REGIST_SEAFILE_OK:
+                        OpenthosIDRegister.this.onBackPressed();
                         break;
                     default:
                         Toast.makeText(OpenthosIDRegister.this,
@@ -211,5 +233,23 @@ public class OpenthosIDRegister extends BaseActivity {
         }
         resultData = new String(byteArrayOutputStream.toByteArray());
         return resultData;
+    }
+
+    private void getCsrf() {
+        RequestThread thread = new RequestThread(mHandler,
+               "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
+        thread.start();
+    }
+
+    private void registSeafile() {
+        List<NameValuePair> list = new ArrayList<>();
+        list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
+        list.add(new BasicNameValuePair("email", openthosID));
+        list.add(new BasicNameValuePair("password1", password));
+        list.add(new BasicNameValuePair("password2", againpassword));
+        RequestThread thread = new RequestThread(mHandler,
+               "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
+                mCookie);
+        thread.start();
     }
 }
