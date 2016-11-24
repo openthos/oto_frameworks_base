@@ -668,7 +668,9 @@ public class Intent implements Parcelable, Cloneable {
     @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
     public static final String ACTION_NOTIFICATION_PROJECTION
                          = "com.android.action.SYSTEMUI_NOTIFICITION_SEND";
-
+    @SdkConstant(SdkConstantType.ACTIVITY_INTENT_ACTION)
+    public static final String ACTION_STARTMENU_SEND_SQLITE_INFO
+                         = "com.android.startupmenu.SQLITE_CHANGE";
     /**
      * A synonym for {@link #ACTION_VIEW}, the "standard" action that is
      * performed on a piece of data.

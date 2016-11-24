@@ -25,33 +25,48 @@ import android.database.Cursor;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.widget.Toast;
+import android.content.Intent;
 
 public class MySQLReceiver extends BroadcastReceiver {
     private MySqliteOpenHelper mMsoh;
     private SQLiteDatabase mdb;
     private boolean mIsHasReayDb;
     private int mNumber;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
-        mdb = mMsoh.getWritableDatabase();
-        if (intent.getAction().equals("com.android.startupmenu.SQLITE_CHANGE")) {
+
+        if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
             BackstageRenewalData(context);
         }
+
         //Accept Message
-        if (intent.getAction().equals("com.android.action.PACKAGE_SEND")) {
+        if (intent.getAction().equals(Intent.ACTION_SEND_CLICK_INFO)) {
+            mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
+            mdb = mMsoh.getWritableDatabase();
             String pkgName = intent.getStringExtra("keyAddInfo");
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                       new String[] { pkgName });
-            c.moveToNext();
-            int numbers = c.getInt(c.getColumnIndex("int"));
-            int number = c.getInt(c.getColumnIndex("click"));
-            numbers ++ ;
-            number ++;
             ContentValues values = new ContentValues();
-            values.put("int", numbers);
-            values.put("click", number);
-            mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+            int numbers = 0;
+            int number = 0;
+            if (c.moveToNext()) {
+                numbers = c.getInt(c.getColumnIndex("int"));
+                number = c.getInt(c.getColumnIndex("click"));
+                numbers ++;
+                number ++;
+                values.put("int", numbers);
+                values.put("click", number);
+                mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+            } else {
+                numbers ++;
+                number ++;
+                values.put("pkname", pkgName);
+                values.put("int", numbers);
+                values.put("click", number);
+                mdb.insert("perpo", "pkname", values);
+                BackstageRenewalData(context);
+            }
             //Same to open run
             SharedPreferences sharedPreference = context.getSharedPreferences("click",
                                                           Context.MODE_PRIVATE);
@@ -90,6 +105,7 @@ public class MySQLReceiver extends BroadcastReceiver {
                     break;
                 }
             }
+
             if (!mIsHasReayDb) {
                 mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
                                 + "values (?,?,?,?,?)",

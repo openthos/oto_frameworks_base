@@ -291,7 +291,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     if (mIsClick == 0) {
                         if (isSql == 0) {
                             Intent i = new Intent();
-                            i.setAction("com.android.startupmenu.SQLITE_CHANGE");
+                            i.setAction(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO);
                             sendBroadcast(i);
                             SharedPreferences.Editor edit = sharedPreference.edit();
                             edit.putInt("isSql", 1);
