@@ -20,11 +20,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String sql = "create table selectState(_id integer primary key autoincrement,"
                                               + "appPackage varchar, state int)";
+        String sqlOpenthosID = "create table openthosID(_id integer primary key autoincrement,"
+                                + "openthosID varchar, password varchar)";
         sqLiteDatabase.execSQL(sql);
+        sqLiteDatabase.execSQL(sqlOpenthosID);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
     }
 }

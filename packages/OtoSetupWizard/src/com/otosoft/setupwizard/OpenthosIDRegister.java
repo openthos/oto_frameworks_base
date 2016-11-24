@@ -23,6 +23,15 @@ import java.util.Map;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
+import android.content.Context;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteOpenHelper;
+import com.otosoft.tools.DatabaseHelper;
+import android.content.Context;
+import android.content.ContentResolver;
+import android.net.Uri;
 
 //Rewrite Register function
 public class OpenthosIDRegister extends BaseActivity {
@@ -33,14 +42,13 @@ public class OpenthosIDRegister extends BaseActivity {
     private EditText mEditTextAgainPassword;
     private String openthosID;
     private String password;
+    private String againpassword;
     private int result;
     private Handler mHandler;
     private final Map<String,String> params = new HashMap<String,String>();
     private final String encode = "utf-8";
     static final int RG_REQUEST = 0;
-    private static String CODE_WRONG_USERNAME ="1002";
-    private static String CODE_WRONG_PASSWORD ="1001";
-    private static String CODE_SUCCESS ="1000";
+    private ContentResolver mResolver;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +64,8 @@ public class OpenthosIDRegister extends BaseActivity {
         //again password
         mEditTextAgainPassword = (EditText) findViewById(R.id.enter_password_again);
 
+        mResolver = getContentResolver();
+
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -63,25 +73,27 @@ public class OpenthosIDRegister extends BaseActivity {
                     case HttpURLConnection.HTTP_OK:
                         Bundle b = msg.getData();
                         String result = b.getString("result");
-                        String code = result.split(":")[1].split("\"")[1].trim();
-                        //name wrong
-                        if(CODE_WRONG_USERNAME.equals(code)) {
-                            Toast.makeText(OpenthosIDRegister.this,
-                                    getText(R.string.toast_openthos_id_invalid),
+                        if (result != null
+                              && result.equals(getText(R.string.toast_register_successful))) {
+                            Toast.makeText(OpenthosIDRegister.this,result,
                                     Toast.LENGTH_SHORT).show();
-                        } else if (CODE_WRONG_PASSWORD.equals(code)) {
-                            Toast.makeText(OpenthosIDRegister.this,
-                                    getText(R.string.toast_openthos_password_wrong),
-                                    Toast.LENGTH_SHORT).show();
+                            OpenthosIDRegister.this.onBackPressed();
+
+                            Uri uriInsert =
+                                  Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
+                            ContentValues values = new ContentValues();
+                            values.put("openthosID", openthosID);
+                            values.put("password", password);
+                            mResolver.insert(uriInsert, values);
                         } else {
-                            Intent intent = new Intent();
-                            intent.setAction("com.android.wizard.REGISTER");
-                            startActivity(intent);
+                            Toast.makeText(OpenthosIDRegister.this,result,
+                                Toast.LENGTH_SHORT).show();
                         }
+
                         break;
                     default:
                         Toast.makeText(OpenthosIDRegister.this,
-                                getText(R.string.toast_openthos_register_password_wrong),
+                                getText(R.string.toast_network_not_connect),
                                 Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -95,7 +107,25 @@ public class OpenthosIDRegister extends BaseActivity {
         });
         mRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                OpenthosIDRegister.this.onBackPressed();
+                openthosID = mEditTextOpenthosID.getText().toString().trim();
+                password = mEditTextPassword.getText().toString().trim();
+                againpassword = mEditTextAgainPassword.getText().toString().trim();
+                //verify openthos id and password
+                params.put("ID", openthosID);
+                params.put("pwd", password);
+
+                if (password.equals("") || againpassword.equals("")) {
+                    params.put("pwd", password);
+                } else {
+                    if (!password.equals(againpassword)) {
+                        Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_openthos_register_password_not_equals),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        params.put("pwd", password);
+                    }
+                }
+                submitPostData(params, encode);
             }
         });
 
@@ -106,6 +136,7 @@ public class OpenthosIDRegister extends BaseActivity {
     }
 
     public void submitPostData(final Map<String, String> params, final String encode) {
+
         final  byte[] data = getRequestData(params, encode).toString().getBytes();
             new Thread(new Runnable() {
                 @Override
@@ -113,7 +144,7 @@ public class OpenthosIDRegister extends BaseActivity {
                     try {
                         HttpURLConnection httpURLConnection =
                                 (HttpURLConnection) HttpUtils.getHttpsURLConnection(
-                                        "http://dev.openthos.org/?q=check/userinfo");
+                                        "http://dev.openthos.org/?q=u/register");
                         httpURLConnection.setConnectTimeout(3000);
                         httpURLConnection.setDoInput(true);
                         httpURLConnection.setDoOutput(true);
@@ -140,6 +171,7 @@ public class OpenthosIDRegister extends BaseActivity {
                         msg.what = response;
                         Bundle bundle = new Bundle();
                         bundle.putString("result",data);
+                        bundle.putString("resultID",openthosID);
                         msg.setData(bundle);
                         mHandler.sendMessage(msg);
                     } catch (IOException e) {

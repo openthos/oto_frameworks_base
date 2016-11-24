@@ -18,10 +18,12 @@ public class MyProvider extends ContentProvider {
     private static final String AUTHORITY = "com.otosoft.tools.myprovider";
     private static UriMatcher mUriMatcher;
     private static final int MCLICKSTATE = 1;
+    private static final int OPENTHOSSTATE = 2;
 
     static{
         mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         mUriMatcher.addURI(AUTHORITY, "selectState", MCLICKSTATE);
+        mUriMatcher.addURI(AUTHORITY, "openthosID", OPENTHOSSTATE);
     }
 
     @Override
@@ -39,6 +41,9 @@ public class MyProvider extends ContentProvider {
         if(mUriMatcher.match(uri) == MCLICKSTATE) {
             cursor = db.query("selectState", strings, s, strings1,s1, null, null);
             return cursor;
+        } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
+            cursor = db.query("openthosID", strings, s, strings1,s1, null, null);
+            return cursor;
         }
         return null;
     }
@@ -48,6 +53,8 @@ public class MyProvider extends ContentProvider {
     public String getType(Uri uri) {
         if(mUriMatcher.match(uri) == MCLICKSTATE) {
             return "vnd.android.cursor.dir/"+AUTHORITY+"clickState";
+        } else if (mUriMatcher.match(uri) == OPENTHOSSTATE){
+            //return "vnd.android.cursor.dir/"+AUTHORITY+"clickState"
         }
         return null;
     }
@@ -58,6 +65,10 @@ public class MyProvider extends ContentProvider {
         SQLiteDatabase db = helper.getWritableDatabase();
         if (mUriMatcher.match(uri) == MCLICKSTATE) {
             long newId=db.insert("selectState", null, contentValues);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, newId);
+        } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
+            long newId = db.insert("openthosID", null, contentValues);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, newId);
         }
@@ -75,6 +86,8 @@ public class MyProvider extends ContentProvider {
         int updatedNum = 0;
         if(mUriMatcher.match(uri) == MCLICKSTATE) {
             updatedNum = db.update("selectState", contentValues, s, strings);
+        } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
+            updatedNum = db.update("openthosID", contentValues, s, strings);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return updatedNum;
