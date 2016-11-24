@@ -36,14 +36,14 @@ public class MySQLReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
+        mdb = mMsoh.getWritableDatabase();
         if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
             BackstageRenewalData(context);
         }
 
         //Accept Message
         if (intent.getAction().equals(Intent.ACTION_SEND_CLICK_INFO)) {
-            mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
-            mdb = mMsoh.getWritableDatabase();
             String pkgName = intent.getStringExtra("keyAddInfo");
             Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
                       new String[] { pkgName });
