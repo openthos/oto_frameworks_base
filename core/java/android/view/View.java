@@ -81,6 +81,7 @@ import android.view.accessibility.AccessibilityNodeProvider;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
+import android.view.GestureDetector;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
@@ -692,7 +693,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see android.view.ViewGroup
  */
 public class View implements Drawable.Callback, KeyEvent.Callback,
-        AccessibilityEventSource {
+        AccessibilityEventSource, GestureDetector.OnGestureListener {
     private static final boolean DBG = false;
 
     protected static final String WECHAT_PLAY_TEXTUREVIEW =
@@ -3220,6 +3221,11 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
     private String mTransitionName;
 
+    private GestureDetector mGestureDetector;
+
+    private float mLastDownX;
+    private float mLastDownY;
+
     private static class TintInfo {
         ColorStateList mTintList;
         PorterDuff.Mode mTintMode;
@@ -3597,6 +3603,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         mUserPaddingStart = UNDEFINED_PADDING;
         mUserPaddingEnd = UNDEFINED_PADDING;
         mRenderNode = RenderNode.create(getClass().getName(), this);
+        mGestureDetector = new GestureDetector(this);
 
         if (!sCompatibilityDone && context != null) {
             final int targetSdkVersion = context.getApplicationInfo().targetSdkVersion;
@@ -9234,6 +9241,20 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @return True if the event was handled, false otherwise.
      */
     public boolean onGenericMotionEvent(MotionEvent event) {
+        if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_SCROLL: {
+                    final float vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                    if (vscroll != 0.0f) {
+                        MotionEvent scrollEvent = MotionEvent.obtain(event);
+                        mLastDownY += vscroll * getVerticalScrollFactor();
+                        scrollEvent.setAction(MotionEvent.ACTION_MOVE);
+                        scrollEvent.setLocation(mLastDownX, mLastDownY);
+                        return mGestureDetector.onTouchEvent(scrollEvent);
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -9491,7 +9512,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
                 case MotionEvent.ACTION_DOWN:
                     mHasPerformedLongPress = false;
-
+                    mLastDownX = event.getX();
+                    mLastDownY = event.getY();
                     if (performButtonActionOnTouchDown(event)) {
                         break;
                     }
@@ -21256,4 +21278,27 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         final String output = bits + " " + name;
         found.put(key, output);
     }
+
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    public void onShowPress(MotionEvent e) {
+    }
+
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    public void onLongPress(MotionEvent e) {
+    }
+
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
 }
