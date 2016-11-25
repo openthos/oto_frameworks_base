@@ -5850,18 +5850,41 @@ public class PackageManagerService extends IPackageManager.Stub {
                     // not launch them if it's present. Don't bother checking on devices
                     // that don't have 64 bit support.
                     boolean needsRenderScriptOverride = false;
-                    if (Build.SUPPORTED_64_BIT_ABIS.length > 0 && cpuAbiOverride == null &&
-                            NativeLibraryHelper.hasRenderscriptBitcode(handle)) {
-                        abiList = Build.SUPPORTED_32_BIT_ABIS;
-                        needsRenderScriptOverride = true;
+                    if ((scanFlags & SCAN_BOOTING) == 0) {
+                        if (Build.SUPPORTED_64_BIT_ABIS.length > 0 && cpuAbiOverride == null &&
+                                NativeLibraryHelper.hasRenderscriptBitcode(handle)) {
+                            abiList = Build.SUPPORTED_32_BIT_ABIS;
+                            needsRenderScriptOverride = true;
+                        }
+                    } else {
+                        if (DEBUG_PACKAGE_SCANNING) {
+                            Slog.i(TAG,
+                                   "System is BOOTING,skipping scan RenderScript,path:" + codePath);
+                        }
                     }
-
-                    final int copyRet;
+                    int copyRet;
                     if (isAsec) {
                         copyRet = NativeLibraryHelper.findSupportedAbi(handle, abiList);
                     } else {
-                        copyRet = NativeLibraryHelper.copyNativeBinariesForSupportedAbi(handle,
-                                nativeLibraryRoot, abiList, useIsaSpecificSubdirs);
+                        if ((scanFlags & SCAN_BOOTING) == 0) {
+                            copyRet = NativeLibraryHelper.copyNativeBinariesForSupportedAbi(handle,
+                                    nativeLibraryRoot, abiList, useIsaSpecificSubdirs);
+                        } else {
+                            for (copyRet = 0; copyRet < abiList.length; copyRet++) {
+                                final String instructionSet =
+                                                    VMRuntime.getInstructionSet(abiList[copyRet]);
+                                String abiPath = nativeLibraryRootStr + "/" + instructionSet;
+                                if (DEBUG_PACKAGE_SCANNING) Slog.i(TAG, "abiPath:" + abiPath);
+                                final File abiLibFile = new File(abiPath);
+                                if (abiLibFile.isDirectory()) {
+                                    break;
+                                }
+                            }
+                            if (copyRet == abiList.length) {
+                                copyRet = PackageManager.NO_NATIVE_LIBRARIES;
+                                pkg.applicationInfo.primaryCpuAbi = abiList[0];
+                            }
+                        }
                     }
 
                     if (copyRet < 0 && copyRet != PackageManager.NO_NATIVE_LIBRARIES) {
