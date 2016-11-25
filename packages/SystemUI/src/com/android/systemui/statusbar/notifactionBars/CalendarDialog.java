@@ -33,6 +33,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Locale;
+import android.app.ActivityManager;
+import android.text.format.DateFormat;
+import java.util.Calendar;
 
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarClickListener;
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarDateChangedListener;
@@ -43,8 +46,9 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     public static final int COLOR_VIEW_FOCUS = Color.parseColor("#2b1f52");
     String mDate;
     String mStr;
-    private CalendarView mCalendar;
+    private CalendarView mCalendarView;
     private Handler mHandler;
+    private Calendar mCalendar;
     public static final int TIME_CUT_BEGIN = 11;
     public static final int TIME_CUT_THIRTEEN = 13;
     public static final int TIME_CUT_EIGHTEEN = 22;
@@ -53,6 +57,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     public static final int NEXT_DATE = 1;// year, month, and day to add 1
     public static final int THREAD_SEND_MESSAGE = 100;// send message to handler
     public static final int UPDATE_DATE_INTERVAL = 1000;// per 1 second
+    public static final int TIME_FORMAT_TWELVE = 12;
     public String mYear, mMonth, mDay;
 
     public CalendarDialog(Context context) {
@@ -75,17 +80,18 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         final TextView calendarDate = (TextView) mediaView.findViewById(R.id.calendar_date);
         final TextView popupwindow_calendar_month = (TextView)
                                          mediaView.findViewById(R.id.popupwindow_calendar_month);
-        mCalendar = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
+        mCalendarView = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
         final TextView popupwindow_calendar_bt_enter = (TextView)
                                                mediaView.findViewById(R.id.popupwindow_calendar_bt_enter);
+        mCalendar = Calendar.getInstance();
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
                 mStr = (String)msg.obj;
                 calendarTime.setText(showTime(mStr));
                 calendarDate.setText(showMonth(mStr));
                 popupwindow_calendar_bt_enter.setText(R.string.set_date_and_time);
-                popupwindow_calendar_month.setText(mCalendar.getCalendarYear() + mYear
-                                           + mCalendar.getCalendarMonth());
+                popupwindow_calendar_month.setText(mCalendarView.getCalendarYear() + mYear
+                                           + mCalendarView.getCalendarMonth());
             }
         };
         new Thread(this).start();
@@ -95,36 +101,36 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
             int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + NEXT_DATE,
                                                          mDate.lastIndexOf("-")));
             popupwindow_calendar_month.setText(years + mYear  + month);
-            mCalendar.showCalendar(years, month);
-            mCalendar.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
+            mCalendarView.showCalendar(years, month);
+            mCalendarView.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
         }
 
         List<String> list = new ArrayList<String>();
         list.add("2014-04-01");
         list.add("2014-04-02");
-        mCalendar.addMarks(list, 0);
+        mCalendarView.addMarks(list, 0);
 
-        mCalendar.setOnCalendarClickListener(new OnCalendarClickListener() {
+        mCalendarView.setOnCalendarClickListener(new OnCalendarClickListener() {
             public void onCalendarClick(int row, int col, String dateFormat) {
                 int month = Integer.parseInt(dateFormat.substring(
                                              dateFormat.indexOf("-") + NEXT_DATE,
                                              dateFormat.lastIndexOf("-")));
-                if (mCalendar.getCalendarMonth() - month == NEXT_DATE
-                    || mCalendar.getCalendarMonth() - month == YEAR_BREAK_NUMBER) {
-                    mCalendar.lastMonth();
-                } else if (month - mCalendar.getCalendarMonth() == NEXT_DATE
-                           || month - mCalendar.getCalendarMonth() == YEAR_BREAK_NUMBER) {
-                    mCalendar.nextMonth();
+                if (mCalendarView.getCalendarMonth() - month == NEXT_DATE
+                    || mCalendarView.getCalendarMonth() - month == YEAR_BREAK_NUMBER) {
+                    mCalendarView.lastMonth();
+                } else if (month - mCalendarView.getCalendarMonth() == NEXT_DATE
+                           || month - mCalendarView.getCalendarMonth() == YEAR_BREAK_NUMBER) {
+                    mCalendarView.nextMonth();
                 } else {
-                    mCalendar.removeAllBgColor();
-                    mCalendar.setCalendarDayBgColor(dateFormat,
+                    mCalendarView.removeAllBgColor();
+                    mCalendarView.setCalendarDayBgColor(dateFormat,
                     R.drawable.status_bar_calendar_background);
                     mDate = dateFormat;
                 }
             }
         });
 
-        mCalendar.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
+        mCalendarView.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
             public void onCalendarDateChanged(int year, int month) {
                 popupwindow_calendar_month.setText(year + mYear + month);
             }
@@ -148,10 +154,10 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
             CalendarDialog.this.dismiss();
             break;
         case R.id.popupwindow_calendar_next_month:
-            mCalendar.nextMonth();
+            mCalendarView.nextMonth();
             break;
         case R.id.popupwindow_calendar_last_month:
-            mCalendar.lastMonth();
+            mCalendarView.lastMonth();
             break;
         }
     }
@@ -165,10 +171,60 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         Locale locale = mContext.getResources().getConfiguration().locale;
         String language = locale.getLanguage();
         if (language.endsWith("zh")) {
-            return str.substring(TIME_CUT_THIRTEEN, TIME_CUT_EIGHTEEN);
+            String time = str.substring(TIME_CUT_THIRTEEN, TIME_CUT_EIGHTEEN);
+            if (!DateFormat.is24HourFormat(mContext, ActivityManager.getCurrentUser())) {
+                if (mCalendar.get(Calendar.AM_PM) != 0) {
+                    int hhFormat24 = Integer.parseInt(time.substring(0, 2));
+                    int hhFormat12 = hhFormat24 - TIME_FORMAT_TWELVE;
+                    if (hhFormat24 <= 12) {
+                        if (hhFormat24 == 00) {
+                            String timeFormat12 = 12 + time.substring(2);
+                            return mContext.getString(R.string.morning)+" "+timeFormat12;
+                        }
+                        return mContext.getString(R.string.morning) + " " + time;
+                    }
+                    String timeFormat12 = hhFormat12 + time.substring(2);
+                    return mContext.getString(R.string.afternoon) + " " + timeFormat12;
+                } else {
+                    int hhFormat24 = Integer.parseInt(time.substring(0, 2));
+                    if (hhFormat24 > 12) {
+                        int hhFormat12 = hhFormat24 - TIME_FORMAT_TWELVE;
+                        String timeFormat12 = hhFormat12 + time.substring(2);
+                        return mContext.getString(R.string.afternoon) + " " + timeFormat12;
+                    }
+                    return mContext.getString(R.string.morning) + " " + time;
+                }
+            }
+            return time;
         } else {
-            return str.substring(TIME_CUT_THIRTEEN - NEXT_DATE,
+            String time = str.substring(TIME_CUT_THIRTEEN - NEXT_DATE,
                                           TIME_CUT_EIGHTEEN - NEXT_DATE);
+            if (!DateFormat.is24HourFormat(mContext, ActivityManager.getCurrentUser())) {
+                if (mCalendar.get(Calendar.AM_PM) != 0) {
+                    int hhFormat24 = Integer.parseInt(time.substring(0, 2));
+                    int hhFormat12 = hhFormat24 - TIME_FORMAT_TWELVE;
+                    if (hhFormat24 <= 12) {
+                        if (hhFormat24 == 00) {
+                            String timeFormat12 = 12 + time.substring(2);
+                            return timeFormat12+" "+mContext.getString(R.string.morning);
+                        }
+                        return time + " " + mContext.getString(R.string.morning);
+                    }
+                    String timeFormat12 = hhFormat12 + time.substring(2) + " " +
+                                                   mContext.getString(R.string.afternoon);
+                    return timeFormat12;
+                } else {
+                    int hhFormat24 = Integer.parseInt(time.substring(0, 2));
+                    if (hhFormat24 > 12) {
+                        int hhFormat12 = hhFormat24 - TIME_FORMAT_TWELVE;
+                        String timeFormat12 = hhFormat12 + time.substring(2) + " " +
+                                                    mContext.getString(R.string.afternoon);
+                        return timeFormat12;
+                    }
+                    return time + " " + mContext.getString(R.string.morning);
+                }
+            }
+            return time;
         }
     }
 

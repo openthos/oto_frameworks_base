@@ -31,6 +31,7 @@ import android.text.style.CharacterStyle;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.widget.TextView;
+import android.text.format.DateFormat;
 
 import com.android.systemui.DemoMode;
 import com.android.systemui.R;
@@ -141,7 +142,7 @@ public class Clock extends TextView implements DemoMode {
     final void updateClock() {
         if (mDemoMode) return;
         mCalendar.setTimeInMillis(System.currentTimeMillis());
-        setText(getSmallTime()+"\n"+getClockYear());
+        showTimeFormat();
     }
 
     private final CharSequence getSmallTime() {
@@ -236,12 +237,40 @@ public class Clock extends TextView implements DemoMode {
                 mCalendar.set(Calendar.HOUR, hh);
                 mCalendar.set(Calendar.MINUTE, mm);
             }
-            setText(getSmallTime()+"\n"+getClockYear());
+
+            showTimeFormat();
         }
     }
     private String getClockYear() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         return sdf.format(new Date());
+    }
+
+    private void showTimeFormat() {
+        Locale locale = getContext().getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        if (!DateFormat.is24HourFormat(getContext(), ActivityManager.getCurrentUser())) {
+            if (mCalendar.get(Calendar.AM_PM) == 0) {
+                if (language.endsWith("zh")) {
+                    setText(getContext().getString(R.string.morning) + " " +
+                                         getSmallTime() + "\n" + getClockYear());
+                } else {
+                    setText(getSmallTime() + " " + getContext().getString(R.string.morning)
+                                                        + "\n" + getClockYear());
+                }
+                return;
+            } else {
+                if (language.endsWith("zh")) {
+                    setText(getContext().getString(R.string.afternoon) + " " +
+                                         getSmallTime() + "\n" + getClockYear());
+                } else {
+                    setText(getSmallTime()+ " " +getContext().getString(R.string.afternoon)
+                                                        + "\n" + getClockYear());
+                }
+                return;
+            }
+        }
+        setText(getSmallTime() + "\n" + getClockYear());
     }
 }
 

@@ -991,4 +991,6 @@
    <string name="year">-</string>
    <string name="month">-</string>
    <string name="day"></string>
+   <string name="morning">AM</string>
+   <string name="afternoon">PM</string>
 </resources>
