@@ -346,6 +346,8 @@ public class Dialog implements DialogInterface, Window.Callback,
                || (a.getComponentName().flattenToString().compareTo(
                                                               ActivityInfo.ISSUE_WIN_WPS_PAD) == 0)
                || (a.getComponentName().flattenToString().compareTo(
+                                                      ActivityInfo.ISSUE_WIN_OTO_FILEMANAGER) == 0)
+               || (a.getComponentName().flattenToString().compareTo(
                                                           ActivityInfo.ISSUE_WIN_WPS_PAD_PRO) == 0);
     }
     

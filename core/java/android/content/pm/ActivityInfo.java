@@ -42,6 +42,8 @@ public class ActivityInfo extends ComponentInfo
                  "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.PadHomeActivity";
     public static final String ISSUE_WIN_WPS_PAD_PRO =
                  "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.PadHomeActivity";
+    public static final String ISSUE_WIN_OTO_FILEMANAGER =
+                 "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
 
     /**
      * A style resource identifier (in the package's resources) of this
