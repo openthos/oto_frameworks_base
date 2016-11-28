@@ -59,6 +59,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     public static final int UPDATE_DATE_INTERVAL = 1000;// per 1 second
     public static final int TIME_FORMAT_TWELVE = 12;
     public String mYear, mMonth, mDay;
+    private TextView mPopupwindowCalendarMonth;
 
     public CalendarDialog(Context context) {
         super(context);
@@ -78,7 +79,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         setContentView(mediaView);
         final TextView calendarTime = (TextView) mediaView.findViewById(R.id.calendar_time);
         final TextView calendarDate = (TextView) mediaView.findViewById(R.id.calendar_date);
-        final TextView popupwindow_calendar_month = (TextView)
+        mPopupwindowCalendarMonth = (TextView)
                                          mediaView.findViewById(R.id.popupwindow_calendar_month);
         mCalendarView = (CalendarView) mediaView.findViewById(R.id.popupwindow_calendar);
         final TextView popupwindow_calendar_bt_enter = (TextView)
@@ -87,23 +88,15 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
                 mStr = (String)msg.obj;
+                mDate = (String)msg.obj;
                 calendarTime.setText(showTime(mStr));
                 calendarDate.setText(showMonth(mStr));
                 popupwindow_calendar_bt_enter.setText(R.string.set_date_and_time);
-                popupwindow_calendar_month.setText(mCalendarView.getCalendarYear() + mYear
+                mPopupwindowCalendarMonth.setText(mCalendarView.getCalendarYear() + mYear
                                            + mCalendarView.getCalendarMonth());
             }
         };
         new Thread(this).start();
-
-        if (null != mDate) {
-            int years = Integer.parseInt(mDate.substring(0, mDate.indexOf("-")));
-            int month = Integer.parseInt(mDate.substring(mDate.indexOf("-") + NEXT_DATE,
-                                                         mDate.lastIndexOf("-")));
-            popupwindow_calendar_month.setText(years + mYear  + month);
-            mCalendarView.showCalendar(years, month);
-            mCalendarView.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
-        }
 
         List<String> list = new ArrayList<String>();
         list.add("2014-04-01");
@@ -132,7 +125,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
 
         mCalendarView.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
             public void onCalendarDateChanged(int year, int month) {
-                popupwindow_calendar_month.setText(year + mYear + month);
+                mPopupwindowCalendarMonth.setText(year + mYear + month);
             }
         });
 
@@ -245,5 +238,21 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void show(View v) {
+        super.show(v);
+        SimpleDateFormat formatter = new SimpleDateFormat
+                                    ("yyyy" + mYear + "MM" + mMonth + "dd" +
+                                    mDay +"  "+ "HH:mm:ss EEEE" , Locale.getDefault());
+        String str = formatter.format(new Date());
+        int years = Integer.parseInt(str.substring(0, 4));
+        int month = Integer.parseInt(str.substring(5, 7));
+        mDate = str.substring(0, 10);
+        mCalendarView.clearAll();
+        mPopupwindowCalendarMonth.setText(years + mYear  + month);
+        mCalendarView.showCalendar(years, month);
+        mCalendarView.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
     }
 }
