@@ -4112,6 +4112,9 @@ public class Intent implements Parcelable, Cloneable {
      */
     public static final int URI_ALLOW_UNSAFE = 1<<2;
 
+    public static final String EXTRA_FILE_HEADER = "OtoFile:///";
+    public static final String EXTRA_CROP_FILE_HEADER = "OtoCropFile:///";
+
     // ---------------------------------------------------------------------
 
     private String mAction;
