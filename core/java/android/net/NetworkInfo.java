@@ -182,6 +182,12 @@ public class NetworkInfo implements Parcelable {
         }
     }
 
+   public int getRealType() {
+       synchronized (this) {
+          return mNetworkType;
+       }
+   }
+
     /**
      * @hide
      */

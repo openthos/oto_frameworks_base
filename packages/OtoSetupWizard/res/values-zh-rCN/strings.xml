@@ -28,7 +28,7 @@
     <string name="setup_language_title">选择语言</string>
     <string name="toast_openthos_id_invalid">输入的openthos Id不存在</string>
     <string name="toast_openthos_password_wrong">密码输入有误</string>
-    <string name="toast_network_not_connect">无法链接openthos网址，请检查网络链接</string>
+    <string name="toast_network_not_connect">未接入互联网,请检查网络设置</string>
     <string name="toast_openthos_register_cancel">取消openthos　Id注册</string>
     <string name="toast_openthos_register_password_wrong">您的密码未输入或者两次输入密码不一致</string>
     <string name="toast_openthos_register_password_not_equals">两次输入密码不一致</string>

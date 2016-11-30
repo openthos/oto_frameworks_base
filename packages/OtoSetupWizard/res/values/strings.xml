@@ -28,7 +28,7 @@
     <string name="setup_language_title">setting language</string>
     <string name="toast_openthos_id_invalid">openthos Id is not invalid</string>
     <string name="toast_openthos_password_wrong">passowrd is wrong</string>
-    <string name="toast_network_not_connect">you can not connect the openthos web</string>
+    <string name="toast_network_not_connect">Not connected to the Internet, please check the network settings</string>
     <string name="toast_openthos_register_cancel">you have canceled</string>
     <string name="toast_openthos_register_password_wrong">you have null input or the twice password was not the same</string>
     <string name="toast_openthos_register_password_not_equals"> Two input passwords are not consistent</string>
