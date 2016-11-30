@@ -31,6 +31,7 @@ public class SetupWizardActivity extends BaseActivity {
     private static final int DEFAULT_SLEEP_TIME = 1800000; // 30 min -- 1800 seconds
     private static final String HOURS_24 = "24";
     private static final String CHINA_TIME_ZONE = "GMT+8:00";
+    private static final String IMEName = "com.android.inputmethod.pinyin/.PinyinIME";
     private int noSelectedBg;
     private int selectedBg;
     private final Runnable mRequestFocus = new Runnable() {
@@ -65,6 +66,9 @@ public class SetupWizardActivity extends BaseActivity {
         alarm.setTimeZone("Asia/Shanghai"); // TODO: need a time zone picker page.
         //set time 24 hour
         Settings.System.putString(getContentResolver(), Settings.System.TIME_12_24, HOURS_24);
+        //set default inputmethod
+        Settings.Secure.putString(getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD,
+                                  IMEName);
         this.mChinese = (TextView) findViewById(R.id.tv_chinese);
         this.mEnglish = (TextView) findViewById(R.id.tv_english);
         Resources res = getBaseContext().getResources();
