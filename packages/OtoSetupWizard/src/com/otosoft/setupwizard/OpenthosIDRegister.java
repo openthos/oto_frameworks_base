@@ -39,6 +39,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+import android.widget.Toast;
+
 //Rewrite Register function
 public class OpenthosIDRegister extends BaseActivity {
     private TextView mPrev;
@@ -60,6 +65,7 @@ public class OpenthosIDRegister extends BaseActivity {
     public static final int MSG_GET_CSRF_OK = 0x1002;
     public static final int MSG_REGIST_SEAFILE = 0x1003;
     public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
+    private ConnectivityManager mCM;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +82,8 @@ public class OpenthosIDRegister extends BaseActivity {
         mEditTextAgainPassword = (EditText) findViewById(R.id.enter_password_again);
 
         mResolver = getContentResolver();
+
+        mCM = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         mHandler = new Handler() {
             @Override
@@ -135,6 +143,13 @@ public class OpenthosIDRegister extends BaseActivity {
                 //verify openthos id and password
                 params.put("ID", openthosID);
                 params.put("pwd", password);
+
+                NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
+                if (networkINfo == null) {
+                   Toast.makeText(OpenthosIDRegister.this,
+                        getText(R.string.toast_network_not_connect),
+                        Toast.LENGTH_SHORT).show();
+                }
 
                 if (password.equals("") || againpassword.equals("")) {
                     params.put("pwd", password);

@@ -30,6 +30,11 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.net.NetworkInfo;
+import android.util.Log;
+import android.net.ConnectivityManager;
+import android.content.Context;
+
 public class OpenthosIDSetupActivity extends BaseActivity {
     private TextView mVerify;
     private TextView mPrev;
@@ -48,6 +53,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private static String CODE_WRONG_PASSWORD ="1001";
     private static String CODE_SUCCESS ="1000";
 
+    private ConnectivityManager mCM;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_openthos_id_setup);
@@ -58,6 +64,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
         mSkip = (TextView) findViewById(R.id.tv_skip);
         mRegister = (TextView) findViewById(R.id.tv_register);
+
+        mCM = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         mHandler = new Handler() {
             @Override
@@ -94,6 +102,12 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             public void onClick(View v) {
                 openthosID = mEditTextOpenthosID.getText().toString().trim();
                 password = mEditTextPassword.getText().toString().trim();
+                NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
+                if (networkINfo == null) {
+                    Toast.makeText(OpenthosIDSetupActivity.this,
+                            getText(R.string.toast_network_not_connect),
+                            Toast.LENGTH_SHORT).show();
+                }
                 //verify openthos id and password
                 params.put("username", openthosID);
                 params.put("password", password);
