@@ -42,6 +42,7 @@ public class ActivityKeyView extends ImageView {
     private static final int DIALOG_OFFSET_PART = 3; // divide 3
     private static final int DIALOG_PADDING_TIPS = 10; // divide 3
     private static final int TIMER_NUMBERS = 1000;
+    private static final int DIALOG_OFFSET_DIMENSIONS = 20;
 
     //OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     //OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
@@ -51,6 +52,8 @@ public class ActivityKeyView extends ImageView {
     OnTouchListener mClose;
     OnTouchListener mDock;
     OnTouchListener mUnDock;
+    OnTouchListener mPhoneMode;
+    OnTouchListener mPcMode;
 
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
     View mFocusedView;
@@ -117,6 +120,26 @@ public class ActivityKeyView extends ImageView {
                 mActivity.mIsDocked = false;
                 dismissDialog();
                 removeFromRoot();
+                return true;
+            }
+        };
+
+        mPhoneMode = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                waitTimer();
+                runPhoneMode();
+                dismissDialog();
+                return true;
+            }
+        };
+
+        mPcMode = new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                waitTimer();
+                runPcMode();
+                dismissDialog();
                 return true;
             }
         };
@@ -228,8 +251,12 @@ public class ActivityKeyView extends ImageView {
         //open.setOnClickListener(mOpen);
         open.setOnTouchListener(mOpen);
         TextView undock = (TextView) rbmDocked.findViewById(R.id.rbm_undock);
-        //undock.setOnClickListener(mUnDock);
         undock.setOnTouchListener(mUnDock);
+        TextView phoneMode = (TextView) rbmDocked.findViewById(R.id.rbm_phone_mode);
+        phoneMode.setOnTouchListener(mPhoneMode);
+        TextView pcMode = (TextView) rbmDocked.findViewById(R.id.rbm_pc_mode);
+        pcMode.setOnTouchListener(mPcMode);
+        //undock.setOnClickListener(mUnDock);
         return rbmDocked;
     }
 
@@ -299,7 +326,7 @@ public class ActivityKeyView extends ImageView {
 
         getLocationOnScreen(location);
         lp.x = location[0] - dpx / 2 + iconSize - iconSize / DIALOG_OFFSET_PART;
-        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() - padding;
+        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() + DIALOG_OFFSET_DIMENSIONS;
         lp.width = LayoutParams.WRAP_CONTENT;
         lp.height = LayoutParams.WRAP_CONTENT;
 
@@ -352,6 +379,25 @@ public class ActivityKeyView extends ImageView {
         } catch(Exception exc) {
         }
     }
+
+    private void runPhoneMode() {
+        PackageManager manager = mContext.getPackageManager();
+        Intent intent = new Intent();
+        intent = manager.getLaunchIntentForPackage(mActivity.mPkgName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mContext.startActivity(intent);
+    }
+
+    private void runPcMode() {
+        PackageManager manager = mContext.getPackageManager();
+        Intent intent = new Intent();
+        intent = manager.getLaunchIntentForPackage(mActivity.mPkgName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
+
 
     public void openAppBroadcast(Context context) {
         Intent openAppIntent = new Intent();

@@ -73,6 +73,9 @@
     <string name="status_bar_undock">Undock</string>
     <string name="status_bar_open">Open application</string>
     <string name="status_bar_close">Close application</string>
+    <string name="status_bar_phone_mode">phone mode </string>
+    <string name="status_bar_pc_mode">pc mode</string>
+
     <!-- The label in the bar at the top of the status bar when there are no notifications
          showing.  [CHAR LIMIT=40]-->
     <string name="status_bar_no_notifications_title">No notifications</string>
