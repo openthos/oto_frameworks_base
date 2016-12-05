@@ -407,6 +407,7 @@
     <string name="charge_remaining_string">"剩余<xliff:g id="TIME">%1$s</xliff:g>充满"</string>
     <string name="battery_percent">"电池<xliff:g id="TIME">%1$d</xliff:g>"</string>
     <string name="button_com">仅电脑</string>
+    <string name="battery_saver_settings">设置节能模式</string>
 
     <string name="button_pro">仅投影</string>
 

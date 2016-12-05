@@ -21,6 +21,7 @@ import java.util.List;
 import android.os.UserHandle;
 import android.os.SystemClock;
 import android.text.format.Formatter;
+import android.provider.Settings;
 
 public class BatteryDialog extends BaseSettingDialog {
     private static final String BATTERY_HISTORY_FILE = "tmp_bat_history.bin";
@@ -28,6 +29,7 @@ public class BatteryDialog extends BaseSettingDialog {
     private static final int REMAIN_MINUTE_DEFAULT = 30;
     private TextView mBatteryPercentage;
     private TextView mBatteryRemaining;
+    private TextView mBatterySavingMode;
     private BatteryReceive batteryReceive;
     private BatteryStatsHelper mBatteryStatsHelper;
     private UserManager mUserManager;
@@ -56,11 +58,21 @@ public class BatteryDialog extends BaseSettingDialog {
         setContentView(mediaView);
         mBatteryPercentage = (TextView) mediaView.findViewById(R.id.battery_time_percentage);
         mBatteryRemaining = (TextView) mediaView.findViewById(R.id.battery_time_remaining);
+        mBatterySavingMode = (TextView) mediaView.findViewById(R.id.battery_time_enter);
         mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
         mBatteryStatsHelper = new BatteryStatsHelper(mContext);
         mBatteryStatsHelper.create(new Bundle());
         updataBatteryRemaining();
         mContentView = mediaView;
+        mBatterySavingMode.setText(R.string.battery_saver_settings);
+        mBatterySavingMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent("com.android.settings.POWERMANAGER_SETTINGS")
+                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                BatteryDialog.this.dismiss();
+            }
+        });
     }
 
     private class BatteryReceive extends BroadcastReceiver {

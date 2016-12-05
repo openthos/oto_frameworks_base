@@ -27,5 +27,12 @@
         android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/battery_time_enter"
+        android:layout_gravity="center"
+        android:textSize="@dimen/systemui_textsize_twelve"
+        android:textColor="#FFFFFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
