@@ -22,8 +22,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                               + "appPackage varchar, state int)";
         String sqlOpenthosID = "create table openthosID(_id integer primary key autoincrement,"
                                 + "openthosID varchar, password varchar)";
+
+        String sqlUpgradeUrl = "create table upgradeUrl(_id integer primary key autoincrement,"
+                                  + "upgradeUrl varchar)";
+
         sqLiteDatabase.execSQL(sql);
         sqLiteDatabase.execSQL(sqlOpenthosID);
+        sqLiteDatabase.execSQL(sqlUpgradeUrl);
     }
 
     @Override

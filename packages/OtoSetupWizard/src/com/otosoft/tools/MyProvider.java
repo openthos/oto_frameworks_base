@@ -19,11 +19,13 @@ public class MyProvider extends ContentProvider {
     private static UriMatcher mUriMatcher;
     private static final int MCLICKSTATE = 1;
     private static final int OPENTHOSSTATE = 2;
+    private static final int UPGRADETATE = 3;
 
     static{
         mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         mUriMatcher.addURI(AUTHORITY, "selectState", MCLICKSTATE);
         mUriMatcher.addURI(AUTHORITY, "openthosID", OPENTHOSSTATE);
+        mUriMatcher.addURI(AUTHORITY, "upgradeUrl", UPGRADETATE);
     }
 
     @Override
@@ -44,6 +46,9 @@ public class MyProvider extends ContentProvider {
         } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
             cursor = db.query("openthosID", strings, s, strings1,s1, null, null);
             return cursor;
+        } else if (mUriMatcher.match(uri) == UPGRADETATE) {
+            cursor = db.query("upgradeUrl", strings, s, strings1,s1, null, null);
+            return cursor;
         }
         return null;
     }
@@ -55,7 +60,10 @@ public class MyProvider extends ContentProvider {
             return "vnd.android.cursor.dir/"+AUTHORITY+"clickState";
         } else if (mUriMatcher.match(uri) == OPENTHOSSTATE){
             //return "vnd.android.cursor.dir/"+AUTHORITY+"clickState"
+        } else if (mUriMatcher.match(uri) == UPGRADETATE) {
+            //return "vnd.android.cursor.dir/"+AUTHORITY+"clickState"
         }
+
         return null;
     }
 
@@ -69,6 +77,10 @@ public class MyProvider extends ContentProvider {
             return ContentUris.withAppendedId(uri, newId);
         } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
             long newId = db.insert("openthosID", null, contentValues);
+            getContext().getContentResolver().notifyChange(uri, null);
+            return ContentUris.withAppendedId(uri, newId);
+        } else if (mUriMatcher.match(uri) == UPGRADETATE) {
+            long newId = db.insert("upgradeUrl", null, contentValues);
             getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, newId);
         }
@@ -88,6 +100,8 @@ public class MyProvider extends ContentProvider {
             updatedNum = db.update("selectState", contentValues, s, strings);
         } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
             updatedNum = db.update("openthosID", contentValues, s, strings);
+        } else if (mUriMatcher.match(uri) == UPGRADETATE) {
+             updatedNum = db.update("upgradeUrl", contentValues, s, strings);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return updatedNum;
