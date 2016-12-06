@@ -4019,6 +4019,12 @@ public class Activity extends ContextThemeWrapper
     @Override
     public void startActivity(Intent intent, @Nullable Bundle options) {
         if (options != null) {
+            if (getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
+                Intent intent1 = new Intent();
+                intent1.setAction(Intent.STATUS_BAR_HIDE);
+                this.sendBroadcast(intent1);
+            }
             startActivityForResult(intent, -1, options);
         } else {
             // Note we want to go through this call for compatibility with
