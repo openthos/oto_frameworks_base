@@ -34,9 +34,15 @@ import android.util.Log;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import com.android.startupmenu.adapter.StartupMenuAdapter;
+import android.os.Handler;
+import android.os.Message;
+import android.content.ContentResolver;
 
 public class StartMenuDialog extends Dialog implements OnClickListener {
     public static int STARTMENU_WIDTH = 55;
+    public static final int STATE_CODE_SEND_DATA = 0;
+    public static final String URI_CONTENT_STATUS_BAR =
+                        "content://com.android.systemui.util/status_bar_tb";
     private Context mContext;
     private boolean mFlag;
     private int mPosition;
@@ -46,6 +52,12 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     private MySqliteOpenHelper mMsoh;
     private int mListType;
     private String mPkgName;
+    private boolean mBooleanFlag;
+    private String mStrTextView;
+    private TextView mRightFixedTaskbar;
+    private boolean mflagChange;
+    private String mLockedAppText;
+    private String mUnlockedAppText;
 
     public StartMenuDialog(Context context) {
         super(context);
@@ -73,23 +85,26 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
 
         mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
+        mLockedAppText = mContext.getResources().getString(R.string.lockedapptext);
+        mUnlockedAppText = mContext.getResources().getString(R.string.unlockedapptext);
         mRightOpen = (TextView) findViewById(R.id.tv_right_open);
         TextView rightPhoneRun = (TextView) findViewById(R.id.tv_right_phone_run);
         TextView rightDesktopRun = (TextView) findViewById(R.id.tv_right_desktop_run);
-        TextView rightFixedTaskbar = (TextView) findViewById(R.id.tv_right_fixed_taskbar);
+        mRightFixedTaskbar = (TextView) findViewById(R.id.tv_right_fixed_taskbar);
         TextView rightUninstall = (TextView) findViewById(R.id.tv_right_uninstall);
-
+        mStrTextView = StartupMenuAdapter.strPkgName;
+        new Thread(new QueryCursorData()).start();
         mFlag = true;
         mRightOpen.setOnClickListener(this);
         rightPhoneRun.setOnClickListener(this);
         rightDesktopRun.setOnClickListener(this);
-        rightFixedTaskbar.setOnClickListener(this);
+        mRightFixedTaskbar.setOnClickListener(this);
         rightUninstall.setOnClickListener(this);
 
         mRightOpen.setOnHoverListener(hoverListener);
         rightPhoneRun.setOnHoverListener(hoverListener);
         rightDesktopRun.setOnHoverListener(hoverListener);
-        rightFixedTaskbar.setOnHoverListener(hoverListener);
+        mRightFixedTaskbar.setOnHoverListener(hoverListener);
         rightUninstall.setOnHoverListener(hoverListener);
     }
 
@@ -103,6 +118,8 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     }
 
     public void showDialog(int x, int y, int height, int width, int type) {
+        mStrTextView = StartupMenuAdapter.strPkgName;
+        new Thread(new QueryCursorData()).start();;
         show();
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -186,10 +203,21 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             break;
         case R.id.tv_right_fixed_taskbar:
             String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            Intent intentSend = new Intent();
-            intentSend.putExtra("keyInfo",pkgInfo);
-            intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
-            mContext.sendBroadcast(intentSend);
+            if (mflagChange) {
+                Intent intentSend = new Intent();
+                intentSend.putExtra("keyInfo", pkgInfo);
+                intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
+                mContext.sendBroadcast(intentSend);
+                mRightFixedTaskbar.setText(mUnlockedAppText);
+                new Thread(new QueryCursorData()).start();
+            } else {
+                Intent intentUnlock = new Intent();
+                intentUnlock.putExtra("unlockapk", pkgInfo);
+                intentUnlock.setAction(Intent.STARTMENU_UNLOCKED);
+                mContext.sendBroadcast(intentUnlock);
+                mRightFixedTaskbar.setText(mLockedAppText);
+                new Thread(new QueryCursorData()).start();
+            }
             dialogDismiss();
             break;
         case R.id.tv_right_uninstall:
@@ -206,6 +234,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             break;
         }
     }
+
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
         public boolean onHover(View v, MotionEvent event) {
             int action = event.getAction();
@@ -259,8 +288,54 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         editor.commit();
     }
 
+    private boolean queryData(String str) {
+        Uri uri = Uri.parse(URI_CONTENT_STATUS_BAR);
+        ContentResolver contentResolver = mContext.getContentResolver();
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String strname = cursor.getString(1);
+                if (strname.equals(str)) {
+                    return true;
+                }
+            }
+            cursor.close();
+        }
+        return false;
+    }
+
+    private void changeTextViewText(boolean flag) {
+        if (flag) {
+            mRightFixedTaskbar.setText(mUnlockedAppText);
+            mflagChange = false;
+        } else {
+            mRightFixedTaskbar.setText(mLockedAppText);
+            mflagChange = true;
+        }
+    }
+
     private void dialogDismiss() {
         dismiss();
         StartupMenuActivity.setFocus(false);
+    }
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case STATE_CODE_SEND_DATA:
+                    changeTextViewText(mBooleanFlag);
+                    break;
+            }
+            return false;
+        }
+    });
+
+    class QueryCursorData implements Runnable {
+        @Override
+        public void run() {
+            mBooleanFlag = queryData(mStrTextView);
+            mHandler.sendEmptyMessage(STATE_CODE_SEND_DATA);
+        }
     }
 }

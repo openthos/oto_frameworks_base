@@ -25,9 +25,11 @@ import android.os.UserHandle;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class StartupMenuAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
+    public static String strPkgName;
 
     private List<AppInfo> mlistAppInfo = null;
     private Map<Integer,Boolean> isCheckedMap;
@@ -129,6 +131,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                 case MotionEvent.BUTTON_SECONDARY:
                     if (position < 0 || position >= mlistAppInfo.size())
                         return false;
+                    strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
                     showMenuDialog1(position,motionEvent);
                     break;
                 default :

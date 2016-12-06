@@ -407,5 +407,9 @@
             android:exported="true"
             android:singleUser="true"
             android:permission="android.permission.BIND_DREAM_SERVICE" />
+
+        <provider android:name = ".util.StatusBarContentProvider"
+                  android:exported = "true"
+                  android:authorities = "com.android.systemui.util"/>
     </application>
 </manifest>

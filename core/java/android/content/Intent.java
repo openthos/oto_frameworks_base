@@ -3550,6 +3550,7 @@ public class Intent implements Parcelable, Cloneable {
     public static final String STATUS_BAR_POWER_SLEEP = "android.intent.statusbar.power.sleep";
     public static final String STATUS_BAR_HIDE = "android.intent.statusbar.hide";
     public static final String STATUS_BAR_HIDE_MARKLESS = "android.intent.statusbar.hide.markless";
+    public static final String STARTMENU_UNLOCKED = "com.android.startmenu.unlock";
 
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------

@@ -21,8 +21,7 @@
 
     <TextView
         android:id="@+id/tv_right_fixed_taskbar"
-        style="@style/StartMenuAppStyle"
-        android:text="@string/fixed_the_taskbar" />
+        style="@style/StartMenuAppStyle"/>
 
     <TextView
         android:id="@+id/tv_right_uninstall"

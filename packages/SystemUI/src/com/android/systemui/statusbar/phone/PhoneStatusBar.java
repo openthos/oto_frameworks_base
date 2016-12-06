@@ -217,6 +217,10 @@ import android.view.Window;
 import android.graphics.Color;
 import android.text.TextPaint;
 import android.os.BatteryManager;
+import android.database.Cursor;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import com.android.systemui.util.StatusBarSqlDatabase;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -280,6 +284,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int HINT_RESET_DELAY_MS = 1200;
     private static final int INPUTMETHOD_SEND_MESSAGE = 100;
     private static final int INPUTMETHOD_MESSAGE_WHAT = 0;
+    private static final int VERSION_SQLDATABASE = 1;
 
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -438,9 +443,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private Set<String> mSet = new HashSet<>();
     private int mRemoveCount = 0;
     private MyVolumeReceiver mVolumeReceiver;
+    private StatusBarSqlDatabase mMsohStatusBar;
+    private SQLiteDatabase mdbStatusBar;
 
     private HorizontalScrollView mStatusBarHorizontalScrollView;
-
+    ContentValues mValues = new ContentValues();
     // ensure quick settings is disabled until the current user makes it through the setup wizard
     private boolean mUserSetup = false;
     private ContentObserver mUserSetupObserver = new ContentObserver(new Handler()) {
@@ -646,6 +653,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void start() {
+        mMsohStatusBar = new StatusBarSqlDatabase(mContext,
+                             "Status_bar_database.db", null, VERSION_SQLDATABASE);
+        mdbStatusBar = mMsohStatusBar.getWritableDatabase();
+
         mPresPkg = mContext.getSharedPreferences("pkg",Context.MODE_APPEND);
         mEditorPkg = mPresPkg.edit();
         mPresPkgRm = mContext.getSharedPreferences("pkgs",Context.MODE_APPEND);
@@ -739,7 +750,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
         */
-
         loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -954,7 +964,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 (ViewStub) mStatusBarWindow.findViewById(R.id.keyguard_user_switcher),
                 mKeyguardStatusBar, mNotificationPanel, mUserSwitcherController);
 
-
         // Set up the quick settings tile panel
         mQSPanel = (QSPanel) mStatusBarWindow.findViewById(R.id.quick_settings_panel);
         if (mQSPanel != null) {
@@ -1017,6 +1026,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_SYSTEMUI_SEND_INFO_UNLOCK);
         filter.addAction(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK);
         filter.addAction(Intent.ACTION_SHOW_BRIGHTNESS_DIALOG);
+        filter.addAction(Intent.STARTMENU_UNLOCKED);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
@@ -2890,6 +2900,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mSet.add(ApplicationInfo.APPNAME_ANDROID_BROWSER);
             mEditorPkg.putString(ApplicationInfo.APPNAME_OTO_FILEMANAGER, "");
             mEditorPkg.putString(ApplicationInfo.APPNAME_ANDROID_BROWSER, "");
+            mValues.put("pkgname", ApplicationInfo.APPNAME_OTO_FILEMANAGER);
+            mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
+            mValues.put("pkgname", ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
         }
     }
 
@@ -2906,6 +2920,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mEditorPkg.putString(str,"");
             mEditorPkg.commit();
             loadDockedApk(str);
+            mValues.put("pkgname", str);
+            mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
         }
     }
 
@@ -2913,6 +2929,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mEditorPkgRm.putString(packageName, "");
         mEditorPkgRm.commit();
         mSet.remove(packageName);
+        mdbStatusBar.delete("status_bar_tb", "pkgname = ?", new String[]{ packageName });
         mEditorPkg.clear();
         for (String removeStr : mSet) {
             mEditorPkg.putString(removeStr,"");
@@ -3113,6 +3130,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 kbv.getStatusbarActivity().mPkgName.equals(pkg)) {
                 // mStatusBarActivities.removeView(kbv);
                 mStatusBarActivities.removeView(mStatusBarActivities.getChildAt(i));
+                break;
+            }
+        }
+    }
+
+   public void removeLockedIcon(String pkg) {
+        for (int i = 0; i < mStatusBarActivities.getChildCount(); i++) {
+            ActivityKeyView kbv = getActivityKeyView(i);
+            if (kbv.getStatusbarActivity().mPkgName.equals(pkg)) {
+                kbv.setVisibility(View.GONE);
                 break;
             }
         }
@@ -3724,6 +3751,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (action.equals(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK)) {
                     mSet.add(intent.getStringExtra("lockIcon"));
                 }
+                if (action.equals(Intent.STARTMENU_UNLOCKED)) {
+                    String pkgName = intent.getStringExtra("unlockapk");
+                    removeStatusbar(mRemoveCount, pkgName);
+                    removeLockedIcon(pkgName);
+                    removeLockedView(pkgName);
+                    removeApk(pkgName);
+                }
             }
         }
     };
@@ -3736,6 +3770,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (kbv.getStatusbarActivity().mPkgName.equals(apkInfo) &&
                 !kbv.getStatusbarActivity().mIsDocked && kbv.getStatusbarActivity().mApkRun) {
                 kbv.getStatusbarActivity().mIsDocked = true;
+                mSet.add(apkInfo);
+                mValues.put("pkgname", apkInfo);
+                mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
                 break;
             }
             countNumber++;

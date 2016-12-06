@@ -41,5 +41,7 @@
     <string name="removed_the_list">Removed Out</string>
     <string name="omit">…</string>
     <string name="my_mobile_phone_mode_run">Phone Mode</string>
+    <string name="lockedapptext">locked app</string>
+    <string name="unlockedapptext">unlocked app</string>
 
 </resources>
