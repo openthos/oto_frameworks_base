@@ -1644,6 +1644,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             }
             if (r.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
                 || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
+                || r.packageName.equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
                 || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                 mWindowManager.hideStatusbarBroadcast();
