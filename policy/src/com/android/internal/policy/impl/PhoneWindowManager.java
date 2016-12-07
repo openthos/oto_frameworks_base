@@ -1276,7 +1276,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         try {
             PackageManager manager = mContext.getPackageManager();
             Intent lanuch = new Intent();
-            lanuch = manager.getLaunchIntentForPackage("com.cyanogenmod.filemanager");
+            lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
             lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(lanuch);
         } catch (ActivityNotFoundException e) {
@@ -2778,6 +2778,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
         final boolean canceled = event.isCanceled();
 
+        if (event.isCtrlPressed() && event.isAltPressed()) {
+            if (!down && keyCode == KeyEvent.KEYCODE_FORWARD_DEL) {
+                ActivityManagerNative.callPowerSource(mContext);
+                return -1;
+            }
+        }
+
         if (DEBUG_INPUT) {
             Log.d(TAG, "interceptKeyTi keyCode=" + keyCode + " down=" + down + " repeatCount="
                     + repeatCount + " keyguardOn=" + keyguardOn + " mHomePressed=" + mHomePressed
@@ -2829,6 +2836,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 if (mHomeKeyHasEffect) {
                     startupMenu();
                     mHomeKeyHasEffect = false;
+                    return -1;
                 }
                 mHomeKeyDown = false;
             }
@@ -2837,37 +2845,50 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 sendHomeManager();
                 mHomeKeyHasEffect = false;
             }
+        } else if(keyCode == KeyEvent.KEYCODE_E) {
+            if (down && (repeatCount == 0) && mHomeKeyDown) {
+                sendFileManager();
+                mHomeKeyHasEffect = false;
+            }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
             if (down) {
                 sendFileManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BROWSER) {
             if (down) {
                 intentExplorer();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_ACTION_CENTER) {
             if (down) {
                sendActionCenterManager();
+               return -1;
             }
        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_INPUT_METHOD) {
             if (down) {
                sendInputMethodManager();
+               return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BATTERY) {
             if (down) {
                 sendBatteryManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_WIFI) {
             if (down) {
                 sendWifiManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_SOUND) {
             if (down) {
                 sendSoundManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_HOME) {
             if (down) {
                 sendHomeManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {
