@@ -40,9 +40,10 @@ import com.android.systemui.statusbar.phone.PhoneStatusBar;
 public class ActivityKeyView extends ImageView {
 
     private static final int DIALOG_OFFSET_PART = 3; // divide 3
-    private static final int DIALOG_PADDING_TIPS = 10; // divide 3
+    private static final int DIALOG_PADDING_TIPS = 30;
     private static final int TIMER_NUMBERS = 1000;
     private static final int DIALOG_OFFSET_DIMENSIONS = 20;
+    private int mChangeDimension = 0;
 
     //OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     //OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
@@ -235,11 +236,13 @@ public class ActivityKeyView extends ImageView {
                         (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(mActivity.mIsDocked) {
             if(mActivity.mApkRun) {
+                mChangeDimension = DIALOG_OFFSET_DIMENSIONS;
                 return buildRbmDockedRun(li);
             } else {
                 return buildRbmDocked(li);
             }
         } else {
+            mChangeDimension = DIALOG_OFFSET_DIMENSIONS;
             return buildRbmRun(li);
         }
     }
@@ -326,7 +329,8 @@ public class ActivityKeyView extends ImageView {
 
         getLocationOnScreen(location);
         lp.x = location[0] - dpx / 2 + iconSize - iconSize / DIALOG_OFFSET_PART;
-        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() + DIALOG_OFFSET_DIMENSIONS;
+        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() + DIALOG_OFFSET_DIMENSIONS
+                                                                - padding;
         lp.width = LayoutParams.WRAP_CONTENT;
         lp.height = LayoutParams.WRAP_CONTENT;
 
@@ -433,7 +437,7 @@ public class ActivityKeyView extends ImageView {
         if(button == MotionEvent.BUTTON_SECONDARY && action == MotionEvent.ACTION_DOWN) {
             dismissDialog();
             mShowRBM = true;
-            showDialog(getRbmView(), 0);
+            showDialog(getRbmView(), mChangeDimension);
             return true;
         }
         // Locked status to click

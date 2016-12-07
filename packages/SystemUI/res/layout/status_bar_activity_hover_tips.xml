@@ -10,10 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingRight = "@dimen/systemui_size_five" >
+        android:layout_gravity="center">
         <TextView
             android:id="@+id/akv_tips"
             style="@style/Mstyle"
-            android:text="@string/status_bar_close" />
+            android:text="@string/status_bar_close"
+            android:gravity="center"/>
     </LinearLayout>
 </LinearLayout>
