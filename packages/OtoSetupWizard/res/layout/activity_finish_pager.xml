@@ -5,9 +5,9 @@
     android:layout_height="fill_parent">
     <ImageView
         android:id="@+id/view_finish"
-        android:background="@drawable/firstboot_finish"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:src="@drawable/firstboot_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="250dp"/>
     <TextView
