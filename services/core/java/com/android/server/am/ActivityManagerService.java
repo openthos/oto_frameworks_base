@@ -20011,9 +20011,17 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean closeActivity(int stackId) {
+        boolean ret = false;
         synchronized (ActivityManagerService.this) {
-            return closeActivity(stackId, true, 0);
+            ret = closeActivity(stackId, true, 0);
         }
+
+        int nextStackId = getFocusedStackId();
+        if (nextStackId != HOME_STACK_ID) {
+            setFocusedStack(nextStackId);
+        }
+
+        return ret;
     }
 
     @Override

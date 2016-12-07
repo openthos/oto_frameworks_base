@@ -1879,7 +1879,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
                     if (stack.isStartupMenuStack()) {
-                        stacks.remove(stack);
                         mService.closeActivity(stack.mStackId);
                         return true;
                     }
@@ -4228,6 +4227,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         void onTaskListEmptyLocked() {
+            detachLocked();
+            deleteActivityContainer(this);
         }
 
         @Override
@@ -4376,6 +4377,16 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (DEBUG_STACK) Slog.v(TAG, "detachActivitiesLocked: detaching " + stack
                     + " from displayId=" + mDisplayId);
             mStacks.remove(stack);
+            int size = mStacks.size();
+            if (size > 0) {
+                ActivityStack nextStack = mStacks.get(size - 1);
+                if (nextStack.mStackId == HOME_STACK_ID) {
+                    mStacks.remove(nextStack);
+                    mStacks.add(0, nextStack);
+                    nextStack = mStacks.get(size - 1);
+                }
+                setFocusedStack(nextStack.mStackId);
+            }
         }
 
         void getBounds(Point bounds) {

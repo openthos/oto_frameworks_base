@@ -7689,7 +7689,11 @@ public class WindowManagerService extends IWindowManager.Stub
                     mCurrentStackId = dc.stackIdFromPoint(x, y);
                     if (mCurrentStackId > 0) {
                         mStack = mStackIdToStack.get(mCurrentStackId);
-                        mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y);
+                        if (mStack != null) {
+                            mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y);
+                        } else {
+                            mCurrentStackId = -1;
+                        }
                     } else {
                         mCurrentStackId = -1;
                     }
@@ -7703,6 +7707,7 @@ public class WindowManagerService extends IWindowManager.Stub
                     mActionDown = false;
                     if (mCurrentStackId != -1) {
                         mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y);
+                        mStack = null;
                     }
                     // Fall through
                 default:
