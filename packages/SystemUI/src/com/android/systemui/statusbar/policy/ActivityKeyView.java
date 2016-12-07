@@ -253,12 +253,16 @@ public class ActivityKeyView extends ImageView {
         TextView open = (TextView) rbmDocked.findViewById(R.id.rbm_open);
         //open.setOnClickListener(mOpen);
         open.setOnTouchListener(mOpen);
+        open.setOnHoverListener(hoverListener);
         TextView undock = (TextView) rbmDocked.findViewById(R.id.rbm_undock);
         undock.setOnTouchListener(mUnDock);
+        undock.setOnHoverListener(hoverListener);
         TextView phoneMode = (TextView) rbmDocked.findViewById(R.id.rbm_phone_mode);
         phoneMode.setOnTouchListener(mPhoneMode);
+        phoneMode.setOnHoverListener(hoverListener);
         TextView pcMode = (TextView) rbmDocked.findViewById(R.id.rbm_pc_mode);
         pcMode.setOnTouchListener(mPcMode);
+        pcMode.setOnHoverListener(hoverListener);
         //undock.setOnClickListener(mUnDock);
         return rbmDocked;
     }
@@ -269,6 +273,7 @@ public class ActivityKeyView extends ImageView {
         TextView close = (TextView) rbmDockedRun.findViewById(R.id.rbm_close);
         //close.setOnClickListener(mClose);
         close.setOnTouchListener(mClose);
+        close.setOnHoverListener(hoverListener);
         TextView undock = (TextView) rbmDockedRun.findViewById(R.id.rbm_undock);
         //undock.setOnClickListener(mUnDock);
         undock.setOnTouchListener(mUnDock);
@@ -281,9 +286,11 @@ public class ActivityKeyView extends ImageView {
         TextView close = (TextView) rbmRun.findViewById(R.id.rbm_close);
         //close.setOnClickListener(mClose);
         close.setOnTouchListener(mClose);
+        close.setOnHoverListener(hoverListener);
         TextView dock = (TextView) rbmRun.findViewById(R.id.rbm_dock);
         //dock.setOnClickListener(mDock);
         dock.setOnTouchListener(mDock);
+        dock.setOnHoverListener(hoverListener);
         return rbmRun;
     }
 
@@ -494,4 +501,19 @@ public class ActivityKeyView extends ImageView {
             return false;
         }
     }
+
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(android.R.color.transparent);
+                    break;
+            }
+            return false;
+        }
+    };
 }
