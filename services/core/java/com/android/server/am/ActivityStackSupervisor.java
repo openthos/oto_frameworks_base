@@ -1853,7 +1853,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 || currentActivity.packageName.equals(
                        ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
                 || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
+                       ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)
+                || currentActivity.packageName.equals(
+                       ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
                 mWindowManager.hideStatusbarBroadcast();
             } else if (currentActivity.info.name.length() >
                                                  PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
