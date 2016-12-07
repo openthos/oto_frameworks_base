@@ -613,6 +613,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     // Whether to go to sleep entering theater mode from power button
     private boolean mGoToSleepOnButtonPressTheaterMode;
 
+    private boolean mHomeKeyHasEffect;
+    private boolean mHomeKeyDown;
+
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
     private static final long SCREENSHOT_CHORD_DEBOUNCE_DELAY_MILLIS = 150;
@@ -2812,10 +2815,27 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // can never break it, although if keyguard is on, we do let
         // it handle it, because that gives us the correct 5 second
         // timeout.
-        if ((keyCode == KeyEvent.KEYCODE_HOME)
-            || (keyCode == KeyEvent.KEYCODE_STARTUPMENU)) {
+        if (keyCode == KeyEvent.KEYCODE_STARTUPMENU) {
             if (down && repeatCount == 0) {
                 startupMenu();
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_HOME) {
+            if (down) {
+                if (repeatCount == 0) {
+                    mHomeKeyHasEffect = true;
+                    mHomeKeyDown = true;
+                }
+            } else {
+                if (mHomeKeyHasEffect) {
+                    startupMenu();
+                    mHomeKeyHasEffect = false;
+                }
+                mHomeKeyDown = false;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_D) {
+            if (down && (repeatCount == 0) && mHomeKeyDown) {
+                sendHomeManager();
+                mHomeKeyHasEffect = false;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
             if (down) {
