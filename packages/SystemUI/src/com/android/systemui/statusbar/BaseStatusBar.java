@@ -82,6 +82,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+import android.widget.Button;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
@@ -169,6 +170,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
 
+    protected Button mNotificationClearAll;
     // for heads up notifications
     protected HeadsUpNotificationView mHeadsUpNotificationView;
     protected int mHeadsUpNotificationDecay;
@@ -415,6 +417,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     };
 
+    protected void onChangeUserInfo(final boolean bl) {}
+
     private final NotificationListenerService mNotificationListener =
             new NotificationListenerService() {
         @Override
@@ -440,6 +444,11 @@ public abstract class BaseStatusBar extends SystemUI implements
                 @Override
                 public void run() {
                     Notification n = sbn.getNotification();
+                    // notification bar information is empty
+                    if (n.contentView != null) {
+                        onChangeUserInfo(true);
+                    }
+
                     boolean isUpdate = mNotificationData.get(sbn.getKey()) != null
                             || isHeadsUp(sbn.getKey());
 
@@ -476,6 +485,14 @@ public abstract class BaseStatusBar extends SystemUI implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    Notification notification = sbn.getNotification();
+                    // notification bar information is empty
+                    if ( notification.contentView == null) {
+                        onChangeUserInfo(false);
+                    } else {
+                        onChangeUserInfo(true);
+                    }
+
                     removeNotification(sbn.getKey(), rankingMap);
                 }
             });

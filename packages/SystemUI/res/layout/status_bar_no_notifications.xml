@@ -58,6 +58,7 @@
             android:layout_marginRight="@dimen/systemui_size_sixteen"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:enabled="false"
             android:background="@null"
             android:text="@string/clear_all"
             android:textSize="@dimen/systemui_textsize_twelve" />

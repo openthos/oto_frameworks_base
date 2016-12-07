@@ -652,6 +652,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     };
 
     @Override
+    protected void onChangeUserInfo(final boolean bl) {
+        super.onChangeUserInfo(bl);
+        if (bl) {
+            mNotificationClearAll.setEnabled(true);
+        } else {
+            mNotificationClearAll.setEnabled(false);
+        }
+    }
+
+    @Override
     public void start() {
         mMsohStatusBar = new StatusBarSqlDatabase(mContext,
                              "Status_bar_database.db", null, VERSION_SQLDATABASE);
@@ -825,6 +835,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mEmptyShadeView = (EmptyShadeView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_no_notifications, mStackScroller, false);
         mEmptyShadeView.setPhoneStatusBar(this);
+        mNotificationClearAll = (Button) mEmptyShadeView.findViewById(R.id.clearAll);
         mStackScroller.setEmptyShadeView(mEmptyShadeView);
 
         mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
