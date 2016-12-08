@@ -83,8 +83,10 @@ public class ActivityKeyView extends ImageView {
         mOpen = new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                waitTimer();
-                runApkByPkg();
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    waitTimer();
+                    runApkByPkg();
+                }
                 dismissDialog();
                 return true;
             }
@@ -128,8 +130,10 @@ public class ActivityKeyView extends ImageView {
         mPhoneMode = new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                waitTimer();
-                runPhoneMode();
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    waitTimer();
+                    runPhoneMode();
+                }
                 dismissDialog();
                 return true;
             }
@@ -138,8 +142,10 @@ public class ActivityKeyView extends ImageView {
         mPcMode = new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                waitTimer();
-                runPcMode();
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    waitTimer();
+                    runPcMode();
+                }
                 dismissDialog();
                 return true;
             }
@@ -239,6 +245,7 @@ public class ActivityKeyView extends ImageView {
                 mChangeDimension = DIALOG_OFFSET_DIMENSIONS;
                 return buildRbmDockedRun(li);
             } else {
+                mChangeDimension = 0;
                 return buildRbmDocked(li);
             }
         } else {
@@ -277,6 +284,7 @@ public class ActivityKeyView extends ImageView {
         TextView undock = (TextView) rbmDockedRun.findViewById(R.id.rbm_undock);
         //undock.setOnClickListener(mUnDock);
         undock.setOnTouchListener(mUnDock);
+        undock.setOnHoverListener(hoverListener);
         return rbmDockedRun;
     }
 
