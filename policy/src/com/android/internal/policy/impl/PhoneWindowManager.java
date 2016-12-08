@@ -2833,12 +2833,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mHomeKeyDown = true;
                 }
             } else {
+                mHomeKeyDown = false;
                 if (mHomeKeyHasEffect) {
                     startupMenu();
                     mHomeKeyHasEffect = false;
                     return -1;
                 }
-                mHomeKeyDown = false;
             }
         } else if (keyCode == KeyEvent.KEYCODE_D) {
             if (down && (repeatCount == 0) && mHomeKeyDown) {
