@@ -672,6 +672,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_BATTERY = 21;
     private static final int MSG_STARTUP_WIFI = 22;
     private static final int MSG_STARTUP_SOUND = 23;
+    private static final int MSG_STARTUP_APP_SETTINGS = 24;
 
     private boolean mIsMini;
     private Map<Integer, Rect> mTreeMap = new TreeMap<>();
@@ -750,6 +751,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_SOUND:
                     startSoundManager();
+                    break;
+                case MSG_STARTUP_APP_SETTINGS:
+                    startAppSettings();
                     break;
             }
         }
@@ -1237,6 +1241,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_FILE_MANAGER);
     }
 
+    public void sendAppManager() {
+        mHandler.removeMessages(MSG_STARTUP_APP_SETTINGS);
+        mHandler.sendEmptyMessage(MSG_STARTUP_APP_SETTINGS);
+    }
+
     public void sendActionCenterManager() {
         mHandler.removeMessages(MSG_STARTUP_ACTION_CENTER);
         mHandler.sendEmptyMessage(MSG_STARTUP_ACTION_CENTER);
@@ -1282,6 +1291,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } catch (ActivityNotFoundException e) {
             Slog.w(TAG, "No activity to handle assist action.", e);
         }
+    }
+
+    void startAppSettings() {
+       Intent intent = new Intent("android.settings.MANAGE_ALL_APPLICATIONS_SETTINGS");
+       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+       mContext.startActivity(intent);
     }
 
     void startExplorer() {
@@ -2845,9 +2860,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 sendHomeManager();
                 mHomeKeyHasEffect = false;
             }
-        } else if(keyCode == KeyEvent.KEYCODE_E) {
+        } else if (keyCode == KeyEvent.KEYCODE_E) {
             if (down && (repeatCount == 0) && mHomeKeyDown) {
                 sendFileManager();
+                mHomeKeyHasEffect = false;
+            }
+        } else if (!event.isAltPressed() && keyCode == KeyEvent.KEYCODE_ESCAPE) {
+            if (down && (repeatCount == 0) && mHomeKeyDown) {
+                sendAppManager();
                 mHomeKeyHasEffect = false;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
@@ -2862,13 +2882,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_ACTION_CENTER) {
             if (down) {
-               sendActionCenterManager();
-               return -1;
+                sendActionCenterManager();
+                return -1;
             }
        } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_INPUT_METHOD) {
             if (down) {
-               sendInputMethodManager();
-               return -1;
+                sendInputMethodManager();
+                return -1;
             }
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_BATTERY) {
             if (down) {
