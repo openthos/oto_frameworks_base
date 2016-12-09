@@ -1779,7 +1779,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     void setFocusedStack(ActivityRecord r, String reason) {
         if (r != null) {
             if (isHomeActivity(r)) {
-                moveHomeStack(false, reason);
+                moveHomeStack(true, reason);
             } else {
                 setFocusedStack(r.task.stack.mStackId);
             }
@@ -1795,6 +1795,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_ARROW);
         if (stackId == HOME_STACK_ID) {
             mayAutoHideStatusBar();
+            moveHomeStack(true, "HOME_STACK_ID directly");
             return;
         }
 
@@ -1811,6 +1812,10 @@ public final class ActivityStackSupervisor implements DisplayListener {
                         stacks.remove(stack);
                         stacks.add(stack);
                         mLastFocusedStack = mFocusedStack;
+                        if (mFocusedStack.mStackId == HOME_STACK_ID) {
+                            stacks.remove(mFocusedStack);
+                            stacks.add(0, mFocusedStack);
+                        }
                         mFocusedStack = stack;
                         mService.setFocusedStatusbarActivity(stack.mStackId);
                         adjustStatusBar(stack.topTask());

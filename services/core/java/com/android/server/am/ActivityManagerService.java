@@ -2211,7 +2211,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 if (mUnsetFocusedStack > 0) {
                                     unsetFocusedStack(mUnsetFocusedStack);
                                     mUnsetFocusedStack = -1;
-                                } else if (mSetFocusedStack > 0) {
+                                } else if (mSetFocusedStack >= 0) {
                                     setFocusedStack(mSetFocusedStack);
                                     mSetFocusedStack = -1;
                                 } else if (mClosingStackId > 0) {
@@ -2493,10 +2493,8 @@ public final class ActivityManagerService extends ActivityManagerNative
                 if (stack != null) {
                     ActivityRecord r = stack.topRunningActivityLocked(null);
                     if (r != null) {
-                        if (!mStackSupervisor.isHomeActivity(r)) {
-                            setFocusedActivityLocked(r, "setFocusedStack");
-                            moveTaskToFront(r.task.taskId, 0, null);
-                        }
+                        setFocusedActivityLocked(r, "setFocusedStack");
+                        moveTaskToFront(r.task.taskId, 0, null);
                     }
                 }
             }
@@ -2521,10 +2519,8 @@ public final class ActivityManagerService extends ActivityManagerNative
             if (stack != null) {
                 ActivityRecord r = stack.topRunningActivityLocked(null);
                 if (r != null) {
-                    if (!mStackSupervisor.isHomeActivity(r)) {
-                        setFocusedActivityLocked(r, "setFocusedStack");
-                        moveTaskToFront(r.task.taskId, 0, null);
-                    }
+                    setFocusedActivityLocked(r, "setFocusedStack");
+                    moveTaskToFront(r.task.taskId, 0, null);
                 }
             }
         }
@@ -20017,7 +20013,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
 
         int nextStackId = getFocusedStackId();
-        if (nextStackId != HOME_STACK_ID) {
+        if (nextStackId >= 0) {
             setFocusedStack(nextStackId);
         }
 
