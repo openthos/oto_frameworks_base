@@ -83,6 +83,7 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.StatusBarIcon;
@@ -210,6 +211,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected StatusBarKeyguardViewManager mStatusBarKeyguardViewManager;
     protected int mRowMinHeight;
     protected int mRowMaxHeight;
+    private RankingMap mRankingMap;
 
     // public mode, private notifications, etc
     private boolean mLockscreenPublicMode = false;
@@ -447,6 +449,7 @@ public abstract class BaseStatusBar extends SystemUI implements
                     // notification bar information is empty
                     if (n.contentView != null) {
                         onChangeUserInfo(true);
+                        mRankingMap = rankingMap;
                     }
 
                     boolean isUpdate = mNotificationData.get(sbn.getKey()) != null
@@ -897,6 +900,15 @@ public abstract class BaseStatusBar extends SystemUI implements
         final View settingsButton = guts.findViewById(R.id.notification_inspect_item);
         final View appSettingsButton
                 = guts.findViewById(R.id.notification_inspect_app_provided_settings);
+        final ImageButton notificationItemDelete
+                = (ImageButton) row.findViewById(R.id.delete_notification);
+
+        notificationItemDelete.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                removeNotification(sbn.getKey(), mRankingMap);
+            }
+        });
+
         if (appUid >= 0) {
             final int appUidF = appUid;
             settingsButton.setOnClickListener(new View.OnClickListener() {
