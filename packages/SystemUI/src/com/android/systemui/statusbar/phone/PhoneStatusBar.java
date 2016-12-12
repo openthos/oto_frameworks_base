@@ -3149,8 +3149,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
    public void removeLockedIcon(String pkg) {
         for (int i = 0; i < mStatusBarActivities.getChildCount(); i++) {
             ActivityKeyView kbv = getActivityKeyView(i);
-            if (kbv.getStatusbarActivity().mPkgName.equals(pkg)) {
+            if (kbv.getStatusbarActivity().mPkgName.equals(pkg) &&
+                !kbv.getStatusbarActivity().mApkRun) {
                 kbv.setVisibility(View.GONE);
+                break;
+            }
+            if (kbv.getStatusbarActivity().mPkgName.equals(pkg) &&
+                kbv.getStatusbarActivity().mApkRun) {
+                kbv.getStatusbarActivity().mIsDocked = false;
                 break;
             }
         }
@@ -3761,6 +3767,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
                 if (action.equals(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK)) {
                     mSet.add(intent.getStringExtra("lockIcon"));
+                    mValues.put("pkgname", intent.getStringExtra("lockIcon"));
+                    mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
+                    mEditorPkg.putString(intent.getStringExtra("lockIcon"), "");
+                    mEditorPkg.commit();
                 }
                 if (action.equals(Intent.STARTMENU_UNLOCKED)) {
                     String pkgName = intent.getStringExtra("unlockapk");
@@ -3782,6 +3792,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 !kbv.getStatusbarActivity().mIsDocked && kbv.getStatusbarActivity().mApkRun) {
                 kbv.getStatusbarActivity().mIsDocked = true;
                 mSet.add(apkInfo);
+                mEditorPkg.putString(apkInfo, "");
+                mEditorPkg.commit();
                 mValues.put("pkgname", apkInfo);
                 mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
                 break;
