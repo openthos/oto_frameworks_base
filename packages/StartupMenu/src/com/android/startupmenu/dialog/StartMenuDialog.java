@@ -43,6 +43,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     public static final int STATE_CODE_SEND_DATA = 0;
     public static final String URI_CONTENT_STATUS_BAR =
                         "content://com.android.systemui.util/status_bar_tb";
+    public static final String TEXT_COLOR_GRAY = "#8B8970";
     private Context mContext;
     private boolean mFlag;
     private int mPosition;
@@ -58,6 +59,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     private boolean mflagChange;
     private String mLockedAppText;
     private String mUnlockedAppText;
+    private TextView mRightPhoneRun;
 
     public StartMenuDialog(Context context) {
         super(context);
@@ -88,21 +90,27 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
         mLockedAppText = mContext.getResources().getString(R.string.lockedapptext);
         mUnlockedAppText = mContext.getResources().getString(R.string.unlockedapptext);
         mRightOpen = (TextView) findViewById(R.id.tv_right_open);
-        TextView rightPhoneRun = (TextView) findViewById(R.id.tv_right_phone_run);
+        mRightPhoneRun = (TextView) findViewById(R.id.tv_right_phone_run);
         TextView rightDesktopRun = (TextView) findViewById(R.id.tv_right_desktop_run);
         mRightFixedTaskbar = (TextView) findViewById(R.id.tv_right_fixed_taskbar);
         TextView rightUninstall = (TextView) findViewById(R.id.tv_right_uninstall);
         mStrTextView = StartupMenuAdapter.strPkgName;
         new Thread(new QueryCursorData()).start();
+        if (StartupMenuAdapter.mIsFullScreen) {
+            mRightPhoneRun.setEnabled(false);
+            mRightPhoneRun.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
+        }
         mFlag = true;
         mRightOpen.setOnClickListener(this);
-        rightPhoneRun.setOnClickListener(this);
+        mRightPhoneRun.setOnClickListener(this);
+        mPosition = StartupMenuAdapter.mPositionItem;
+
         rightDesktopRun.setOnClickListener(this);
         mRightFixedTaskbar.setOnClickListener(this);
         rightUninstall.setOnClickListener(this);
 
         mRightOpen.setOnHoverListener(hoverListener);
-        rightPhoneRun.setOnHoverListener(hoverListener);
+        mRightPhoneRun.setOnHoverListener(hoverListener);
         rightDesktopRun.setOnHoverListener(hoverListener);
         mRightFixedTaskbar.setOnHoverListener(hoverListener);
         rightUninstall.setOnHoverListener(hoverListener);
@@ -118,8 +126,6 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     }
 
     public void showDialog(int x, int y, int height, int width, int type) {
-        mStrTextView = StartupMenuAdapter.strPkgName;
-        new Thread(new QueryCursorData()).start();;
         show();
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -202,17 +208,17 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             dialogDismiss();
             break;
         case R.id.tv_right_fixed_taskbar:
-            String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+            //String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
             if (mflagChange) {
                 Intent intentSend = new Intent();
-                intentSend.putExtra("keyInfo", pkgInfo);
+                intentSend.putExtra("keyInfo", mStrTextView);
                 intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
                 mContext.sendBroadcast(intentSend);
                 mRightFixedTaskbar.setText(mUnlockedAppText);
                 new Thread(new QueryCursorData()).start();
             } else {
                 Intent intentUnlock = new Intent();
-                intentUnlock.putExtra("unlockapk", pkgInfo);
+                intentUnlock.putExtra("unlockapk", mStrTextView);
                 intentUnlock.setAction(Intent.STARTMENU_UNLOCKED);
                 mContext.sendBroadcast(intentUnlock);
                 mRightFixedTaskbar.setText(mLockedAppText);
@@ -262,7 +268,9 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     //Method of run pc mode
     private void runPcMode() {
         Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PC_MODE
+                            | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
     }
 

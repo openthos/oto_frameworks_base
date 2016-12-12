@@ -26,6 +26,8 @@ import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.content.pm.ApplicationInfo;
+import com.android.startupmenu.dialog.StartMenuDialog;
 
 public class StartupMenuAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
@@ -40,6 +42,8 @@ public class StartupMenuAdapter extends BaseAdapter {
     private MySqliteOpenHelper mMsoh;
     private int mStartMenuAppWidth;
     private int mStartMenuAppHeight;
+    public static boolean mIsFullScreen;
+    public static int mPositionItem;
 
     public StartupMenuAdapter(Context context, List<AppInfo> apps,
                               Map<Integer,Boolean> isCheckedMap) {
@@ -129,9 +133,11 @@ public class StartupMenuAdapter extends BaseAdapter {
                 case MotionEvent.BUTTON_TERTIARY:
                     break;
                 case MotionEvent.BUTTON_SECONDARY:
+                    mPositionItem = position;
+                    strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
+                    mIsFullScreen = ApplicationInfo.isFullScreenStyleWindow(strPkgName);
                     if (position < 0 || position >= mlistAppInfo.size())
                         return false;
-                    strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
                     showMenuDialog1(position,motionEvent);
                     break;
                 default :
@@ -170,7 +176,8 @@ public class StartupMenuAdapter extends BaseAdapter {
         StartupMenuActivity.mStartMenuDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
-        StartupMenuActivity.mStartMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
+        StartMenuDialog startMenuDialog = new StartMenuDialog(mContext, R.style.dialog);
+        startMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
                     ,(int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
                     , mStartMenuAppWidth, mStartMenuAppHeight, 0);
     }
