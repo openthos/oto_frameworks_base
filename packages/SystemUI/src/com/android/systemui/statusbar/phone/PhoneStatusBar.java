@@ -285,6 +285,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int INPUTMETHOD_SEND_MESSAGE = 100;
     private static final int INPUTMETHOD_MESSAGE_WHAT = 0;
     private static final int VERSION_SQLDATABASE = 1;
+    private static final int BATTERY_LOW = 25;
+    private static final int BATTERY_HIGH = 75;
 
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -1149,9 +1151,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mBatteryButton.setImageDrawable(mContext.getDrawable(
                                                     R.drawable.statusbar_battery));
                 } else {
-                    if (level >= 10) {
+                    if (level >= BATTERY_HIGH) {
                         mBatteryButton.setImageDrawable(mContext.getDrawable(
                                                         R.drawable.statusbar_battery_high));
+                    } else if (level >= BATTERY_LOW && level <= BATTERY_HIGH) {
+                        mBatteryButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.ic_notice_battery_half));
                     } else {
                         mBatteryButton.setImageDrawable(mContext.getDrawable(
                                                         R.drawable.statusbar_battery_low));
