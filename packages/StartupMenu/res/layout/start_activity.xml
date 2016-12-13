@@ -96,7 +96,7 @@
                     android:layout_height="@dimen/startupmenu_layout_size_twenty_eight"
                     android:paddingLeft="@dimen/startupmenu_layout_size_eight"
                     android:gravity="left|center_vertical"
-                    android:hint="Software search"
+                    android:hint="@string/software_search"
                     android:textSize="@dimen/startupmenu_text_size_twelve"
                     android:minLines="1"
                     android:textCursorDrawable="@null"

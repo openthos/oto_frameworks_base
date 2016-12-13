@@ -40,7 +40,7 @@
     <dimen name="dir_elevation">8dp</dimen>
 
     <!--StartupMenu sort layout size -->
-    <dimen name="sort_layout_width">105dp</dimen>
+    <dimen name="sort_layout_width">103dp</dimen>
     <dimen name="sort_layout_height">83dp</dimen>
 
     <!--StartupMenu layout size -->
