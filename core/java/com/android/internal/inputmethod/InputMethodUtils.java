@@ -484,14 +484,12 @@ public class InputMethodUtils {
             return null;
         }
         // We'd prefer to fall back on a system IME, since that is safer.
-        int i = enabledImes.size();
         int firstFoundSystemIme = -1;
-        while (i > 0) {
-            i--;
+        for (int i = enabledImes.size() - 1; i >= 0; i--) {
             final InputMethodInfo imi = enabledImes.get(i);
-            if (InputMethodUtils.isSystemImeThatHasEnglishKeyboardSubtype(imi)
-                    && !imi.isAuxiliaryIme()) {
-                return imi;
+            if (ApplicationInfo.APPNAME_ANDROID_INPUTMETHOD_PINYIN.equals(imi.getId())) {
+                firstFoundSystemIme = i;
+                break;
             }
             if (firstFoundSystemIme < 0 && InputMethodUtils.isSystemIme(imi)
                     && !imi.isAuxiliaryIme()) {
@@ -896,17 +894,15 @@ public class InputMethodUtils {
         // At the initial boot, the settings for input methods are not set,
         // so we need to enable IME in that case.
         public void enableAllIMEsIfThereIsNoEnabledIME() {
-            if (TextUtils.isEmpty(getEnabledInputMethodsStr())) {
-                StringBuilder sb = new StringBuilder();
-                final int N = mMethodList.size();
-                for (int i = 0; i < N; i++) {
-                    InputMethodInfo imi = mMethodList.get(i);
-                    Slog.i(TAG, "Adding: " + imi.getId());
-                    if (i > 0) sb.append(':');
-                    sb.append(imi.getId());
-                }
-                putEnabledInputMethodsStr(sb.toString());
+            StringBuilder sb = new StringBuilder();
+            final int N = mMethodList.size();
+            for (int i = 0; i < N; i++) {
+                InputMethodInfo imi = mMethodList.get(i);
+                Slog.i(TAG, "Adding: " + imi.getId());
+                if (i > 0) sb.append(':');
+                sb.append(imi.getId());
             }
+            putEnabledInputMethodsStr(sb.toString());
         }
 
         public List<Pair<String, ArrayList<String>>> getEnabledInputMethodsAndSubtypeListLocked() {

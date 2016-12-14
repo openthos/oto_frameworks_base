@@ -106,6 +106,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
     public static final String APPNAME_CHROMIUM = "org.chromium.chrome";
     public static final String PACKAGENAME_TAG = "package";
+    public static final String APPNAME_ANDROID_INPUTMETHOD_PINYIN
+                                               = "com.android.inputmethod.pinyin/.PinyinIME";
 
     /**
      * Default task affinity of all activities in this application. See 
