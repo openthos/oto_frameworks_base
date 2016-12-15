@@ -290,6 +290,9 @@ public class Application extends ContextWrapper implements ComponentCallbacks2 {
         mQQWeChatShowCount.edit().putInt("qqwechatshowcount", count).commit();
     }
     public int getQQWeChatShowCount() {
-        return mQQWeChatShowCount.getInt("qqwechatshowcount", -1);
+        if (mQQWeChatShowCount != null) {
+            return mQQWeChatShowCount.getInt("qqwechatshowcount", -1);
+        }
+        return -1;
     }
 }
