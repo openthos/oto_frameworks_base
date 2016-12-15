@@ -425,6 +425,9 @@
 
      <dimen name="text_handle_min_size">40dp</dimen>
 
+     <dimen name="qqmmDialogWidth">400dp</dimen>
+     <dimen name="qqmmDialogHeight">300dp</dimen>
+
      <!-- Lighting and shadow properties -->
      <dimen name="light_y">-200dp</dimen>
      <dimen name="light_z">800dp</dimen>

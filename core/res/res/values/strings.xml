@@ -5179,4 +5179,9 @@
     <string name="stk_cc_ss_to_ussd">SS request is modified to USSD request.</string>
     <string name="stk_cc_ss_to_ss">SS request is modified to new SS request.</string>
 
+    <string name="qqmmDialogTitle">Tips</string>
+    <string name="qqmmDialogPositiveButton">OK</string>
+    <string name="mmDialogMessage">Set the enter key to send message:\n\n"\u3000\u3000"click below me -> Settings -> Chat -> enter key to send message</string>
+    <string name="qqDialogMessage">Set the enter key to send message:\n\n"\u3000\u3000"click below userpic -> Settings -> Assist-Function -> enter key to send message</string>
+
 </resources>

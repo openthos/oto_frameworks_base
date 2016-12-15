@@ -413,6 +413,8 @@
   <java-symbol type="dimen" name="notification_badge_size" />
   <java-symbol type="dimen" name="immersive_mode_cling_width" />
   <java-symbol type="dimen" name="circular_display_mask_offset" />
+  <java-symbol type="dimen" name="qqmmDialogWidth" />
+  <java-symbol type="dimen" name="qqmmDialogHeight" />
 
   <java-symbol type="string" name="add_account_button_label" />
   <java-symbol type="string" name="addToDictionary" />
@@ -1055,6 +1057,10 @@
   <java-symbol type="string" name="lockscreen_transport_pause_description" />
   <java-symbol type="string" name="config_ethernet_tcp_buffers" />
   <java-symbol type="string" name="config_wifi_tcp_buffers" />
+  <java-symbol type="string" name="qqmmDialogTitle" />
+  <java-symbol type="string" name="qqmmDialogPositiveButton" />
+  <java-symbol type="string" name="mmDialogMessage" />
+  <java-symbol type="string" name="qqDialogMessage" />
 
   <java-symbol type="plurals" name="abbrev_in_num_days" />
   <java-symbol type="plurals" name="abbrev_in_num_hours" />

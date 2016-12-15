@@ -25,6 +25,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.content.SharedPreferences;
 
 /**
  * Base class for those who need to maintain global application state. You can
@@ -50,6 +51,7 @@ public class Application extends ContextWrapper implements ComponentCallbacks2 {
 
     /** @hide */
     public LoadedApk mLoadedApk;
+    public SharedPreferences mQQWeChatShowCount;
 
     public interface ActivityLifecycleCallbacks {
         void onActivityCreated(Activity activity, Bundle savedInstanceState);
@@ -90,6 +92,9 @@ public class Application extends ContextWrapper implements ComponentCallbacks2 {
      * If you override this method, be sure to call super.onCreate().
      */
     public void onCreate() {
+        if (mQQWeChatShowCount == null) {
+            mQQWeChatShowCount = getSharedPreferences("qqwechatdialog", Context.MODE_PRIVATE);
+        }
     }
 
     /**
@@ -280,5 +285,11 @@ public class Application extends ContextWrapper implements ComponentCallbacks2 {
                 ((OnProvideAssistDataListener)callbacks[i]).onProvideAssistData(activity, data);
             }
         }
+    }
+    public void putQQWeChatShowCount(int count) {
+        mQQWeChatShowCount.edit().putInt("qqwechatshowcount", count).commit();
+    }
+    public int getQQWeChatShowCount() {
+        return mQQWeChatShowCount.getInt("qqwechatshowcount", -1);
     }
 }

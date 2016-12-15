@@ -44,6 +44,9 @@ public class ActivityInfo extends ComponentInfo
                  "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.PadHomeActivity";
     public static final String ISSUE_WIN_OTO_FILEMANAGER =
                  "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
+    public static final String LAUNCHERNAME_TENCENT_WECHAT = "com.tencent.mm.ui.LauncherUI";
+    public static final String LAUNCHERNAME_TENCENT_QQ =
+                 "com.tencent.mobileqq.activity.RegisterGuideActivity";
 
     /**
      * A style resource identifier (in the package's resources) of this

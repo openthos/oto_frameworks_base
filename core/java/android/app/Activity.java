@@ -105,6 +105,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import android.app.ActivityManager;
+import android.os.Handler;
+import android.os.Message;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import com.android.internal.R;
 
 /**
  * An activity is a single, focused thing that the user can do.  Almost all
@@ -683,6 +689,9 @@ public class Activity extends ContextThemeWrapper
     private static final String SAVED_DIALOGS_TAG = "android:savedDialogs";
     private static final String SAVED_DIALOG_KEY_PREFIX = "android:dialog_";
     private static final String SAVED_DIALOG_ARGS_KEY_PREFIX = "android:dialog_args_";
+    private static final int SHOW_QQWECHAT_DIALOG_TIME = 1000;
+    private static final int SHOW_QQ_DIALOG_MESSAGE = 0;
+    private static final int SHOW_WECHAT_DIALOG_MESSAGE = 1;
 
     private static class ManagedDialog {
         Dialog mDialog;
@@ -943,6 +952,15 @@ public class Activity extends ContextThemeWrapper
             mVoiceInteractor.attachActivity(this);
         }
         mCalled = true;
+        if (mApplication.getQQWeChatShowCount() == -1 && isWeChatRunning()) {
+            mShowQQWeChatTip.sendEmptyMessageDelayed(SHOW_WECHAT_DIALOG_MESSAGE,
+                                                     SHOW_QQWECHAT_DIALOG_TIME);
+            mApplication.putQQWeChatShowCount(0);
+        }
+        if (isQQRunning()) {
+            mShowQQWeChatTip.sendEmptyMessageDelayed(SHOW_QQ_DIALOG_MESSAGE,
+                                                     SHOW_QQWECHAT_DIALOG_TIME);
+        }
     }
 
     /**
@@ -2134,6 +2152,51 @@ public class Activity extends ContextThemeWrapper
 
         mWindow.setDefaultIcon(mActivityInfo.getIconResource());
         mWindow.setDefaultLogo(mActivityInfo.getLogoResource());
+    }
+
+    Handler mShowQQWeChatTip = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            AlertDialog mQQWeChatDialog = new AlertDialog.Builder(Activity.this).create();
+            mQQWeChatDialog.setTitle(getResources().getString(R.string.qqmmDialogTitle));
+            switch (msg.what) {
+                case SHOW_WECHAT_DIALOG_MESSAGE :
+                    mQQWeChatDialog.setMessage(getResources().
+                                                    getString(R.string.mmDialogMessage));
+                    break;
+                case SHOW_QQ_DIALOG_MESSAGE :
+                    mQQWeChatDialog.setMessage(getResources().
+                                                    getString(R.string.qqDialogMessage));
+                    break;
+                default:
+                    break;
+            }
+            mQQWeChatDialog.setCancelable(true);
+            mQQWeChatDialog.setButton(DialogInterface.BUTTON_POSITIVE, getResources()
+                                       .getString(R.string.qqmmDialogPositiveButton),
+                                              new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            mQQWeChatDialog.show();
+            android.view.WindowManager.LayoutParams params =
+                                               mQQWeChatDialog.getWindow().getAttributes();
+            params.width = getResources().getDimensionPixelSize(R.dimen.qqmmDialogWidth);
+            params.height = getResources().getDimensionPixelSize(R.dimen.qqmmDialogHeight);
+            mQQWeChatDialog.getWindow().setAttributes(params);
+        }
+    };
+
+    private boolean isWeChatRunning() {
+        return (getClass().getName()).equals(ActivityInfo.LAUNCHERNAME_TENCENT_WECHAT)
+                && getPackageName().equals(ApplicationInfo.APPNAME_TENCENT_WECHAT);
+    }
+
+    private boolean isQQRunning() {
+        return (getClass().getName()).equals(ActivityInfo.LAUNCHERNAME_TENCENT_QQ)
+                && getPackageName().equals(ApplicationInfo.APPNAME_TENCENT_QQ);
     }
 
     /**
