@@ -36,6 +36,8 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
+import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
 
 public class ActivityKeyView extends ImageView {
 
@@ -43,6 +45,7 @@ public class ActivityKeyView extends ImageView {
     private static final int DIALOG_PADDING_TIPS = 30;
     private static final int TIMER_NUMBERS = 1000;
     private static final int DIALOG_OFFSET_DIMENSIONS = 20;
+    public static final String TEXT_COLOR_GRAY = "#8B8970";
     private int mChangeDimension = 0;
 
     //OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
@@ -270,6 +273,10 @@ public class ActivityKeyView extends ImageView {
         TextView pcMode = (TextView) rbmDocked.findViewById(R.id.rbm_pc_mode);
         pcMode.setOnTouchListener(mPcMode);
         pcMode.setOnHoverListener(hoverListener);
+        if (ApplicationInfo.isFullScreenStyleWindow(mActivity.mPkgName)) {
+            phoneMode.setEnabled(false);
+            phoneMode.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
+        }
         //undock.setOnClickListener(mUnDock);
         return rbmDocked;
     }
@@ -413,7 +420,9 @@ public class ActivityKeyView extends ImageView {
         PackageManager manager = mContext.getPackageManager();
         Intent intent = new Intent();
         intent = manager.getLaunchIntentForPackage(mActivity.mPkgName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PC_MODE
+                                    | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mContext.startActivity(intent);
     }
 
