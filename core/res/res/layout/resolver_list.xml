@@ -102,7 +102,7 @@
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_ignoreOffset="true"
+        android:layout_ignoreOffset="false"
         android:layout_alwaysShow="true"
         android:gravity="end|center_vertical"
         android:orientation="horizontal"
