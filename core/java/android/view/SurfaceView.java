@@ -35,6 +35,7 @@ import android.os.SystemClock;
 import android.os.ParcelFileDescriptor;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -459,6 +460,22 @@ public class SurfaceView extends View {
         if (myWidth <= 0) myWidth = getWidth();
         int myHeight = mRequestedHeight;
         if (myHeight <= 0) myHeight = getHeight();
+
+        if ((getClass().getName().compareTo(
+                 "cn.wps.moffice.writer.view.editor.TextEditor") == 0)
+            || (getClass().getName().compareTo(
+                 "cn.wps.moffice.spreadsheet.control.grid.shell.GridSurfaceView") == 0)) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+            int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                      - decor.getWindowHeaderPadding();
+            if ((w != getWidth()) || (h != getHeight())) {
+                myWidth = w;
+                myHeight = h;
+                setRight(myWidth);
+                setBottom(myHeight);
+            }
+        }
 
         getLocationInWindow(mLocation);
         final boolean creating = mWindow == null;
