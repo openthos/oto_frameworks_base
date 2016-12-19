@@ -689,7 +689,7 @@ public class Activity extends ContextThemeWrapper
     private static final String SAVED_DIALOGS_TAG = "android:savedDialogs";
     private static final String SAVED_DIALOG_KEY_PREFIX = "android:dialog_";
     private static final String SAVED_DIALOG_ARGS_KEY_PREFIX = "android:dialog_args_";
-    private static final int SHOW_QQWECHAT_DIALOG_TIME = 1000;
+    private static final int SHOW_QQWECHAT_DIALOG_TIME = 700;
     private static final int SHOW_QQ_DIALOG_MESSAGE = 0;
     private static final int SHOW_WECHAT_DIALOG_MESSAGE = 1;
 
@@ -952,10 +952,9 @@ public class Activity extends ContextThemeWrapper
             mVoiceInteractor.attachActivity(this);
         }
         mCalled = true;
-        if (mApplication.getQQWeChatShowCount() == -1 && isWeChatRunning()) {
+        if (isWeChatRunning()) {
             mShowQQWeChatTip.sendEmptyMessageDelayed(SHOW_WECHAT_DIALOG_MESSAGE,
                                                      SHOW_QQWECHAT_DIALOG_TIME);
-            mApplication.putQQWeChatShowCount(0);
         }
         if (isQQRunning()) {
             mShowQQWeChatTip.sendEmptyMessageDelayed(SHOW_QQ_DIALOG_MESSAGE,
@@ -2190,7 +2189,7 @@ public class Activity extends ContextThemeWrapper
     };
 
     private boolean isWeChatRunning() {
-        return (getClass().getName()).equals(ActivityInfo.LAUNCHERNAME_TENCENT_WECHAT)
+        return (getClass().getName()).equals(ActivityInfo.INPUTUINAME_TENCENT_WECHAT)
                 && getPackageName().equals(ApplicationInfo.APPNAME_TENCENT_WECHAT);
     }
 
