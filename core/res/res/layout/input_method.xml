@@ -53,4 +53,9 @@
         android:visibility="gone">
     </FrameLayout>
 
+    <FrameLayout android:id="@+id/spaceHeight"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/status_bar_height_real">
+    </FrameLayout>
+
 </LinearLayout>
