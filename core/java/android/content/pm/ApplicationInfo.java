@@ -109,6 +109,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ANDROID_INPUTMETHOD_PINYIN
                                                = "com.android.inputmethod.pinyin/.PinyinIME";
 
+    public static final String APPNAME_FENNEC = "org.mozilla.fennec_root";
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 
@@ -719,6 +721,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
+                                     || (pkgName.compareTo(APPNAME_FENNEC) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
