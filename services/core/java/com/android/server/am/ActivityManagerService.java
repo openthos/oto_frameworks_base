@@ -283,6 +283,8 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final boolean VALIDATE_TOKENS = false;
     static final boolean SHOW_ACTIVITY_START_TIME = true;
 
+    static final int CLOSE_POS_OFFSET = 10000;
+
     // Control over CPU and battery monitoring.
     static final long BATTERY_STATS_TIME = 30*60*1000;      // write battery stats every 30 minutes.
     static final boolean MONITOR_CPU_USAGE = true;
@@ -20009,6 +20011,13 @@ public final class ActivityManagerService extends ActivityManagerNative
     public boolean closeActivity(int stackId) {
         boolean ret = false;
         synchronized (ActivityManagerService.this) {
+            if (stackId > HOME_STACK_ID) {
+                Rect r = getStackBounds(stackId);
+                relayoutWindow(stackId, new Rect(r.left + CLOSE_POS_OFFSET,
+                                                 r.top +  CLOSE_POS_OFFSET,
+                                                 r.right + CLOSE_POS_OFFSET,
+                                                 r.bottom + CLOSE_POS_OFFSET));
+            }
             ret = closeActivity(stackId, true, 0);
         }
 

@@ -991,8 +991,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-                //killStartupMenu();
-                finish();
+                killStartupMenu();
             }
 
             // Delegate everything else to Activity.
