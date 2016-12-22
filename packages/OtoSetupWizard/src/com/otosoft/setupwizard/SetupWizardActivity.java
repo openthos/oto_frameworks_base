@@ -56,7 +56,7 @@ public class SetupWizardActivity extends BaseActivity {
         setContentView(R.layout.activity_setupwizard);
         //send broadcast to control status bar
         Intent intent1 = new Intent();
-        intent1.setAction(Intent.STATUS_BAR_HIDE);
+        intent1.setAction(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
         SetupWizardActivity.this.sendBroadcast(intent1);
         Settings.System.putInt(getContentResolver(),
                 android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);

@@ -42,6 +42,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         powerLock.setOnHoverListener(hoverListeners);
         powerRestart.setOnHoverListener(hoverListeners);
         hideStatusBar();
+        shutDownHideStatusBar();
     }
 
     View.OnHoverListener hoverListeners= new View.OnHoverListener() {
@@ -84,6 +85,18 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         sendBroadcast(intent);
     }
 
+    private void shutDownHideStatusBar() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
+        sendBroadcast(intent);
+    }
+
+    private void closeButtonShowStatusBar() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
+        sendBroadcast(intent);
+    }
+
     private void waitForAWhile() {
         try {
             Thread.sleep(WAIT_INTERVAL);
@@ -114,6 +127,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                     PowerSourceActivity.this.finish();
                     break;
                 case R.id.power_close:
+                    closeButtonShowStatusBar();
                     System.exit(0);
                     break;
             }

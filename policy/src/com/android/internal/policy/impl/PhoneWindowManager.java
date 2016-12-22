@@ -219,6 +219,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mKeyguardHidden;
     private boolean mKeyguardDrawnOnce;
 
+    private boolean mIsHide;
+
     /**
      * Broadcast for app to set visibility of statusbar
      */
@@ -233,6 +235,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                      = new IntentFilter(Intent.STATUS_BAR_SHOW_SUGGEST);
     private IntentFilter mAppChangeStatusBarPowerSleepFilter
                      = new IntentFilter(Intent.STATUS_BAR_POWER_SLEEP);
+    private IntentFilter mBootHideStatusBar
+                     = new IntentFilter(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
+    private IntentFilter mFinishShowStatusBar
+                     = new IntentFilter(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
     private IntentFilter mAppMaxFilter = new IntentFilter(Intent.ACTION_OPEN_APPLICATION);
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -244,6 +250,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
     };
+
+    private BroadcastReceiver mBootHideStatusBarReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.STATUS_BAR_HIDE_BOOT_EXIT.equals(intent.getAction())) {
+                mIsHide = false;
+                try {
+                    mStatusBarService.hideStatusBar();
+                } catch(Exception e) {}
+            }
+        }
+    };
+
+    private BroadcastReceiver mFinishShowStatusBarReceiver = new BroadcastReceiver() {
+         public void onReceive(Context context, Intent intent) {
+             if (Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY.equals(intent.getAction())) {
+                 mIsHide = true;
+             }
+         }
+     };
+
     private BroadcastReceiver mAppChangeStatusBarStartMarklessReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_HIDE_MARKLESS.equals(intent.getAction())) {
@@ -257,7 +283,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private BroadcastReceiver mAppChangeStatusBarFinishReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_SHOW.equals(intent.getAction())) {
-                showStatusBar();
+                if (mIsHide) {
+                    showStatusBar();
+                }
             }
         }
     };
@@ -1558,6 +1586,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                   this.mAppChangeStatusBarFinishMarklessFilter);
         mContext.registerReceiver(this.mAppChangeStatusBarPowerSleepReceiver,
                                   this.mAppChangeStatusBarPowerSleepFilter);
+        mContext.registerReceiver(this.mBootHideStatusBarReceiver,
+                                  this.mBootHideStatusBar);
+        mContext.registerReceiver(this.mFinishShowStatusBarReceiver,
+                                  this.mFinishShowStatusBar);
+
         mContext.registerReceiver(mBroadcastReceiver, mAppMaxFilter);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
