@@ -765,6 +765,10 @@ public class Intent implements Parcelable, Cloneable {
     public static final String ACTION_DESKTOP_SHOW_FILE = "android.intent.action.DESKTOP_SHOW_FILE";
     public static final String ACTION_DESKTOP_DELETE_FILE
                                                       = "android.intent.action.DESKTOP_DELETE_FILE";
+    public static final String ACTION_DESKTOP_FOCUSED_STATE
+                                     = "android.intent.action.DESKTOP_FOCUSED_STATE";
+    public static final String ACTION_DESKTOP_UNFOCUSED_STATE
+                                     = "android.intent.action.DESKTOP_UNFOCUSED_STATE";
 
     /**
      * Represents a shortcut/live folder icon resource.
