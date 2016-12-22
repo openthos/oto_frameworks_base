@@ -31,7 +31,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
 import java.util.List;
-import com.otosoft.setupwizard.OpenthosIDRegister;
+import com.otosoft.setupwizard.OpenthosIDSetupActivity;
 
 /**
  * Created by wang zhixu on 2016-11-24.
@@ -95,7 +95,7 @@ public class RequestThread extends Thread {
         int sCode = response.getStatusLine().getStatusCode();
         if (sCode == HttpStatus.SC_OK) {
             String result = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-            mHandler.sendMessage(Message.obtain(mHandler, OpenthosIDRegister.MSG_GET_CSRF_OK,
+            mHandler.sendMessage(Message.obtain(mHandler, OpenthosIDSetupActivity.MSG_GET_CSRF_OK,
                                       CookieUtils.getCookieskey(response).split(";")[0]));
         }
     }
@@ -115,7 +115,7 @@ public class RequestThread extends Thread {
             e.printStackTrace();
         }
         int sCode = response.getStatusLine().getStatusCode();
-        mHandler.sendMessage(Message.obtain(mHandler, OpenthosIDRegister.MSG_REGIST_SEAFILE_OK,
+        mHandler.sendMessage(Message.obtain(mHandler, OpenthosIDSetupActivity.MSG_REGIST_SEAFILE_OK,
                                                                      sCode));
     }
 

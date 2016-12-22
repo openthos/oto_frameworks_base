@@ -37,4 +37,5 @@
     <string name="enter_password_again">再次输入密码</string>
     <string name="register_openthos_title">注册 Openthos ID</string>
     <string name="register_openthos_summary">Openthos ID 是您获得openthos服务的唯一凭证,请牢记你的ID名称和密码.</string>
+    <string name="toast_register_fail">注册失败(邮箱已注册/邮箱格式错误)</string>
 </resources>

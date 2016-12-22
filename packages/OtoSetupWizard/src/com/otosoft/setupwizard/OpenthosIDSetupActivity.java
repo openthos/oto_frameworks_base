@@ -20,6 +20,19 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
+import android.content.Context;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteOpenHelper;
+import com.otosoft.tools.DatabaseHelper;
+import android.content.Context;
+import android.content.ContentResolver;
+import android.net.Uri;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -30,10 +43,14 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.io.FileWriter;
+import java.io.File;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.net.NetworkInfo;
-import android.util.Log;
 import android.net.ConnectivityManager;
-import android.content.Context;
 
 public class OpenthosIDSetupActivity extends BaseActivity {
     private TextView mVerify;
@@ -52,7 +69,12 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private static String CODE_WRONG_USERNAME ="1002";
     private static String CODE_WRONG_PASSWORD ="1001";
     private static String CODE_SUCCESS ="1000";
-
+    private ContentResolver mResolver;
+    private String mCookie = "";
+    public static final int MSG_GET_CSRF = 0x1001;
+    public static final int MSG_GET_CSRF_OK = 0x1002;
+    public static final int MSG_REGIST_SEAFILE = 0x1003;
+    public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
     private ConnectivityManager mCM;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +86,8 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
         mSkip = (TextView) findViewById(R.id.tv_skip);
         mRegister = (TextView) findViewById(R.id.tv_register);
+
+        mResolver = getContentResolver();
 
         mCM = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -84,11 +108,31 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     getText(R.string.toast_openthos_password_wrong),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            Intent intent = new Intent();
-                            intent.setAction("com.android.wizard.FINISH");
-                            startActivity(intent);
+                            mHandler.sendEmptyMessage(MSG_GET_CSRF);
+                            Uri uriInsert =
+                                  Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
+                            ContentValues values = new ContentValues();
+                            values.put("OpenthosID", openthosID);
+                            values.put("password", password);
+                            mResolver.insert(uriInsert, values);
                         }
                         break;
+                    case MSG_GET_CSRF:
+                        getCsrf();
+                        break;
+                    case MSG_GET_CSRF_OK:
+                        mCookie = (String) msg.obj;
+                        mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
+                        break;
+                    case MSG_REGIST_SEAFILE:
+                        registSeafile();
+                        break;
+                    case MSG_REGIST_SEAFILE_OK:
+                        Intent intent = new Intent();
+                        intent.setAction("com.android.wizard.FINISH");
+                        startActivity(intent);
+                        break;
+
                     default:
                         Toast.makeText(OpenthosIDSetupActivity.this,
                                 getText(R.string.toast_network_not_connect),
@@ -131,7 +175,6 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction("com.android.wizard.REGISTER");
-                // startActivityForResult(intent,RG_REQUEST);
                 startActivity(intent);
             }
         });
@@ -228,4 +271,22 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             }
         }
     }
+
+     private void getCsrf() {
+         RequestThread thread = new RequestThread(mHandler,
+                "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
+         thread.start();
+     }
+
+     private void registSeafile() {
+         List<NameValuePair> list = new ArrayList<>();
+         list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
+         list.add(new BasicNameValuePair("email", openthosID));
+         list.add(new BasicNameValuePair("password1", password));
+         RequestThread thread = new RequestThread(mHandler,
+                "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
+                 mCookie);
+         thread.start();
+     }
+
 }

@@ -66,39 +66,6 @@
                     android:hint="@string/str_email"/>
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:orientation="horizontal">
-                <TextView
-                    style="@style/common_textview_style"
-                    android:text="@string/openthos_id_password"/>
-                <TextView
-                    android:layout_width="76dp"
-                    android:layout_height="match_parent" />
-                <EditText
-                    android:id="@+id/edittext_openthos_password"
-                    style="@style/common_editview_style"
-                    android:inputType="textPassword"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:orientation="horizontal">
-                <TextView
-                    style="@style/common_textview_style"
-                    android:text="@string/enter_password_again"/>
-                <TextView
-                    android:layout_width="76dp"
-                    android:layout_height="match_parent" />
-                <EditText
-                    android:id="@+id/enter_password_again"
-                    style="@style/common_editview_style"
-                    android:inputType="textPassword"/>
-
-            </LinearLayout>
 
         </LinearLayout>
         <TextView

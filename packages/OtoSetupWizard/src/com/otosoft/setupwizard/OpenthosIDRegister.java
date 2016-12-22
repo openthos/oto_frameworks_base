@@ -35,6 +35,8 @@ import android.content.Context;
 import android.content.ContentResolver;
 import android.net.Uri;
 
+import java.io.FileWriter;
+import java.io.File;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -43,6 +45,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.Toast;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import org.jsoup.nodes.*;
+import org.jsoup.select.Elements;
+import android.content.Context;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.support.v4.app.NotificationCompat;
 
 //Rewrite Register function
 public class OpenthosIDRegister extends BaseActivity {
@@ -60,13 +71,8 @@ public class OpenthosIDRegister extends BaseActivity {
     private final String encode = "utf-8";
     static final int RG_REQUEST = 0;
     private ContentResolver mResolver;
-    private String mCookie = "";
-    public static final int MSG_GET_CSRF = 0x1001;
-    public static final int MSG_GET_CSRF_OK = 0x1002;
-    public static final int MSG_REGIST_SEAFILE = 0x1003;
-    public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
     private ConnectivityManager mCM;
-
+    private String TAG = "OpenthosIDRegister";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_register);
@@ -76,10 +82,6 @@ public class OpenthosIDRegister extends BaseActivity {
         mRegister = (TextView) findViewById(R.id.tv_register);
         //input user name
         mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
-        //input password
-        mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
-        //again password
-        mEditTextAgainPassword = (EditText) findViewById(R.id.enter_password_again);
 
         mResolver = getContentResolver();
 
@@ -92,34 +94,26 @@ public class OpenthosIDRegister extends BaseActivity {
                     case HttpURLConnection.HTTP_OK:
                         Bundle b = msg.getData();
                         String result = b.getString("result");
-                        if (result != null
-                              && result.equals(getText(R.string.toast_register_successful))) {
-                            Toast.makeText(OpenthosIDRegister.this,result,
-                                    Toast.LENGTH_SHORT).show();
-                            mHandler.sendEmptyMessage(MSG_GET_CSRF);
-                            Uri uriInsert =
-                                  Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
-                            ContentValues values = new ContentValues();
-                            values.put("openthosID", openthosID);
-                            values.put("password", password);
-                            mResolver.insert(uriInsert, values);
+                        Document doc = Jsoup.parse(result);
+                        Log.i(TAG, "register result:");
+                        Element masthead = doc.select("div.messages").first();
+                        if ((masthead !=null)) {
+                            Log.i(TAG, "register failed");
+                            Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_register_fail), Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(OpenthosIDRegister.this,result,
+                            Log.i(TAG, "register OK");
+                            Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_register_successful),
                                 Toast.LENGTH_SHORT).show();
+                            NotificationCompat.Builder mBuilder =
+                                new NotificationCompat.Builder(getApplicationContext())
+                                    .setContentTitle("System notification")
+                                    .setContentText("xxxx");
+                            NotificationManager mNotificationManager =
+                               (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManager.notify(0, mBuilder.build());
                         }
-                        break;
-                    case MSG_GET_CSRF:
-                        getCsrf();
-                        break;
-                    case MSG_GET_CSRF_OK:
-                        mCookie = (String) msg.obj;
-                        mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
-                        break;
-                    case MSG_REGIST_SEAFILE:
-                        registSeafile();
-                        break;
-                    case MSG_REGIST_SEAFILE_OK:
-                        OpenthosIDRegister.this.onBackPressed();
                         break;
                     default:
                         Toast.makeText(OpenthosIDRegister.this,
@@ -138,11 +132,10 @@ public class OpenthosIDRegister extends BaseActivity {
         mRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 openthosID = mEditTextOpenthosID.getText().toString().trim();
-                password = mEditTextPassword.getText().toString().trim();
-                againpassword = mEditTextAgainPassword.getText().toString().trim();
-                //verify openthos id and password
-                params.put("ID", openthosID);
-                params.put("pwd", password);
+                params.put("name", openthosID);
+                params.put("mail", openthosID);
+                params.put("form_id", "user_register_form");
+                params.put("form_build_id", "form-WkUSPmAzO4z-HBjYe03NyRvjNsx44ZDrMGJ8nYAJWfU");
 
                 NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
                 if (networkINfo == null) {
@@ -151,17 +144,6 @@ public class OpenthosIDRegister extends BaseActivity {
                         Toast.LENGTH_SHORT).show();
                 }
 
-                if (password.equals("") || againpassword.equals("")) {
-                    params.put("pwd", password);
-                } else {
-                    if (!password.equals(againpassword)) {
-                        Toast.makeText(OpenthosIDRegister.this,
-                                getText(R.string.toast_openthos_register_password_not_equals),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        params.put("pwd", password);
-                    }
-                }
                 submitPostData(params, encode);
             }
         });
@@ -181,7 +163,7 @@ public class OpenthosIDRegister extends BaseActivity {
                     try {
                         HttpURLConnection httpURLConnection =
                                 (HttpURLConnection) HttpUtils.getHttpsURLConnection(
-                                        "http://dev.openthos.org/?q=u/register");
+                                        "http://dev.openthos.org/?q=user/register");
                         httpURLConnection.setConnectTimeout(3000);
                         httpURLConnection.setDoInput(true);
                         httpURLConnection.setDoOutput(true);
@@ -250,21 +232,4 @@ public class OpenthosIDRegister extends BaseActivity {
         return resultData;
     }
 
-    private void getCsrf() {
-        RequestThread thread = new RequestThread(mHandler,
-               "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
-        thread.start();
-    }
-
-    private void registSeafile() {
-        List<NameValuePair> list = new ArrayList<>();
-        list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
-        list.add(new BasicNameValuePair("email", openthosID));
-        list.add(new BasicNameValuePair("password1", password));
-        list.add(new BasicNameValuePair("password2", againpassword));
-        RequestThread thread = new RequestThread(mHandler,
-               "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
-                mCookie);
-        thread.start();
-    }
 }
