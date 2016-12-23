@@ -219,7 +219,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mKeyguardHidden;
     private boolean mKeyguardDrawnOnce;
 
-    private boolean mIsHide;
+    private boolean mIsHide = true;
 
     /**
      * Broadcast for app to set visibility of statusbar
