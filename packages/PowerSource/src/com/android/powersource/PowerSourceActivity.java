@@ -2,8 +2,11 @@ package com.android.powersource;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.PowerManager;
+import java.lang.reflect.Method;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -108,31 +111,44 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         showStatusBar();
-        try {
-            switch (v.getId()) {
-                case R.id.power_off:
-                    Runtime.getRuntime().exec("su -c \"/system/xbin/poweroff\"");
-                    break;
-                case R.id.power_restart:
-                    Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
-                    break;
-                case R.id.power_lock:
-                    Intent intentLock = new Intent("android.intent.action.LOCKNOW");
-                    intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
-                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intentLock);
-                    System.exit(0);
-                    break;
-                case R.id.power_sleep:
-                    PowerSourceActivity.this.finish();
-                    break;
-                case R.id.power_close:
-                    closeButtonShowStatusBar();
-                    System.exit(0);
-                    break;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        switch (v.getId()) {
+            case R.id.power_off:
+                try {
+                    Class<?> ServiceManager = Class.forName("android.os.ServiceManager");
+                    Method getService =
+                           ServiceManager.getMethod("getService", java.lang.String.class);
+                    Object oRemoteService =
+                           getService.invoke(null,Context.POWER_SERVICE);
+                    Class<?> cStub =
+                           Class.forName("android.os.IPowerManager$Stub");
+                    Method asInterface =
+                           cStub.getMethod("asInterface", android.os.IBinder.class);
+                    Object oIPowerManager =
+                           asInterface.invoke(null, oRemoteService);
+                    Method shutdown =
+                           oIPowerManager.getClass().getMethod("shutdown",
+                                                               boolean.class, boolean.class);
+                    shutdown.invoke(oIPowerManager,false,true);
+                    //Runtime.getRuntime().exec("su -c \"/system/xbin/poweroff\"");
+                } catch(Exception e) {}
+                break;
+            case R.id.power_restart:
+                PowerManager pm = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+                pm.reboot("true");
+                //Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
+                break;
+            case R.id.power_lock:
+                Intent intentLock = new Intent("android.intent.action.LOCKNOW");
+                intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intentLock);
+                System.exit(0);
+            case R.id.power_sleep:
+                PowerSourceActivity.this.finish();
+                break;
+            case R.id.power_close:
+                closeButtonShowStatusBar();
+                System.exit(0);
         }
     }
 }
