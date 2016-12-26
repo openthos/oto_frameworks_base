@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by wanglifeng on 16-8-11.
@@ -89,14 +90,24 @@ public class MyProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int deleteNum = 0;
+        if (mUriMatcher.match(uri) == MCLICKSTATE) {
+            deleteNum = db.delete("selectState", s, strings);
+        } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
+            deleteNum = db.delete("openthosID", s, strings);
+        } else if (mUriMatcher.match(uri) == UPGRADETATE) {
+            deleteNum = db.delete("upgradeUrl", s, strings);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return deleteNum;
     }
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
         SQLiteDatabase db = helper.getWritableDatabase();
         int updatedNum = 0;
-        if(mUriMatcher.match(uri) == MCLICKSTATE) {
+        if (mUriMatcher.match(uri) == MCLICKSTATE) {
             updatedNum = db.update("selectState", contentValues, s, strings);
         } else if (mUriMatcher.match(uri) == OPENTHOSSTATE) {
             updatedNum = db.update("openthosID", contentValues, s, strings);
