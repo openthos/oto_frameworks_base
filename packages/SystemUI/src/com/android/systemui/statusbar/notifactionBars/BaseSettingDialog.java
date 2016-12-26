@@ -56,7 +56,7 @@ public class BaseSettingDialog extends Dialog {
         }
     }
 
-    private void setPosition(View v) {
+    protected void setPosition(View v) {
         int[] location = new int[2];
         v.getLocationOnScreen(location);
         Window window = getWindow();

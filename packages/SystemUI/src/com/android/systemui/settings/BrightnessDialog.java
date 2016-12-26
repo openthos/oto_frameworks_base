@@ -71,4 +71,12 @@ public class BrightnessDialog extends BaseSettingDialog {
 
         return super.onKeyDown(keyCode, event);
     }
+
+    @Override
+    public void setPosition(View v) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attr = getWindow().getAttributes();
+        attr.gravity = Gravity.CENTER;
+        window.setAttributes(attr);
+    }
 }

@@ -66,6 +66,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -468,8 +469,7 @@ public class VolumePanel extends Handler implements DemoMode {
         final Resources res = mContext.getResources();
         final LayoutParams lp = mDialog.getWindow().getAttributes();
         lp.width = res.getDimensionPixelSize(com.android.systemui.R.dimen.notification_panel_width);
-        lp.gravity =
-                res.getInteger(com.android.systemui.R.integer.notification_panel_layout_gravity);
+        lp.gravity = Gravity.CENTER;
         mDialog.getWindow().setAttributes(lp);
     }
 
