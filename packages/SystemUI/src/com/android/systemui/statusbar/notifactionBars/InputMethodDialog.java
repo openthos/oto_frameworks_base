@@ -102,11 +102,13 @@ public class InputMethodDialog extends BaseSettingDialog {
         mMethodList.clear();
         mMethodList = mImm.getInputMethodList();
         for (InputMethodInfo mi : mMethodList) {
-            mCharName = mi.loadLabel(mPm);
-            String name = (String) mCharName;
-            InputAppInfo appInfo = new InputAppInfo();
-            appInfo.setName(name);
-            mListViewAppInfo.add(appInfo);
+            if (!Intent.EXTRA_DESKTOP_INPUT_PACKAGE_NAME.equals(mi.getPackageName())) {
+                mCharName = mi.loadLabel(mPm);
+                String name = (String) mCharName;
+                InputAppInfo appInfo = new InputAppInfo();
+                appInfo.setName(name);
+                mListViewAppInfo.add(appInfo);
+            }
         }
         for (int i = 0; i< mListViewAppInfo.size(); i++) {
             mIsSelected.put(i, false);
