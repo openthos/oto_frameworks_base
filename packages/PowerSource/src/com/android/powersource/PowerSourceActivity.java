@@ -63,13 +63,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         }
     };
 
-    @Override
-    protected void onDestroy() {
-        finishStatusbarPwoerLayout();
-        super.onDestroy();
-    }
-
-    private void finishStatusbarPwoerLayout() {
+    private void finishStatusbarPowerLayout() {
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_POWER_SLEEP);
         intent.addFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
@@ -144,6 +138,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                 startActivity(intentLock);
                 System.exit(0);
             case R.id.power_sleep:
+                finishStatusbarPowerLayout();
                 PowerSourceActivity.this.finish();
                 break;
             case R.id.power_close:
