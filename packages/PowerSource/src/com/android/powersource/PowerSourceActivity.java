@@ -132,12 +132,14 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                 //Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
                 break;
             case R.id.power_lock:
+                closeButtonShowStatusBar();
                 Intent intentLock = new Intent("android.intent.action.LOCKNOW");
                 intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
                                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 System.exit(0);
             case R.id.power_sleep:
+                closeButtonShowStatusBar();
                 finishStatusbarPowerLayout();
                 PowerSourceActivity.this.finish();
                 break;
