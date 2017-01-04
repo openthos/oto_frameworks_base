@@ -1105,6 +1105,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {
                         mInputButton.setImageResource(
                                         R.drawable.statusbar_switch_input_method);
+                    } else if (im.getId().equals(
+                               ApplicationInfo.APPNAME_ANDROID_INPUTMETHOD_PINYIN)) {
+                        mInputButton.setImageResource(
+                                        R.drawable.statusbar_switch_input_method_pinyin);
                     } else {
                         Drawable inputMethodIcon = im.loadIcon(pm);
                         mInputButton.setImageDrawable(inputMethodIcon);
