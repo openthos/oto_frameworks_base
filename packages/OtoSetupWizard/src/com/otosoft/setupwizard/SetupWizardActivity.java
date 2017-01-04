@@ -126,7 +126,7 @@ public class SetupWizardActivity extends BaseActivity {
         intent.putExtra("allowSkip", true);
         intent.putExtra("useImmersiveMode", true);
         intent.putExtra("theme", "material_light");
-        intent.putExtra("wifi_auto_finish_on_connect", true);
+        intent.putExtra("wifi_auto_finish_on_connect", false);
         intent.putExtra("scriptUri", "NotUsedNow");
         return intent;
     }
