@@ -2951,22 +2951,17 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
             final CharSequence subtypeName = item.mSubtypeName;
             final TextView firstTextView = (TextView)view.findViewById(android.R.id.text1);
             final TextView secondTextView = (TextView)view.findViewById(android.R.id.text2);
+            if (TextUtils.isEmpty(subtypeName)) {
+                firstTextView.setText(imeName);
+                secondTextView.setVisibility(View.GONE);
+            } else {
+                firstTextView.setText(subtypeName);
+                secondTextView.setText(imeName);
+                secondTextView.setVisibility(View.VISIBLE);
+            }
             final RadioButton radioButton =
                     (RadioButton)view.findViewById(com.android.internal.R.id.radio);
-            if (!Intent.EXTRA_DESKTOP_INPUT_PACKAGE_NAME.equals(item.mImi.getPackageName())) {
-                view .setVisibility(View.VISIBLE);
-                if (TextUtils.isEmpty(subtypeName)) {
-                    firstTextView.setText(imeName);
-                    secondTextView.setVisibility(View.GONE);
-                } else {
-                    firstTextView.setText(subtypeName);
-                    secondTextView.setText(imeName);
-                    secondTextView.setVisibility(View.VISIBLE);
-                }
-                radioButton.setChecked(position == mCheckedItem);
-            } else {
-                view.setVisibility(View.GONE);
-            }
+            radioButton.setChecked(position == mCheckedItem);
             return view;
         }
     }

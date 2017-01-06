@@ -762,7 +762,6 @@ public class Intent implements Parcelable, Cloneable {
             "android.intent.extra.shortcut.ICON_RESOURCE";
 
     public static final String EXTRA_DESKTOP_PATH_TAG = "path";
-    public static final String EXTRA_DESKTOP_INPUT_PACKAGE_NAME = "com.android.launcher3";
     public static final String ACTION_DESKTOP_SHOW_FILE = "android.intent.action.DESKTOP_SHOW_FILE";
     public static final String ACTION_DESKTOP_DELETE_FILE
                                                       = "android.intent.action.DESKTOP_DELETE_FILE";
