@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -179,7 +180,8 @@ public class StartupMenuAdapter extends BaseAdapter {
         StartMenuDialog startMenuDialog = new StartMenuDialog(mContext, R.style.dialog);
         startMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
                     ,(int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
-                    , mStartMenuAppWidth, mStartMenuAppHeight, 0);
+                    , mStartMenuAppWidth, mStartMenuAppHeight
+                    , WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
     }
 
     class ViewHolder {

@@ -38,7 +38,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.content.ContentResolver;
 
-public class StartMenuDialog extends Dialog implements OnClickListener {
+public class StartMenuDialog extends Dialog implements OnTouchListener {
     public static int STARTMENU_WIDTH = 55;
     public static final int STATE_CODE_SEND_DATA = 0;
     public static final String URI_CONTENT_STATUS_BAR =
@@ -101,13 +101,13 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             mRightPhoneRun.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
         }
         mFlag = true;
-        mRightOpen.setOnClickListener(this);
-        mRightPhoneRun.setOnClickListener(this);
+        mRightOpen.setOnTouchListener(this);
+        mRightPhoneRun.setOnTouchListener(this);
         mPosition = StartupMenuAdapter.mPositionItem;
 
-        rightDesktopRun.setOnClickListener(this);
-        mRightFixedTaskbar.setOnClickListener(this);
-        rightUninstall.setOnClickListener(this);
+        rightDesktopRun.setOnTouchListener(this);
+        mRightFixedTaskbar.setOnTouchListener(this);
+        rightUninstall.setOnTouchListener(this);
 
         mRightOpen.setOnHoverListener(hoverListener);
         mRightPhoneRun.setOnHoverListener(hoverListener);
@@ -126,11 +126,12 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     }
 
     public void showDialog(int x, int y, int height, int width, int type) {
-        show();
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.dimAmount = 0.0f;
+        lp.type = type;
+        show();
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager m = dialogWindow.getWindowManager();
         Display d = m.getDefaultDisplay();
@@ -160,7 +161,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
     }
 
     @Override
-    public void onClick(View view) {
+    public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
         case R.id.tv_right_open:
             Intent intent;
@@ -239,6 +240,7 @@ public class StartMenuDialog extends Dialog implements OnClickListener {
             dialogDismiss();
             break;
         }
+        return true;
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
