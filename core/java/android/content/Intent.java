@@ -3564,6 +3564,10 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.statusbar.hide.boot.exit";
     public static final String STATUS_BAR_SHOW_FINISH_ACTIVITY =
                                       "android.intent.statusbar.show.finish.activity";
+    public static final String STATUS_BAR_INFO_HIDE_CUSTOM =
+                                      "android.intent.statusbar.info.hide.custom";
+    public static final String STATUS_BAR_INFO_SHOW_CUSTOM =
+                                      "android.intent.statusbar.info.show.custom";
 
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------

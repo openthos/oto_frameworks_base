@@ -46,6 +46,7 @@ import com.android.server.Watchdog;
 import com.android.server.am.BatteryStatsService;
 import com.android.server.input.InputManagerService;
 import com.android.server.power.ShutdownThread;
+import com.android.server.am.ActivityStackSupervisor;
 
 import android.Manifest;
 import android.app.ActivityManagerNative;
@@ -323,6 +324,12 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED.equals(action)) {
                 mKeyguardDisableHandler.sendEmptyMessage(
                     KeyguardDisableHandler.KEYGUARD_POLICY_CHANGED);
+            }
+            if ((Intent.STATUS_BAR_INFO_SHOW_CUSTOM).equals(action)) {
+                 mStatusBarAutoHide = false;
+            }
+            if ((Intent.STATUS_BAR_INFO_HIDE_CUSTOM).equals(action)) {
+                 mStatusBarAutoHide = true;
             }
         }
     };
@@ -655,7 +662,7 @@ public class WindowManagerService extends IWindowManager.Stub
     int mExitAnimId, mEnterAnimId;
 
     int mStatusBarHeight = 0;
-    boolean mStatusBarAutoHide = true;
+    public boolean mStatusBarAutoHide = true;
     boolean mStatusBarLock = false;
     boolean mStatusBarSkipSense = false;
 
@@ -907,7 +914,9 @@ public class WindowManagerService extends IWindowManager.Stub
         // Track changes to DevicePolicyManager state so we can enable/disable keyguard.
         IntentFilter filter = new IntentFilter();
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
-        mContext.registerReceiver(mBroadcastReceiver, filter);
+        filter.addAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
+        filter.addAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
+        mContext.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         mSettingsObserver = new SettingsObserver();
         updateShowImeWithHardKeyboard();
@@ -12014,5 +12023,13 @@ public class WindowManagerService extends IWindowManager.Stub
 
     public boolean isStatusBarAutoHide() {
         return mStatusBarAutoHide && !mStatusBarLock;
+    }
+
+    public int getRealScreenHeight(int realLogicalHeight) {
+       if (mStatusBarAutoHide) {
+           return realLogicalHeight;
+       } else {
+           return mContext.getResources().getDisplayMetrics().heightPixels;
+       }
     }
 }

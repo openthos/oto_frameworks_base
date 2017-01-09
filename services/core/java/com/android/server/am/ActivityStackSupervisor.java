@@ -1779,7 +1779,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
     void setFocusedStack(ActivityRecord r, String reason) {
         if (r != null) {
             if (isHomeActivity(r)) {
-                moveHomeStack(true, reason);
+                /*
+                 * When show statu bar, change 'toFront' to false.
+                 * if 'toFront' is true, StartUpMenu will open application appear fullScreen.
+                 * Todo: need to research.
+                 */
+                //moveHomeStack(true, reason);
+                moveHomeStack(mWindowManager.mStatusBarAutoHide, reason);
             } else {
                 setFocusedStack(r.task.stack.mStackId);
             }
@@ -4346,11 +4352,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
     /** Exactly one of these classes per Display in the system. Capable of holding zero or more
      * attached {@link ActivityStack}s */
-    class ActivityDisplay {
+   public class ActivityDisplay {
         /** Actual Display this object tracks. */
         int mDisplayId;
         Display mDisplay;
-        DisplayInfo mDisplayInfo = new DisplayInfo();
+        public DisplayInfo mDisplayInfo = new DisplayInfo();
 
         /** All of the stacks on this display. Order matters, topmost stack is in front of all other
          * stacks, bottommost behind. Accessed directly by ActivityManager package classes */
@@ -4475,7 +4481,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
                     if (stack.mStackId == stackId) {
-                        return mActivityDisplays.get(displayNdx).mDisplayInfo.logicalHeight;
+                        return mWindowManager.getRealScreenHeight(
+                                      mActivityDisplays.get(displayNdx).mDisplayInfo.logicalHeight);
                     }
                 }
             }

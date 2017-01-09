@@ -418,4 +418,6 @@
     <string name="day">日</string>
     <string name="morning">上午</string>
     <string name="afternoon">下午 </string>
+    <string name="status_bar_info_hide">隐藏任务栏</string>
+    <string name="status_bar_info_show">显示任务栏</string>
 </resources>

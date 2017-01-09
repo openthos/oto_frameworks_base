@@ -4047,7 +4047,10 @@ public class Activity extends ContextThemeWrapper
      */
     @Override
     public void startActivity(Intent intent) {
-        if (getPackageName().equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)) {
+        if (getPackageName().equals(ApplicationInfo.APPNAME_TOGIC_VIDEO) ||
+            getPackageName().equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM) ||
+            getPackageName().equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI) ||
+            getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
             Intent intent1 = new Intent();
             intent1.setAction(Intent.STATUS_BAR_HIDE);

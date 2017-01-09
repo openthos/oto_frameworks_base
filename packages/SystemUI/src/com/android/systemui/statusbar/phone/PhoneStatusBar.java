@@ -221,6 +221,7 @@ import android.database.Cursor;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.systemui.util.StatusBarSqlDatabase;
+import android.app.Dialog;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -287,6 +288,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int VERSION_SQLDATABASE = 1;
     private static final int BATTERY_LOW = 25;
     private static final int BATTERY_HIGH = 75;
+    private static final int DIALOG_OFFSET_PART_THREE = 3;
+    private static final int DIMENSION_OFFSET_LOCATION = 7;
 
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -386,6 +389,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mKeyguardFadingAway;
     private long mKeyguardFadingAwayDelay;
     private long mKeyguardFadingAwayDuration;
+    private Dialog mDialog = null;
 
     int mKeyguardMaxNotificationCount;
 
@@ -753,15 +757,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 return true;
             }
         });
-        mStatusBarView.setFocusable(false);
+        mStatusBarView.setFocusable(false);*/
         mStatusBarHorizontalScrollView = (HorizontalScrollView)mStatusBarView
                                           .findViewById(R.id.status_bar_scroll_view);
         mStatusBarHorizontalScrollView.setOnTouchListener(new View.OnTouchListener(){
             public boolean onTouch(View v, MotionEvent event) {
+                if ((event.getButtonState()) == MotionEvent.BUTTON_SECONDARY
+                        && (event.getAction()) ==  MotionEvent.ACTION_DOWN) {
+                    showDialog(dialogViewHide(), (int)event.getX(), (int)event.getY(),  0);
+                }
                 return true;
             }
         });
-        */
         loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -1123,6 +1130,92 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public static BaseSettingDialog getWifiDialog() {
         return mWifiPopupWindow;
     }
+
+    // show dialog to hide or show
+    private void showDialog(View view, int x, int y,  int padding) {
+        if(mDialog == null) {
+            mDialog = new Dialog(mContext);
+            mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
+            mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+        mDialog.setContentView(view);
+        Window dws = mDialog.getWindow();
+        WindowManager.LayoutParams lps = dws.getAttributes();
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        int dpx = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                             .getDefaultDisplay().getWidth();
+        int dpy = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
+                                             .getDefaultDisplay().getHeight();
+        int iconSize = mContext.getResources().getDimensionPixelSize(
+                                             R.dimen.status_bar_icon_size_big);
+        int[] location = new int[2];
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                       View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.getLocationOnScreen(location);
+        // lp.x = location[0] - dpx / 2   iconSize - iconSize / DIALOG_OFFSET_PART;
+        // lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() - padding;
+        lps.x = x - dpx / 2 + iconSize +  iconSize;
+        lps.y = dpy / 2 - iconSize - iconSize / DIALOG_OFFSET_PART_THREE -
+                                                DIMENSION_OFFSET_LOCATION;
+        lps.width = LayoutParams.WRAP_CONTENT;
+        lps.height = LayoutParams.WRAP_CONTENT;
+        dws.setAttributes(lps);
+        mDialog.show();
+    }
+
+    public View dialogViewHide() {
+        LayoutInflater li = (LayoutInflater) mContext.
+                              getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dialogView = li.inflate(R.layout.right_button_menu_hide_show, null, false);
+        TextView hideText = (TextView) dialogView.findViewById(R.id.rbm_hide);
+        TextView showText = (TextView) dialogView.findViewById(R.id.rbm_show);
+        dialogView.setFocusable(true);
+        hideText.setOnHoverListener(hideShowHover);
+        hideText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentHide = new Intent();
+                intentHide.setAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
+                mContext.sendBroadcast(intentHide);
+                dismissDialog();
+            }
+        });
+
+        showText.setOnHoverListener(hideShowHover);
+        showText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intentShow = new Intent();
+                intentShow.setAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
+                mContext.sendBroadcast(intentShow);
+                dismissDialog();
+            }
+        });
+        return dialogView;
+    }
+
+    public void dismissDialog() {
+        if ((mDialog == null) || (!mDialog.isShowing())) {
+            return;
+        }
+        mDialog.dismiss();
+    }
+
+    View.OnHoverListener hideShowHover = new View.OnHoverListener() {
+         public boolean onHover(View v, MotionEvent event) {
+             int action = event.getAction();
+             switch (action) {
+                 case MotionEvent.ACTION_HOVER_ENTER:
+                     v.setBackgroundResource(R.color.rightMenuFocus);
+                     break;
+                 case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(android.R.color.transparent);
+                     break;
+             }
+             return false;
+         }
+    };
 
     private void myRegisterReceiver(){
         mVolumeReceiver = new MyVolumeReceiver();
