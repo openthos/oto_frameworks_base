@@ -1802,14 +1802,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (stackId == HOME_STACK_ID) {
             mayAutoHideStatusBar();
             moveHomeStack(true, "HOME_STACK_ID directly");
-            mService.mContext.sendBroadcast(
-                          new Intent(Intent.ACTION_DESKTOP_FOCUSED_STATE));
             return;
-        } else{
-            mService.mContext.sendBroadcast(
-                          new Intent(Intent.ACTION_DESKTOP_UNFOCUSED_STATE));
         }
-
         int numDisplays = mActivityDisplays.size();
         boolean findMenu = false;
         boolean findStack = false;

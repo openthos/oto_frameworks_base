@@ -2491,6 +2491,13 @@ public final class ActivityManagerService extends ActivityManagerNative
         if (DEBUG_FOCUS) Slog.d(TAG, "setFocusedStack: stackId=" + stackId);
         synchronized (ActivityManagerService.this) {
             if (!mFocusJustChanged) {
+                if (stackId == HOME_STACK_ID) {
+                    mContext.sendBroadcast(
+                               new Intent(Intent.ACTION_DESKTOP_FOCUSED_STATE));
+                } else{
+                    mContext.sendBroadcast(
+                               new Intent(Intent.ACTION_DESKTOP_UNFOCUSED_STATE));
+                }
                 ActivityStack stack = mStackSupervisor.getStack(stackId);
                 if (stack != null) {
                     ActivityRecord r = stack.topRunningActivityLocked(null);
