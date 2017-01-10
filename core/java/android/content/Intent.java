@@ -4132,6 +4132,7 @@ public class Intent implements Parcelable, Cloneable {
 
     public static final String EXTRA_FILE_HEADER = "OtoFile:///";
     public static final String EXTRA_CROP_FILE_HEADER = "OtoCropFile:///";
+    public static final String EXTRA_DELETE_FILE_HEADER = "OtoDeleteFile:///";
 
     // ---------------------------------------------------------------------
 
