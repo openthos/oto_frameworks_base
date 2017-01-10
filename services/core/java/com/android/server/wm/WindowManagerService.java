@@ -327,9 +327,11 @@ public class WindowManagerService extends IWindowManager.Stub
             }
             if ((Intent.STATUS_BAR_INFO_SHOW_CUSTOM).equals(action)) {
                  mStatusBarAutoHide = false;
+                 showStatusbarBroadcast();
             }
             if ((Intent.STATUS_BAR_INFO_HIDE_CUSTOM).equals(action)) {
                  mStatusBarAutoHide = true;
+                 hideStatusbarBroadcast();
             }
         }
     };

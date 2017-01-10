@@ -257,6 +257,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public static final String SYSTEM_INPUT_METHOD_ID
             = "com.android.inputmethod.latin/.LatinIME";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
+    public static final String TEXT_COLOR_GRAY = "#8B8970";
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
     private static final int MSG_CLOSE_PANELS = 1001;
@@ -390,6 +391,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private long mKeyguardFadingAwayDelay;
     private long mKeyguardFadingAwayDuration;
     private Dialog mDialog = null;
+    private boolean mIsClick = true;
 
     int mKeyguardMaxNotificationCount;
 
@@ -1170,11 +1172,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         View dialogView = li.inflate(R.layout.right_button_menu_hide_show, null, false);
         TextView hideText = (TextView) dialogView.findViewById(R.id.rbm_hide);
         TextView showText = (TextView) dialogView.findViewById(R.id.rbm_show);
+        if (mIsClick) {
+            hideText.setEnabled(false);
+            hideText.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
+        } else {
+            showText.setEnabled(false);
+            showText.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
+        }
         dialogView.setFocusable(true);
         hideText.setOnHoverListener(hideShowHover);
         hideText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mIsClick = true;
                 Intent intentHide = new Intent();
                 intentHide.setAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
                 mContext.sendBroadcast(intentHide);
@@ -1186,6 +1196,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         showText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                mIsClick = false;
                 Intent intentShow = new Intent();
                 intentShow.setAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
                 mContext.sendBroadcast(intentShow);
