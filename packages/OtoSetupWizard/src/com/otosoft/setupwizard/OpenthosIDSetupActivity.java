@@ -272,22 +272,21 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         }
     }
 
-     private void getCsrf() {
-         RequestThread thread = new RequestThread(mHandler,
-                "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
-         thread.start();
-     }
+    private void getCsrf() {
+        RequestThread thread = new RequestThread(mHandler,
+               "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
+        thread.start();
+    }
 
-     private void registSeafile() {
-         List<NameValuePair> list = new ArrayList<>();
-         list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
-         list.add(new BasicNameValuePair("email", openthosID));
-         list.add(new BasicNameValuePair("password1", password));
-         list.add(new BasicNameValuePair("password2", password));
-         RequestThread thread = new RequestThread(mHandler,
-                "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
-                 mCookie);
-         thread.start();
-     }
-
+    private void registSeafile() {
+        List<NameValuePair> list = new ArrayList<>();
+        list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
+        list.add(new BasicNameValuePair("email", openthosID));
+        list.add(new BasicNameValuePair("password1", password));
+        list.add(new BasicNameValuePair("password2", password));
+        RequestThread thread = new RequestThread(mHandler,
+               "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
+                mCookie);
+        thread.start();
+    }
 }
