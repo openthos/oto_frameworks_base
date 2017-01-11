@@ -143,7 +143,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         StartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
                 (int)motionEvent.getRawX() - location[0],
                 (int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
-                mStartMenuCommonlWidth, mStartMenuCommonlHeight, 1);
+                mStartMenuCommonlWidth, mStartMenuCommonlHeight);
     }
 
     class ViewHolder {

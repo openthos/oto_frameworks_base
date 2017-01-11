@@ -51,7 +51,6 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
-    private int mListType;
     private String mPkgName;
     private boolean mBooleanFlag;
     private String mStrTextView;
@@ -125,12 +124,12 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         }
     }
 
-    public void showDialog(int x, int y, int height, int width, int type) {
+    public void showDialog(int x, int y, int height, int width) {
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.dimAmount = 0.0f;
-        lp.type = type;
+        lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG;
         show();
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager m = dialogWindow.getWindowManager();
@@ -157,7 +156,6 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         lp.height = height;
         //lp.alpha = 0.9f;
         dialogWindow.setAttributes(lp);
-        mListType = type;
     }
 
     @Override
@@ -165,13 +163,8 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         switch (view.getId()) {
         case R.id.tv_right_open:
             Intent intent;
-            if (mListType == 0) {
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-            } else {
-                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
-            }
+            mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             StartupMenuAdapter.openAppBroadcast(mContext);
@@ -228,11 +221,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             dialogDismiss();
             break;
         case R.id.tv_right_uninstall:
-            if (mListType == 0) {
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            } else {
-                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-            }
+            mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
             Uri uri = Uri.parse("package:" + mPkgName);
             Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
             intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

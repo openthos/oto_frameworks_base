@@ -44,7 +44,6 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
     private MySqliteOpenHelper mMsoh;
-    private int mListType;
     private String mPkgName;
 
     public StartMenuUsuallyDialog(Context context) {
@@ -100,7 +99,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         }
     }
 
-    public void showDialog(int x, int y, int height, int width, int type) {
+    public void showDialog(int x, int y, int height, int width) {
         show();
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -122,7 +121,6 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         lp.width = width;
         lp.height = height;
         dialogWindow.setAttributes(lp);
-        mListType = type;
     }
 
     @Override
@@ -130,13 +128,8 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         switch (view.getId()) {
         case R.id.tv_right_usually_open:
             Intent intent;
-            if (mListType == 0) {
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-            } else {
-                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
-            }
+            mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+            intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             StartupMenuAdapter.openAppBroadcast(mContext);
@@ -189,11 +182,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of save used database
     private void addUsedNum() {
         String pkgName = "";
-        if (mListType == 0) {
-            pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-        } else {
-            pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-        }
+        pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
         Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
                                      new String[] { pkgName });
         cursor.moveToNext();
@@ -216,11 +205,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of run pc mode
     private void runPcMode() {
         Intent intent;
-        if (mListType == 0) {
-            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-        } else {
-            intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
-        }
+        intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -228,11 +213,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of run phone mode
     private void runPhoneMode() {
         Intent intent;
-        if (mListType == 0) {
-            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-        } else {
-            intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
-        }
+        intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
                             | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TOP);
