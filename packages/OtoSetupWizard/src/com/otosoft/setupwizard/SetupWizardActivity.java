@@ -99,6 +99,7 @@ public class SetupWizardActivity extends BaseActivity {
                         updateLocale(mCurrentLocale);
                         break;
                     default:
+                        mCurrentLocale = Locale.CHINA;
                         updateLocale(mCurrentLocale);
                         break;
                 }
