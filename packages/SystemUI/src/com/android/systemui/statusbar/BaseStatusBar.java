@@ -1455,7 +1455,10 @@ public abstract class BaseStatusBar extends SystemUI implements
         notificationItemDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 removeNotification(sbn.getKey(), mRankingMap);
-                 updateNotificationRanking(mRankingMap);
+                updateNotificationRanking(mRankingMap);
+                if (mNotificationData.getActiveNotifications().size() <= 0) {
+                    onChangeUserInfo(false);
+                }
             }
         });
 
