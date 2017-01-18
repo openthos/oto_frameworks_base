@@ -49,8 +49,15 @@ public class WifiContentView extends LinearLayout {
                                                     "com.android.settings.wifi.WifiSettings");
             intent.setComponent(comp);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            sendBroadcastWifiIcon(mBar);
             mBar.mContext.startActivity(intent);
         }
         return true;
+    }
+
+    public void sendBroadcastWifiIcon(PhoneStatusBar bar) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.STATUS_BAR_CHANGE_ICON);
+        bar.mContext.sendBroadcast(intent);
     }
 }

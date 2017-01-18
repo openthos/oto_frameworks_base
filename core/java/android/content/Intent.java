@@ -3568,7 +3568,10 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.statusbar.info.hide.custom";
     public static final String STATUS_BAR_INFO_SHOW_CUSTOM =
                                       "android.intent.statusbar.info.show.custom";
-
+    public static final String STATUS_BAR_WIFI_ICON =
+                                      "android.intent.statusbar.wifi.icon";
+    public static final String STATUS_BAR_CHANGE_ICON =
+                                      "android.intent.statusbar.change.icon";
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).

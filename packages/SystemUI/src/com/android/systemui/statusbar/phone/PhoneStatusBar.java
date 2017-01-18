@@ -222,6 +222,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.systemui.util.StatusBarSqlDatabase;
 import android.app.Dialog;
+import android.net.wifi.WifiManager;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -263,6 +264,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int MSG_CLOSE_PANELS = 1001;
     private static final int MSG_OPEN_SETTINGS_PANEL = 1002;
     private static final int MSG_LAUNCH_TRANSITION_TIMEOUT = 1003;
+    private static final int DEFAULT_CODE = -1;
     // 1020-1040 reserved for BaseStatusBar
 
     // Time after we abort the launch transition.
@@ -305,6 +307,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     PhoneStatusBarPolicy mIconPolicy;
     private boolean mIsShowwing = true;
+    boolean mIsWifiIcon = true;
     // These are no longer handled by the policy, because we need custom strategies for them
     BluetoothControllerImpl mBluetoothController;
     SecurityControllerImpl mSecurityController;
@@ -1233,6 +1236,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         IntentFilter filter = new IntentFilter();
         filter.addAction(MEDIA_VOLUME_CHANGED);
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(Intent.STATUS_BAR_WIFI_ICON);
+        filter.addAction(Intent.STATUS_BAR_CHANGE_ICON);
         mContext.registerReceiver(mVolumeReceiver, filter);
     }
 
@@ -1270,6 +1276,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                                                         R.drawable.statusbar_battery_low));
                     }
                 }
+            } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+                if (mIsWifiIcon) {
+                    switch (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, DEFAULT_CODE)) {
+                        case WifiManager.WIFI_STATE_DISABLED:
+                            mWifiButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.status_bar_no_wifi));
+                            break;
+                        default:
+                            mWifiButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.statusbar_wifi));
+                            break;
+                    }
+                }
+            }
+            if (intent.getAction().equals(Intent.STATUS_BAR_WIFI_ICON)) {  //ethnet
+                mWifiButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.status_bar_pc_icon));
+                mIsWifiIcon = false;
+            }
+            if (intent.getAction().equals(Intent.STATUS_BAR_CHANGE_ICON) && (!mIsWifiIcon)) {
+                mWifiButton.setImageDrawable(mContext.getDrawable(
+                                                        R.drawable.statusbar_wifi));
+                mIsWifiIcon = true;
             }
         }
     }
