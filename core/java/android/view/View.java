@@ -4520,8 +4520,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             scrollabilityCache.scrollBar = new ScrollBarDrawable();
         }
 
-        scrollabilityCache.state = ScrollabilityCache.ON;
-        scrollabilityCache.fadeScrollBars = false;
+        final boolean fadeScrollbars = a.getBoolean(R.styleable.View_fadeScrollbars, true);
+
+        if (!fadeScrollbars) {
+            scrollabilityCache.state = ScrollabilityCache.ON;
+        }
+        scrollabilityCache.fadeScrollBars = fadeScrollbars;
 
 
         scrollabilityCache.scrollBarFadeDuration = a.getInt(
@@ -12550,8 +12554,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     public void setScrollbarFadingEnabled(boolean fadeScrollbars) {
         initScrollCache();
         final ScrollabilityCache scrollabilityCache = mScrollCache;
-        scrollabilityCache.fadeScrollBars = false;
-        scrollabilityCache.state = ScrollabilityCache.ON;
+        scrollabilityCache.fadeScrollBars = fadeScrollbars;
+        if (fadeScrollbars) {
+            scrollabilityCache.state = ScrollabilityCache.OFF;
+        } else {
+            scrollabilityCache.state = ScrollabilityCache.ON;
+        }
     }
 
     /**
@@ -12844,7 +12852,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         }
     }
 
-    private int getScrollBarInternal(boolean isVertical) {
+    private int getScrollBarInternal(WindowDecorView decor, boolean isVertical) {
         if ((mScrollCache == null) || (mScrollCache.scrollBar == null)) {
             return 0;
         }
@@ -12852,16 +12860,18 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         if (size <= 0) {
             size = mScrollCache.scrollBarSize;
         }
-        size *= SCROLL_BAR_SIZE_FACTOR;
+        if ((decor != null) && (decor.getScrollView() == this)) {
+            size *= SCROLL_BAR_SIZE_FACTOR;
+        }
         return size;
     }
 
-    public int getScrollBarThickH() {
-        return getScrollBarInternal(false);
+    public int getScrollBarThickH(WindowDecorView decor) {
+        return getScrollBarInternal(decor, false);
     }
 
-    public int getScrollBarThickV() {
-        return getScrollBarInternal(true);
+    public int getScrollBarThickV(WindowDecorView decor) {
+        return getScrollBarInternal(decor, true);
     }
 
     /**
@@ -12878,14 +12888,20 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         if (cache != null) {
 
             int state = cache.state;
+            WindowDecorView decor = null;
 
-            if (state == ScrollabilityCache.OFF) {
+            if (getViewRootImpl().getView() instanceof WindowDecorView) {
+                decor = (WindowDecorView) getViewRootImpl().getView();
+            }
+
+            boolean canDisappear = (decor == null) || !decor.setScrollView(this);
+            if (canDisappear && (state == ScrollabilityCache.OFF)) {
                 return;
             }
 
             boolean invalidate = false;
 
-            if (state == ScrollabilityCache.FADING) {
+            if (canDisappear && (state == ScrollabilityCache.FADING)) {
                 // We're fading -- get our fade interpolation
                 if (cache.interpolatorValues == null) {
                     cache.interpolatorValues = new float[1];
@@ -12919,11 +12935,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             final boolean drawVerticalScrollBar =
                 (viewFlags & SCROLLBARS_VERTICAL) == SCROLLBARS_VERTICAL
                 && !isVerticalScrollBarHidden();
-            WindowDecorView decor = null;
-
-            if (getViewRootImpl().getView() instanceof WindowDecorView) {
-                decor = (WindowDecorView) getViewRootImpl().getView();
-            }
 
             if (drawVerticalScrollBar || drawHorizontalScrollBar) {
                 final int width = mRight - mLeft;
@@ -12940,18 +12951,15 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 int right;
                 int bottom;
 
-                if (decor != null) {
-                    if (decor.getScrollView() != this) {
-                        decor.setScrollView(this);
-                    }
+                if (!canDisappear) {
                     decor.enableScroll(this, drawHorizontalScrollBar, drawVerticalScrollBar);
                 }
 
                 if (drawHorizontalScrollBar) {
-                    int size = getScrollBarThickH();
+                    int size = getScrollBarThickH(decor);
                     int range = computeHorizontalScrollRange();
 
-                    if ((decor != null) && (decor.getScrollView() == this)) {
+                    if (!canDisappear) {
                         decor.setScrollBarRangeH(range);
                     }
                     scrollBar.setParameters(range,
@@ -12970,10 +12978,10 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 }
 
                 if (drawVerticalScrollBar) {
-                    int size = getScrollBarThickV();
+                    int size = getScrollBarThickV(decor);
                     int range = computeVerticalScrollRange();
 
-                    if ((decor != null) && (decor.getScrollView() == this)) {
+                    if (!canDisappear) {
                         decor.setScrollBarRangeV(range);
                     }
                     scrollBar.setParameters(range,
@@ -13001,10 +13009,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                         invalidate(left, top, right, bottom);
                     }
                 }
-            } else if (decor != null) {
-                if (decor.getScrollView() == this) {
-                    decor.enableScroll(this, false, false);
-                }
+            } else if (!canDisappear) {
+                decor.enableScroll(this, false, false);
             }
         }
     }

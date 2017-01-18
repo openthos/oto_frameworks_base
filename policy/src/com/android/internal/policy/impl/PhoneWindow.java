@@ -2525,7 +2525,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 return false;
             }
 
-            if (enableH && (y >= (rect.bottom - scrollView.getScrollBarThickH()))) {
+            if (enableH && (y >= (rect.bottom - scrollView.getScrollBarThickH(this)))) {
                 int range = getScrollBarRangeH();
                 int size = rect.width();
                 int length = Math.round((float) size * size / range);
@@ -2567,7 +2567,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 return true;
             }
 
-            if (enableV && (x >= (rect.right - scrollView.getScrollBarThickV()))) {
+            if (enableV && (x >= (rect.right - scrollView.getScrollBarThickV(this)))) {
                 int range = getScrollBarRangeV();
                 int size = rect.height();
                 int length = Math.round((float) size * size / range);

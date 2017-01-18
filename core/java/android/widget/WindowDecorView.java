@@ -125,6 +125,9 @@ public abstract class WindowDecorView extends FrameLayout {
     }
 
     public boolean setScrollView(View view) {
+        if (mScrollView == view) {
+            return true;
+        }
         if ((view != null) && ((getWidth() - view.getWidth() > SCROLLVIEW_DIFF_MAX_WIDTH)
                       || (getHeight() - view.getHeight() > SCROLLVIEW_DIFF_MAX_HEIGHT))) {
             return false;
