@@ -26,12 +26,20 @@ public abstract class WindowDecorView extends FrameLayout {
 
     private static final String TAG = "WindowDecorView";
     private static final int DIALOG_HAS_HEADER_MIN_HEIGHT = 300;
+    private static final int SCROLLVIEW_DIFF_MAX_WIDTH = 120;
+    private static final int SCROLLVIEW_DIFF_MAX_HEIGHT = 500;
 
     private Window mWindow;
 
     private View mDialogView = null;
     private Window mDialogParentWindow = null;
     private View mDialogParentDecor = null;
+
+    private View mScrollView = null;
+    private int mScrollBarRangeH = 0;
+    private int mScrollBarRangeV = 0;
+    private boolean mScrollHEnabled = false;
+    private boolean mScrollVEnabled = false;
 
     private boolean mMayMSOfficeFirstSkipView = false;
 
@@ -98,5 +106,51 @@ public abstract class WindowDecorView extends FrameLayout {
 
     public int getDialogTopOffset() {
         return (mDialogParentDecor.getHeight() - mDialogView.getHeight()) / 2;
+    }
+
+    public void enableScroll(View view, boolean enabledH, boolean enabledV) {
+        if ((mScrollView == null) || (view != mScrollView)) {
+            return;
+        }
+        mScrollHEnabled = enabledH;
+        mScrollVEnabled = enabledV;
+    }
+
+    public boolean isEnableScrollH() {
+        return mScrollHEnabled;
+    }
+
+    public boolean isEnableScrollV() {
+        return mScrollVEnabled;
+    }
+
+    public boolean setScrollView(View view) {
+        if ((view != null) && ((getWidth() - view.getWidth() > SCROLLVIEW_DIFF_MAX_WIDTH)
+                      || (getHeight() - view.getHeight() > SCROLLVIEW_DIFF_MAX_HEIGHT))) {
+            return false;
+        }
+        mScrollView = view;
+        enableScroll(view, false, false);
+        return true;
+    }
+
+    public View getScrollView() {
+        return mScrollView;
+    }
+
+    public void setScrollBarRangeH(int size) {
+        mScrollBarRangeH = size;
+    }
+
+    public int getScrollBarRangeH() {
+        return mScrollBarRangeH;
+    }
+
+    public void setScrollBarRangeV(int size) {
+        mScrollBarRangeV = size;
+    }
+
+    public int getScrollBarRangeV() {
+        return mScrollBarRangeV;
     }
 }

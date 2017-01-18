@@ -160,6 +160,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
 
+    private final static int SCROLLBAR_MS_EXCEL_PADDING_TOP = 25;
+    private final static int SCROLLBAR_MS_EXCEL_PADDING_LEFT = 50;
+
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
             (1 << FEATURE_CONTENT_TRANSITIONS) |
@@ -2305,6 +2308,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private int mRootScrollY = 0;
 
         private boolean mHeaderChecked = false;
+        private boolean mScrollDragH = false;
+        private boolean mScrollDragV = false;
 
         public DecorView(Context context, int featureId) {
             super(context);
@@ -2476,8 +2481,149 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             return false;
         }
 
+        private void scrollWork(View scrollView, int off, int max, boolean vertical) {
+            if (off < 0) {
+                off = 0;
+            }
+            if (off > max) {
+                off = max;
+            }
+            if (vertical) {
+                scrollView.scrollBy(0, off - scrollView.getScrollY());
+            } else {
+                scrollView.scrollBy(off - scrollView.getScrollX(), 0);
+            }
+        }
+
+        private boolean processScrollBarTouchEvent(MotionEvent ev) {
+            boolean enableH, enableV;
+            int x, y;
+            Rect rect;
+            View scrollView = getScrollView();
+
+            if (scrollView == null) {
+                return false;
+            }
+
+            enableH = isEnableScrollH();
+            enableV = isEnableScrollV();
+            if (!enableH && !enableV) {
+                return false;
+            }
+
+            rect = new Rect();
+            scrollView.getBoundsOnScreen(rect);
+            if (getContext().getApplicationInfo()
+                              .packageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {
+                rect.top +=  SCROLLBAR_MS_EXCEL_PADDING_TOP;
+                rect.left +=  SCROLLBAR_MS_EXCEL_PADDING_LEFT;
+            }
+            x = (int) ev.getRawX();
+            y = (int) ev.getRawY();
+            if ((x < rect.left) || (x > rect.right)
+                    || (y < rect.top) || (y > rect.bottom)) {
+                return false;
+            }
+
+            if (enableH && (y >= (rect.bottom - scrollView.getScrollBarThickH()))) {
+                int range = getScrollBarRangeH();
+                int size = rect.width();
+                int length = Math.round((float) size * size / range);
+                if (length < size) {
+                    int scrollX = scrollView.getScrollX();
+                    int offset = x - rect.left;
+                    int origX = Math.round((float) scrollX * (size - length) / (range - size))
+                                + length / 2;
+                    switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if ((offset >= (origX - length / 2)) && (offset <= (origX + length / 2))) {
+                            mScrollDragH = true;
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (mScrollDragH) {
+                            scrollX = Math.round((float) (offset - length / 2)
+                                                         * (range - size) / (size - length));
+                            scrollWork(scrollView, scrollX, range - size, false);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // Page left
+                        if (!mScrollDragH && (offset < (origX - length / 2))) {
+                            scrollX -= size / 4;
+                        // Page right
+                        } else if (!mScrollDragH && (offset > (origX + length / 2))) {
+                            scrollX += size / 4;
+                        } else {
+                            scrollX = Math.round((float) (offset - length / 2)
+                                                         * (range - size) / (size - length));
+                        }
+                        scrollWork(scrollView, scrollX, range - size, false);
+                        mScrollDragH = false;
+                    default:
+                        break;
+                    }
+                }
+                return true;
+            }
+
+            if (enableV && (x >= (rect.right - scrollView.getScrollBarThickV()))) {
+                int range = getScrollBarRangeV();
+                int size = rect.height();
+                int length = Math.round((float) size * size / range);
+                if (length < size) {
+                    int scrollY = scrollView.getScrollY();
+                    int offset = y - rect.top;
+                    int origY = Math.round((float) scrollY * (size - length) / (range - size))
+                                + length / 2;
+
+                    switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if ((offset >= (origY - length / 2)) && (offset <= (origY + length / 2))) {
+                            mScrollDragV = true;
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (mScrollDragV) {
+                            scrollY = Math.round((float) (offset - length / 2)
+                                                         * (range - size) / (size - length));
+                            scrollWork(scrollView, scrollY, range - size, true);
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // Page up
+                        if (!mScrollDragV && (offset < (origY - length / 2))) {
+                            scrollY -= size;
+                        // Page down
+                        } else if (!mScrollDragV && (offset > (origY + length / 2))) {
+                            scrollY += size;
+                        } else {
+                            scrollY = Math.round((float) (offset - length / 2)
+                                                         * (range - size) / (size - length));
+                        }
+                        scrollWork(scrollView, scrollY, range - size, true);
+                        mScrollDragV = false;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                return true;
+            }
+
+            return false;
+        }
+
         @Override
         public boolean dispatchTouchEvent(MotionEvent ev) {
+            if (processScrollBarTouchEvent(ev)) {
+                return true;
+            }
+            if (ev.getAction() == MotionEvent.ACTION_UP) {
+                mScrollDragH = false;
+                mScrollDragV = false;
+            }
+
             final Callback cb = getCallback();
             return cb != null && !isDestroyed() && mFeatureId < 0 ? cb.dispatchTouchEvent(ev)
                     : super.dispatchTouchEvent(ev);
