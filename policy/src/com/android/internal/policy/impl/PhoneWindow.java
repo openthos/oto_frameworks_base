@@ -3951,23 +3951,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                                                    + getTopFramePadding();
         }
 
-        public BackgroundDrawable getDefaultDrawable() {
-            int color;
-            if ((mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) == 0)
-                || (mPackageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)) {
-                color = COLOR_TENCENT_APP;
-            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) == 0) {
-                color = COLOR_OFFICE_WORD;
-            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {
-                color = COLOR_OFFICE_EXCEL;
-            } else if (mPackageName.compareTo(ApplicationInfo.APPNAME_OFFICE_POWERPOINT) == 0) {
-                color = COLOR_OFFICE_POWERPOINT;
-            } else {
-                color = Color.BLACK;
-            }
-            return getDrawableByColor(color);
-        }
-
         public BackgroundDrawable getDrawableByColor(int color) {
             if (mDrawable == null) {
                 mDrawable = new BackgroundDrawable();

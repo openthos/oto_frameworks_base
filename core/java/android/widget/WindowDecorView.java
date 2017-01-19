@@ -17,6 +17,7 @@
 package android.widget;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Rect;
 import android.view.Window;
 import android.view.View;
@@ -129,6 +130,7 @@ public abstract class WindowDecorView extends FrameLayout {
     }
 
     public boolean setScrollView(View view) {
+        String pkgName;
         if (mScrollView == view) {
             return true;
         }
@@ -136,6 +138,14 @@ public abstract class WindowDecorView extends FrameLayout {
                       || (getHeight() - view.getHeight() > SCROLLVIEW_DIFF_MAX_HEIGHT))) {
             return false;
         }
+
+        pkgName = getContext().getApplicationInfo().packageName;
+        if((pkgName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) != 0)
+              && (pkgName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) != 0)
+              && (pkgName.compareTo(ApplicationInfo.APPNAME_ANDROID_BROWSER) != 0)) {
+            return false;
+        }
+
         mScrollView = view;
         enableScroll(view, false, false);
         return true;

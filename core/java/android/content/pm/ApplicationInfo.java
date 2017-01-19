@@ -47,11 +47,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OFFICE_WORD = "com.microsoft.office.word";
     public static final String APPNAME_OFFICE_EXCEL = "com.microsoft.office.excel";
     public static final String APPNAME_OFFICE_POWERPOINT = "com.microsoft.office.powerpoint";
-    public static final String APPNAME_MICROSOFT_OFFICE_EXCEL = "com.microsoft.office.excel";
-    public static final String APPNAME_MICROSOFT_OFFICE_WORD = "com.microsoft.office.word";
-    public static final String APPNAME_MICROSOFT_OFFICE_POWERPOINT
-                                                        = "com.microsoft.office.powerpoint";
-    public static final String APPNAME_MICROSOFT_OFFICE_OUTLOOK = "com.microsoft.office.outlook";
+    public static final String APPNAME_OFFICE_OUTLOOK = "com.microsoft.office.outlook";
     public static final String APPNAME_ADOBE_READER = "com.adobe.reader";
     public static final String APPNAME_ESTRONGS_ANDROID_POP = "com.estrongs.android.pop";
     public static final String APPNAME_ORG_MOZILLA_FIREFOX = "org.mozilla.firefox";
@@ -694,7 +690,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo
                                         (APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
-                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_OUTLOOK) == 0)
+                                     || (pkgName.compareTo(APPNAME_OFFICE_OUTLOOK) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
 
     }
@@ -703,9 +699,9 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         return (pkgName != null) && ((pkgName.compareTo(APPNAME_CAMERA2) == 0)
                                      || (pkgName.compareTo(APPNAME_WPS) == 0)
                                      || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
-                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_EXCEL) == 0)
-                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_WORD) == 0)
-                                     || (pkgName.compareTo(APPNAME_MICROSOFT_OFFICE_POWERPOINT)
+                                     || (pkgName.compareTo(APPNAME_OFFICE_EXCEL) == 0)
+                                     || (pkgName.compareTo(APPNAME_OFFICE_WORD) == 0)
+                                     || (pkgName.compareTo(APPNAME_OFFICE_POWERPOINT)
                                         == 0)
                                      || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
                                      || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)

@@ -12894,7 +12894,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 decor = (WindowDecorView) getViewRootImpl().getView();
             }
 
-            boolean canDisappear = (decor == null) || !decor.setScrollView(this);
+            boolean canDisappear = (cache.scrollBar == null) || (decor == null)
+                                     || !decor.setScrollView(this);
             if (canDisappear && (state == ScrollabilityCache.OFF)) {
                 return;
             }
