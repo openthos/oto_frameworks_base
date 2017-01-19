@@ -38,6 +38,10 @@ public abstract class WindowDecorView extends FrameLayout {
     private View mScrollView = null;
     private int mScrollBarRangeH = 0;
     private int mScrollBarRangeV = 0;
+    private int mScrollBarOffsetH = 0;
+    private int mScrollBarOffsetV = 0;
+    private int mScrollBarExtentH = 0;
+    private int mScrollBarExtentV = 0;
     private boolean mScrollHEnabled = false;
     private boolean mScrollVEnabled = false;
 
@@ -141,19 +145,51 @@ public abstract class WindowDecorView extends FrameLayout {
         return mScrollView;
     }
 
-    public void setScrollBarRangeH(int size) {
-        mScrollBarRangeH = size;
+    public void setScrollBarRangeH(int range) {
+        mScrollBarRangeH = range;
     }
 
     public int getScrollBarRangeH() {
         return mScrollBarRangeH;
     }
 
-    public void setScrollBarRangeV(int size) {
-        mScrollBarRangeV = size;
+    public void setScrollBarOffsetH(int offset) {
+        mScrollBarOffsetH = offset;
+    }
+
+    public int getScrollBarOffsetH() {
+        return mScrollBarOffsetH;
+    }
+
+    public void setScrollBarExtentH(int extent) {
+        mScrollBarExtentH = extent;
+    }
+
+    public int getScrollBarExtentH() {
+        return mScrollBarExtentH;
+    }
+
+    public void setScrollBarRangeV(int range) {
+        mScrollBarRangeV = range;
     }
 
     public int getScrollBarRangeV() {
         return mScrollBarRangeV;
+    }
+
+    public void setScrollBarOffsetV(int offset) {
+        mScrollBarOffsetV = offset;
+    }
+
+    public int getScrollBarOffsetV() {
+        return mScrollBarOffsetV;
+    }
+
+    public void setScrollBarExtentV(int extent) {
+        mScrollBarExtentV = extent;
+    }
+
+    public int getScrollBarExtentV() {
+        return mScrollBarExtentV;
     }
 }

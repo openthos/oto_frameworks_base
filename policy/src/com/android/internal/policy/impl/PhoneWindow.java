@@ -160,9 +160,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
 
-    private final static int SCROLLBAR_MS_EXCEL_PADDING_TOP = 25;
-    private final static int SCROLLBAR_MS_EXCEL_PADDING_LEFT = 50;
-
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
             (1 << FEATURE_CONTENT_TRANSITIONS) |
@@ -2497,7 +2494,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         private boolean processScrollBarTouchEvent(MotionEvent ev) {
             boolean enableH, enableV;
-            int x, y;
+            int x, y, sizeX, sizeY, lengthX, lengthY;
+            int rangeX, offsetX, extentX, rangeY, offsetY, extentY, scrollX, scrollY, diffX, diffY;
+            float factorX, factorY;
             Rect rect;
             View scrollView = getScrollView();
 
@@ -2511,102 +2510,103 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 return false;
             }
 
+            rangeX = getScrollBarRangeH();
+            offsetX = getScrollBarOffsetH();
+            extentX = getScrollBarExtentH();
+            rangeY = getScrollBarRangeV();
+            offsetY = getScrollBarOffsetV();
+            extentY = getScrollBarExtentV();
+            scrollX = scrollView.getScrollX();
+            scrollY = scrollView.getScrollY();
+
             rect = new Rect();
             scrollView.getBoundsOnScreen(rect);
-            if (getContext().getApplicationInfo()
-                              .packageName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) == 0) {
-                rect.top +=  SCROLLBAR_MS_EXCEL_PADDING_TOP;
-                rect.left +=  SCROLLBAR_MS_EXCEL_PADDING_LEFT;
-            }
+            sizeX = rect.width();
+            sizeY = rect.height();
+            lengthX = Math.round((float) sizeX * extentX / rangeX);
+            lengthY = Math.round((float) sizeY * extentY / rangeY);
+            factorX = (float) (sizeX - lengthX) / (rangeX - extentX);
+            factorY = (float) (sizeY - lengthY) / (rangeY - extentY);
+            diffX = (offsetX - scrollX) / 2;
+            diffY = (offsetY - scrollY) / 2;
+            rect.left += Math.round(diffX * factorX);
+            rect.top += Math.round(diffY * factorY);
+
             x = (int) ev.getRawX();
             y = (int) ev.getRawY();
-            if ((x < rect.left) || (x > rect.right)
-                    || (y < rect.top) || (y > rect.bottom)) {
+            if ((x < rect.left) || (x > rect.right) || (y < rect.top) || (y > rect.bottom)) {
                 return false;
             }
 
-            if (enableH && (y >= (rect.bottom - scrollView.getScrollBarThickH(this)))) {
-                int range = getScrollBarRangeH();
-                int size = rect.width();
-                int length = Math.round((float) size * size / range);
-                if (length < size) {
-                    int scrollX = scrollView.getScrollX();
-                    int offset = x - rect.left;
-                    int origX = Math.round((float) scrollX * (size - length) / (range - size))
-                                + length / 2;
-                    switch (ev.getAction()) {
+            if (enableH && (y >= (rect.bottom - scrollView.getScrollBarThickH(this)))
+                  && (lengthX < sizeX)) {
+
+                int offset = x - rect.left;
+                int origX = Math.round(offsetX * factorX) + lengthX / 2;
+                switch (ev.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if ((offset >= (origX - length / 2)) && (offset <= (origX + length / 2))) {
+                        if ((offset >= (origX - lengthX / 2))
+                              && (offset <= (origX + lengthX / 2))) {
                             mScrollDragH = true;
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (mScrollDragH) {
-                            scrollX = Math.round((float) (offset - length / 2)
-                                                         * (range - size) / (size - length));
-                            scrollWork(scrollView, scrollX, range - size, false);
+                            scrollX = Math.round((offset - lengthX / 2) / factorX) - diffX;
+                            scrollWork(scrollView, scrollX, rangeX - extentX, false);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
                         // Page left
-                        if (!mScrollDragH && (offset < (origX - length / 2))) {
-                            scrollX -= size / 4;
+                        if (!mScrollDragH && (offset < (origX - lengthX / 2))) {
+                            scrollX -= extentX / 4;
                         // Page right
-                        } else if (!mScrollDragH && (offset > (origX + length / 2))) {
-                            scrollX += size / 4;
+                        } else if (!mScrollDragH && (offset > (origX + lengthX / 2))) {
+                            scrollX += extentX / 4;
                         } else {
-                            scrollX = Math.round((float) (offset - length / 2)
-                                                         * (range - size) / (size - length));
+                            scrollX = Math.round((offset - lengthX / 2) / factorX) - diffX;
                         }
-                        scrollWork(scrollView, scrollX, range - size, false);
+                        scrollWork(scrollView, scrollX, rangeX - extentX, false);
                         mScrollDragH = false;
                     default:
                         break;
-                    }
                 }
                 return true;
             }
 
-            if (enableV && (x >= (rect.right - scrollView.getScrollBarThickV(this)))) {
-                int range = getScrollBarRangeV();
-                int size = rect.height();
-                int length = Math.round((float) size * size / range);
-                if (length < size) {
-                    int scrollY = scrollView.getScrollY();
-                    int offset = y - rect.top;
-                    int origY = Math.round((float) scrollY * (size - length) / (range - size))
-                                + length / 2;
+            if (enableV && (x >= (rect.right - scrollView.getScrollBarThickV(this)))
+                  && (lengthY < sizeY)) {
 
-                    switch (ev.getAction()) {
+                int offset = y - rect.top;
+                int origY = Math.round(offsetY * factorY) + lengthY / 2;
+                switch (ev.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if ((offset >= (origY - length / 2)) && (offset <= (origY + length / 2))) {
+                        if ((offset >= (origY - lengthY / 2))
+                              && (offset <= (origY + lengthY / 2))) {
                             mScrollDragV = true;
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
                         if (mScrollDragV) {
-                            scrollY = Math.round((float) (offset - length / 2)
-                                                         * (range - size) / (size - length));
-                            scrollWork(scrollView, scrollY, range - size, true);
+                            scrollY = Math.round((offset - lengthY / 2) / factorY) - diffY;
+                            scrollWork(scrollView, scrollY, rangeY - extentY, true);
                         }
                         break;
                     case MotionEvent.ACTION_UP:
                         // Page up
-                        if (!mScrollDragV && (offset < (origY - length / 2))) {
-                            scrollY -= size;
+                        if (!mScrollDragV && (offset < (origY - lengthY / 2))) {
+                            scrollY -= extentY;
                         // Page down
-                        } else if (!mScrollDragV && (offset > (origY + length / 2))) {
-                            scrollY += size;
+                        } else if (!mScrollDragV && (offset > (origY + lengthY / 2))) {
+                            scrollY += extentY;
                         } else {
-                            scrollY = Math.round((float) (offset - length / 2)
-                                                         * (range - size) / (size - length));
+                            scrollY = Math.round((offset - lengthY / 2) / factorY) - diffY;
                         }
-                        scrollWork(scrollView, scrollY, range - size, true);
+                        scrollWork(scrollView, scrollY, rangeY - extentY, true);
                         mScrollDragV = false;
                         break;
                     default:
                         break;
-                    }
                 }
                 return true;
             }

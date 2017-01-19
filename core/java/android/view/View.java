@@ -12958,13 +12958,15 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 if (drawHorizontalScrollBar) {
                     int size = getScrollBarThickH(decor);
                     int range = computeHorizontalScrollRange();
+                    int offset = computeHorizontalScrollOffset();
+                    int extent = computeHorizontalScrollExtent();
 
                     if (!canDisappear) {
                         decor.setScrollBarRangeH(range);
+                        decor.setScrollBarOffsetH(offset);
+                        decor.setScrollBarExtentH(extent);
                     }
-                    scrollBar.setParameters(range,
-                                            computeHorizontalScrollOffset(),
-                                            computeHorizontalScrollExtent(), false);
+                    scrollBar.setParameters(range, offset, extent, false);
                     final int verticalScrollBarGap = drawVerticalScrollBar ?
                             getVerticalScrollbarWidth() : 0;
                     top = scrollY + height - size - (mUserPaddingBottom & inside);
@@ -12980,13 +12982,15 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 if (drawVerticalScrollBar) {
                     int size = getScrollBarThickV(decor);
                     int range = computeVerticalScrollRange();
+                    int offset = computeVerticalScrollOffset();
+                    int extent = computeVerticalScrollExtent();
 
                     if (!canDisappear) {
                         decor.setScrollBarRangeV(range);
+                        decor.setScrollBarOffsetV(offset);
+                        decor.setScrollBarExtentV(extent);
                     }
-                    scrollBar.setParameters(range,
-                                            computeVerticalScrollOffset(),
-                                            computeVerticalScrollExtent(), true);
+                    scrollBar.setParameters(range, offset, extent, true);
                     int verticalScrollbarPosition = mVerticalScrollbarPosition;
                     if (verticalScrollbarPosition == SCROLLBAR_POSITION_DEFAULT) {
                         verticalScrollbarPosition = isLayoutRtl() ?
