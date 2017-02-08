@@ -39,6 +39,7 @@ public class IInputConnectionWrapper extends IInputContext.Stub {
     private static final int DO_GET_CURSOR_CAPS_MODE = 30;
     private static final int DO_GET_EXTRACTED_TEXT = 40;
     private static final int DO_COMMIT_TEXT = 50;
+    private static final int DO_LAUNCHER_FOCUS = 51;
     private static final int DO_COMMIT_COMPLETION = 55;
     private static final int DO_COMMIT_CORRECTION = 56;
     private static final int DO_SET_SELECTION = 57;
@@ -113,6 +114,10 @@ public class IInputConnectionWrapper extends IInputContext.Stub {
     
     public void commitText(CharSequence text, int newCursorPosition) {
         dispatchMessage(obtainMessageIO(DO_COMMIT_TEXT, newCursorPosition, text));
+    }
+
+    public void isLauncherFocus(boolean isFocus) {
+        dispatchMessage(obtainMessageO(DO_LAUNCHER_FOCUS, isFocus));
     }
 
     public void commitCompletion(CompletionInfo text) {
@@ -284,6 +289,15 @@ public class IInputConnectionWrapper extends IInputContext.Stub {
                     return;
                 }
                 ic.commitText((CharSequence)msg.obj, msg.arg1);
+                return;
+            }
+            case DO_LAUNCHER_FOCUS: {
+                InputConnection ic = mInputConnection.get();
+                if (ic == null || !isActive()) {
+                    Log.w(TAG, "isLauncherFocus on inactive InputConnection");
+                    return;
+                }
+                ic.isLauncherFocus((boolean)msg.obj);
                 return;
             }
             case DO_SET_SELECTION: {

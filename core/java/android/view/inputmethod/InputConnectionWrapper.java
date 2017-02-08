@@ -82,6 +82,10 @@ public class InputConnectionWrapper implements InputConnection {
         return mTarget.commitText(text, newCursorPosition);
     }
 
+    public boolean isLauncherFocus(boolean isFocus) {
+        return mTarget.isLauncherFocus(isFocus);
+    }
+
     public boolean commitCompletion(CompletionInfo text) {
         return mTarget.commitCompletion(text);
     }

@@ -34,6 +34,8 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewRootImpl;
+import android.inputmethodservice.InputMethodService;
+import android.content.Intent;
 
 class ComposingText implements NoCopySpan {
 }
@@ -59,6 +61,8 @@ public class BaseInputConnection implements InputConnection {
     
     Editable mEditable;
     KeyCharacterMap mKeyCharacterMap;
+
+    private boolean mIsLauncherFocus;
     
     BaseInputConnection(InputMethodManager mgr, boolean fullEditor) {
         mIMM = mgr;
@@ -194,9 +198,33 @@ public class BaseInputConnection implements InputConnection {
      */
     public boolean commitText(CharSequence text, int newCursorPosition) {
         if (DEBUG) Log.v(TAG, "commitText " + text);
-        replaceText(text, newCursorPosition, false);
-        mIMM.notifyUserAction();
-        sendCurrentText();
+        if (mIsLauncherFocus) {
+            sendCommitText(text.toString());
+        } else {
+            replaceText(text, newCursorPosition, false);
+            mIMM.notifyUserAction();
+            sendCurrentText();
+        }
+        return true;
+    }
+
+    private void sendCommitText(String commit) {
+        Context context = null;
+        if (mTargetView != null) {
+            context = mTargetView.getContext();
+        } else if (mIMM.mServedView != null) {
+            context = mIMM.mServedView.getContext();
+        }
+        if (context != null) {
+            Intent intent = new Intent(Intent.ACTION_DESKTOP_COMMIT_TEXT);
+            intent.putExtra(Intent.EXTRA_DESKTOP_RESULTTEXT, commit);
+            context.sendBroadcast(intent);
+        }
+
+    }
+
+    public boolean isLauncherFocus(boolean isFocus) {
+        mIsLauncherFocus = isFocus;
         return true;
     }
 
@@ -209,53 +237,55 @@ public class BaseInputConnection implements InputConnection {
     public boolean deleteSurroundingText(int beforeLength, int afterLength) {
         if (DEBUG) Log.v(TAG, "deleteSurroundingText " + beforeLength
                 + " / " + afterLength);
-        final Editable content = getEditable();
-        if (content == null) return false;
+        if (mIsLauncherFocus) {
+            sendCommitText(Intent.EXTRA_DESKTOP_BACK);
+        } else {
+            final Editable content = getEditable();
+            if (content == null) return false;
 
-        beginBatchEdit();
-        
-        int a = Selection.getSelectionStart(content);
-        int b = Selection.getSelectionEnd(content);
+            beginBatchEdit();
 
-        if (a > b) {
-            int tmp = a;
-            a = b;
-            b = tmp;
+            int a = Selection.getSelectionStart(content);
+            int b = Selection.getSelectionEnd(content);
+
+            if (a > b) {
+                int tmp = a;
+                a = b;
+                b = tmp;
+            }
+
+            // ignore the composing text.
+            int ca = getComposingSpanStart(content);
+            int cb = getComposingSpanEnd(content);
+            if (cb < ca) {
+                int tmp = ca;
+                ca = cb;
+                cb = tmp;
+            }
+            if (ca != -1 && cb != -1) {
+                if (ca < a) a = ca;
+                if (cb > b) b = cb;
+            }
+
+            int deleted = 0;
+
+            if (beforeLength > 0) {
+                int start = a - beforeLength;
+                if (start < 0) start = 0;
+                content.delete(start, a);
+                deleted = a - start;
+            }
+
+            if (afterLength > 0) {
+                b = b - deleted;
+
+                int end = b + afterLength;
+                if (end > content.length()) end = content.length();
+
+                content.delete(b, end);
+            }
+            endBatchEdit();
         }
-
-        // ignore the composing text.
-        int ca = getComposingSpanStart(content);
-        int cb = getComposingSpanEnd(content);
-        if (cb < ca) {
-            int tmp = ca;
-            ca = cb;
-            cb = tmp;
-        }
-        if (ca != -1 && cb != -1) {
-            if (ca < a) a = ca;
-            if (cb > b) b = cb;
-        }
-
-        int deleted = 0;
-
-        if (beforeLength > 0) {
-            int start = a - beforeLength;
-            if (start < 0) start = 0;
-            content.delete(start, a);
-            deleted = a - start;
-        }
-
-        if (afterLength > 0) {
-            b = b - deleted;
-
-            int end = b + afterLength;
-            if (end > content.length()) end = content.length();
-
-            content.delete(b, end);
-        }
-        
-        endBatchEdit();
-        
         return true;
     }
 
@@ -516,18 +546,24 @@ public class BaseInputConnection implements InputConnection {
      * attached to the input connection's view.
      */
     public boolean sendKeyEvent(KeyEvent event) {
-        synchronized (mIMM.mH) {
-            ViewRootImpl viewRootImpl = mTargetView != null ? mTargetView.getViewRootImpl() : null;
-            if (viewRootImpl == null) {
-                if (mIMM.mServedView != null) {
-                    viewRootImpl = mIMM.mServedView.getViewRootImpl();
+        if (mIsLauncherFocus && (event.getKeyCode() == KeyEvent.KEYCODE_DEL)
+                && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+            sendCommitText(Intent.EXTRA_DESKTOP_BACK);
+        } else {
+            synchronized (mIMM.mH) {
+                ViewRootImpl viewRootImpl =
+                    mTargetView != null ? mTargetView.getViewRootImpl() : null;
+                if (viewRootImpl == null) {
+                    if (mIMM.mServedView != null) {
+                        viewRootImpl = mIMM.mServedView.getViewRootImpl();
+                    }
+                }
+                if (viewRootImpl != null) {
+                    viewRootImpl.dispatchKeyFromIme(event);
                 }
             }
-            if (viewRootImpl != null) {
-                viewRootImpl.dispatchKeyFromIme(event);
-            }
+            mIMM.notifyUserAction();
         }
-        mIMM.notifyUserAction();
         return false;
     }
     

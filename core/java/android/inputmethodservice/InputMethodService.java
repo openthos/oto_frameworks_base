@@ -64,6 +64,9 @@ import android.view.inputmethod.InputMethodSubtype;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -304,6 +307,9 @@ public class InputMethodService extends AbstractInputMethodService {
     
     int mStatusIcon;
     int mBackDisposition;
+
+    private LauncherReceiver mLauncherReceiver;
+    private boolean mIsLauncher;
 
     final Insets mTmpInsets = new Insets();
     final int[] mTmpLocation = new int[2];
@@ -677,6 +683,12 @@ public class InputMethodService extends AbstractInputMethodService {
         }
         initViews();
         mWindow.getWindow().setLayout(MATCH_PARENT, WRAP_CONTENT);
+
+        mLauncherReceiver = new LauncherReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_DESKTOP_FOCUSED_STATE);
+        intentFilter.addAction(Intent.ACTION_DESKTOP_UNFOCUSED_STATE);
+        registerReceiver(mLauncherReceiver, intentFilter);
     }
 
     /**
@@ -746,6 +758,7 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindow.getWindow().setWindowAnimations(0);
             mWindow.dismiss();
         }
+        unregisterReceiver(mLauncherReceiver);
     }
 
     /**
@@ -1613,6 +1626,7 @@ public class InputMethodService extends AbstractInputMethodService {
                 onStartCandidatesView(mInputEditorInfo, restarting);
             }
         }
+        getCurrentInputConnection().isLauncherFocus(mIsLauncher);
     }
     
     /**
@@ -1804,6 +1818,11 @@ public class InputMethodService extends AbstractInputMethodService {
             }
             return false;
         }
+        if (mIsLauncher) {
+            sendKeyToDesktop(keyCode, event, true);
+            return mIsLauncher;
+        }
+
         return doMovementKey(keyCode, event, MOVEMENT_DOWN);
     }
 
@@ -1849,8 +1868,23 @@ public class InputMethodService extends AbstractInputMethodService {
                 && !event.isCanceled()) {
             return handleBack(true);
         }
-        
+        if (mIsLauncher) {
+            sendKeyToDesktop(keyCode, event, false);
+            return mIsLauncher;
+        }
+
         return doMovementKey(keyCode, event, MOVEMENT_UP);
+    }
+
+    private void sendKeyToDesktop(int keyCode, KeyEvent event, boolean down) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_DESKTOP_INTERCEPT);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Intent.EXTRA_DESKTOP_KEYCODE, keyCode);
+        bundle.putParcelable(Intent.EXTRA_DESKTOP_KEYEVENT, event);
+        bundle.putBoolean(Intent.EXTRA_DESKTOP_ONKEYDOWN, down);
+        intent.putExtra(Intent.EXTRA_DESKTOP_BUNDLE, bundle);
+        sendBroadcast(intent);
     }
 
     /**
@@ -2057,8 +2091,14 @@ public class InputMethodService extends AbstractInputMethodService {
     public void sendKeyChar(char charCode) {
         switch (charCode) {
             case '\n': // Apps may be listening to an enter key to perform an action
-                if (!sendDefaultEditorAction(true)) {
-                    sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER);
+                if (mIsLauncher) {
+                    Intent intent = new Intent(Intent.ACTION_DESKTOP_COMMIT_TEXT);
+                    intent.putExtra(Intent.EXTRA_DESKTOP_RESULTTEXT, Intent.EXTRA_DESKTOP_ENTER);
+                    sendBroadcast(intent);
+                } else {
+                    if (!sendDefaultEditorAction(true)) {
+                        sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER);
+                    }
                 }
                 break;
             default:
@@ -2422,5 +2462,20 @@ public class InputMethodService extends AbstractInputMethodService {
                 + " visibleTopInsets=" + mTmpInsets.visibleTopInsets
                 + " touchableInsets=" + mTmpInsets.touchableInsets
                 + " touchableRegion=" + mTmpInsets.touchableRegion);
+    }
+
+    private class LauncherReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Intent.ACTION_DESKTOP_FOCUSED_STATE:
+                    mIsLauncher = true;
+                    break;
+                case Intent.ACTION_DESKTOP_UNFOCUSED_STATE:
+                    mIsLauncher = false;
+                    break;
+            }
+        }
     }
 }

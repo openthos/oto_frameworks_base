@@ -489,6 +489,8 @@ public interface InputConnection {
      */
     public boolean commitText(CharSequence text, int newCursorPosition);
 
+    public boolean isLauncherFocus(boolean isFocus);
+
     /**
      * Commit a completion the user has selected from the possible ones
      * previously reported to {@link InputMethodSession#displayCompletions

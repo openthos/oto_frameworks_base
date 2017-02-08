@@ -47,6 +47,8 @@ import com.android.internal.view.IInputContextCallback;
     
     void commitText(CharSequence text, int newCursorPosition);
 
+    void isLauncherFocus(boolean isFocus);
+
     void commitCompletion(in CompletionInfo completion);
 
     void commitCorrection(in CorrectionInfo correction);

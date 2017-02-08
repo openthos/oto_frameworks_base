@@ -5723,6 +5723,11 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
         }
 
         @Override
+        public boolean isLauncherFocus(boolean isFocus) {
+            return getTarget().isLauncherFocus(isFocus);
+        }
+
+        @Override
         public boolean commitCompletion(CompletionInfo text) {
             return getTarget().commitCompletion(text);
         }

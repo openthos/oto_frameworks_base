@@ -769,6 +769,17 @@ public class Intent implements Parcelable, Cloneable {
                                      = "android.intent.action.DESKTOP_FOCUSED_STATE";
     public static final String ACTION_DESKTOP_UNFOCUSED_STATE
                                      = "android.intent.action.DESKTOP_UNFOCUSED_STATE";
+    public static final String ACTION_DESKTOP_COMMIT_TEXT
+                                     = "android.intent.action.DESKTOP_COMMIT_TEXT";
+    public static final String ACTION_DESKTOP_INTERCEPT
+                                     = "android.intent.action.DESKTOP_INTERCEPT";
+    public static final String EXTRA_DESKTOP_BUNDLE = "Bundle";
+    public static final String EXTRA_DESKTOP_KEYCODE = "Keycode";
+    public static final String EXTRA_DESKTOP_KEYEVENT = "Keyevent";
+    public static final String EXTRA_DESKTOP_ONKEYDOWN = "Onkeydown";
+    public static final String EXTRA_DESKTOP_RESULTTEXT = "Resulttext";
+    public static final String EXTRA_DESKTOP_ENTER = "Enter";
+    public static final String EXTRA_DESKTOP_BACK = "Back";
 
     /**
      * Represents a shortcut/live folder icon resource.

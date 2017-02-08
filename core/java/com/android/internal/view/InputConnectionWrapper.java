@@ -293,6 +293,15 @@ public class InputConnectionWrapper implements InputConnection {
         }
     }
 
+    public boolean isLauncherFocus(boolean isFocus) {
+        try {
+            mIInputContext.isLauncherFocus(isFocus);
+            return true;
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
+
     public boolean commitCompletion(CompletionInfo text) {
         try {
             mIInputContext.commitCompletion(text);
