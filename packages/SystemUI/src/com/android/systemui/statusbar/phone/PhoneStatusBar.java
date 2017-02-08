@@ -223,6 +223,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.android.systemui.util.StatusBarSqlDatabase;
 import android.app.Dialog;
 import android.net.wifi.WifiManager;
+import android.net.NetworkInfo;
+import android.net.ConnectivityManager;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener {
@@ -1239,6 +1241,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(Intent.STATUS_BAR_WIFI_ICON);
         filter.addAction(Intent.STATUS_BAR_CHANGE_ICON);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mContext.registerReceiver(mVolumeReceiver, filter);
     }
 
@@ -1300,7 +1303,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                                                         R.drawable.statusbar_wifi));
                 mIsWifiIcon = true;
             }
+            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                mIsWifiIcon = !isEthernet(((ConnectivityManager)mContext.getSystemService(
+                                                        Context.CONNECTIVITY_SERVICE)));
+                mWifiButton.setImageDrawable(mIsWifiIcon ? mContext.getDrawable(R.drawable.
+                    statusbar_wifi) : mContext.getDrawable(R.drawable.status_bar_pc_icon));
+            }
         }
+    }
+
+    public boolean isEthernet(ConnectivityManager cm) {
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().
+                   getRealType() == ConnectivityManager.TYPE_ETHERNET;
     }
 
     private void setVolumeIcon(KeyButtonView keyButtonView) {
