@@ -3130,6 +3130,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             return -1;
                         case KeyEvent.KEYCODE_F4:
                             mSkipFocus = true;
+                            mIsHide = true;
                             try {
                                 ActivityManagerNative.getDefault().closeActivityFocused();
                                 if (win.getOwningPackage().equals(
