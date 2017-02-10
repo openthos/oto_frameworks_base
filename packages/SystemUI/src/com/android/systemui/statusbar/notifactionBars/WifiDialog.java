@@ -39,12 +39,16 @@ import java.util.List;
 import android.view.Gravity;
 import android.view.Window;
 import android.text.TextUtils;
+import android.content.ComponentName;
 
 /**
  * Created by Mingkai on 2016/6/22.
  */
 public final class WifiDialog extends BaseSettingDialog {
     private final String SCAN_WIFI = "scan wifi";
+    private final String CLASSNAME_COMPONENTNAME =
+                         "com.android.settings.ethernet.EthernetSettings";
+    private final String PACKAGENAME_COMPONENTNAME = "com.android.settings";
     private final String TAG = "umic";
 
     private final int UPDATE_LIST = 7 << 1;
@@ -73,6 +77,7 @@ public final class WifiDialog extends BaseSettingDialog {
     private List<ScanResult> netList;
     private List<WifiConfiguration> wifiCfgList;
     private NetInfoAdapter mNetInfoAdapter;
+    private LinearLayout mEthnetSetLl;
 
     private String waitConnectWifi;
     private String waitInputPswWifi;
@@ -186,6 +191,7 @@ public final class WifiDialog extends BaseSettingDialog {
         setContentView(wifiRootView);
         mContentView = wifiRootView;
         netEnable = (TextView) wifiRootView.findViewById(R.id.wifi_enable);
+        mEthnetSetLl = (LinearLayout) wifiRootView.findViewById(R.id.ethernet_set_dg_list);
         netEnableBtn = (Switch) wifiRootView.findViewById(R.id.wifi_enable_btn);
         if (wifiIsEnable()) {
             wifiStateChangeViewUpdate(true);
@@ -205,6 +211,16 @@ public final class WifiDialog extends BaseSettingDialog {
                     }
                 }
                 netEnableBtn.setClickable(false);
+            }
+        });
+        mEthnetSetLl.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName (PACKAGENAME_COMPONENTNAME,
+                                                       CLASSNAME_COMPONENTNAME));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
             }
         });
     }

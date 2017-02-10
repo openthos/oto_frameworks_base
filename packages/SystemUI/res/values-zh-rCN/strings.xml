@@ -420,4 +420,5 @@
     <string name="afternoon">下午 </string>
     <string name="status_bar_info_hide">隐藏任务栏</string>
     <string name="status_bar_info_show">显示任务栏</string>
+    <string name="status_bar_ethernet">设置以太网</string>
 </resources>

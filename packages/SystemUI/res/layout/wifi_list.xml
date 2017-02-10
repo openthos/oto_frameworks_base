@@ -38,4 +38,20 @@
             android:layout_width="@dimen/systemui_size_hundred"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ethernet_set_dg_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <TextView
+            android:text="@string/status_bar_ethernet"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/systemui_textsize_eight_pt"
+            android:paddingLeft="@dimen/systemui_padding_thirty"
+            android:paddingBottom="@dimen/systemui_padding_five"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </LinearLayout>

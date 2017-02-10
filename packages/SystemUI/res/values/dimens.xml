@@ -653,4 +653,6 @@
     <dimen name="systemui_textsize_ten_pt">10pt</dimen>
     <dimen name="systemui_textsize_twelve_px">12px</dimen>
     <dimen name="status_bar_bottom_two">2dp</dimen>
+    <dimen name="systemui_padding_thirty">30dp</dimen>
+    <dimen name="systemui_padding_five">5dp</dimen>
 </resources>
