@@ -3124,7 +3124,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
 
         if (down && repeatCount == 0 && !event.isShiftPressed()) {
-            if (!keyguardOn) {
+            if (!keyguardOn && isUserSetupComplete()) {
                 final int shiftlessModifiers = event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
                 if (KeyEvent.metaStateHasModifiers(shiftlessModifiers, KeyEvent.META_ALT_ON)) {
                     switch (keyCode) {
