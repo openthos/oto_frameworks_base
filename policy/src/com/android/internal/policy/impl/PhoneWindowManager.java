@@ -1708,6 +1708,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         filter = new IntentFilter(Intent.ACTION_USER_SWITCHED);
         context.registerReceiver(mMultiuserReceiver, filter);
 
+        filter = new IntentFilter();
+        filter.addAction(Intent.STATUS_BAR_NOTIFICATION_EXPAND);
+        filter.addAction(Intent.STATUS_BAR_NOTIFICATION_COLLAPSE);
+        context.registerReceiver(mNotificationReceiver, filter);
+
         // monitor for system gestures
         mSystemGestures = new SystemGesturesPointerEventListener(context,
                 new SystemGesturesPointerEventListener.Callbacks() {
@@ -5408,6 +5413,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mLastSystemUiFlags = 0;
                     updateSystemUiVisibilityLw();
                 }
+            }
+        }
+    };
+
+    BroadcastReceiver mNotificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Intent.STATUS_BAR_NOTIFICATION_EXPAND:
+                    mSkipFocus = true;
+                    break;
+                case Intent.STATUS_BAR_NOTIFICATION_COLLAPSE:
+                    mSkipFocus = false;
+                    break;
             }
         }
     };

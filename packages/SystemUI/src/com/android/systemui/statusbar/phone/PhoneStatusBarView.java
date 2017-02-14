@@ -45,7 +45,7 @@ public class PhoneStatusBarView extends PanelBar {
     private ScrimController mScrimController;
 
     private boolean mSkipActionUp = false;
-
+    private boolean mNotificationPanelShow = true;
     private int mStartupMenuSize;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
@@ -123,6 +123,13 @@ public class PhoneStatusBarView extends PanelBar {
             @Override
             public void run() {
                 mBar.makeExpandedInvisible();
+                if (mBar.isPhoneStatusBarHide()) {
+                    getContext().sendBroadcast(
+                                 new Intent(Intent.STATUS_BAR_INFO_HIDE_CUSTOM));
+                    mNotificationPanelShow = false;
+                }
+                getContext().sendBroadcast(
+                             new Intent(Intent.STATUS_BAR_NOTIFICATION_COLLAPSE));
             }
         });
         mLastFullyOpenedPanel = null;
@@ -161,7 +168,14 @@ public class PhoneStatusBarView extends PanelBar {
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
         }
-
+        if (mBar.isPhoneStatusBarHide()) {
+            if (mNotificationPanelShow) {
+                getContext().sendBroadcast(
+                             new Intent(Intent.STATUS_BAR_INFO_SHOW_CUSTOM));
+            }
+            mNotificationPanelShow = true;
+        }
+        getContext().sendBroadcast(new Intent(Intent.STATUS_BAR_NOTIFICATION_EXPAND));
         mBar.showHomePanelWork();
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 

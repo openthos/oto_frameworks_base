@@ -396,7 +396,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private long mKeyguardFadingAwayDelay;
     private long mKeyguardFadingAwayDuration;
     private Dialog mDialog = null;
-    private boolean mIsClick = true;
+    private boolean mClicked = true;
 
     int mKeyguardMaxNotificationCount;
 
@@ -1177,7 +1177,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         View dialogView = li.inflate(R.layout.right_button_menu_hide_show, null, false);
         TextView hideText = (TextView) dialogView.findViewById(R.id.rbm_hide);
         TextView showText = (TextView) dialogView.findViewById(R.id.rbm_show);
-        if (mIsClick) {
+        if (mClicked) {
             hideText.setEnabled(false);
             hideText.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
         } else {
@@ -1189,7 +1189,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         hideText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIsClick = true;
+                mClicked = true;
                 Intent intentHide = new Intent();
                 intentHide.setAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
                 mContext.sendBroadcast(intentHide);
@@ -1201,7 +1201,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         showText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                mIsClick = false;
+                mClicked = false;
                 Intent intentShow = new Intent();
                 intentShow.setAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
                 mContext.sendBroadcast(intentShow);
@@ -1209,6 +1209,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
         return dialogView;
+    }
+
+    public boolean isPhoneStatusBarHide() {
+        return mClicked;
     }
 
     public void dismissDialog() {
