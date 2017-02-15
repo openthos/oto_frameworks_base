@@ -4050,6 +4050,7 @@ public class Activity extends ContextThemeWrapper
         if (getPackageName().equals(ApplicationInfo.APPNAME_TOGIC_VIDEO) ||
             getPackageName().equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM) ||
             getPackageName().equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI) ||
+            getPackageName().equals(ApplicationInfo.APPNAME_CTMC_CLOUDTIMES) ||
             getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
             Intent intent1 = new Intent();

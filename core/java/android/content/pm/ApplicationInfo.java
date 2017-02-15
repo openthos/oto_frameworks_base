@@ -108,6 +108,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_FENNEC = "org.mozilla.fennec_root";
 
+    public static final String APPNAME_CTMC_CLOUDTIMES = "com.cloudtimes.ctmc";
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 

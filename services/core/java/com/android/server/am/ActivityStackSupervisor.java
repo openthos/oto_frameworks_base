@@ -1645,7 +1645,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (r.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
                 || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
                 || r.packageName.equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
-                || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)) {
+                || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)
+                || r.packageName.equals(ApplicationInfo.APPNAME_CTMC_CLOUDTIMES)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                 mWindowManager.hideStatusbarBroadcast();
             } else if (r.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
@@ -1864,6 +1865,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
                        ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
                 || currentActivity.packageName.equals(
                        ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)
+                || currentActivity.packageName.equals(
+                       ApplicationInfo.APPNAME_CTMC_CLOUDTIMES)
                 || currentActivity.packageName.equals(
                        ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
                 mWindowManager.hideStatusbarBroadcast();
