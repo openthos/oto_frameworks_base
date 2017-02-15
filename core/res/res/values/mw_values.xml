@@ -12,4 +12,5 @@ Dariusz Kluska
     <dimen name="mw_shadow_middle_border">0dip</dimen>
     <dimen name="mw_shadow_inside_border">25dp</dimen>
     <dimen name="mw_shadow_padding">25dp</dimen>
+    <dimen name="mwImgBt_size_thirty_five">35dp</dimen>
 </resources>
