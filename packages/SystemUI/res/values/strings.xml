@@ -995,6 +995,7 @@
    <string name="year">-</string>
    <string name="month">-</string>
    <string name="day"></string>
+   <string name="text_month"> </string>
    <string name="morning">AM</string>
    <string name="afternoon">PM</string>
    <string name="status_bar_info_hide">hide task bar</string>

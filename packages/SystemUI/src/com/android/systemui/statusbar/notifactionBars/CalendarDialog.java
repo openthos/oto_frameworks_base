@@ -58,7 +58,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     public static final int THREAD_SEND_MESSAGE = 100;// send message to handler
     public static final int UPDATE_DATE_INTERVAL = 1000;// per 1 second
     public static final int TIME_FORMAT_TWELVE = 12;
-    public String mYear, mMonth, mDay;
+    public String mYear, mMonth, mDay, mMonthText;
     private TextView mPopupwindowCalendarMonth;
 
     public CalendarDialog(Context context) {
@@ -93,7 +93,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                 calendarDate.setText(showMonth(mStr));
                 popupwindow_calendar_bt_enter.setText(R.string.set_date_and_time);
                 mPopupwindowCalendarMonth.setText(mCalendarView.getCalendarYear() + mYear
-                                           + mCalendarView.getCalendarMonth());
+                                           + mCalendarView.getCalendarMonth() + mMonthText);
             }
         };
         new Thread(this).start();
@@ -125,7 +125,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
 
         mCalendarView.setOnCalendarDateChangedListener(new OnCalendarDateChangedListener() {
             public void onCalendarDateChanged(int year, int month) {
-                mPopupwindowCalendarMonth.setText(year + mYear + month);
+                mPopupwindowCalendarMonth.setText(year + mYear + month + mMonthText);
             }
         });
 
@@ -228,6 +228,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
                 mYear = mContext.getString(R.string.year);
                 mMonth = mContext.getString(R.string.month);
                 mDay = mContext.getString(R.string.day);
+                mMonthText = mContext.getString(R.string.text_month);
                 SimpleDateFormat formatter = new SimpleDateFormat
                                               ("yyyy" + mYear + "MM" + mMonth + "dd" +
                                                mDay +"  "+ "HH:mm:ss EEEE" , Locale.getDefault());
@@ -251,7 +252,7 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         int month = Integer.parseInt(str.substring(5, 7));
         mDate = str.substring(0, 10);
         mCalendarView.clearAll();
-        mPopupwindowCalendarMonth.setText(years + mYear  + month);
+        mPopupwindowCalendarMonth.setText(years + mYear  + month + mMonthText);
         mCalendarView.showCalendar(years, month);
         mCalendarView.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
     }

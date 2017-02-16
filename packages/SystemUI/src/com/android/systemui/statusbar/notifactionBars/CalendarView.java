@@ -44,7 +44,7 @@ public class CalendarView extends ViewFlipper implements
     private Animation mPushRightIn;
     private Animation mPushRightOut;
 
-    private int ROWS_TOTAL = 5;
+    private int ROWS_TOTAL = 6;
     private int COLS_TOTAL = 7;
     private String[][] mDates = new String[6][7];
     private float mTB;

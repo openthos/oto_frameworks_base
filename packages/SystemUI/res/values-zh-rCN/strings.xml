@@ -416,6 +416,7 @@
     <string name="year">年</string>
     <string name="month">月</string>
     <string name="day">日</string>
+    <string name="text_month">月</string>
     <string name="morning">上午</string>
     <string name="afternoon">下午 </string>
     <string name="status_bar_info_hide">隐藏任务栏</string>
