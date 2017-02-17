@@ -20,7 +20,7 @@
     <string name="str_start_use">开始使用</string>
     <string name="common_title">请设置您的openthos</string>
     <string name="language_chinese">中文　(简体)</string>
-    <string name="language_english">英文</string>
+    <string name="language_english">English</string>
     <string name="setup_next">下一步</string>
     <string name="setup_device_setting">本机设置</string>
     <string name="verify_openthos_title">验证　Openthos ID</string>
