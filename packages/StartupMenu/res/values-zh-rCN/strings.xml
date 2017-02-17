@@ -31,6 +31,7 @@
     <string name="system_setting">设置</string>
     <string name="common_application">常用软件</string>
     <string name="name_sort">A-Z</string>
+    <string name="time_sort">安装时间</string>
     <string name="click_sort">使用频率</string>
     <string name="power_source">电源</string>
     <string name="power_off">关机</string>

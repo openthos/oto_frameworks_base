@@ -25,7 +25,7 @@
         android:layout_gravity="center"
         android:singleLine="true"
         android:ellipsize="end"
-        android:textSize="@dimen/startupmenu_text_size_twelve"
+        android:textSize="@dimen/startupmenu_text_size_fourteen"
         android:textColor="#ffffff"
         android:text="@string/startup_menu_app" />
 
