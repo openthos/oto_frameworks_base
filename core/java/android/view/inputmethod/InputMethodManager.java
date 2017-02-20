@@ -1771,6 +1771,8 @@ public final class InputMethodManager {
                 msg.setAsynchronous(true);
                 mH.sendMessage(msg);
                 return DISPATCH_IN_PROGRESS;
+            } else if (checkFocusNoStartInput(true, false)) {
+                startInputInner(null, 0, 0, 0);
             }
         }
         return DISPATCH_NOT_HANDLED;
