@@ -35,6 +35,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:paddingTop="13dp"
+                android:focusable="true"
+                android:nextFocusRight="@+id/power_sleep"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -55,6 +57,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:paddingTop="13dp"
+                android:focusable="true"
+                android:nextFocusRight="@+id/power_lock"
                 android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 
@@ -76,6 +80,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:paddingTop="13dp"
+                android:focusable="true"
+                android:nextFocusRight="@+id/power_restart"
                 android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 
@@ -97,6 +103,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:paddingTop="13dp"
+                android:focusable="true"
+                android:nextFocusRight="@+id/power_off"
                 android:layout_marginLeft="24dp"
                 android:orientation="vertical" >
 

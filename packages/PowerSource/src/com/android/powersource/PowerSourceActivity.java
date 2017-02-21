@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.MotionEvent;
 import android.view.View.OnHoverListener;
 import android.widget.ImageView;
@@ -44,9 +45,26 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         powerSleep.setOnHoverListener(hoverListeners);
         powerLock.setOnHoverListener(hoverListeners);
         powerRestart.setOnHoverListener(hoverListeners);
+
+        powerClose.setOnFocusChangeListener(focusChangeListener);
+        powerOff.setOnFocusChangeListener(focusChangeListener);
+        powerSleep.setOnFocusChangeListener(focusChangeListener);
+        powerLock.setOnFocusChangeListener(focusChangeListener);
+        powerRestart.setOnFocusChangeListener(focusChangeListener);
+
         hideStatusBar();
         shutDownHideStatusBar();
     }
+
+    View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus) {
+                v.setBackgroundResource(R.drawable.power_setting_background);
+            } else {
+                v.setBackgroundColor(android.R.color.transparent);
+            }
+        }
+    };
 
     View.OnHoverListener hoverListeners= new View.OnHoverListener() {
         public boolean onHover(View v, MotionEvent event) {
