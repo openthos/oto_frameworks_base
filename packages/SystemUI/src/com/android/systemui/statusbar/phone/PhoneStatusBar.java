@@ -1054,6 +1054,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK);
         filter.addAction(Intent.ACTION_SHOW_BRIGHTNESS_DIALOG);
         filter.addAction(Intent.STARTMENU_UNLOCKED);
+        filter.addAction(Intent.STATUS_BAR_SEAFILE);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
@@ -3914,6 +3915,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             } else if (Intent.ACTION_SHOW_BRIGHTNESS_DIALOG.equals(action)){
                 dismisTargetDialog(mBrightnessDialog);
                 mBrightnessDialog.show(mInputButton);
+            } else if (Intent.STATUS_BAR_SEAFILE.equals(action)) {
+                for (String pkgName : intent.getStringArrayListExtra("pkgname")) {
+                    findRunApp(pkgName);
+                }
             } else {
                 String apkInfo = intent.getStringExtra("keyInfo");
                 if (action.equals(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK)) {

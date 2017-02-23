@@ -3587,6 +3587,8 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.statusbar.notification.expand";
     public static final String STATUS_BAR_NOTIFICATION_COLLAPSE =
                                       "android.intent.statusbar.notification.collapse";
+    public static final String STATUS_BAR_SEAFILE =
+                                      "android.intent.statusbar.seafile";
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).
