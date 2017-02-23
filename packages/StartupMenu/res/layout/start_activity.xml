@@ -138,7 +138,7 @@
                         android:layout_height="@dimen/startupmenu_layout_size_twelve"
                         android:layout_marginLeft="@dimen/startupmenu_layout_size_eight"
                         android:gravity="center"
-                        android:src="@drawable/ic_starter_down_arrow_gray" />
+                        android:src="@drawable/ic_start_menu_down_arrow" />
 
                     <TextView
                         android:id="@+id/tv_sort_show"
