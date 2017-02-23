@@ -78,6 +78,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ANDROID_BROWSER = "com.android.browser";
     public static final String APPNAME_ANDROID_SETTINGS = "com.android.settings";
     public static final String APPNAME_ANDROID_GALLERY3D = "com.android.gallery3d";
+    public static final String APPNAME_QUICK_PIC = "com.alensw.PicFolder";
     public static final String APPNAME_FIHTDC_NOTE = "com.fihtdc.note";
     public static final String APPNAME_ORG_VIDEOLAN_VLC = "org.videolan.vlc";
     public static final String APPNAME_HEXIN_PLAT_ANDROID = "com.hexin.plat.android";
@@ -684,6 +685,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
+                                     || (pkgName.compareTo(APPNAME_QUICK_PIC) == 0)
                                      || (pkgName.compareTo(APPNAME_FIHTDC_NOTE) == 0)
                                      || (pkgName.compareTo(APPNAME_HEXIN_PLAT_ANDROID) == 0)
                                      || (pkgName.compareTo(APPNAME_NETEASE_CLOUDMUSIC) == 0)
