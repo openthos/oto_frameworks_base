@@ -773,6 +773,8 @@ public class Intent implements Parcelable, Cloneable {
                                      = "android.intent.action.DESKTOP_COMMIT_TEXT";
     public static final String ACTION_DESKTOP_INTERCEPT
                                      = "android.intent.action.DESKTOP_INTERCEPT";
+    public static final String ACTION_APPSTORE_SEAFILE
+                                     = "android.intent.action.APPSTORE_SEAFILE";
     public static final String EXTRA_DESKTOP_BUNDLE = "Bundle";
     public static final String EXTRA_DESKTOP_KEYCODE = "Keycode";
     public static final String EXTRA_DESKTOP_KEYEVENT = "Keyevent";
