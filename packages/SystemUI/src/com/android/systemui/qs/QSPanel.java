@@ -581,7 +581,8 @@ public class QSPanel extends ViewGroup {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_NOTIFICATION_PROJECTION)) {
-                PopupWindow popupWindow;
+                Toast.makeText(mContext, "Projection: COMING SOON", Toast.LENGTH_LONG).show();
+                /*PopupWindow popupWindow;
                 View popupView;
                 Button mButtonCom;
                 popupView = LayoutInflater.from(mContext)
@@ -604,7 +605,7 @@ public class QSPanel extends ViewGroup {
                 });
                 int[] location = new int[2];
                 popupView.getLocationOnScreen(location);
-                popupWindow.showAsDropDown(mView);
+                popupWindow.showAsDropDown(mView); */
             }
         }
     };
