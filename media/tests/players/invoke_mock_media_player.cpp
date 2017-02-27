@@ -75,6 +75,7 @@ class Player: public MediaPlayerBase
     virtual status_t    prepare() {return OK;}
     virtual status_t    prepareAsync() {return OK;}
     virtual status_t    start() {return OK;}
+    virtual status_t    start(pid_t caller) {return OK;}
     virtual status_t    stop() {return OK;}
     virtual status_t    pause() {return OK;}
     virtual bool        isPlaying() {return true;}
