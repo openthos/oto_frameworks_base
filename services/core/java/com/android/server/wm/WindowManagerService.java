@@ -326,12 +326,21 @@ public class WindowManagerService extends IWindowManager.Stub
                     KeyguardDisableHandler.KEYGUARD_POLICY_CHANGED);
             }
             if ((Intent.STATUS_BAR_INFO_SHOW_CUSTOM).equals(action)) {
+                 mIsHideBar = false;
                  mStatusBarAutoHide = false;
                  showStatusbarBroadcast();
             }
             if ((Intent.STATUS_BAR_INFO_HIDE_CUSTOM).equals(action)) {
                  mStatusBarAutoHide = true;
                  hideStatusbarBroadcast();
+                 mIsHideBar = true;
+            }
+            if ((Intent.LOCK_SCREEN_SHOW_STATUS_BAR).equals(action)) {
+                 mStatusBarAutoHide = false;
+                 showStatusbarBroadcast();
+            }
+            if ((Intent.LOCK_SCREEN_HIDE_STATUS_BAR).equals(action) && mIsHideBar) {
+                 mStatusBarAutoHide = true;
             }
         }
     };
@@ -667,6 +676,7 @@ public class WindowManagerService extends IWindowManager.Stub
     public boolean mStatusBarAutoHide = true;
     boolean mStatusBarLock = false;
     boolean mStatusBarSkipSense = false;
+    boolean mIsHideBar = true;
 
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
@@ -918,6 +928,8 @@ public class WindowManagerService extends IWindowManager.Stub
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
         filter.addAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
         filter.addAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
+        filter.addAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
+        filter.addAction(Intent.LOCK_SCREEN_HIDE_STATUS_BAR);
         mContext.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         mSettingsObserver = new SettingsObserver();

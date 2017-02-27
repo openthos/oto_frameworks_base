@@ -26,10 +26,13 @@ import android.util.EventLog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.content.BroadcastReceiver;
 
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.ActivityKeyView;
+import android.content.IntentFilter;
+import android.os.UserHandle;
 
 public class PhoneStatusBarView extends PanelBar {
     private static final boolean DEBUG = PhoneStatusBar.DEBUG;
@@ -46,6 +49,7 @@ public class PhoneStatusBarView extends PanelBar {
 
     private boolean mSkipActionUp = false;
     private boolean mNotificationPanelShow = true;
+    private boolean mIsHideBar = true;
     private int mStartupMenuSize;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
@@ -53,6 +57,10 @@ public class PhoneStatusBarView extends PanelBar {
         mStartupMenuSize = (int) (40 * (context.getResources().getDisplayMetrics().density) + 0.5f);
         Resources res = getContext().getResources();
         mBarTransitions = new PhoneStatusBarTransitions(this);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
+        filter.addAction(Intent.LOCK_SCREEN_HIDE_STATUS_BAR);
+        context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
     }
 
     public BarTransitions getBarTransitions() {
@@ -123,7 +131,7 @@ public class PhoneStatusBarView extends PanelBar {
             @Override
             public void run() {
                 mBar.makeExpandedInvisible();
-                if (mBar.isPhoneStatusBarHide()) {
+                if (mBar.isPhoneStatusBarHide() && mIsHideBar) {
                     getContext().sendBroadcast(
                                  new Intent(Intent.STATUS_BAR_INFO_HIDE_CUSTOM));
                     mNotificationPanelShow = false;
@@ -238,4 +246,15 @@ public class PhoneStatusBarView extends PanelBar {
         mScrimController.setPanelExpansion(frac);
         mBar.updateCarrierLabelVisibility(false);
     }
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if ((Intent.LOCK_SCREEN_SHOW_STATUS_BAR).equals(intent.getAction())) {
+                mIsHideBar = false;
+            }
+            if ((Intent.LOCK_SCREEN_HIDE_STATUS_BAR).equals(intent.getAction())) {
+                mIsHideBar = true;
+            }
+        }
+    };
 }

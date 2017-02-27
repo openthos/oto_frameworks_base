@@ -21,6 +21,7 @@ public class LocknActivity extends Activity {
         mDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         mComponentName = new ComponentName(LocknActivity.this, LockReceiver.class);
         if (mDevicePolicyManager.isAdminActive(mComponentName)) {
+            sendLockScreenShowBar();
             mDevicePolicyManager.lockNow();
             finish();
         } else {
@@ -40,5 +41,11 @@ public class LocknActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    public void sendLockScreenShowBar() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
+        sendBroadcast(intent);
     }
 }
