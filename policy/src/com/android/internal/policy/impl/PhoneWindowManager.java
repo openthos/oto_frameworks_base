@@ -240,6 +240,27 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private IntentFilter mFinishShowStatusBar
                      = new IntentFilter(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
     private IntentFilter mAppMaxFilter = new IntentFilter(Intent.ACTION_OPEN_APPLICATION);
+
+    /**
+     * Intercept hot keys for desktop
+     */
+    private boolean mIsLauncher;
+    private IntentFilter mLauncherHotKey;
+    private BroadcastReceiver mLauncherReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Intent.ACTION_DESKTOP_FOCUSED_STATE:
+                    mIsLauncher = true;
+                    break;
+                case Intent.ACTION_DESKTOP_UNFOCUSED_STATE:
+                    mIsLauncher = false;
+                    break;
+            }
+        }
+    };
+
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_HIDE.equals(intent.getAction())) {
@@ -1592,6 +1613,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                   this.mFinishShowStatusBar);
 
         mContext.registerReceiver(mBroadcastReceiver, mAppMaxFilter);
+        mLauncherHotKey = new IntentFilter();
+        mLauncherHotKey.addAction(Intent.ACTION_DESKTOP_FOCUSED_STATE);
+        mLauncherHotKey.addAction(Intent.ACTION_DESKTOP_UNFOCUSED_STATE);
+        mContext.registerReceiver(mLauncherReceiver, mLauncherHotKey);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
         mWindowManagerInternal = LocalServices.getService(WindowManagerInternal.class);
@@ -3186,8 +3211,34 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return -1;
         }
 
+        if (mIsLauncher && ((event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_FORWARD_DEL)
+                || (!event.isCtrlPressed() && (keyCode == KeyEvent.KEYCODE_ENTER
+                    || keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER
+                    || keyCode == KeyEvent.KEYCODE_FORWARD_DEL)
+                    || keyCode == KeyEvent.KEYCODE_F2
+                    || keyCode == KeyEvent.KEYCODE_F5)
+                || (event.isCtrlPressed() && (keyCode == KeyEvent.KEYCODE_A
+                    || keyCode == KeyEvent.KEYCODE_C
+                    || keyCode == KeyEvent.KEYCODE_V
+                    || keyCode == KeyEvent.KEYCODE_D))
+                || (event.isCtrlPressed() && (keyCode == KeyEvent.KEYCODE_CTRL_LEFT
+                    || keyCode == KeyEvent.KEYCODE_CTRL_RIGHT)))) {
+            sendKeyToDesktop(keyCode, event, down);
+            return -1;
+        }
         // Let the application handle the key.
         return 0;
+    }
+
+    private void sendKeyToDesktop(int keyCode, KeyEvent event, boolean down) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_DESKTOP_INTERCEPT);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Intent.EXTRA_DESKTOP_KEYCODE, keyCode);
+        bundle.putParcelable(Intent.EXTRA_DESKTOP_KEYEVENT, event);
+        bundle.putBoolean(Intent.EXTRA_DESKTOP_ONKEYDOWN, down);
+        intent.putExtra(Intent.EXTRA_DESKTOP_BUNDLE, bundle);
+        mContext.sendBroadcast(intent);
     }
 
     /** {@inheritDoc} */
