@@ -210,6 +210,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.lang.reflect.Method;
 import android.content.SharedPreferences;
 import java.util.Iterator;
 import android.media.AudioManager;
@@ -3916,6 +3917,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 dismisTargetDialog(mBrightnessDialog);
                 mBrightnessDialog.show(mInputButton);
             } else if (Intent.STATUS_BAR_SEAFILE.equals(action)) {
+                mdbStatusBar.delete("status_bar_tb", null, null);
+                mEditorPkg.clear().commit();
+                mSet.clear();
+                for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
+                    ActivityKeyView kbv = getActivityKeyView(i);
+                    if (kbv.getStatusbarActivity().mApkRun) {
+                        try {
+                            Class.forName("android.app.ActivityManager")
+                                    .getMethod("forceStopPackage", String.class)
+                                       .invoke((ActivityManager) mContext.getSystemService(
+                                                                    Context.ACTIVITY_SERVICE),
+                                               kbv.getStatusbarActivity().mPkgName);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                mStatusBarActivities.removeAllViews();
                 for (String pkgName : intent.getStringArrayListExtra("pkgname")) {
                     findRunApp(pkgName);
                 }
