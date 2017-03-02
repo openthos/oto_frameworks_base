@@ -1320,8 +1320,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     public boolean isEthernet(ConnectivityManager cm) {
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().
-                   getRealType() == ConnectivityManager.TYPE_ETHERNET;
+        try {
+            return cm.getActiveNetworkInfo().getRealType() == ConnectivityManager.TYPE_ETHERNET;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void setVolumeIcon(KeyButtonView keyButtonView) {
