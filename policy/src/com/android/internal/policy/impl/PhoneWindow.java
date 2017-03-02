@@ -167,6 +167,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             (1 << FEATURE_ACTION_MODE_OVERLAY);
 
     private static final Transition USE_DEFAULT_TRANSITION = new TransitionSet();
+    private static final double CORRECT_FACTOR_INSIDE = 0.4;
+    private static final double CORRECT_FACTOR_OUTSIDE = 0.6;
 
     /**
      * Simple callback used by the context menu and its submenus. The options
@@ -3734,8 +3736,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     if (needHidePointer()) {
                         InputManager.getInstance().setPointerIcon(PointerIcon.STYLE_NULL);
                     } else {
-                        syncResizingIcon(getResizeWays(getActivityFrame(),
+                        if (!judgeDragArea(event.getRawX(), event.getRawY())) {
+                            syncResizingIcon(getResizeWays(null, 0, 0));
+                        } else {
+                            syncResizingIcon(getResizeWays(getActivityFrame(),
                                            (int) event.getRawX(), (int) event.getRawY()));
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
@@ -3750,6 +3756,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         private WindowManager.MultiWindow.ResizeWindow mResizeWindow;
         private boolean mHeader;
+        private boolean mCanDrag;
 
         public TouchListener(WindowManager.MultiWindow.ResizeWindow rw, boolean header) {
             mResizeWindow = rw;
@@ -3758,17 +3765,81 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Rect ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
+            Rect ret;
+            switch (v.getId()) {
+                case com.android.internal.R.id.mw_shadow:
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            if (judgeDragArea(event.getRawX(), event.getRawY())) {
+                                ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
                                      (int) event.getRawY(),  getActivityFrame(),
                                      mResizeWindow, mHeader);
-            if(ret != null) {
-                syncFrame(ret);
+                                if(ret != null) {
+                                    syncFrame(ret);
+                                }
+                                if ((event.getAction() == MotionEvent.ACTION_DOWN)
+                                        && !isResizing() && !mHeader) {
+                                    return false;
+                                }
+                                mCanDrag = true;
+                                return true;
+                            } else {
+                                mCanDrag = false;
+                                return false;
+                            }
+                        default:
+                            if (mCanDrag) {
+                                if (event.getAction() == MotionEvent.ACTION_UP) {
+                                    mCanDrag = false;
+                                }
+                                ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
+                                     (int) event.getRawY(),  getActivityFrame(),
+                                     mResizeWindow, mHeader);
+                                if(ret != null) {
+                                    syncFrame(ret);
+                                }
+                                if ((event.getAction() == MotionEvent.ACTION_DOWN)
+                                        && !isResizing() && !mHeader) {
+                                    return false;
+                                }
+                                return true;
+                            } else {
+                                return false;
+                            }
+                    }
+                default:
+                        ret = onTouchWindow(event.getAction(), (int) event.getRawX(),
+                                     (int) event.getRawY(),  getActivityFrame(),
+                                     mResizeWindow, mHeader);
+                        if(ret != null) {
+                            syncFrame(ret);
+                        }
+                        if ((event.getAction() == MotionEvent.ACTION_DOWN)
+                                && !isResizing() && !mHeader) {
+                            return false;
+                        }
+                        return true;
             }
-            if ((event.getAction() == MotionEvent.ACTION_DOWN) && !isResizing() && !mHeader) {
-                return false;
-            }
-            return true;
         }
+    }
+
+    private boolean judgeDragArea(float x, float y) {
+        int shadowPadding = getShadowPadding();
+        int topShadowPadding = getTopShadowPadding();
+        int[] arrS = new int[2];
+        mDecor.getLocationOnScreen(arrS);
+        int width = mDecor.getWidth();
+        int height = mDecor.getHeight();
+        return ((x >= arrS[0] + shadowPadding * CORRECT_FACTOR_OUTSIDE)
+                         && (x <= arrS[0] + shadowPadding))
+                     || ((y >= arrS[1] + topShadowPadding * CORRECT_FACTOR_OUTSIDE)
+                         && (y <= arrS[1] + topShadowPadding))
+                     || ((x >= arrS[0] + width - shadowPadding)
+                         && (x <= arrS[0] + width - shadowPadding + shadowPadding
+                             * CORRECT_FACTOR_INSIDE))
+                     || ((y >= arrS[1] + height - shadowPadding)
+                         && (y <= arrS[1] + height - topShadowPadding + topShadowPadding
+                             * CORRECT_FACTOR_INSIDE));
     }
 
     private DecorView getActivityDecor() {
@@ -4029,6 +4100,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             if (useBorder || needHidePointer()) {
                 mOuterBorder.setOnHoverListener(new HoverListener());
+                mShadow.setOnHoverListener(new HoverListener());
                 if (useBorder) {
                     if (ApplicationInfo.isFullScreenStyleWindow(mPackageName)) {
                         toggleFullScreen(getContext().getResources().getDisplayMetrics()
@@ -4036,6 +4108,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                     getContext().getApplicationInfo().isPhoneStyleWindow()));
                     }
                     mOuterBorder.setOnTouchListener(new TouchListener(
+                                              new WindowManager.MultiWindow.ResizeWindow(), false));
+                    mShadow.setOnTouchListener(new TouchListener(
                                               new WindowManager.MultiWindow.ResizeWindow(), false));
                 }
             }

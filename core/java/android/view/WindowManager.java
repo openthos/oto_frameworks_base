@@ -2376,7 +2376,8 @@ public interface WindowManager extends ViewManager {
 
             if (frame.equals(mFullScreen)) {
                 return MW_WINDOW_RESIZE_NONE;
-            } else if (y - frame.top <= padding / MW_WINDOW_RESIZE_HEADER_FACTOR) {
+            } else if (y - frame.top >= padding / MW_WINDOW_RESIZE_HEADER_FACTOR
+                    && y - frame.top <= padding) {
                 if(x - frame.left <= padding) {
                     return MW_WINDOW_RESIZE_TOPLEFT;
                 } else if(frame.right - x <= padding) {
