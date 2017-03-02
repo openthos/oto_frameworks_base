@@ -3551,6 +3551,8 @@ public class Intent implements Parcelable, Cloneable {
     /** {@hide} */
     public static final String EXTRA_REASON = "android.intent.extra.REASON";
 
+    public static final String EXTRA_KEY_UNINSTALL_APK = "android.intent.extra.uninstall.apk";
+
     /**
      * For passing Rect
      */
@@ -3595,6 +3597,8 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.lock.screen.show.status.bar";
     public static final String LOCK_SCREEN_HIDE_STATUS_BAR =
                                       "android.intent.lock.screen.hide.status.bar";
+    public static final String STATUS_BAR_UNINSTALL_APK =
+                                      "android.intent.statusbar.remove.apk";
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).

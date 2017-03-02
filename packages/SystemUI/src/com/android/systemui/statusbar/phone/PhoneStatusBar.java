@@ -1056,6 +1056,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_SHOW_BRIGHTNESS_DIALOG);
         filter.addAction(Intent.STARTMENU_UNLOCKED);
         filter.addAction(Intent.STATUS_BAR_SEAFILE);
+        filter.addAction(Intent.STATUS_BAR_UNINSTALL_APK);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
         // listen for USER_SETUP_COMPLETE setting (per-user)
         resetUserSetupObserver();
@@ -3962,6 +3963,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     removeLockedIcon(pkgName);
                     removeLockedView(pkgName);
                     removeApk(pkgName);
+                }
+                if (action.equals(Intent.STATUS_BAR_UNINSTALL_APK)){
+                    removeStatusbar(mRemoveCount, intent.getStringExtra(
+                                                         Intent.EXTRA_KEY_UNINSTALL_APK));
+                    removeLockedIcon(intent.getStringExtra(Intent.EXTRA_KEY_UNINSTALL_APK));
+                    removeLockedView(intent.getStringExtra(Intent.EXTRA_KEY_UNINSTALL_APK));
+                    removeApk(intent.getStringExtra(Intent.EXTRA_KEY_UNINSTALL_APK));
                 }
             }
         }
