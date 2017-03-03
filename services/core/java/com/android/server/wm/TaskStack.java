@@ -94,6 +94,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
     WindowManager.MultiWindow mMultiWindow;
     Rect mDialogRect;
     boolean mEnableMultiWindow = false;
+    long mCurrentDownTime;
 
     WindowManager.MultiWindow.ResizeWindow mCurrentWindow;
     WindowManager.MultiWindow.ResizeWindow mResizeWindow;
@@ -149,7 +150,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         }
     }
 
-    public void onTouchEvent(int what, int x, int y) {
+    public void onTouchEvent(int what, int x, int y, long downTime) {
         if (!mEnableMultiWindow) {
             return;
         }
@@ -158,6 +159,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         switch (what) {
             case MotionEvent.ACTION_DOWN:
                 mCurrentWindow = null;
+                mCurrentDownTime = downTime;
                 if (isOnFrame(x, y)) {
                     mMultiWindow.onTouchWindow(what, x + mBounds.left, y + mBounds.top,
                                                mBounds, mResizeWindow, false);
@@ -204,7 +206,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                             Slog.e(TAG, "Close failed", e);
                         }
                     }
-                } else if (isOnContentArea(x, y)) {
+                } else if (downTime == mCurrentDownTime && isOnContentArea(x, y)) {
                     KeyEvent.sendKeyEventBack();
                 }
                 break;

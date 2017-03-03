@@ -7713,15 +7713,16 @@ public class WindowManagerService extends IWindowManager.Stub
             }
         }
 
-        private void onPointerEvent(int what, int x, int y, DisplayContent dc) {
+        private void onPointerEvent(int what, int x, int y, DisplayContentAndMotionEvent dcAndMe) {
             switch (what) {
                 case POINTER_EVENT_ACTION_DOWN:
                     mActionDown = true;
-                    mCurrentStackId = dc.stackIdFromPoint(x, y);
+                    mCurrentStackId = dcAndMe.displayContent.stackIdFromPoint(x, y);
                     if (mCurrentStackId > 0) {
                         mStack = mStackIdToStack.get(mCurrentStackId);
                         if (mStack != null) {
-                            mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y);
+                            mStack.onTouchEvent(MotionEvent.ACTION_DOWN, x, y,
+                                                dcAndMe.downTime);
                         } else {
                             mCurrentStackId = -1;
                         }
@@ -7731,17 +7732,17 @@ public class WindowManagerService extends IWindowManager.Stub
                     break;
                 case POINTER_EVENT_ACTION_MOVE:
                     if (mCurrentStackId != -1) {
-                        mStack.onTouchEvent(MotionEvent.ACTION_MOVE, x, y);
+                        mStack.onTouchEvent(MotionEvent.ACTION_MOVE, x, y, dcAndMe.downTime);
                     }
                     break;
                 case POINTER_EVENT_ACTION_UP:
-                    DisplayInfo displayInfo = dc.getDisplayInfo();
+                    DisplayInfo displayInfo = dcAndMe.displayContent.getDisplayInfo();
                     if (y >= displayInfo.logicalHeight - STATUS_BAR_SKIP_SENSE_HEIGHT) {
                         mStatusBarSkipSense = true;
                     }
                     mActionDown = false;
                     if (mCurrentStackId != -1) {
-                        mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y);
+                        mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y, dcAndMe.downTime);
                         mStack = null;
                     }
                     // Fall through
@@ -8218,7 +8219,8 @@ public class WindowManagerService extends IWindowManager.Stub
                 case POINTER_EVENT_ACTION_MOVE:
                 case POINTER_EVENT_ACTION_UP:
                     synchronized (mWindowMap) {
-                        onPointerEvent(msg.what, msg.arg1, msg.arg2, (DisplayContent)msg.obj);
+                        onPointerEvent(msg.what, msg.arg1, msg.arg2,
+                                       (DisplayContentAndMotionEvent)msg.obj);
                     }
                     break;
                 case NOTIFY_ACTIVITY_DRAWN:
@@ -12045,5 +12047,13 @@ public class WindowManagerService extends IWindowManager.Stub
        } else {
            return mContext.getResources().getDisplayMetrics().heightPixels;
        }
+    }
+
+    class DisplayContentAndMotionEvent {
+        public DisplayContent displayContent;
+        public long  downTime;
+
+        public DisplayContentAndMotionEvent () {
+        }
     }
 }

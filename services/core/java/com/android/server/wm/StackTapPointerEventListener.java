@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import android.content.Context;
 
 import com.android.server.wm.WindowManagerService.H;
+import com.android.server.wm.WindowManagerService.DisplayContentAndMotionEvent;
 
 public class StackTapPointerEventListener implements PointerEventListener {
     private static final int TAP_TIMEOUT_MSEC = 300;
@@ -37,6 +38,7 @@ public class StackTapPointerEventListener implements PointerEventListener {
     final private Region mTouchExcludeRegion;
     private final WindowManagerService mService;
     private final DisplayContent mDisplayContent;
+    private DisplayContentAndMotionEvent mDcAndMe;
 
     public StackTapPointerEventListener(WindowManagerService service,
             DisplayContent displayContent) {
@@ -45,10 +47,13 @@ public class StackTapPointerEventListener implements PointerEventListener {
         mTouchExcludeRegion = displayContent.mTouchExcludeRegion;
         DisplayInfo info = displayContent.getDisplayInfo();
         mMotionSlop = (int)(info.logicalDensityDpi * TAP_MOTION_SLOP_INCHES);
+        mDcAndMe = mService.new DisplayContentAndMotionEvent();
     }
 
     @Override
     public void onPointerEvent(MotionEvent motionEvent) {
+        mDcAndMe.displayContent = mDisplayContent;
+        mDcAndMe.downTime = motionEvent.getDownTime();
         final int action = motionEvent.getAction();
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_HOVER_MOVE:
@@ -62,13 +67,13 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 mDownX = motionEvent.getX();
                 mDownY = motionEvent.getY();
                 mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_DOWN, (int) mDownX, (int) mDownY,
-                                          mDisplayContent).sendToTarget();
+                                          mDcAndMe).sendToTarget();
                 break;
             case MotionEvent.ACTION_MOVE:
                 mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_MOVE,
                                           (int) motionEvent.getX(),
                                           (int) motionEvent.getY(),
-                                          mDisplayContent).sendToTarget();
+                                          mDcAndMe).sendToTarget();
                 if (mPointerId >= 0) {
                     int index = motionEvent.findPointerIndex(mPointerId);
                     if ((motionEvent.getEventTime() - motionEvent.getDownTime()) > TAP_TIMEOUT_MSEC
@@ -84,7 +89,7 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_UP,
                                           (int) motionEvent.getX(),
                                           (int) motionEvent.getY(),
-                                          mDisplayContent).sendToTarget();
+                                          mDcAndMe).sendToTarget();
                 int index = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
                         >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 // Extract the index of the pointer that left the touch sensor
