@@ -3599,6 +3599,8 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.lock.screen.hide.status.bar";
     public static final String STATUS_BAR_UNINSTALL_APK =
                                       "android.intent.statusbar.remove.apk";
+    public static final String HEADER_BAR_HIDE = "android.intent.action.hide.header";
+    public static final String HEADER_BAR_SHOW = "android.intent.action.show.header";
     // ---------------------------------------------------------------------
     // ---------------------------------------------------------------------
     // Intent flags (see mFlags variable).

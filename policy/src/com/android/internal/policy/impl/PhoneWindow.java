@@ -37,6 +37,9 @@ import com.android.internal.widget.ActionBarContextView;
 import com.android.internal.widget.BackgroundFallback;
 import com.android.internal.widget.DecorContentParent;
 import com.android.internal.widget.SwipeDismissLayout;
+import android.content.IntentFilter;
+import android.os.UserHandle;
+import android.content.BroadcastReceiver;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -373,6 +376,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         super(context);
         mLayoutInflater = LayoutInflater.from(context);
         setCallback(this);
+        IntentFilter filterHide = new IntentFilter(Intent.HEADER_BAR_HIDE);
+        IntentFilter filterShow = new IntentFilter(Intent.HEADER_BAR_SHOW);
+        context.registerReceiver(mBroadcastReceiverHide, filterHide);
+        context.registerReceiver(mBroadcastReceiverShow, filterShow);
     }
 
     @Override
@@ -5732,4 +5739,24 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
         return getContext().getResources().getDisplayMetrics().heightPixels;
     }
+
+    private BroadcastReceiver mBroadcastReceiverHide = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.HEADER_BAR_HIDE) && mDecorMW != null &&
+                    mDecorMW.mHeader.getVisibility() != View.GONE && context.getPackageName().
+                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
+                mDecorMW.mHeader.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    private BroadcastReceiver mBroadcastReceiverShow = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.HEADER_BAR_SHOW) && mDecorMW != null &&
+                    mDecorMW.mHeader.getVisibility() != View.VISIBLE && context.getPackageName().
+                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
+                mDecorMW.mHeader.setVisibility(View.VISIBLE);
+            }
+        }
+    };
 }
