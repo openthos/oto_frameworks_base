@@ -49,6 +49,7 @@ import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
@@ -4128,10 +4129,18 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mCloseBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            ActivityManagerNative.getDefault().closeActivity(getStackId());
-                        } catch (RemoteException e) {
-                            Log.e(TAG, "Close button failes", e);
+                        if (getContext().getPackageName().equals(ApplicationInfo.APPNAME_WPS)
+                                && (getContext().getClass().getName()
+                                        .contains(ActivityInfo.ISSUE_WIN_WPS_WRITER)
+                                    | getContext().getClass().getName()
+                                        .contains(ActivityInfo.ISSUE_WIN_WPS_SPREADSHEET))) {
+                            KeyEvent.sendKeyEventBack();
+                        } else {
+                            try {
+                                ActivityManagerNative.getDefault().closeActivity(getStackId());
+                            } catch (RemoteException e) {
+                                Log.e(TAG, "Close button failes", e);
+                            }
                         }
                     }
                 });

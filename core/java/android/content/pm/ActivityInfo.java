@@ -42,6 +42,10 @@ public class ActivityInfo extends ComponentInfo
                  "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.PadHomeActivity";
     public static final String ISSUE_WIN_WPS_PAD_PRO =
                  "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.PadHomeActivity";
+    public static final String ISSUE_WIN_WPS_WRITER =
+                 "cn.wps.moffice.writer.multiactivity";
+    public static final String ISSUE_WIN_WPS_SPREADSHEET =
+                 "cn.wps.moffice.spreadsheet.multiactivity";
     public static final String ISSUE_WIN_OTO_FILEMANAGER =
                  "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
     public static final String INPUTUINAME_TENCENT_WECHAT =
