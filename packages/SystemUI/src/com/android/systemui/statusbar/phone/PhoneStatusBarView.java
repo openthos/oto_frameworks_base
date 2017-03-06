@@ -51,6 +51,7 @@ public class PhoneStatusBarView extends PanelBar {
     private boolean mNotificationPanelShow = true;
     private boolean mIsHideBar = true;
     private int mStartupMenuSize;
+    private boolean mNotificationOpen = false;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -138,6 +139,7 @@ public class PhoneStatusBarView extends PanelBar {
                 }
                 getContext().sendBroadcast(
                              new Intent(Intent.STATUS_BAR_NOTIFICATION_COLLAPSE));
+                mNotificationOpen = false;
             }
         });
         mLastFullyOpenedPanel = null;
@@ -183,7 +185,12 @@ public class PhoneStatusBarView extends PanelBar {
             }
             mNotificationPanelShow = true;
         }
-        getContext().sendBroadcast(new Intent(Intent.STATUS_BAR_NOTIFICATION_EXPAND));
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mNotificationOpen = !mNotificationOpen;
+            if (mNotificationOpen) {
+                getContext().sendBroadcast(new Intent(Intent.STATUS_BAR_NOTIFICATION_EXPAND));
+            }
+        }
         mBar.showHomePanelWork();
         boolean barConsumedEvent = mBar.interceptTouchEvent(event);
 

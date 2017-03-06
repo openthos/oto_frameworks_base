@@ -3130,11 +3130,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_TAB:
                             mRecentAppsHeldModifiers = shiftlessModifiers;
-                            mSkipFocus = true;
                             showRecentApps(true);
                             return -1;
                         case KeyEvent.KEYCODE_F4:
-                            mSkipFocus = true;
                             mIsHide = true;
                             try {
                                 ActivityManagerNative.getDefault().closeActivityFocused();
@@ -3156,7 +3154,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } else if (!down && mRecentAppsHeldModifiers != 0
                 && (metaState & mRecentAppsHeldModifiers) == 0) {
             mRecentAppsHeldModifiers = 0;
-            mSkipFocus = false;
             hideRecentApps(true, false);
         }
 
@@ -3379,6 +3376,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void showRecentApps(boolean triggeredFromAltTab) {
+        mSkipFocus = true;
         mPreloadedRecentApps = false; // preloading no longer needs to be canceled
         try {
             IStatusBarService statusbar = getStatusBarService();
@@ -3393,6 +3391,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHome) {
+        mSkipFocus = false;
         mPreloadedRecentApps = false; // preloading no longer needs to be canceled
         try {
             IStatusBarService statusbar = getStatusBarService();
