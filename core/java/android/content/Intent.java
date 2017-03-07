@@ -782,6 +782,8 @@ public class Intent implements Parcelable, Cloneable {
     public static final String EXTRA_DESKTOP_RESULTTEXT = "Resulttext";
     public static final String EXTRA_DESKTOP_ENTER = "Enter";
     public static final String EXTRA_DESKTOP_BACK = "Back";
+    public static final String EXTRA_DESKTOP_ISCTRLPRESS = "isCtrl";
+    public static final String EXTRA_DESKTOP_ISSHIFTPRESS = "isShift";
 
     /**
      * Represents a shortcut/live folder icon resource.

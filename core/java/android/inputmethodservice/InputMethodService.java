@@ -1818,6 +1818,7 @@ public class InputMethodService extends AbstractInputMethodService {
             }
             return false;
         }
+        sendCtrlAndShift(event.isCtrlPressed(), event.isShiftPressed());
         if (mIsLauncher) {
             sendKeyToDesktop(keyCode, event, true);
             return mIsLauncher;
@@ -1868,6 +1869,7 @@ public class InputMethodService extends AbstractInputMethodService {
                 && !event.isCanceled()) {
             return handleBack(true);
         }
+        sendCtrlAndShift(event.isCtrlPressed(), event.isShiftPressed());
         if (mIsLauncher) {
             sendKeyToDesktop(keyCode, event, false);
             return mIsLauncher;
@@ -1876,6 +1878,12 @@ public class InputMethodService extends AbstractInputMethodService {
         return doMovementKey(keyCode, event, MOVEMENT_UP);
     }
 
+    private void sendCtrlAndShift(boolean isCtrl, boolean isShift) {
+        Intent intent = new Intent(Intent.ACTION_DESKTOP_INTERCEPT);
+        intent.putExtra(Intent.EXTRA_DESKTOP_ISCTRLPRESS, isCtrl);
+        intent.putExtra(Intent.EXTRA_DESKTOP_ISSHIFTPRESS, isShift);
+        sendBroadcast(intent);
+    }
     private void sendKeyToDesktop(int keyCode, KeyEvent event, boolean down) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_DESKTOP_INTERCEPT);
