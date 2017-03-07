@@ -695,6 +695,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                         (APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_OUTLOOK) == 0)
+                                     || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
 
     }
@@ -721,7 +722,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
-                                     || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_FENNEC) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
