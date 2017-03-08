@@ -1818,13 +1818,7 @@ public class InputMethodService extends AbstractInputMethodService {
             }
             return false;
         }
-        sendCtrlAndShift(event.isCtrlPressed(), event.isShiftPressed());
-        if (mIsLauncher) {
-            sendKeyToDesktop(keyCode, event, true);
-            return mIsLauncher;
-        }
-
-        return doMovementKey(keyCode, event, MOVEMENT_DOWN);
+        return operateKey(keyCode, event, MOVEMENT_DOWN);
     }
 
     /**
@@ -1869,30 +1863,25 @@ public class InputMethodService extends AbstractInputMethodService {
                 && !event.isCanceled()) {
             return handleBack(true);
         }
-        sendCtrlAndShift(event.isCtrlPressed(), event.isShiftPressed());
+        return operateKey(keyCode, event, MOVEMENT_UP);
+    }
+
+    private boolean operateKey(int keyCode, KeyEvent event, int action) {
+        Intent intent = new Intent(Intent.ACTION_DESKTOP_INTERCEPT);
+        intent.putExtra(Intent.EXTRA_DESKTOP_ISCTRLPRESS, event.isCtrlPressed());
+        intent.putExtra(Intent.EXTRA_DESKTOP_ISSHIFTPRESS, event.isShiftPressed());
         if (mIsLauncher) {
-            sendKeyToDesktop(keyCode, event, false);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Intent.EXTRA_DESKTOP_KEYCODE, keyCode);
+            bundle.putParcelable(Intent.EXTRA_DESKTOP_KEYEVENT, event);
+            bundle.putBoolean(Intent.EXTRA_DESKTOP_ONKEYDOWN,
+                              action == MOVEMENT_DOWN ? true : false);
+            intent.putExtra(Intent.EXTRA_DESKTOP_BUNDLE, bundle);
+            sendBroadcast(intent);
             return mIsLauncher;
         }
-
-        return doMovementKey(keyCode, event, MOVEMENT_UP);
-    }
-
-    private void sendCtrlAndShift(boolean isCtrl, boolean isShift) {
-        Intent intent = new Intent(Intent.ACTION_DESKTOP_INTERCEPT);
-        intent.putExtra(Intent.EXTRA_DESKTOP_ISCTRLPRESS, isCtrl);
-        intent.putExtra(Intent.EXTRA_DESKTOP_ISSHIFTPRESS, isShift);
         sendBroadcast(intent);
-    }
-    private void sendKeyToDesktop(int keyCode, KeyEvent event, boolean down) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_DESKTOP_INTERCEPT);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Intent.EXTRA_DESKTOP_KEYCODE, keyCode);
-        bundle.putParcelable(Intent.EXTRA_DESKTOP_KEYEVENT, event);
-        bundle.putBoolean(Intent.EXTRA_DESKTOP_ONKEYDOWN, down);
-        intent.putExtra(Intent.EXTRA_DESKTOP_BUNDLE, bundle);
-        sendBroadcast(intent);
+        return doMovementKey(keyCode, event, action);
     }
 
     /**
