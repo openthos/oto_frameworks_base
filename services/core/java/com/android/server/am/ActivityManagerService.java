@@ -2494,6 +2494,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 if (stackId == HOME_STACK_ID) {
                     mContext.sendBroadcast(
                                new Intent(Intent.ACTION_DESKTOP_FOCUSED_STATE));
+                    return;
                 } else{
                     mContext.sendBroadcast(
                                new Intent(Intent.ACTION_DESKTOP_UNFOCUSED_STATE));
