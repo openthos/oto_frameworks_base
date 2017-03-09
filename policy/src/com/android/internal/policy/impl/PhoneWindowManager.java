@@ -1390,6 +1390,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         Integer id = (Integer) entry.getKey();
                         Rect rect = (Rect) entry.getValue();
                         ActivityManagerNative.getDefault().relayoutWindow(id, rect);
+                        ActivityManagerNative.getDefault().setFocusedStack(id);
                         mIsMini = false;
                     } catch (RemoteException e) {
                         Log.e("umic", "Maxmize failed", e);
