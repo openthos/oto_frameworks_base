@@ -44,3 +44,11 @@ PRODUCT_PACKAGES := \
     AndroidClock.ttf \
     AndroidClock_Highlight.ttf \
     AndroidClock_Solid.ttf \
+    DengXian-Light.ttf \
+    DengXian.ttf \
+    Dengxian.ttf \
+    MalgunGothic.ttf \
+    STFangsong.ttf \
+    Simhei.ttf \
+    TimesNewRoman-Bold.ttf \
+    TimesNewRoman.ttf \

@@ -156,5 +156,21 @@ endif # !MINIMAL_FONT
 
 $(foreach f, $(font_src_files), $(call build-one-font-module, $(f)))
 
+font_src_files :=
+#####################################################################
+##Openthos Add fonts for MicroSoft office,crazy
+#####################################################################
+font_src_files += \
+    DengXian-Light.ttf \
+    DengXian.ttf \
+    Dengxian.ttf \
+    MalgunGothic.ttf \
+    STFangsong.ttf \
+    Simhei.ttf \
+    TimesNewRoman-Bold.ttf \
+    TimesNewRoman.ttf
+
+$(foreach f, $(font_src_files), $(call build-one-font-module, $(f)))
+
 build-one-font-module :=
 font_src_files :=

@@ -336,4 +336,24 @@
     <family>
         <font weight="400" style="normal">NotoSansTaiLe-Regular.ttf</font>
     </family>
+    <family>
+        <font weight="400" style="normal">DengXian-Light.ttf</font>
+        <font weight="400" style="normal">DengXian.ttf</font>
+    </family>
+    <family>
+        <font weight="400" style="normal">Dengxian.ttf</font>
+    </family>
+    <family>
+        <font weight="400" style="normal">MalgunGothic.ttf</font>
+    </family>
+    <family>
+        <font weight="400" style="normal">STFangsong.ttf</font>
+    </family>
+    <family name="Simhei">
+        <font weight="400" style="normal">Simhei.ttf</font>
+    </family>
+    <family>
+        <font weight="400" style="normal">TimesNewRoman.ttf</font>
+        <font weight="700" style="normal">TimesNewRoman-Bold.ttf</font>
+    </family>
 </familyset>
