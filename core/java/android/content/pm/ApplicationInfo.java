@@ -103,6 +103,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
     public static final String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
     public static final String APPNAME_CHROMIUM = "org.chromium.chrome";
+    public static final String APPNAME_ZHIHAOLE = "cn.zhl.book";
+    public static final String APPNAME_ZHIHAOLE_VIDEO = "com.zhl.zhl_individual_tutor";
     public static final String PACKAGENAME_TAG = "package";
     public static final String APPNAME_ANDROID_INPUTMETHOD_PINYIN
                                                = "com.android.inputmethod.pinyin/.PinyinIME";
@@ -696,6 +698,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_OUTLOOK) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
+                                     || (pkgName.compareTo(APPNAME_ZHIHAOLE) == 0)
+                                     || (pkgName.compareTo(APPNAME_ZHIHAOLE_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
 
     }
