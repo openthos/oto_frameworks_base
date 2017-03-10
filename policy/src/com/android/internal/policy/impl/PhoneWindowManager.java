@@ -2909,6 +2909,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 sendAppManager();
                 mHomeKeyHasEffect = false;
             }
+            mIsHide = true;
         } else if (keyCode == KeyEvent.KEYCODE_CUSTOMIZE_FILE_MANAGER) {
             if (down) {
                 sendFileManager();
