@@ -335,11 +335,13 @@ public class WindowManagerService extends IWindowManager.Stub
                  hideStatusbarBroadcast();
                  mIsHideBar = true;
             }
-            if ((Intent.LOCK_SCREEN_SHOW_STATUS_BAR).equals(action)) {
+            if ((Intent.LOCK_MACHINE_TOTALLY).equals(action)) {
+                 mLockMachine = true;
                  mStatusBarAutoHide = false;
                  showStatusbarBroadcast();
             }
-            if ((Intent.LOCK_SCREEN_HIDE_STATUS_BAR).equals(action) && mIsHideBar) {
+            if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(action) && mIsHideBar) {
+                 mLockMachine = false;
                  mStatusBarAutoHide = true;
             }
         }
@@ -677,6 +679,7 @@ public class WindowManagerService extends IWindowManager.Stub
     boolean mStatusBarLock = false;
     boolean mStatusBarSkipSense = false;
     boolean mIsHideBar = true;
+    boolean mLockMachine = false;
 
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
@@ -928,8 +931,8 @@ public class WindowManagerService extends IWindowManager.Stub
         filter.addAction(DevicePolicyManager.ACTION_DEVICE_POLICY_MANAGER_STATE_CHANGED);
         filter.addAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
         filter.addAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
-        filter.addAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
-        filter.addAction(Intent.LOCK_SCREEN_HIDE_STATUS_BAR);
+        filter.addAction(Intent.LOCK_MACHINE_TOTALLY);
+        filter.addAction(Intent.UNLOCK_MACHINE_TOTALLY);
         mContext.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         mSettingsObserver = new SettingsObserver();
@@ -7688,7 +7691,7 @@ public class WindowManagerService extends IWindowManager.Stub
             }
 
             if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT) || !mStatusBarAutoHide
-                                                                        || mStatusBarSkipSense) {
+                                                      || mStatusBarSkipSense || mLockMachine) {
                 return;
             }
             showStatusbarBroadcast();
@@ -12055,5 +12058,30 @@ public class WindowManagerService extends IWindowManager.Stub
 
         public DisplayContentAndMotionEvent () {
         }
+    }
+
+    public int interceptKeyBeforeQueueing(KeyEvent event, int policyFlags) {
+        if (mLockMachine && (event.getKeyCode() == KeyEvent.KEYCODE_POWER)) {
+            return 0;
+        }
+        return mPolicy.interceptKeyBeforeQueueing(event, policyFlags);
+    }
+
+    public long interceptKeyBeforeDispatching(WindowState win, KeyEvent event, int policyFlags) {
+        if (mLockMachine) {
+            int keyCode = event.getKeyCode();
+            if (event.isCtrlPressed() && event.isAltPressed()
+                && keyCode == KeyEvent.KEYCODE_FORWARD_DEL) {
+                return 0;
+            }
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_STARTUPMENU:
+                case KeyEvent.KEYCODE_HOME:
+                    return 0;
+                default:
+                    break;
+            }
+        }
+        return mPolicy.interceptKeyBeforeDispatching(win, event, policyFlags);
     }
 }

@@ -59,8 +59,8 @@ public class PhoneStatusBarView extends PanelBar {
         Resources res = getContext().getResources();
         mBarTransitions = new PhoneStatusBarTransitions(this);
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
-        filter.addAction(Intent.LOCK_SCREEN_HIDE_STATUS_BAR);
+        filter.addAction(Intent.LOCK_MACHINE_TOTALLY); // Before unlock machine, try lock firstly
+        filter.addAction(Intent.UNLOCK_MACHINE_TOTALLY);
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
     }
 
@@ -256,10 +256,10 @@ public class PhoneStatusBarView extends PanelBar {
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            if ((Intent.LOCK_SCREEN_SHOW_STATUS_BAR).equals(intent.getAction())) {
+            if ((Intent.LOCK_MACHINE_TOTALLY).equals(intent.getAction())) {
                 mIsHideBar = false;
             }
-            if ((Intent.LOCK_SCREEN_HIDE_STATUS_BAR).equals(intent.getAction())) {
+            if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(intent.getAction())) {
                 mIsHideBar = true;
             }
         }

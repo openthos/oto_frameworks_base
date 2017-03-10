@@ -3595,10 +3595,10 @@ public class Intent implements Parcelable, Cloneable {
                                       "android.intent.statusbar.notification.collapse";
     public static final String STATUS_BAR_SEAFILE =
                                       "android.intent.statusbar.seafile";
-    public static final String LOCK_SCREEN_SHOW_STATUS_BAR =
-                                      "android.intent.lock.screen.show.status.bar";
-    public static final String LOCK_SCREEN_HIDE_STATUS_BAR =
-                                      "android.intent.lock.screen.hide.status.bar";
+    public static final String LOCK_MACHINE_TOTALLY =
+                                      "android.intent.lock.machine.totally";
+    public static final String UNLOCK_MACHINE_TOTALLY =
+                                      "android.intent.unlock.machine.totally";
     public static final String STATUS_BAR_UNINSTALL_APK =
                                       "android.intent.statusbar.remove.apk";
     public static final String HEADER_BAR_HIDE = "android.intent.action.hide.header";

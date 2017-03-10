@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.AttributeSet;
@@ -409,6 +410,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             }
         }
         if (finish) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.UNLOCK_MACHINE_TOTALLY);
+            mContext.sendBroadcast(intent);
             mSecurityCallback.finish();
         }
         return finish;

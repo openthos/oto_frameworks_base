@@ -977,10 +977,10 @@ public class KeyguardViewMediator extends SystemUI {
             return;
         }
 
-        if (mLockPatternUtils.isLockScreenDisabled() && !lockedOrMissing) {
-            if (DEBUG) Log.d(TAG, "doKeyguard: not showing because lockscreen is off");
-            return;
-        }
+        //if (mLockPatternUtils.isLockScreenDisabled() && !lockedOrMissing) {
+        //    if (DEBUG) Log.d(TAG, "doKeyguard: not showing because lockscreen is off");
+        //    return;
+        //}
 
         if (mLockPatternUtils.checkVoldPassword()) {
             if (DEBUG) Log.d(TAG, "Not showing lock screen since just decrypted");

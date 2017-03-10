@@ -367,7 +367,7 @@ final class InputMonitor implements InputManagerService.WindowManagerCallbacks {
      * processing as soon as the key has been read from the device. */
     @Override
     public int interceptKeyBeforeQueueing(KeyEvent event, int policyFlags) {
-        return mService.mPolicy.interceptKeyBeforeQueueing(event, policyFlags);
+        return mService.interceptKeyBeforeQueueing(event, policyFlags);
     }
 
     /* Provides an opportunity for the window manager policy to intercept early motion event
@@ -385,7 +385,7 @@ final class InputMonitor implements InputManagerService.WindowManagerCallbacks {
     public long interceptKeyBeforeDispatching(
             InputWindowHandle focus, KeyEvent event, int policyFlags) {
         WindowState windowState = focus != null ? (WindowState) focus.windowState : null;
-        return mService.mPolicy.interceptKeyBeforeDispatching(windowState, event, policyFlags);
+        return mService.interceptKeyBeforeDispatching(windowState, event, policyFlags);
     }
 
     /* Provides an opportunity for the window manager policy to process a key that

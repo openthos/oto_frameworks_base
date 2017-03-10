@@ -45,7 +45,7 @@ public class LocknActivity extends Activity {
 
     public void sendLockScreenShowBar() {
         Intent intent = new Intent();
-        intent.setAction(Intent.LOCK_SCREEN_SHOW_STATUS_BAR);
+        intent.setAction(Intent.LOCK_MACHINE_TOTALLY);
         sendBroadcast(intent);
     }
 }

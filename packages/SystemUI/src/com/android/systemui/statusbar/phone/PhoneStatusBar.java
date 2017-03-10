@@ -724,6 +724,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         notifyUserAboutHiddenNotifications();
 
         mScreenPinningRequest = new ScreenPinningRequest(mContext);
+
+        Intent intentLock = new Intent("android.intent.action.LOCKNOW");
+        intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        mContext.startActivity(intentLock);
     }
 
     // ================================================================================

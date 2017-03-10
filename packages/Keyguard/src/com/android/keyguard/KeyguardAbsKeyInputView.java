@@ -105,7 +105,6 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
     protected void verifyPasswordAndUnlock() {
         String entry = getPasswordText();
         if (mLockPatternUtils.checkPassword(entry)) {
-            sendLockScreenHideBar();
             mCallback.reportUnlockAttempt(true);
             mCallback.dismiss(true);
         } else {
@@ -199,12 +198,6 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout
     @Override
     public boolean startDisappearAnimation(Runnable finishRunnable) {
         return false;
-    }
-
-    public void sendLockScreenHideBar() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.LOCK_SCREEN_HIDE_STATUS_BAR);
-        mContext.sendBroadcast(intent);
     }
 }
 
