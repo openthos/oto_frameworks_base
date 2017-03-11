@@ -410,9 +410,6 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             }
         }
         if (finish) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.UNLOCK_MACHINE_TOTALLY);
-            mContext.sendBroadcast(intent);
             mSecurityCallback.finish();
         }
         return finish;

@@ -30,6 +30,7 @@ import android.content.BroadcastReceiver;
 
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
+import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.policy.ActivityKeyView;
 import android.content.IntentFilter;
 import android.os.UserHandle;
@@ -49,7 +50,6 @@ public class PhoneStatusBarView extends PanelBar {
 
     private boolean mSkipActionUp = false;
     private boolean mNotificationPanelShow = true;
-    private boolean mIsHideBar = true;
     private int mStartupMenuSize;
     private boolean mNotificationOpen = false;
 
@@ -58,10 +58,6 @@ public class PhoneStatusBarView extends PanelBar {
         mStartupMenuSize = (int) (40 * (context.getResources().getDisplayMetrics().density) + 0.5f);
         Resources res = getContext().getResources();
         mBarTransitions = new PhoneStatusBarTransitions(this);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.LOCK_MACHINE_TOTALLY); // Before unlock machine, try lock firstly
-        filter.addAction(Intent.UNLOCK_MACHINE_TOTALLY);
-        context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
     }
 
     public BarTransitions getBarTransitions() {
@@ -132,7 +128,7 @@ public class PhoneStatusBarView extends PanelBar {
             @Override
             public void run() {
                 mBar.makeExpandedInvisible();
-                if (mBar.isPhoneStatusBarHide() && mIsHideBar) {
+                if (mBar.isPhoneStatusBarHide() && mBar.getBarState() != StatusBarState.KEYGUARD) {
                     getContext().sendBroadcast(
                                  new Intent(Intent.STATUS_BAR_INFO_HIDE_CUSTOM));
                     mNotificationPanelShow = false;
@@ -253,15 +249,4 @@ public class PhoneStatusBarView extends PanelBar {
         mScrimController.setPanelExpansion(frac);
         mBar.updateCarrierLabelVisibility(false);
     }
-
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            if ((Intent.LOCK_MACHINE_TOTALLY).equals(intent.getAction())) {
-                mIsHideBar = false;
-            }
-            if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(intent.getAction())) {
-                mIsHideBar = true;
-            }
-        }
-    };
 }

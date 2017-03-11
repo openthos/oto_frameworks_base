@@ -2899,8 +2899,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void showStatusBarViewMarkless() {
         mStatusBarWindow.setVisibility(View.VISIBLE);
+        // TODO: should try to dumy visibility when in KEYGUARD state, next.
         mStatusBarView.setVisibility(View.VISIBLE);
         mNotificationPanel.setPanelShow();
+        if (mState == StatusBarState.KEYGUARD) {
+            instantExpandNotificationsPanel();
+        }
     }
 
     @Override
@@ -4456,6 +4460,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mDraggedDownRow.notifyHeightChanged();
             mDraggedDownRow = null;
         }
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.LOCK_MACHINE_TOTALLY);
+        mContext.sendBroadcast(intent);
     }
 
     public boolean isCollapsing() {
@@ -4544,6 +4552,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public boolean hideKeyguard() {
         boolean staying = mLeaveOpenOnKeyguardHide;
         setBarState(StatusBarState.SHADE);
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.UNLOCK_MACHINE_TOTALLY);
+        mContext.sendBroadcast(intent);
+
         if (mLeaveOpenOnKeyguardHide) {
             mLeaveOpenOnKeyguardHide = false;
             mNotificationPanel.animateToFullShade(calculateGoingToFullShadeDelay());
