@@ -385,7 +385,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final int STATUSBAR_ACTIVITY_ID_START = KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_START;
     static final int STATUSBAR_ACTIVITY_ID_END =KeyEvent.KEYCODE_STATUSBAR_ACTIVITY_ID_END;
 
-    private static final long GABAGE_REMOVE_INTERVAL = 100; // 0.1 second
+    private static final long BACKGROUND_WORK_INTERVAL = 100; // 0.1 second
     private static final long FOCUS_JUST_CHANGED_TIMES = 2; // about 0.2 second
 
     /** All system services */
@@ -2220,6 +2220,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                                     closeActivity(mClosingStackId);
                                     mClosingStackId = -1;
                                 }
+                                mWindowManager.backgroundWork();
                             }
 
                             if (mFocusJustChanged) {
@@ -2230,7 +2231,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                                 }
                             }
 
-                            this.sleep(GABAGE_REMOVE_INTERVAL);
+                            this.sleep(BACKGROUND_WORK_INTERVAL);
                         } catch (InterruptedException e) {
                         }
                     } catch (Exception e) {

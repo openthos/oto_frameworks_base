@@ -336,12 +336,13 @@ public class WindowManagerService extends IWindowManager.Stub
                  mIsHideBar = true;
             }
             if ((Intent.LOCK_MACHINE_TOTALLY).equals(action)) {
-                 mLockMachine = true;
+                 mLockMachine.mLocked = true;
+                 mLockMachine.reset();
                  mStatusBarAutoHide = false;
                  showStatusbarBroadcast();
             }
             if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(action) && mIsHideBar) {
-                 mLockMachine = false;
+                 mLockMachine.mLocked = false;
                  mStatusBarAutoHide = true;
             }
         }
@@ -679,7 +680,45 @@ public class WindowManagerService extends IWindowManager.Stub
     boolean mStatusBarLock = false;
     boolean mStatusBarSkipSense = false;
     boolean mIsHideBar = true;
-    boolean mLockMachine = false;
+
+    class LockMachine {
+        public boolean mLocked;
+
+        private static final long SCREEN_OFF_INTERVAL = 100; // wait 10 second
+        private boolean mScreenOn;
+        private int mBrightnessCur;
+        private int mCountPer100MS;
+
+        public void reset() {
+            mCountPer100MS = 0;
+            mScreenOn = true;
+            mBrightnessCur = Settings.System.getIntForUser(mContext.getContentResolver(),
+                                                Settings.System.SCREEN_BRIGHTNESS,
+                                                mPowerManager.getDefaultScreenBrightnessSetting(),
+                                                UserHandle.USER_CURRENT_OR_SELF);
+        }
+
+        public void screenTurnOn() {
+            mCountPer100MS = 0;
+            Settings.System.putIntForUser(mContext.getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, mBrightnessCur,
+                            UserHandle.USER_CURRENT_OR_SELF);
+            mScreenOn = true;
+        }
+
+        public void screenTryTurnOff() {
+            if (++mCountPer100MS > SCREEN_OFF_INTERVAL) {
+                if (mScreenOn) {
+                    Settings.System.putIntForUser(mContext.getContentResolver(),
+                                    Settings.System.SCREEN_BRIGHTNESS, 0,
+                                    UserHandle.USER_CURRENT_OR_SELF);
+                    mScreenOn = false;
+                }
+                mCountPer100MS = 0;
+            }
+        }
+    };
+    LockMachine mLockMachine = new LockMachine();
 
     /** Pulled out of performLayoutAndPlaceSurfacesLockedInner in order to refactor into multiple
      * methods. */
@@ -7691,7 +7730,7 @@ public class WindowManagerService extends IWindowManager.Stub
             }
 
             if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT) || !mStatusBarAutoHide
-                                                      || mStatusBarSkipSense || mLockMachine) {
+                                                  || mStatusBarSkipSense || mLockMachine.mLocked) {
                 return;
             }
             showStatusbarBroadcast();
@@ -12061,14 +12100,15 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public int interceptKeyBeforeQueueing(KeyEvent event, int policyFlags) {
-        if (mLockMachine && (event.getKeyCode() == KeyEvent.KEYCODE_POWER)) {
+        if (mLockMachine.mLocked && (event.getKeyCode() == KeyEvent.KEYCODE_POWER)) {
+            mLockMachine.screenTurnOn();
             return 0;
         }
         return mPolicy.interceptKeyBeforeQueueing(event, policyFlags);
     }
 
     public long interceptKeyBeforeDispatching(WindowState win, KeyEvent event, int policyFlags) {
-        if (mLockMachine) {
+        if (mLockMachine.mLocked) {
             int keyCode = event.getKeyCode();
             if (event.isCtrlPressed() && event.isAltPressed()
                 && keyCode == KeyEvent.KEYCODE_FORWARD_DEL) {
@@ -12081,7 +12121,14 @@ public class WindowManagerService extends IWindowManager.Stub
                 default:
                     break;
             }
+            mLockMachine.screenTurnOn();
         }
         return mPolicy.interceptKeyBeforeDispatching(win, event, policyFlags);
+    }
+
+    public void backgroundWork() {
+        if (mLockMachine.mLocked) {
+            mLockMachine.screenTryTurnOff();
+        }
     }
 }
