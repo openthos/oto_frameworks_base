@@ -377,10 +377,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         super(context);
         mLayoutInflater = LayoutInflater.from(context);
         setCallback(this);
-        IntentFilter filterHide = new IntentFilter(Intent.HEADER_BAR_HIDE);
-        IntentFilter filterShow = new IntentFilter(Intent.HEADER_BAR_SHOW);
-        context.registerReceiver(mBroadcastReceiverHide, filterHide);
-        context.registerReceiver(mBroadcastReceiverShow, filterShow);
+        if (context.getPackageName().
+                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
+            IntentFilter filterHide = new IntentFilter(Intent.HEADER_BAR_HIDE);
+            IntentFilter filterShow = new IntentFilter(Intent.HEADER_BAR_SHOW);
+            context.registerReceiver(mBroadcastReceiverHide, filterHide);
+            context.registerReceiver(mBroadcastReceiverShow, filterShow);
+        }
     }
 
     @Override
