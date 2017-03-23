@@ -2320,6 +2320,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private boolean mHeaderChecked = false;
         private boolean mScrollDragH = false;
         private boolean mScrollDragV = false;
+        private boolean mAppCustom = false;
+        private Rect mAppRectOrig = null;
 
         public DecorView(Context context, int featureId) {
             super(context);
@@ -3711,6 +3713,38 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mActionMode = null;
                 requestFitSystemWindows();
             }
+        }
+
+        @Override
+        public void invalidate() {
+            ViewRootImpl root = getViewRootImpl();
+
+            // Check whether application customizes full screen
+            if ((mDecorMW != null) && (root != null)) {
+                Rect frame = root.getWinFrame();
+                Rect screen = getFullScreen();
+                Rect r = null;
+                if ((frame.width() > 0) && (frame.height() > 0) && (getHeight() > screen.height())
+                      && ((getWidth() != frame.width()) || (getHeight() != frame.height()))) {
+                    if (mAppRectOrig == null) {
+                        mAppRectOrig = new Rect();
+                    }
+                    mAppRectOrig.set(frame);
+                    r = new Rect(getLeft(), getTop(), getRight(), getBottom());
+                    mAppCustom = true;
+                } else if (mAppCustom) {
+                    r = mAppRectOrig;
+                    mAppCustom = false;
+                }
+                if (r != null) {
+                    try {
+                        ActivityManagerNative.getDefault().relayoutWindow(getStackId(), r);
+                    } catch (RemoteException e) {
+                    }
+                }
+            }
+
+            super.invalidate();
         }
     }
 
