@@ -150,6 +150,25 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
         }
     }
 
+    public boolean isSwitchWindow(int x, int y) {
+        if (mMultiWindow == null) {
+            return true;
+        }
+        return (x < mBounds.left + mMultiWindow.getFramePadding()
+                        * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE)
+                    || (x > mBounds.width() + mBounds.left - mMultiWindow.getFramePadding()
+                        * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE)
+                    || (y < mBounds.top + mMultiWindow.getTopFramePadding()
+                        * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE)
+                    || (y > mBounds.height() + mBounds.top - mMultiWindow.getTopFramePadding()
+                        * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE)
+                    || ((x >= mBounds.left + mMultiWindow.getFramePadding())
+                        && (x <= mBounds.left + mBounds.width() - mMultiWindow.getFramePadding())
+                        && (y >= mBounds.top + mMultiWindow.getTopFramePadding())
+                        && (y <= mBounds.top + mBounds.height()
+                            - mMultiWindow.getTopFramePadding()));
+    }
+
     public void onTouchEvent(int what, int x, int y, long downTime) {
         if (!mEnableMultiWindow) {
             return;

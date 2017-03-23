@@ -2069,6 +2069,9 @@ public interface WindowManager extends ViewManager {
         private final static String LINERECT_LOCATION = "com.android.linerect";
         private final static String LINERECT_ACTIVITY = "com.android.linerect.LineRectActivity";
 
+        // For dragging window
+        public static final double CORRECT_FACTOR_OUTSIDE = 0.6;
+
         public int mStackId = -1;
 
         public int mBorderPadding = 0;

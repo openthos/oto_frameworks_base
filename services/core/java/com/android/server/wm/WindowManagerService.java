@@ -8244,11 +8244,13 @@ public class WindowManagerService extends IWindowManager.Stub
                     synchronized (mWindowMap) {
                         stackId = ((DisplayContent)msg.obj).stackIdFromPoint(msg.arg1, msg.arg2);
                     }
-                    if (stackId >= 0) {
-                        try {
+                    try {
+                        int currentId = mActivityManager.getFocusedStackId();
+                        if (stackId >= 0 && currentId >= 0 && mStackIdToStack.get(currentId) != null
+                             && mStackIdToStack.get(currentId).isSwitchWindow(msg.arg1, msg.arg2)) {
                             mActivityManager.setFocusedStack(stackId);
-                        } catch (RemoteException e) {
                         }
+                    } catch (RemoteException e) {
                     }
                 }
                 break;

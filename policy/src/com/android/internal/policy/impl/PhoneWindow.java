@@ -171,8 +171,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             (1 << FEATURE_ACTION_MODE_OVERLAY);
 
     private static final Transition USE_DEFAULT_TRANSITION = new TransitionSet();
-    private static final double CORRECT_FACTOR_INSIDE = 0.4;
-    private static final double CORRECT_FACTOR_OUTSIDE = 0.6;
 
     /**
      * Simple callback used by the context menu and its submenus. The options
@@ -3875,16 +3873,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         mDecor.getLocationOnScreen(arrS);
         int width = mDecor.getWidth();
         int height = mDecor.getHeight();
-        return ((x >= arrS[0] + shadowPadding * CORRECT_FACTOR_OUTSIDE)
-                         && (x <= arrS[0] + shadowPadding))
-                     || ((y >= arrS[1] + topShadowPadding * CORRECT_FACTOR_OUTSIDE)
-                         && (y <= arrS[1] + topShadowPadding))
-                     || ((x >= arrS[0] + width - shadowPadding)
-                         && (x <= arrS[0] + width - shadowPadding + shadowPadding
-                             * CORRECT_FACTOR_INSIDE))
-                     || ((y >= arrS[1] + height - shadowPadding)
-                         && (y <= arrS[1] + height - topShadowPadding + topShadowPadding
-                             * CORRECT_FACTOR_INSIDE));
+        return ((x >= arrS[0] + shadowPadding * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE)
+                        && (x <= arrS[0] + shadowPadding))
+                    || ((y <= arrS[1] + topShadowPadding)
+                        && (y >= arrS[1] + topShadowPadding
+                            * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE))
+                    || ((x >= arrS[0] + width - shadowPadding)
+                        && (x <= arrS[0] + width - shadowPadding
+                            * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE))
+                    || ((y >= arrS[1] + height - shadowPadding)
+                        && (y <= arrS[1] + height - topShadowPadding
+                            * WindowManager.MultiWindow.CORRECT_FACTOR_OUTSIDE));
     }
 
     private DecorView getActivityDecor() {

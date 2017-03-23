@@ -66,6 +66,16 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 mPointerId = motionEvent.getPointerId(0);
                 mDownX = motionEvent.getX();
                 mDownY = motionEvent.getY();
+                WindowManager wm = (WindowManager) mService.mContext
+                                   .getSystemService(Context.WINDOW_SERVICE);
+                int height = wm.getDefaultDisplay().getHeight();
+                if ((!mTouchExcludeRegion.contains((int)mDownX, (int)mDownY)
+                        || DisplayContent.sCurrentTouchedDisplay != mDisplayContent.getDisplayId())
+                        && (mDownY < height)) {
+                    DisplayContent.sCurrentTouchedDisplay = mDisplayContent.getDisplayId();
+                    mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, (int)mDownX, (int)mDownY,
+                                              mDisplayContent).sendToTarget();
+                }
                 mService.mH.obtainMessage(H.POINTER_EVENT_ACTION_DOWN, (int) mDownX, (int) mDownY,
                                           mDcAndMe).sendToTarget();
                 break;
@@ -94,11 +104,11 @@ public class StackTapPointerEventListener implements PointerEventListener {
                         >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 // Extract the index of the pointer that left the touch sensor
                 if (mPointerId == motionEvent.getPointerId(index)) {
-                    final int x = (int)motionEvent.getX(index);
+                    /*final int x = (int)motionEvent.getX(index);
                     final int y = (int)motionEvent.getY(index);
                     WindowManager wm =  (WindowManager) mService.mContext
                                                          .getSystemService(Context.WINDOW_SERVICE);
-                    int height = wm.getDefaultDisplay().getHeight();
+                    int height = wm.getDefaultDisplay().getHeight();*/
                     /**
                      * Date: Apr 3, 2014
                      * Copyright (C) 2014 Tieto Poland Sp. z o.o.
@@ -106,7 +116,7 @@ public class StackTapPointerEventListener implements PointerEventListener {
                      * TietoTODO: Dirty hack to check if previous tap was done
                      * on different screen.
                      */
-                    if ((motionEvent.getEventTime() - motionEvent.getDownTime())
+                    /*if ((motionEvent.getEventTime() - motionEvent.getDownTime())
                                < TAP_TIMEOUT_MSEC
                             && (x - mDownX) < mMotionSlop && (y - mDownY) < mMotionSlop
                             && (!mTouchExcludeRegion.contains(x, y)
@@ -115,7 +125,7 @@ public class StackTapPointerEventListener implements PointerEventListener {
                         DisplayContent.sCurrentTouchedDisplay = mDisplayContent.getDisplayId();
                         mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, x, y,
                                 mDisplayContent).sendToTarget();
-                    }
+                    }*/
                     mPointerId = -1;
                 }
                 break;
