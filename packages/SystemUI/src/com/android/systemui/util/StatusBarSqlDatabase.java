@@ -19,6 +19,9 @@ public class StatusBarSqlDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("create table status_bar_tb(_id integer primary key autoincrement,"
                                                           + "pkgname varchar(100))");
+        sqLiteDatabase.
+            execSQL("create table status_bar_custom_tb(_id integer primary key autoincrement,"
+                                                          + "state varchar(100))");
     }
 
     @Override

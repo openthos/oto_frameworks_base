@@ -326,14 +326,12 @@ public class WindowManagerService extends IWindowManager.Stub
                     KeyguardDisableHandler.KEYGUARD_POLICY_CHANGED);
             }
             if ((Intent.STATUS_BAR_INFO_SHOW_CUSTOM).equals(action)) {
-                 mIsHideBar = false;
                  mStatusBarAutoHide = false;
                  showStatusbarBroadcast();
             }
             if ((Intent.STATUS_BAR_INFO_HIDE_CUSTOM).equals(action)) {
                  mStatusBarAutoHide = true;
                  hideStatusbarBroadcast();
-                 mIsHideBar = true;
             }
             if ((Intent.LOCK_MACHINE_TOTALLY).equals(action)) {
                  mLockMachine.mLocked = true;
@@ -341,7 +339,7 @@ public class WindowManagerService extends IWindowManager.Stub
                  mStatusBarAutoHide = false;
                  showStatusbarBroadcast();
             }
-            if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(action) && mIsHideBar) {
+            if ((Intent.UNLOCK_MACHINE_TOTALLY).equals(action)) {
                  mLockMachine.mLocked = false;
                  mStatusBarAutoHide = true;
             }
@@ -679,7 +677,6 @@ public class WindowManagerService extends IWindowManager.Stub
     public boolean mStatusBarAutoHide = true;
     boolean mStatusBarLock = false;
     boolean mStatusBarSkipSense = false;
-    boolean mIsHideBar = true;
 
     class LockMachine {
         public boolean mLocked;

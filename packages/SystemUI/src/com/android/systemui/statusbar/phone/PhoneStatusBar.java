@@ -262,6 +262,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             = "com.android.inputmethod.latin/.LatinIME";
     public static final boolean SHOW_LOCKSCREEN_MEDIA_ARTWORK = true;
     public static final String TEXT_COLOR_GRAY = "#8B8970";
+    public static final String STATUS_BAR_SQL_STATE = "state";
+    public static final String STATUS_BAR_SHOW = "show";
+    public static final String STATUS_BAR_HIDE = "hide";
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
     private static final int MSG_CLOSE_PANELS = 1001;
@@ -399,6 +402,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private Dialog mDialog = null;
     private boolean mClicked = true;
 
+    public  boolean mIsShowNotificationPanel = false;
     int mKeyguardMaxNotificationCount;
 
     // carrier/wifi label
@@ -1197,10 +1201,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         hideText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClicked = true;
-                Intent intentHide = new Intent();
-                intentHide.setAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
-                mContext.sendBroadcast(intentHide);
+                sendBroadcastStatusBarCustom(STATUS_BAR_HIDE, true);
                 dismissDialog();
             }
         });
@@ -1209,10 +1210,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         showText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                mClicked = false;
-                Intent intentShow = new Intent();
-                intentShow.setAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
-                mContext.sendBroadcast(intentShow);
+                sendBroadcastStatusBarCustom(STATUS_BAR_SHOW, true);
                 dismissDialog();
             }
         });
@@ -2901,7 +2899,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarWindow.setVisibility(View.VISIBLE);
         // TODO: should try to dumy visibility when in KEYGUARD state, next.
         mStatusBarView.setVisibility(View.VISIBLE);
-        mNotificationPanel.setPanelShow();
+        if (mIsShowNotificationPanel) {
+            mNotificationPanel.setPanelShow();
+        }
         if (mState == StatusBarState.KEYGUARD) {
             instantExpandNotificationsPanel();
         }
@@ -4363,6 +4363,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if(mPrinterBroadcastReceiver != null){
             mContext.unregisterReceiver(mPrinterBroadcastReceiver);
         }
+        if (mdbStatusBar != null) {
+            mdbStatusBar.close();
+        }
     }
 
     private boolean mDemoModeAllowed;
@@ -4557,6 +4560,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         intent.setAction(Intent.UNLOCK_MACHINE_TOTALLY);
         mContext.sendBroadcast(intent);
 
+        new Thread(new SyncStatusBarState()).start();
         if (mLeaveOpenOnKeyguardHide) {
             mLeaveOpenOnKeyguardHide = false;
             mNotificationPanel.animateToFullShade(calculateGoingToFullShadeDelay());
@@ -4574,12 +4578,50 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mQSPanel != null) {
             mQSPanel.refreshAllTiles();
         }
+        mIsShowNotificationPanel = false;
         mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
         return staying;
     }
 
     public long calculateGoingToFullShadeDelay() {
         return mKeyguardFadingAwayDelay + mKeyguardFadingAwayDuration;
+    }
+
+    class SyncStatusBarState implements Runnable {
+        @Override
+        public void run() {
+            Cursor cursor = mdbStatusBar.rawQuery("select * from status_bar_custom_tb", null);
+            if (cursor != null) {
+                if (cursor.moveToNext()) {
+                    sendBroadcastStatusBarCustom(cursor.getString(1), false);
+                }
+                cursor.close();
+            } else {
+                sendBroadcastStatusBarCustom(STATUS_BAR_HIDE, false);
+            }
+        }
+    }
+
+    public void sendBroadcastStatusBarCustom(String strStateStatusBar, boolean isUpdate) {
+        ContentValues cValues = new ContentValues();
+        Intent intentCustom = new Intent();
+        Cursor c = mdbStatusBar.rawQuery("select * from status_bar_custom_tb", null);
+        if (isUpdate) {
+            cValues.put(STATUS_BAR_SQL_STATE, strStateStatusBar);
+            if (c.getCount() == 0) {
+                mdbStatusBar.insert("status_bar_custom_tb", STATUS_BAR_SQL_STATE, cValues);
+            } else {
+                mdbStatusBar.update("status_bar_custom_tb", cValues, "_id = ?", new String[]{"1"});
+            }
+        }
+        if (strStateStatusBar.equals(STATUS_BAR_SHOW)) {
+            mClicked = false;
+            intentCustom.setAction(Intent.STATUS_BAR_INFO_SHOW_CUSTOM);
+        } else if (strStateStatusBar.equals(STATUS_BAR_HIDE)) {
+            mClicked = true;
+            intentCustom.setAction(Intent.STATUS_BAR_INFO_HIDE_CUSTOM);
+        }
+        mContext.sendBroadcast(intentCustom);
     }
 
     /**

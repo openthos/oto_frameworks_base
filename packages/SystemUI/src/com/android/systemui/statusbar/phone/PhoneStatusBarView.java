@@ -170,7 +170,9 @@ public class PhoneStatusBarView extends PanelBar {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
+        //Show notificationPanel when click notification center.
+        mBar.mIsShowNotificationPanel = true;
+        mBar.mNotificationPanel.setPanelShow();
         if (checkValidEvent((int)event.getX()) == false) {
             return false;
         }
