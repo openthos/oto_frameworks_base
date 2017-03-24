@@ -1626,7 +1626,6 @@ public class InputMethodService extends AbstractInputMethodService {
                 onStartCandidatesView(mInputEditorInfo, restarting);
             }
         }
-        getCurrentInputConnection().isLauncherFocus(mIsLauncher);
     }
     
     /**
@@ -2473,6 +2472,7 @@ public class InputMethodService extends AbstractInputMethodService {
                     mIsLauncher = false;
                     break;
             }
+            getCurrentInputConnection().isLauncherFocus(mIsLauncher);
         }
     }
 }
