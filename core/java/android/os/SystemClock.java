@@ -19,6 +19,7 @@ package android.os;
 import android.app.IAlarmManager;
 import android.content.Context;
 import android.util.Slog;
+import java.util.TimeZone;
 
 /**
  * Core timekeeping facilities.
@@ -93,6 +94,8 @@ import android.util.Slog;
  */
 public final class SystemClock {
     private static final String TAG = "SystemClock";
+    private static final String OTO_TIMEZONE_PROPERTY = "persist.sys.openthos.timezone";
+    private static final String OTO_USE_UTC = "persist.sys.openthos.utc";
 
     /**
      * This class is uninstantiable.
@@ -145,9 +148,13 @@ public final class SystemClock {
         if (mgr == null) {
             return false;
         }
-
-        try {
-            return mgr.setTime(millis);
+	long delta_millis = 0;
+	if (SystemProperties.get(OTO_USE_UTC, "false").equals("false")) {
+	    Slog.d(TAG,"From " + OTO_TIMEZONE_PROPERTY + " ,OPENTHOS configure BIOS store localtime");
+	    delta_millis = TimeZone.getTimeZone(SystemProperties.get(OTO_TIMEZONE_PROPERTY)).getRawOffset();
+	}
+	try {
+            return mgr.setTime(millis + delta_millis);
         } catch (RemoteException e) {
             Slog.e(TAG, "Unable to set RTC", e);
         } catch (SecurityException e) {
