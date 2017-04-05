@@ -99,8 +99,6 @@ class AlarmManagerService extends SystemService {
     static final boolean DEBUG_ALARM_CLOCK = localLOGV || false;
     static final int ALARM_EVENT = 1;
     static final String TIMEZONE_PROPERTY = "persist.sys.timezone";
-    static final String OTO_TIMEZONE_PROPERTY = "persist.sys.openthos.timezone";
-    static final String OTO_USE_UTC = "persist.sys.openthos.utc";
 
     static final Intent mBackgroundIntent
             = new Intent().addFlags(Intent.FLAG_FROM_BACKGROUND);
@@ -650,11 +648,9 @@ class AlarmManagerService extends SystemService {
         }
 
         TimeZone zone = TimeZone.getTimeZone(tz);
-	TimeZone fakeZone = TimeZone.getTimeZone("Europe/London");
         // Prevent reentrant calls from stepping on each other when writing
         // the time zone property
         boolean timeZoneWasChanged = false;
-	String useutc = SystemProperties.get(OTO_USE_UTC, "false");
         synchronized (this) {
             String current = SystemProperties.get(TIMEZONE_PROPERTY);
             if (current == null || !current.equals(zone.getID())) {
@@ -662,23 +658,13 @@ class AlarmManagerService extends SystemService {
                     Slog.v(TAG, "timezone changed: " + current + ", new=" + zone.getID());
                 }
                 timeZoneWasChanged = true;
-		if (useutc.equals("false")) {
-		    SystemProperties.set(OTO_TIMEZONE_PROPERTY, zone.getID());
-		    Slog.d(TAG ,"setTimeZoneImpl setRawOffset:" + TimeZone.getDefault().getRawOffset());
-		} else {
-		    SystemProperties.set(TIMEZONE_PROPERTY, zone.getID());
-		}
+                SystemProperties.set(TIMEZONE_PROPERTY, zone.getID());
             }
 
             // Update the kernel timezone information
             // Kernel tracks time offsets as 'minutes west of GMT'
-            int gmtOffset = 0;
-	    if (useutc.equals("false")) {
-		gmtOffset = fakeZone.getOffset(System.currentTimeMillis());
-	    } else {
-		gmtOffset = zone.getOffset(System.currentTimeMillis());
-	    }
-	    setKernelTimezone(mNativeData, -(gmtOffset / 60000));
+            int gmtOffset = zone.getOffset(System.currentTimeMillis());
+            setKernelTimezone(mNativeData, -(gmtOffset / 60000));
         }
 
         TimeZone.setDefault(null);

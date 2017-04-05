@@ -31,12 +31,10 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.os.SystemProperties;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.NtpTrustedTime;
 import android.util.TrustedTime;
-import java.util.TimeZone;
 
 import com.android.internal.telephony.TelephonyIntents;
 
@@ -62,8 +60,6 @@ public class NetworkTimeUpdateService {
     private static final String ACTION_POLL =
             "com.android.server.NetworkTimeUpdateService.action.POLL";
     private static int POLL_REQUEST = 0;
-    private static final String OTO_TIMEZONE_PROPERTY = "persist.sys.openthos.timezone";
-    private static final String OTO_USE_UTC = "persist.sys.openthos.utc";
 
     private static final long NOT_SET = -1;
     private long mNitzTimeSetTime = NOT_SET;
@@ -161,12 +157,7 @@ public class NetworkTimeUpdateService {
             resetAlarm(mPollingIntervalMs);
             return;
         }
-        long currentTime = System.currentTimeMillis();
-	if (SystemProperties.get(OTO_USE_UTC, "false").equals("false")) {
-	    TimeZone zone = TimeZone.getTimeZone(SystemProperties.get(OTO_TIMEZONE_PROPERTY));
-	    int gmtOffset = zone.getRawOffset();
-	    currentTime = currentTime - gmtOffset;
-	}
+        final long currentTime = System.currentTimeMillis();
         if (DBG) Log.d(TAG, "System time = " + currentTime);
         // Get the NTP time
         if (mLastNtpFetchTime == NOT_SET || refTime >= mLastNtpFetchTime + mPollingIntervalMs
