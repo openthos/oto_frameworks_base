@@ -114,7 +114,7 @@ public class UserSetupActivity extends BaseActivity {
                 oldPassword = mOldPassword.getText().toString().trim();
                 newPassword = mNewPassword.getText().toString().trim();
                 //grant permission
-                ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
+                //ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
 
                 //save computer name
                 ChangeBuildPropTools.setPropertyName(
@@ -131,7 +131,7 @@ public class UserSetupActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(oldPassword) && !TextUtils.isEmpty(newPassword) && oldPassword.equals(newPassword)) {
                     mLockPatternUtils.saveLockPassword(newPassword,
                                          DevicePolicyManager.PASSWORD_QUALITY_NUMERIC, false);
-                    ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
+                    //ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
                     Intent intent = new Intent();
                     intent.setAction("com.android.wizard.STARTUSE");
                     startActivity(intent);
