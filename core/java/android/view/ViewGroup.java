@@ -19,7 +19,6 @@ package android.view;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -454,9 +453,6 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
 
     private static final int ARRAY_INITIAL_CAPACITY = 12;
     private static final int ARRAY_CAPACITY_INCREMENT = 12;
-
-    private static final int FLAG_EXCEL_UNHOVER_TOP_EDGE = 150;
-    private static final int FLAG_EXCEL_UNHOVER_LOWER_EDGE = 250;
 
     private static Paint sDebugPaint;
     private static float[] sDebugLines;
@@ -1843,12 +1839,7 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
      * and prevent its children from receiving it.
      */
     public boolean onInterceptHoverEvent(MotionEvent event) {
-        return getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
-                          && getContext().getClass().getName().equals(
-                                                ActivityInfo.ISSUE_WIN_OFFICE_EXCEL_MAIN)
-                          && event.getAction() != MotionEvent.ACTION_HOVER_EXIT
-                          && event.getY() > FLAG_EXCEL_UNHOVER_TOP_EDGE
-                          && event.getY() < FLAG_EXCEL_UNHOVER_LOWER_EDGE;
+        return false;
     }
 
     private static MotionEvent obtainMotionEventNoHistoryOrSelf(MotionEvent event) {

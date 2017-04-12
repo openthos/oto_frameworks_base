@@ -2656,6 +2656,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     : super.dispatchGenericMotionEvent(ev);
         }
 
+        @Override
+        protected boolean dispatchHoverEvent(MotionEvent event) {
+            return getContext().getPackageName()
+                       .equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
+                   || super.dispatchHoverEvent(event);
+        }
+
         public boolean superDispatchKeyEvent(KeyEvent event) {
             // Give priority to closing action modes if applicable.
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
