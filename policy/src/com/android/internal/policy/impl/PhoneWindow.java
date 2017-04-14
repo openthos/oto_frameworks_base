@@ -2638,6 +2638,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
 
             final Callback cb = getCallback();
+            ev = prepareEvent(ev);
             return cb != null && !isDestroyed() && mFeatureId < 0 ? cb.dispatchTouchEvent(ev)
                     : super.dispatchTouchEvent(ev);
         }
@@ -2652,8 +2653,35 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         @Override
         public boolean dispatchGenericMotionEvent(MotionEvent ev) {
             final Callback cb = getCallback();
+            ev = prepareEvent(ev);
             return cb != null && !isDestroyed() && mFeatureId < 0 ? cb.dispatchGenericMotionEvent(ev)
                     : super.dispatchGenericMotionEvent(ev);
+        }
+
+        private MotionEvent prepareEvent(MotionEvent orig) {
+            if ((orig.getToolType(0) != MotionEvent.TOOL_TYPE_MOUSE)
+                || (!getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
+                    && !getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
+                    && !getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_WORD)
+                    )) {
+                return orig;
+            }
+
+            // Mouse has only one pointer coords and properties.
+            MotionEvent.PointerCoords[] pc = new MotionEvent.PointerCoords[1];
+            pc[0] = new MotionEvent.PointerCoords ();
+            orig.getPointerCoords(0, pc[0]);
+            MotionEvent.PointerProperties[] pp = new MotionEvent.PointerProperties[1];
+            pp[0] = new MotionEvent.PointerProperties ();
+            orig.getPointerProperties(0, pp[0]);
+
+            pp[0].toolType = MotionEvent.TOOL_TYPE_FINGER;
+
+            return MotionEvent.obtain(orig.getDownTime(), orig.getEventTime(), orig.getAction(),
+                                      1, pp, pc, orig.getMetaState(), orig.getButtonState(),
+                                      orig.getXPrecision(), orig.getYPrecision(),
+                                      orig.getDeviceId(), orig.getEdgeFlags(),
+                                      orig.getSource(), orig.getFlags());
         }
 
         @Override
