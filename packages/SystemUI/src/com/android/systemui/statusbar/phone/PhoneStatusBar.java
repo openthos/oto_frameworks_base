@@ -3066,11 +3066,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void loadPkg() {
-        Map<String,?> map = mPresPkg.getAll();
-        for (Map.Entry<String,?> entry : map.entrySet()) {
-            String keyPkg = entry.getKey();
-            loadDockedApk(keyPkg);
-            mSet.add(keyPkg);// add to set
+        Cursor cursor = mdbStatusBar.rawQuery("select * from status_bar_tb", null);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    loadDockedApk(cursor.getString(1));
+                    mSet.add(cursor.getString(1));
+                }
+            cursor.close();
         }
         Set<String> sets = new HashSet<>();
         Map<String, ?> maps = mPresPkgRm.getAll();
