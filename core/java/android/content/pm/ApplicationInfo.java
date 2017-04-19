@@ -113,6 +113,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_CTMC_CLOUDTIMES = "com.cloudtimes.ctmc";
 
+    public static final int AUTO_STARTUP_MODE = 0;
+    public static final int PHONE_STARTUP_MODE = 1;
+    public static final int DESKTOP_STARTUP_MODE = 2;
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 

@@ -1754,13 +1754,24 @@ public final class ActivityStackSupervisor implements DisplayListener {
         }
 
         //run default mode
-        if (ApplicationInfo.isFullScreenStyleWindow(pkgName)) {
-            ActivityDisplay display = mActivityDisplays.get(displayId);
-            return new Rect(0, 0, display.mDisplayInfo.logicalWidth,
-                        display.mDisplayInfo.logicalHeight - mWindowManager.getStatusBarHeight());
-        } else {
-            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
-                                 !ApplicationInfo.isDesktopStyleWindow(pkgName));
+        switch (android.provider.Settings.Global.getInt(
+                           mService.mContext.getContentResolver(), pkgName, 0)) {
+            case ApplicationInfo.AUTO_STARTUP_MODE:
+                if (ApplicationInfo.isFullScreenStyleWindow(pkgName)) {
+                    return new Rect(0, 0, mActivityDisplays.get(displayId).mDisplayInfo.
+                           logicalWidth, mActivityDisplays.get(displayId).mDisplayInfo.
+                           logicalHeight - mWindowManager.getStatusBarHeight());
+                } else {
+                    return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+                                  !ApplicationInfo.isDesktopStyleWindow(pkgName));
+                }
+            case ApplicationInfo.PHONE_STARTUP_MODE:
+                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
+            case ApplicationInfo.DESKTOP_STARTUP_MODE:
+                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+            default:
+                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+                           !ApplicationInfo.isDesktopStyleWindow(pkgName));
         }
     }
 
