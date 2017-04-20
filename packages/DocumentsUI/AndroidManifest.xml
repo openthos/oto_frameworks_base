@@ -84,7 +84,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".util.MySQLReceiver"
+            android:name=".util.StartupMenuSqlReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.android.documentsui.SQLITE_CHANGE" />

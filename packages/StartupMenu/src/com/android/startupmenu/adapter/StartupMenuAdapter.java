@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.startupmenu.dialog.StartMenuDialog;
 import com.android.startupmenu.StartupMenuActivity;
-import com.android.startupmenu.util.MySqliteOpenHelper;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 
 import android.os.UserHandle;
 import android.content.IntentFilter;
@@ -39,7 +39,7 @@ public class StartupMenuAdapter extends BaseAdapter {
     private Context mContext;
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
-    private MySqliteOpenHelper mMsoh;
+    private StartupMenuSqliteOpenHelper mMsoh;
     private int mStartMenuAppWidth;
     private int mStartMenuAppHeight;
     public static boolean mIsFullScreen;
@@ -56,7 +56,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistAppInfo = apps;
         this.isCheckedMap = isCheckedMap;
-        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         mStartupMenuActivity = getStartupMenuActivity();
     }

@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import com.android.startupmenu.util.MySqliteOpenHelper;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import android.content.ContentValues;
@@ -19,65 +19,23 @@ import java.util.Date;
 import java.util.List;
 import static com.android.startupmenu.StartupMenuActivity.isEnglish;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.widget.Toast;
-import android.content.Intent;
-
-public class MySQLReceiver extends BroadcastReceiver {
-    private MySqliteOpenHelper mMsoh;
+public class StartupMenuInstalledReceiver extends BroadcastReceiver {
+    private StartupMenuSqliteOpenHelper mMsoh;
     private SQLiteDatabase mdb;
     private boolean mIsHasReayDb;
     private int mNumber;
-
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        mMsoh = new MySqliteOpenHelper(context, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(context, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
-        if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
+        if (intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
+            String pkName = intent.getData().getSchemeSpecificPart();
+            Log.i("openthos", "Install app package name :" + pkName);
             BackstageRenewalData(context);
         }
-
-        //Accept Message
-        if (intent.getAction().equals(Intent.ACTION_SEND_CLICK_INFO)) {
-            String pkgName = intent.getStringExtra("keyAddInfo");
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                      new String[] { pkgName });
-            ContentValues values = new ContentValues();
-            int numbers = 0;
-            int number = 0;
-            if (c.moveToNext()) {
-                numbers = c.getInt(c.getColumnIndex("int"));
-                number = c.getInt(c.getColumnIndex("click"));
-                numbers ++;
-                number ++;
-                values.put("int", numbers);
-                values.put("click", number);
-                mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
-            } else {
-                numbers ++;
-                number ++;
-                values.put("pkname", pkgName);
-                values.put("int", numbers);
-                values.put("click", number);
-                mdb.insert("perpo", "pkname", values);
-                BackstageRenewalData(context);
-            }
-            //Same to open run
-            SharedPreferences sharedPreference = context.getSharedPreferences("click",
-                                                          Context.MODE_PRIVATE);
-            Editor editor = sharedPreference.edit();
-            String type = sharedPreference.getString("type", "sortName");
-            int order = sharedPreference.getInt("order", 0);
-            editor.clear();
-            editor.putInt("isClick", 1);
-            editor.putString("type", type);
-            editor.putInt("order", order);
-            editor.commit();
+        if (intent.getAction().equals("android.intent.action.PACKAGE_REMOVED")) {
+            String pkName = intent.getData().getSchemeSpecificPart();
+            mdb.delete("perpo", "pkname = ? ", new String[] { pkName });
         }
     }
 
@@ -105,12 +63,11 @@ public class MySQLReceiver extends BroadcastReceiver {
                     break;
                 }
             }
-
             if (!mIsHasReayDb) {
                 mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
                                 + "values (?,?,?,?,?)",
                         new Object[] { appLabel, pkgName, systemDate,
-                                mNumber,mNumber});
+                                mNumber, mNumber});
             }
             if(isEnglish(appLabel)) {
                 ContentValues contentvalues = new ContentValues();

@@ -27,7 +27,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.android.startupmenu.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
-import com.android.startupmenu.util.MySqliteOpenHelper;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
@@ -50,7 +50,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     private TextView mRightOpen;
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
-    private MySqliteOpenHelper mMsoh;
+    private StartupMenuSqliteOpenHelper mMsoh;
     private String mPkgName;
     private boolean mBooleanFlag;
     private String mStrTextView;
@@ -84,7 +84,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_menu1);
 
-        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         mLockedAppText = mContext.getResources().getString(R.string.lockedapptext);
         mUnlockedAppText = mContext.getResources().getString(R.string.unlockedapptext);

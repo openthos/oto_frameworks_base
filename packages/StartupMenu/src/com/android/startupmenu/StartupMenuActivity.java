@@ -31,12 +31,12 @@ import java.util.Map;
 
 import com.android.startupmenu.R;
 import com.android.startupmenu.util.AppInfo;
-import com.android.startupmenu.util.MySqliteOpenHelper;
 import com.android.startupmenu.dialog.BaseSettingDialog;
 import com.android.startupmenu.dialog.StartMenuDialog;
 import com.android.startupmenu.dialog.StartMenuUsuallyDialog;
 import com.android.startupmenu.adapter.StartupMenuAdapter;
 import com.android.startupmenu.adapter.StartupMenuUsuallyAdapter;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 
 import android.content.ActivityNotFoundException;
 import android.content.pm.ApplicationInfo;
@@ -151,7 +151,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private PopupWindow mPopupWindow;
         private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
         public static StartupMenuUsuallyAdapter mUsuallyAdapter;
-        private MySqliteOpenHelper mMsoh;
+        private StartupMenuSqliteOpenHelper mMsoh;
         private SQLiteDatabase mdb;
         BaseSettingDialog mPowerSourceDialog;
         BaseSettingDialog targetDialog;
@@ -166,7 +166,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private GridView gv_view;
         private ListView mListView;
         private EditText mEditText;
-        private View  my_computer;
+        private View  mOpenthosFileManager;
         private ImageView mIvArrowGray;
         private TextView mTvSortShow;
         private LinearLayout mIvArrowWhite;
@@ -182,9 +182,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private LinearLayout mSortClickView;
         private View mSelectView;
         private SharedPreferences sharedPreference;
-        private String mNameSortText;
-        private String mTimeSortText;
-        private String mClickSortText;
         private String mType;
         private int mOrder;
         private Handler mHandler;
@@ -210,7 +207,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             setContentView(R.layout.start_activity);
             mContext=this;
 
-            mMsoh = new MySqliteOpenHelper(StartupMenuActivity.this,
+            mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
                                            "Application_database.db", null, 1);
             mdb = mMsoh.getWritableDatabase();
             sharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
@@ -225,13 +222,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
             mSortClickView = (LinearLayout) findViewById(R.id.sort_click_view);
             TextView system_setting = (TextView) findViewById(R.id.system_setting);
-            my_computer = (TextView) findViewById(R.id.my_computer);
+            mOpenthosFileManager = (TextView) findViewById(R.id.openthos_file_manager);
             TextView powerOff = (TextView) findViewById(R.id.power_off);
             mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
             mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
-            my_computer.setOnClickListener(this);
+            mOpenthosFileManager.setOnClickListener(this);
             system_setting.setOnClickListener(this);
-            my_computer.setOnHoverListener(hoverListener);
+            mOpenthosFileManager.setOnHoverListener(hoverListener);
             system_setting.setOnHoverListener(hoverListener);
             powerOff.setOnHoverListener(hoverListener);
 
@@ -314,9 +311,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mTimeSort = (TextView) mSelectView.findViewById(R.id.time_sort);
             mNameSort = (TextView) mSelectView.findViewById(R.id.name_sort);
 
-            mClickSortText = mClickSort.getText().toString();
-            mTimeSortText = mTimeSort.getText().toString();
-            mNameSortText = mNameSort.getText().toString();
             //TextView type_sort = (TextView) tv.findViewById(R.id.type_sort);
 
             mClickSort.setOnClickListener(this);
@@ -349,31 +343,31 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mTvSortShow.setText(R.string.name_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 nameSort();
-            } else if (mType.equals(mNameSortText) && mOrder == 1) {
+            } else if (mType.equals(mNameSort.getText().toString()) && mOrder == 1) {
                 mTvSortShow.setText(R.string.name_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 nameSort();
-            } else if (mType.equals(mNameSortText) && mOrder == -1) {
+            } else if (mType.equals(mNameSort.getText().toString()) && mOrder == -1) {
                 mTvSortShow.setText(R.string.name_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mNameSortStatus = -1;
                 mOnlyNameSort = true;
                 nameSort();
-            } else if (mType.equals(mTimeSortText) && mOrder == 1) {
+            } else if (mType.equals(mTimeSort.getText().toString()) && mOrder == 1) {
                 mTvSortShow.setText(R.string.time_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 timeSort();
-            } else if (mType.equals(mTimeSortText) && mOrder == -1) {
+            } else if (mType.equals(mTimeSort.getText().toString()) && mOrder == -1) {
                 mTvSortShow.setText(R.string.time_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mTimeSortStatus = -1;
                 timeSort();
-            } else if (mType.equals(mClickSortText) && mOrder == 1) {
+            } else if (mType.equals(mClickSort.getText().toString()) && mOrder == 1) {
                 mTvSortShow.setText(R.string.click_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 mEditText.setText("");
                 clickSort();
-            } else if (mType.equals(mClickSortText) && mOrder == -1) {
+            } else if (mType.equals(mClickSort.getText().toString()) && mOrder == -1) {
                 mTvSortShow.setText(R.string.click_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mEditText.setText("");
@@ -458,6 +452,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
             mlistAppInfo.clear();
             for (ResolveInfo reInfo : resolveInfos) {
+/*
                 File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
                 Date systemDate = new Date(file.lastModified());
                 ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
@@ -474,6 +469,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 appInfo.setAppIcon(icon);
                 appInfo.setIntent(launchIntent);
                 mlistAppInfo.add(appInfo);
+*/
+                appData(pm, reInfo);
             }
             if (!TextUtils.isEmpty(mEtext)) {
                 List<AppInfo> list = new ArrayList<>();
@@ -523,6 +520,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         mlistViewAppInfo.add(appInfo);
                     }
                 }
+                cs.close();
 
                 Collections.sort(mlistViewAppInfo, new Comparator<AppInfo>() {
                     public int compare(AppInfo lhs, AppInfo rhs) {
@@ -622,7 +620,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-            case R.id.my_computer:
+            case R.id.openthos_file_manager:
                 /* start FileManager */
                 for (int i=0;i<mlistAppInfo.size();i++) {
                     AppInfo appInfo = mlistAppInfo.get(i);
@@ -703,14 +701,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private void nameSort() {
             queryAppInfo();
             SharedPreferences.Editor edit = sharedPreference.edit();
-            edit.putString("type", mNameSortText);
+            edit.putString("type", mNameSort.getText().toString());
             edit.putInt("order", 1);
             edit.commit();
             if (mNameSortStatus == -1 && mOnlyNameSort) {
                 Collections.reverse(mlistAppInfo);
                 mOnlyNameSort = false;
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-                edit.putString("type", mNameSortText);
+                edit.putString("type", mNameSort.getText().toString());
                 edit.putInt("order", -1);
                 edit.commit();
             }
@@ -727,7 +725,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
             SharedPreferences.Editor edit = sharedPreference.edit();
-            edit.putString("type", mTimeSortText);
+            edit.putString("type", mTimeSort.getText().toString());
             edit.putInt("order", 1);
             edit.commit();
 
@@ -779,14 +777,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             });
             SharedPreferences.Editor editor = sharedPreference.edit();
-            editor.putString("type", mClickSortText);
+            editor.putString("type", mClickSort.getText().toString());
             editor.putInt("order", 1);
             editor.commit();
             if (mClickSortStatus == -1) {
                 Collections.reverse(mlistAppInfo);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 SharedPreferences.Editor edit = sharedPreference.edit();
-                edit.putString("type", mClickSortText);
+                edit.putString("type", mClickSort.getText().toString());
                 edit.putInt("order", -1);
                 edit.commit();
             }
@@ -801,14 +799,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             if (v instanceof TextView) {
                 TextView textView = (TextView) v;
                 String textViewText = textView.getText().toString();
-                if (textViewText.equals(mNameSortText)) {
+                if (textViewText.equals(mNameSort.getText().toString())) {
                     mNameSortStatus = mNameSortStatus * -1;
                     mOnlyNameSort = true;
                     nameSort();
-                } else if (textViewText.equals(mTimeSortText)) {
+                } else if (textViewText.equals(mTimeSort.getText().toString())) {
                     mTimeSortStatus = mTimeSortStatus * -1;
                     timeSort();
-                } else if (textViewText.equals(mClickSortText)) {
+                } else if (textViewText.equals(mClickSort.getText().toString())) {
                     mClickSortStatus = mClickSortStatus * -1;
                     clickSort();
                 }
@@ -849,12 +847,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         mlistAppInfo.add(appInfo);
                     }
                 }
+                cursor.close();
             }
         }
 
         private void querySort() {
             String tvSortShow = mTvSortShow.getText().toString();
-            if (tvSortShow.equals(mClickSortText)) {
+            if (tvSortShow.equals(mClickSort.getText().toString())) {
                 Collections.sort(mlistAppInfo, new Comparator<AppInfo>() {
                     public int compare(AppInfo lhs, AppInfo rhs) {
                         Double rScore = (double) rhs.getNumber();
@@ -865,7 +864,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 if (mClickSortStatus == -1) {
                     Collections.reverse(mlistAppInfo);
                 }
-            } else if (tvSortShow.equals(mTimeSortText)) {
+            } else if (tvSortShow.equals(mTimeSort.getText().toString())) {
                 Collections.sort(mlistAppInfo, new Comparator<Object>() {
                     public int compare(Object lhs, Object rhs) {
                         AppInfo p1 = (AppInfo) lhs;
@@ -905,7 +904,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Collections.reverse(mlistAppInfo);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 SharedPreferences.Editor editor = sharedPreference.edit();
-                editor.putString("type", mTimeSortText);
+                editor.putString("type", mTimeSort.getText().toString());
                 editor.putInt("order", -1);
                 editor.commit();
             }
@@ -983,7 +982,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public void killStartupMenu() {
             try {
                 ActivityManagerNative.getDefault().killStartupMenu();
-                System.exit(0);
+                //System.exit(0);
+                finish();
             } catch (RemoteException e) {
             }
         }
@@ -1017,5 +1017,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         public static void setFocus(boolean hFocus) {
             mFocus = hFocus;
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            if (mdb != null) {
+                mdb.close();
+            }
         }
 }

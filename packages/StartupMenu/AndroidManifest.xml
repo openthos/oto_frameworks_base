@@ -27,7 +27,7 @@
              </intent-filter>
          </receiver> -->
 
-         <receiver android:name=".service.MyInstalledReceiver">
+         <receiver android:name=".service.StartupMenuInstalledReceiver">
              <intent-filter>
                  <action android:name="android.intent.action.PACKAGE_REMOVED" />
                  <action android:name="android.intent.action.PACKAGE_ADDED" />
@@ -36,7 +36,7 @@
          </receiver>
 
          <receiver
-             android:name=".service.MySQLReceiver"
+             android:name=".service.StartupMenuSqlReceiver"
              android:enabled="true">
              <intent-filter>
                  <action android:name="com.android.startupmenu.SQLITE_CHANGE" />

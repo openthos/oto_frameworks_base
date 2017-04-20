@@ -27,7 +27,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.android.startupmenu.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
-import com.android.startupmenu.util.MySqliteOpenHelper;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import android.net.Uri;
 import android.provider.Settings;
 import android.content.SharedPreferences;
@@ -43,7 +43,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     private TextView mRightUsuallyOpen;
     private StartupMenuActivity mStartupMenuActivity;
     private SQLiteDatabase mdb;
-    private MySqliteOpenHelper mMsoh;
+    private StartupMenuSqliteOpenHelper mMsoh;
     private String mPkgName;
 
     public StartMenuUsuallyDialog(Context context) {
@@ -70,7 +70,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_usually_menu);
 
-        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         mRightUsuallyOpen = (TextView) findViewById(R.id.tv_right_usually_open);
         TextView rightPhoneUsuallyRun = (TextView) findViewById(R.id.tv_right_phone_usually_run);

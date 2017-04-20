@@ -3,7 +3,7 @@ package com.android.startupmenu.adapter;
 import com.android.startupmenu.R;
 import java.util.List;
 import com.android.startupmenu.util.AppInfo;
-import com.android.startupmenu.util.MySqliteOpenHelper;
+import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.StartupMenuActivity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -28,7 +28,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
 
     private Context mContext;
     private SQLiteDatabase mdb;
-    private MySqliteOpenHelper mMsoh;
+    private StartupMenuSqliteOpenHelper mMsoh;
     private int mStartMenuCommonlWidth;
     private int mStartMenuCommonlHeight;
 
@@ -41,7 +41,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
         mStartMenuCommonlHeight = mContext.getResources()
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_height);
-        mMsoh = new MySqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
     }
 
