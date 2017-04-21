@@ -2472,7 +2472,9 @@ public class InputMethodService extends AbstractInputMethodService {
                     mIsLauncher = false;
                     break;
             }
-            getCurrentInputConnection().isLauncherFocus(mIsLauncher);
+            if (getCurrentInputConnection() != null) {
+                getCurrentInputConnection().isLauncherFocus(mIsLauncher);
+            }
         }
     }
 }
