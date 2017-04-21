@@ -94,7 +94,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                                  = "com.togic.launcher.MainActivity";
     public static final String APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY
                                                  = "com.togic.launcher.SplashActivity";
-    public static final String APPNAME_JACKPAL_ANDROIDTERM_TERM
+    public static final String APPNAME_JACKPAL_ANDROIDTERM_TERMACTIVITY
                                                  = "jackpal.androidterm.Term";
 
     public static final String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
@@ -732,6 +732,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_FENNEC) == 0)
+                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
+                                     || (pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
