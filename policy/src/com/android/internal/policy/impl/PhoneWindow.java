@@ -163,6 +163,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     private final static boolean SWEEP_OPEN_MENU = false;
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
+    private final static int FRAME_THICK_FACTOR = 2;
 
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
@@ -2321,6 +2322,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private boolean mAppCustom = false;
         private Rect mAppRectOrig = null;
 
+        private boolean mUseMouseEvent = false;
+        private boolean mInDragging = false;
+        private boolean mInFrameArea = false;
+
         public DecorView(Context context, int featureId) {
             super(context);
             mFeatureId = featureId;
@@ -2418,6 +2423,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             final int keyCode = event.getKeyCode();
             final int action = event.getAction();
             final boolean isDown = action == KeyEvent.ACTION_DOWN;
+
+            mUseMouseEvent = event.isCtrlPressed() && ctrlMouseEventApp() && !mInFrameArea;
 
             if (isDown && (event.getRepeatCount() == 0)) {
                 // First handle chording of panel key: if a panel key is held
@@ -2658,12 +2665,39 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     : super.dispatchGenericMotionEvent(ev);
         }
 
+        private boolean ctrlMouseEventApp() {
+            return getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
+                   || getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
+                   || getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_WORD);
+        }
+
+        private boolean isFrameEvent(MotionEvent event) {
+            int action = event.getAction();
+            if (mInDragging) {
+                if (action != MotionEvent.ACTION_MOVE) {
+                    mInDragging = false;
+                }
+                return true;
+            }
+
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            int pad = getWindowBorderPadding() * FRAME_THICK_FACTOR;
+            mInFrameArea = (y < getWindowHeaderPadding()) || (y > (getHeight() - pad))
+                               || (x < pad) || (x > (getWidth() - pad));
+
+            if (mInFrameArea && (action == MotionEvent.ACTION_DOWN)) {
+                mInDragging = true;
+            }
+            return mInFrameArea;
+        }
+
         private MotionEvent prepareEvent(MotionEvent orig) {
-            if ((orig.getToolType(0) != MotionEvent.TOOL_TYPE_MOUSE)
-                || (!getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
-                    && !getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
-                    && !getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_WORD)
-                    )) {
+            if (orig.getToolType(0) != MotionEvent.TOOL_TYPE_MOUSE) {
+                mUseMouseEvent = false; // Maybe ctrl+wheel
+                return orig;
+            }
+            if (!ctrlMouseEventApp() || isFrameEvent(orig) || mUseMouseEvent) {
                 return orig;
             }
 
@@ -2686,9 +2720,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         protected boolean dispatchHoverEvent(MotionEvent event) {
-            return getContext().getPackageName()
-                       .equals(ApplicationInfo.APPNAME_OFFICE_EXCEL)
-                   || super.dispatchHoverEvent(event);
+            if (ctrlMouseEventApp()) {
+                if (!isFrameEvent(event)) {
+                    return true;
+                }
+                mUseMouseEvent = false;
+            }
+            return super.dispatchHoverEvent(event);
         }
 
         public boolean superDispatchKeyEvent(KeyEvent event) {
