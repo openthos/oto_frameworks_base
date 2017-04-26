@@ -31,24 +31,24 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         View view = findViewById(R.id.power_source);
         ImageView powerClose = (ImageView) view.findViewById(R.id.power_close);
         LinearLayout powerOff = (LinearLayout) view.findViewById(R.id.power_off);
-        //LinearLayout powerSleep = (LinearLayout) view.findViewById(R.id.power_sleep);
+        LinearLayout powerSleep = (LinearLayout) view.findViewById(R.id.power_sleep);
         LinearLayout powerLock = (LinearLayout) view.findViewById(R.id.power_lock);
         LinearLayout powerRestart = (LinearLayout) view.findViewById(R.id.power_restart);
         powerClose.setOnClickListener(this);
         powerOff.setOnClickListener(this);
-        //powerSleep.setOnClickListener(this);
+        powerSleep.setOnClickListener(this);
         powerLock.setOnClickListener(this);
         powerRestart.setOnClickListener(this);
 
         powerClose.setOnHoverListener(hoverListeners);
         powerOff.setOnHoverListener(hoverListeners);
-        //powerSleep.setOnHoverListener(hoverListeners);
+        powerSleep.setOnHoverListener(hoverListeners);
         powerLock.setOnHoverListener(hoverListeners);
         powerRestart.setOnHoverListener(hoverListeners);
 
         powerClose.setOnFocusChangeListener(focusChangeListener);
         powerOff.setOnFocusChangeListener(focusChangeListener);
-        //powerSleep.setOnFocusChangeListener(focusChangeListener);
+        powerSleep.setOnFocusChangeListener(focusChangeListener);
         powerLock.setOnFocusChangeListener(focusChangeListener);
         powerRestart.setOnFocusChangeListener(focusChangeListener);
 

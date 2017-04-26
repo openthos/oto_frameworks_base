@@ -8,7 +8,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="480dp"
+        android:layout_width="560dp"
         android:layout_height="192dp"
         android:layout_gravity="center_vertical|center_horizontal"
         android:background="@drawable/ic_power_background"
@@ -51,7 +51,6 @@
                     style="@style/PowerStyle"
                     android:text="@string/power_off" />
             </LinearLayout>
-            <!--
             <LinearLayout
                 android:id="@+id/power_sleep"
                 android:layout_width="80dp"
@@ -74,7 +73,6 @@
                    style="@style/PowerStyle"
                    android:text="@string/system_sleep" />
             </LinearLayout>
-            -->
 
             <LinearLayout
                 android:id="@+id/power_lock"
