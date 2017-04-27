@@ -353,7 +353,7 @@ public final class PowerManagerService extends SystemService
     private int mStayOnWhilePluggedInSetting;
 
     // True if the device should stay on.
-    private boolean mStayOn = true;
+    private boolean mStayOn;
 
     // True if the proximity sensor reads a positive result.
     private boolean mProximityPositive;
@@ -1353,13 +1353,12 @@ public final class PowerManagerService extends SystemService
     private void updateStayOnLocked(int dirty) {
         if ((dirty & (DIRTY_BATTERY_STATE | DIRTY_SETTINGS)) != 0) {
             final boolean wasStayOn = mStayOn;
-            //if (mStayOnWhilePluggedInSetting != 0
-            //        && !isMaximumScreenOffTimeoutFromDeviceAdminEnforcedLocked()) {
-            //    mStayOn = mBatteryManagerInternal.isPowered(mStayOnWhilePluggedInSetting);
-            //} else {
-            //    mStayOn = false;
-            //}
-            mStayOn = true;
+            if (mStayOnWhilePluggedInSetting != 0
+                    && !isMaximumScreenOffTimeoutFromDeviceAdminEnforcedLocked()) {
+                mStayOn = mBatteryManagerInternal.isPowered(mStayOnWhilePluggedInSetting);
+            } else {
+                mStayOn = false;
+            }
 
             if (mStayOn != wasStayOn) {
                 mDirty |= DIRTY_STAY_ON;

@@ -2931,6 +2931,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void showStatusBarViewPowerSleep() {
+        /*
         try {
             waitForAWhile();
             String cmd = "/system/xbin/echo mem > /sys/power/state";
@@ -2938,6 +2939,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
+        waitForAWhile();
+        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        pm.goToSleep(SystemClock.uptimeMillis());
     }
 
     @Override
