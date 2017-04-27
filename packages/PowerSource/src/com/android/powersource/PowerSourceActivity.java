@@ -1,11 +1,13 @@
 package com.android.powersource;
 
 import android.app.Activity;
+import android.app.ActivityManagerNative;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import java.lang.reflect.Method;
 import android.util.Log;
 import android.view.View;
@@ -155,7 +157,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                 intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
                                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
-                System.exit(0);
+                PowerSourceActivity.this.finish();
             case R.id.power_sleep:
                 closeButtonShowStatusBar();
                 finishStatusbarPowerLayout();
@@ -164,6 +166,15 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
             case R.id.power_close:
                 closeButtonShowStatusBar();
                 System.exit(0);
+        }
+    }
+
+    @Override
+    public void finish() {
+        try {
+            ActivityManagerNative.getDefault().closeActivity(getWindow().getStackId());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }
