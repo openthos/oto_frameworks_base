@@ -181,7 +181,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private LinearLayout mSelectLayout;
         private LinearLayout mSortClickView;
         private View mSelectView;
-        private SharedPreferences sharedPreference;
+        private SharedPreferences mSharedPreference;
         private String mType;
         private int mOrder;
         private Handler mHandler;
@@ -210,7 +210,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
                                            "Application_database.db", null, 1);
             mdb = mMsoh.getWritableDatabase();
-            sharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
+            mSharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
 
             gv_view = (GridView) findViewById(R.id.gv_view);
             mListView = (ListView) findViewById(R.id.lv_view);
@@ -282,7 +282,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public boolean onHover(View view, MotionEvent motionEvent) {
             int what = motionEvent.getAction();
-            int isSql = sharedPreference.getInt("isSql", 0);
+            int isSql = mSharedPreference.getInt("isSql", 0);
             switch(what) {
                 case MotionEvent.ACTION_HOVER_ENTER:
                     if (mIsClick == 0) {
@@ -290,7 +290,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                             Intent i = new Intent();
                             i.setAction(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO);
                             sendBroadcast(i);
-                            SharedPreferences.Editor edit = sharedPreference.edit();
+                            SharedPreferences.Editor edit = mSharedPreference.edit();
                             edit.putInt("isSql", 1);
                             edit.commit();
                         }
@@ -398,9 +398,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         class mThread extends Thread {
             public void run(){
-                mIsClick = sharedPreference.getInt("isClick", 0);
-                mType = sharedPreference.getString("type", "sortName");
-                mOrder = sharedPreference.getInt("order", 0);
+                mIsClick = mSharedPreference.getInt("isClick", 0);
+                mType = mSharedPreference.getString("type", "sortName");
+                mOrder = mSharedPreference.getInt("order", 0);
                 if (mIsClick == 1) {
                     Message m = new Message();
                     m.what = mGetValueFlag;
@@ -700,7 +700,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         private void nameSort() {
             queryAppInfo();
-            SharedPreferences.Editor edit = sharedPreference.edit();
+            SharedPreferences.Editor edit = mSharedPreference.edit();
             edit.putString("type", mNameSort.getText().toString());
             edit.putInt("order", 1);
             edit.commit();
@@ -724,7 +724,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mBrowseAppAdapter.notifyDataSetChanged();
             mlistAppInfo = new ArrayList<AppInfo>();
             queryAppInfo();
-            SharedPreferences.Editor edit = sharedPreference.edit();
+            SharedPreferences.Editor edit = mSharedPreference.edit();
             edit.putString("type", mTimeSort.getText().toString());
             edit.putInt("order", 1);
             edit.commit();
@@ -776,14 +776,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     return (rScore.compareTo(iScore));
                 }
             });
-            SharedPreferences.Editor editor = sharedPreference.edit();
+            SharedPreferences.Editor editor = mSharedPreference.edit();
             editor.putString("type", mClickSort.getText().toString());
             editor.putInt("order", 1);
             editor.commit();
             if (mClickSortStatus == -1) {
                 Collections.reverse(mlistAppInfo);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-                SharedPreferences.Editor edit = sharedPreference.edit();
+                SharedPreferences.Editor edit = mSharedPreference.edit();
                 edit.putString("type", mClickSort.getText().toString());
                 edit.putInt("order", -1);
                 edit.commit();
@@ -903,7 +903,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             if (mTimeSortStatus == -1) {
                 Collections.reverse(mlistAppInfo);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-                SharedPreferences.Editor editor = sharedPreference.edit();
+                SharedPreferences.Editor editor = mSharedPreference.edit();
                 editor.putString("type", mTimeSort.getText().toString());
                 editor.putInt("order", -1);
                 editor.commit();
