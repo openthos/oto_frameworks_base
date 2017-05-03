@@ -5841,7 +5841,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     public void unsetFocusedStack(int stackId) {
         try {
-            ActivityManagerNative.getDefault().setFocusedStack(stackId);
+            ActivityManagerNative.getDefault().unsetFocusedStack(stackId);
         } catch (RemoteException e) {
         }
     }
