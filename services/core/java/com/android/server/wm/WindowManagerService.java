@@ -12189,7 +12189,11 @@ public class WindowManagerService extends IWindowManager.Stub
 
     public void backgroundWork() {
         if (mLockMachine.mLocked) {
-            mLockMachine.screenTryTurnOff();
+            /*
+             * Sleep function feature can be used,
+             * then annotate the 'screenTryTurnOff()' method.
+             */
+            //mLockMachine.screenTryTurnOff();
         }
     }
 }
