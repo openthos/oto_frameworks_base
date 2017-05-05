@@ -154,6 +154,10 @@ public class DisplayMetrics {
      * The absolute height of the display in pixels.
      */
     public int heightPixels;
+
+    public int widthPixelsFullScreen = 0;
+    public int heightPixelsFullScreen = 0;
+
     /**
      * The logical density of the display.  This is a scaling factor for the
      * Density Independent Pixel unit, where one DIP is one pixel on an
@@ -339,32 +343,52 @@ public class DisplayMetrics {
                 SystemProperties.getInt("ro.sf.lcd_density", DENSITY_DEFAULT));
     }
 
+    public int getWidthPixelsFullScreen() {
+        if (widthPixelsFullScreen == 0) {
+            widthPixelsFullScreen = widthPixels;
+        }
+        return widthPixelsFullScreen;
+    }
+
+    public int getHeightPixelsFullScreen() {
+        if (heightPixelsFullScreen == 0) {
+            heightPixelsFullScreen = heightPixels;
+        }
+        return heightPixelsFullScreen;
+    }
+
     public boolean is_16_9() {
-        return (float) widthPixels / (float) heightPixels > WINDOW_INIT_PART_CHECK_4_3_16_9;
+        return (float) getWidthPixelsFullScreen() / (float) getHeightPixelsFullScreen()
+                                          > WINDOW_INIT_PART_CHECK_4_3_16_9;
     }
 
     public int getInitWindowWidthPhone() {
         if (is_16_9()) {
-            return (int)((float) widthPixels * WINDOW_INIT_PART_WIDTH_THIN_16_9);
+            return (int)((float) getWidthPixelsFullScreen()
+                                    * WINDOW_INIT_PART_WIDTH_THIN_16_9);
         } else {
-            return (int)((float) widthPixels * WINDOW_INIT_PART_WIDTH_THIN_4_3);
+            return (int)((float) getWidthPixelsFullScreen()
+                                    * WINDOW_INIT_PART_WIDTH_THIN_4_3);
         }
     }
 
     public int getInitWindowWidthNormal() {
-        return (int)((float)widthPixels * WINDOW_INIT_PART_WIDTH_WIDE);
+        return (int)((float) getWidthPixelsFullScreen() * WINDOW_INIT_PART_WIDTH_WIDE);
     }
 
     public int getInitWindowHeightPhone() {
         if (is_16_9()) {
-            return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_THIN_16_9);
+            return (int)((float) getHeightPixelsFullScreen()
+                                     * WINDOW_INIT_PART_HEIGHT_THIN_16_9);
         } else {
-            return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_THIN_4_3);
+            return (int)((float) getHeightPixelsFullScreen()
+                                     * WINDOW_INIT_PART_HEIGHT_THIN_4_3);
         }
     }
 
     public int getInitWindowHeightNormal() {
-        return (int)((float) heightPixels * WINDOW_INIT_PART_HEIGHT_WIDE);
+        return (int)((float) getHeightPixelsFullScreen()
+                                 * WINDOW_INIT_PART_HEIGHT_WIDE);
     }
 
     private int getDefaultPosX() {

@@ -2114,4 +2114,5 @@ public abstract class Window {
 
     public abstract void adjustDialog(Window dialog);
     public abstract void showCover(boolean show);
+    public abstract void setMultiWindowEnvAttr();
 }

@@ -51,6 +51,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -164,6 +165,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
     private final static int FRAME_THICK_FACTOR = 2;
+
+    private static int mWidthPixels = 0;
+    private static int mHeightPixels = 0;
 
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
@@ -382,6 +386,29 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             IntentFilter filterShow = new IntentFilter(Intent.HEADER_BAR_SHOW);
             context.registerReceiver(mBroadcastReceiverHide, filterHide);
             context.registerReceiver(mBroadcastReceiverShow, filterShow);
+        }
+    }
+
+    @Override
+    public void setMultiWindowEnvAttr() {
+        if (isMWWindow()) {
+            boolean useShadow = isShadow();
+            boolean useBorder = hasOuterBorder();
+
+            setTopShadowPadding(useShadow);
+            setShadowPadding(useShadow);
+            setBorderPadding(useBorder);
+            setTopBorderPadding(useBorder);
+            if (hasHeader()) {
+                setHeaderHeight(getContext().getResources().getDimensionPixelSize(
+                                                    com.android.internal.R.dimen.mw_header_border));
+            }
+
+            try {
+                Rect r = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                updateDisplayMetrics(r.width(), r.height());
+            } catch (RemoteException e) {
+            }
         }
     }
 
@@ -2350,8 +2377,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public Rect getContentRect() {
-            int h = getContext().getResources().getDimensionPixelSize(
-                                                    com.android.internal.R.dimen.mw_header_border);
+            int h = getHeaderHeight();
             int padding = getFramePadding();
             int paddingTop = getTopFramePadding();
             if ((getWidth() <= 2 * padding) || (getHeight() <= padding + paddingTop + h)) {
@@ -2941,7 +2967,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-            final boolean isPortrait = metrics.widthPixels < metrics.heightPixels;
+            final boolean isPortrait =
+                       metrics.getWidthPixelsFullScreen() < metrics.getHeightPixelsFullScreen();
 
             final int widthMode = getMode(widthMeasureSpec);
             final int heightMode = getMode(heightMeasureSpec);
@@ -2954,7 +2981,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     if (tvw.type == TypedValue.TYPE_DIMENSION) {
                         w = (int) tvw.getDimension(metrics);
                     } else if (tvw.type == TypedValue.TYPE_FRACTION) {
-                        w = (int) tvw.getFraction(metrics.widthPixels, metrics.widthPixels);
+                        w = (int) tvw.getFraction(metrics.getWidthPixelsFullScreen(),
+                                                  metrics.getWidthPixelsFullScreen());
                     } else {
                         w = 0;
                     }
@@ -2979,7 +3007,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     if (tvh.type == TypedValue.TYPE_DIMENSION) {
                         h = (int) tvh.getDimension(metrics);
                     } else if (tvh.type == TypedValue.TYPE_FRACTION) {
-                        h = (int) tvh.getFraction(metrics.heightPixels, metrics.heightPixels);
+                        h = (int) tvh.getFraction(metrics.getHeightPixelsFullScreen(),
+                                                  metrics.getHeightPixelsFullScreen());
                     } else {
                         h = 0;
                     }
@@ -3019,7 +3048,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     if (tv.type == TypedValue.TYPE_DIMENSION) {
                         min = (int)tv.getDimension(metrics);
                     } else if (tv.type == TypedValue.TYPE_FRACTION) {
-                        min = (int)tv.getFraction(metrics.widthPixels, metrics.widthPixels);
+                        min = (int)tv.getFraction(metrics.getWidthPixelsFullScreen(),
+                                                  metrics.getWidthPixelsFullScreen());
                     } else {
                         min = 0;
                     }
@@ -4281,10 +4311,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         private void setFramePaddingPolicy(boolean useShadow,
                                            boolean useBorder, boolean useHeader) {
-            setTopShadowPadding(useShadow);
-            setShadowPadding(useShadow);
-            setBorderPadding(useBorder);
-            setTopBorderPadding(useBorder);
             if (!useShadow) {
                 View shadowInside = (View) mOuterBorder.getParent();
                 View shadowMiddle = (View) shadowInside.getParent();
@@ -4295,10 +4321,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mShadow.setVisibility(View.GONE);
             }
 
-            if (useHeader) {
-                setHeaderHeight(getContext().getResources().getDimensionPixelSize(
-                                                    com.android.internal.R.dimen.mw_header_border));
-            } else {
+            if (!useHeader) {
                 mHeader.setVisibility(View.GONE);
             }
 
@@ -5810,8 +5833,39 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
     }
 
+    private void updateDisplayMetrics(int width, int height) {
+        final WindowManager windowService = (WindowManager) getContext().getSystemService(
+                Context.WINDOW_SERVICE);
+        if (windowService != null) {
+            final Display display = windowService.getDefaultDisplay();
+            Resources resources = getContext().getResources();
+            DisplayMetrics metrics = new DisplayMetrics();
+
+            display.getMetrics(metrics, false); // get system wide metrics
+            if (mWidthPixels == 0) {
+                mWidthPixels = metrics.widthPixels;
+            }
+            if (mHeightPixels == 0) {
+                mHeightPixels = metrics.heightPixels;
+            }
+
+            width -= 2 * getFramePadding();
+            height -= getTopFramePadding() + getHeaderHeight() + getFramePadding();
+
+            metrics.widthPixelsFullScreen = mWidthPixels;
+            metrics.heightPixelsFullScreen = mHeightPixels;
+            metrics.widthPixels = width;
+            metrics.heightPixels = height;
+
+            display.setSizePixels(width, height);
+            resources.updateConfiguration(resources.getConfiguration(), metrics,
+                                          resources.getCompatibilityInfo());
+        }
+    }
+
     public void relayoutWindow(int stackId, Rect rect) {
         try {
+            updateDisplayMetrics(rect.width(), rect.height());
             ActivityManagerNative.getDefault().relayoutWindow(stackId, rect);
         } catch (RemoteException e) {
         }
@@ -5855,7 +5909,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             return ActivityManagerNative.getDefault().getScreenHeight(stackId);
         } catch (RemoteException e) {
         }
-        return getContext().getResources().getDisplayMetrics().heightPixels;
+        return getContext().getResources().getDisplayMetrics().getHeightPixelsFullScreen();
     }
 
     private BroadcastReceiver mBroadcastReceiverHide = new BroadcastReceiver() {

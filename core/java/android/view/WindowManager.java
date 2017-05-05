@@ -2152,7 +2152,8 @@ public interface WindowManager extends ViewManager {
 
             if (context != null) {
                 final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-                mFullScreen.set(0, 0, metrics.widthPixels, metrics.heightPixels);
+                mFullScreen.set(0, 0, metrics.getWidthPixelsFullScreen(),
+                                      metrics.getHeightPixelsFullScreen());
                 mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
                                    mFullScreen.right / 2 - MW_WINDOW_RESIZE_LINE_WIDTH,
                                    mFullScreen.bottom - MW_WINDOW_RESIZE_LINE_WIDTH);
@@ -2328,13 +2329,14 @@ public interface WindowManager extends ViewManager {
         }
 
         public void updateScreenFrame(DisplayMetrics m) {
-            int height = m.heightPixels;
+            int height = m.getHeightPixelsFullScreen();
 
             if (mCallback != null) {
                 height = mCallback.getScreenHeight(mStackId);
             }
             mFullScreen.set(0 - getFramePadding(), 0 - getTopFramePadding(),
-                            m.widthPixels + getFramePadding(), height + getFramePadding());
+                            m.getWidthPixelsFullScreen() + getFramePadding(),
+                            height + getFramePadding());
             mLeftDockFrame.set(mFullScreen.left, mFullScreen.top,
                                mFullScreen.right / 2 - getFramePadding()
                                                      - MW_WINDOW_RESIZE_LINE_WIDTH,

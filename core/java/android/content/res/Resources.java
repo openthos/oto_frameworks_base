@@ -1772,6 +1772,9 @@ public class Resources {
     public void updateConfiguration(Configuration config,
             DisplayMetrics metrics, CompatibilityInfo compat) {
         synchronized (mAccessLock) {
+            int widthPixels = 0;
+            int heightPixels = 0;
+
             if (false) {
                 Slog.i(TAG, "**** Updating config of " + this + ": old config is "
                         + mConfiguration + " old compat is " + mCompatibilityInfo);
@@ -1782,6 +1785,8 @@ public class Resources {
                 mCompatibilityInfo = compat;
             }
             if (metrics != null) {
+                widthPixels = metrics.widthPixels;
+                heightPixels = metrics.heightPixels;
                 mMetrics.setTo(metrics);
             }
             // NOTE: We should re-arrange this code to create a Display
@@ -1794,6 +1799,12 @@ public class Resources {
             // consistently dealing with a compatible display everywhere in
             // the framework.
             mCompatibilityInfo.applyToDisplayMetrics(mMetrics);
+            if (metrics != null) { // Set mMetrics by force for multiwindow
+                mMetrics.widthPixels = widthPixels;
+                mMetrics.heightPixels = heightPixels;
+                mMetrics.widthPixelsFullScreen = metrics.widthPixelsFullScreen;
+                mMetrics.heightPixelsFullScreen = metrics.heightPixelsFullScreen;
+            }
 
             int configChanges = calcConfigChanges(config);
             if (mConfiguration.locale == null) {

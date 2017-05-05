@@ -6041,6 +6041,7 @@ public class Activity extends ContextThemeWrapper
         mWindow.setShadow(isNeedShadow());
         mWindow.setHeader(isNeedHeader());
         mWindow.setOuterBorder(isNeedOuterBorder());
+        mWindow.setMultiWindowEnvAttr();
     }
 
     private boolean isNeedShadow() {
