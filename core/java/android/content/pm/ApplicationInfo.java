@@ -112,6 +112,9 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_CTMC_CLOUDTIMES = "com.cloudtimes.ctmc";
 
+    public static final String APPNAME_CHAOZHUO_BROWSER = "com.chaozhuo.browser";
+    public static final String APPNAME_CHAOZHUO_BROWSER_X86 = "com.chaozhuo.browser.x86";
+
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
@@ -730,6 +733,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_FENNEC) == 0)
+                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER) == 0)
+                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER_X86) == 0)
                                      || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
                                      || (pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
