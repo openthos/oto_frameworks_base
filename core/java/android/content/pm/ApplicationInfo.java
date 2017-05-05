@@ -82,7 +82,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_FIHTDC_NOTE = "com.fihtdc.note";
     public static final String APPNAME_ORG_VIDEOLAN_VLC = "org.videolan.vlc";
     public static final String APPNAME_HEXIN_PLAT_ANDROID = "com.hexin.plat.android";
-    public static final String APPNAME_NETEASE_CLOUDMUSIC = "com.netease.cloudmusic";
     public static final String APPNAME_WANDOUJIA_PHOENIX = "com.wandoujia.phoenix2";
     public static final String APPNAME_JINGDONG_APP_MALL = "com.jingdong.app.mall";
     public static final String APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT
@@ -694,7 +693,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_QUICK_PIC) == 0)
                                      || (pkgName.compareTo(APPNAME_FIHTDC_NOTE) == 0)
                                      || (pkgName.compareTo(APPNAME_HEXIN_PLAT_ANDROID) == 0)
-                                     || (pkgName.compareTo(APPNAME_NETEASE_CLOUDMUSIC) == 0)
                                      || (pkgName.compareTo(APPNAME_WANDOUJIA_PHOENIX) == 0)
                                      || (pkgName.compareTo(APPNAME_JINGDONG_APP_MALL) == 0)
                                      || (pkgName.compareTo
