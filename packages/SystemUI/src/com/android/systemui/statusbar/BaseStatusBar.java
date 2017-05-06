@@ -420,6 +420,10 @@ public abstract class BaseStatusBar extends SystemUI implements
     };
 
     protected void onChangeUserInfo(final boolean bl) {}
+    /*
+    * When accept a notification, notification icon changes hightlight.
+    */
+    protected void setNotificationIconHighlight() {}
 
     private final NotificationListenerService mNotificationListener =
             new NotificationListenerService() {
@@ -1450,6 +1454,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         vetoButton.setContentDescription(mContext.getString(
                 R.string.accessibility_remove_notification));
 
+        setNotificationIconHighlight();
         final ImageButton notificationItemDelete
                 = (ImageButton) row.findViewById(R.id.delete_notification);
         notificationItemDelete.setOnClickListener(new View.OnClickListener() {

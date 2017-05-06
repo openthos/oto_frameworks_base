@@ -680,6 +680,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
+    protected void setNotificationIconHighlight() {
+        mNotification.setBackgroundResource(R.color.notificationHighlight);
+    }
+
+    @Override
     public void start() {
         mMsohStatusBar = new StatusBarSqlDatabase(mContext,
                              "Status_bar_database.db", null, VERSION_SQLDATABASE);

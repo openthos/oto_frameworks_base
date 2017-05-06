@@ -8,4 +8,5 @@
     <color name="app_background">#e9edf0</color>
     <color name="appUsualFocusBackground">#301678</color>
     <color name="rightMenuFocus">#5a41a2</color>
+    <color name="notificationHighlight">#feeeed</color>
 </resources>
