@@ -3144,10 +3144,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             mIsHide = true;
                             try {
                                 ActivityManagerNative.getDefault().closeActivityFocused();
-                                if (win.getOwningPackage().equals(
-                                                               ApplicationInfo.APPNAME_TOGIC_VIDEO)
-                                        || win.getOwningPackage().equals(
-                                                    ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)) {
+                                if (ApplicationInfo.isRealFullScreenStyleWindow(
+                                                         win.getOwningPackage())) {
                                     showStatusBar();
                                 }
                             } catch (RemoteException e) {

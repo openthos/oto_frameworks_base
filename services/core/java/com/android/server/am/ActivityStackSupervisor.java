@@ -1642,11 +1642,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             if (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
                 r.intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
             }
-            if (r.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
-                || r.packageName.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
-                || r.packageName.equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
-                || r.packageName.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)
-                || r.packageName.equals(ApplicationInfo.APPNAME_CTMC_CLOUDTIMES)) {
+            if (ApplicationInfo.isRealFullScreenStyleWindow(r.packageName)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_FULLSCREEN);
                 mWindowManager.hideStatusbarBroadcast();
             } else if (r.info.name.length() > PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {
@@ -1871,15 +1867,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         ActivityRecord currentActivity = currentTask.getTopActivity();
         if (currentActivity != null) {
-            if (currentActivity.packageName.equals(ApplicationInfo.APPNAME_TOGIC_VIDEO)
-                || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM)
-                || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI)
-                || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_CTMC_CLOUDTIMES)
-                || currentActivity.packageName.equals(
-                       ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
+            if (ApplicationInfo.isRealFullScreenStyleWindow(currentActivity.packageName)) {
                 mWindowManager.hideStatusbarBroadcast();
             } else if (currentActivity.info.name.length() >
                                                  PACKAGENAME_POWERPOINT_CUTOUT_LENGTH) {

@@ -115,6 +115,12 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_CHAOZHUO_BROWSER = "com.chaozhuo.browser";
     public static final String APPNAME_CHAOZHUO_BROWSER_X86 = "com.chaozhuo.browser.x86";
 
+    public static final String APPNAME_GAODE_MAP = "com.autonavi.minimap";
+
+    public static final String APPNAME_MXPLAYER = "com.mxtech.videoplayer.ad";
+
+    public static final String APPNAME_SANGUOSHA = "com.bf.sgs.hdexp";
+
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
@@ -703,6 +709,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_OUTLOOK) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
+                                     || (pkgName.compareTo(APPNAME_MXPLAYER) == 0)
                                      || (pkgName.compareTo(APPNAME_ZHIHAOLE) == 0)
                                      || (pkgName.compareTo(APPNAME_ZHIHAOLE_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
@@ -715,8 +722,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_EXCEL) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_WORD) == 0)
-                                     || (pkgName.compareTo(APPNAME_OFFICE_POWERPOINT)
-                                        == 0)
                                      || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
                                      || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_MOZILLA_FIREFOX) == 0)
@@ -733,10 +738,17 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_FENNEC) == 0)
+                                     || (pkgName.compareTo(APPNAME_GAODE_MAP) == 0)
                                      || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER) == 0)
-                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER_X86) == 0)
-                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
+                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER_X86) == 0));
+    }
+
+    public static boolean isRealFullScreenStyleWindow(String pkgName) {
+        return (pkgName != null) && ((pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
                                      || (pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
+                                     || (pkgName.compareTo(APPNAME_OTO_VIRTUAL_GUI) == 0)
+                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
+                                     || (pkgName.compareTo(APPNAME_SANGUOSHA) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
     }
 
