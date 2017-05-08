@@ -220,7 +220,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mKeyguardDrawnOnce;
 
     private boolean mIsHide = true;
-    private boolean mIsSleep = false;
+    private boolean mSleeping = false;
 
     /**
      * Broadcast for app to set visibility of statusbar
@@ -304,7 +304,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private BroadcastReceiver mAppChangeStatusBarPowerSleepReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (Intent.STATUS_BAR_POWER_SLEEP.equals(intent.getAction())) {
-                mIsSleep = true;
                 try {
                     mStatusBarService.showStatusBarPowerSleep();
                 } catch(Exception e) {
@@ -1181,10 +1180,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             if (!performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false)) {
                 performAuditoryFeedbackForAccessibilityIfNeed();
             }
-            if (!mIsSleep) {
+            if (!mSleeping) {
                 ActivityManagerNative.callPowerSource(mContext);
             } else {
-                mIsSleep = false;
+                setSleepingFlag(false);
             }
             break;
         case LONG_PRESS_POWER_SHUT_OFF:
@@ -6868,5 +6867,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mStatusBarService.showStatusBar();
         } catch(Exception e) {
         }
+    }
+
+    @Override
+    public void setSleepingFlag(boolean status) {
+        mSleeping = status;
     }
 }

@@ -1019,6 +1019,7 @@ public final class PowerManagerService extends SystemService
         try {
             switch (mWakefulness) {
                 case WAKEFULNESS_ASLEEP:
+                    mPolicy.setSleepingFlag(true);
                     Slog.i(TAG, "Waking up from sleep (uid " + uid +")...");
                     break;
                 case WAKEFULNESS_DREAMING:

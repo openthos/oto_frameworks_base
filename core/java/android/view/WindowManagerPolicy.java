@@ -1269,4 +1269,10 @@ public interface WindowManagerPolicy {
      * @return true if skip focus windows
      */
     public boolean willSkipFocus();
+
+    /*
+     * When auto-sleep , change 'mSleeping = true'.
+     * Avoid to popup shut down interface.
+     */
+    public void setSleepingFlag(boolean status);
 }
