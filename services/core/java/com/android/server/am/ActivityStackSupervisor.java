@@ -1733,6 +1733,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
+        //resume recorded rect
+        Rect rect = Settings.Global.getRect(
+                          mService.mContext.getContentResolver(), pkgName, null);
+        if (rect != null) {
+            return rect;
+        }
+
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
             return new Rect(0, 0, DisplayMetrics.getStartupMenuWidth(mService.mContext),
                              mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
@@ -1741,12 +1748,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         // run phone mode
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PHONE_MODE) != 0) {
-           return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
+            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
         }
 
         //run pc mode
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PC_MODE) != 0) {
-           return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
         }
 
         //run default mode
@@ -1772,16 +1779,16 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     boolean isHomeActivity(ActivityRecord r) {
-            final TaskRecord task = r.task;
-            boolean ret = !r.isApplicationActivity() || r.isHomeActivity();
-            if (!ret && task != null) {
-                ret = !task.isApplicationTask();
-            }
-            if (!ret && task != null) {
-                final ActivityRecord parent = task.stack.mActivityContainer.mParentActivity;
-                ret = parent != null && parent.isHomeActivity();
-            }
-            return ret;
+        final TaskRecord task = r.task;
+        boolean ret = !r.isApplicationActivity() || r.isHomeActivity();
+        if (!ret && task != null) {
+            ret = !task.isApplicationTask();
+        }
+        if (!ret && task != null) {
+            final ActivityRecord parent = task.stack.mActivityContainer.mParentActivity;
+            ret = parent != null && parent.isHomeActivity();
+        }
+        return ret;
     }
 
     void setFocusedStack(ActivityRecord r, String reason) {

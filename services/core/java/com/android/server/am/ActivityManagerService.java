@@ -20022,6 +20022,22 @@ public final class ActivityManagerService extends ActivityManagerNative
         synchronized (ActivityManagerService.this) {
             if (stackId > HOME_STACK_ID) {
                 Rect r = getStackBounds(stackId);
+                ActivityStack stack = mStackSupervisor.getStack(stackId);
+                if (stack != null) {
+                    ActivityRecord activityRecord = stack.topRunningActivityLocked(null);
+                    if (activityRecord != null
+                           && !ApplicationInfo.isRealFullScreenStyleWindow(
+                                          activityRecord.packageName)
+                           && !ApplicationInfo.isFullScreenStyleWindow(
+                                          activityRecord.packageName)
+                           && !activityRecord.packageName.equals(
+                                          ApplicationInfo.APPNAME_ANDROID_SETTINGS)) {
+                        final long token = Binder.clearCallingIdentity();
+                        Settings.Global.putRect(mContext.getContentResolver(),
+                                                        activityRecord.packageName, r);
+                        Binder.restoreCallingIdentity(token);
+                    }
+                }
                 relayoutWindow(stackId, new Rect(r.left + CLOSE_POS_OFFSET,
                                                  r.top +  CLOSE_POS_OFFSET,
                                                  r.right + CLOSE_POS_OFFSET,
