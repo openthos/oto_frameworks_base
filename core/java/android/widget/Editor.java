@@ -218,6 +218,8 @@ public class Editor {
 
     private TextView mTextView;
 
+    private boolean mIsHideContextMenu;
+
     final CursorAnchorInfoNotifier mCursorAnchorInfoNotifier = new CursorAnchorInfoNotifier();
 
     Editor(TextView textView) {
@@ -2850,6 +2852,11 @@ public class Editor {
             if (menu.hasVisibleItems() || mode.getCustomView() != null) {
                 getSelectionController().show();
                 mTextView.setHasTransientState(true);
+                if (mIsHideContextMenu) {
+                    mDiscardNextActionUp = true;
+                    mIsHideContextMenu = false;
+                    return false;
+                }
                 return true;
             } else {
                 return false;
@@ -2902,6 +2909,8 @@ public class Editor {
         private static final int POPUP_TEXT_LAYOUT =
                 com.android.internal.R.layout.text_edit_action_popup_text;
         private TextView mPasteTextView;
+        private TextView mCopyTextView;
+        private TextView mCutTextView;
         private TextView mReplaceTextView;
 
         @Override
@@ -2931,6 +2940,18 @@ public class Editor {
             mPasteTextView.setText(com.android.internal.R.string.paste);
             mPasteTextView.setOnClickListener(this);
 
+            mCopyTextView = (TextView) inflater.inflate(POPUP_TEXT_LAYOUT, null);
+            mCopyTextView.setLayoutParams(wrapContent);
+            mContentView.addView(mCopyTextView);
+            mCopyTextView.setText(com.android.internal.R.string.copy);
+            mCopyTextView.setOnClickListener(this);
+
+            mCutTextView = (TextView) inflater.inflate(POPUP_TEXT_LAYOUT, null);
+            mCutTextView.setLayoutParams(wrapContent);
+            mContentView.addView(mCutTextView);
+            mCutTextView.setText(com.android.internal.R.string.cut);
+            mCutTextView.setOnClickListener(this);
+
             mReplaceTextView = (TextView) inflater.inflate(POPUP_TEXT_LAYOUT, null);
             mReplaceTextView.setLayoutParams(wrapContent);
             mContentView.addView(mReplaceTextView);
@@ -2943,9 +2964,11 @@ public class Editor {
             boolean canPaste = mTextView.canPaste();
             boolean canSuggest = mTextView.isSuggestionsEnabled() && isCursorInsideSuggestionSpan();
             mPasteTextView.setVisibility(canPaste ? View.VISIBLE : View.GONE);
+            mCopyTextView.setVisibility(mTextView.canCopy() ? View.VISIBLE : View.GONE);
+            mCutTextView.setVisibility(mTextView.canCut() ? View.VISIBLE : View.GONE);
             mReplaceTextView.setVisibility(canSuggest ? View.VISIBLE : View.GONE);
 
-            if (!canPaste && !canSuggest) return;
+            if (!canPaste && !mTextView.canCopy() && !mTextView.canCut() && !canSuggest) return;
 
             super.show();
         }
@@ -2954,6 +2977,15 @@ public class Editor {
         public void onClick(View view) {
             if (view == mPasteTextView && mTextView.canPaste()) {
                 mTextView.onTextContextMenuItem(TextView.ID_PASTE);
+                hide();
+                getSelectionController().hide();
+            } else if (view == mCopyTextView && mTextView.canCopy()) {
+                mTextView.onTextContextMenuItem(TextView.ID_COPY);
+                getSelectionController().hide();
+                hide();
+            } else if (view == mCutTextView && mTextView.canCut()) {
+                mTextView.onTextContextMenuItem(TextView.ID_CUT);
+                getSelectionController().hide();
                 hide();
             } else if (view == mReplaceTextView) {
                 int middle = (mTextView.getSelectionStart() + mTextView.getSelectionEnd()) / 2;
@@ -4317,5 +4349,9 @@ public class Editor {
                 return new TextModifyOperation[size];
             }
         };
+    }
+
+    public void hideContextMenu(boolean isHide) {
+        mIsHideContextMenu = isHide;
     }
 }

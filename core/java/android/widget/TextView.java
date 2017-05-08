@@ -128,6 +128,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.textservice.SpellCheckerSubtype;
 import android.view.textservice.TextServicesManager;
 import android.widget.RemoteViews.RemoteView;
+import android.content.pm.ApplicationInfo;
 
 import com.android.internal.util.FastMath;
 import com.android.internal.widget.EditableInputConnection;
@@ -8034,6 +8035,13 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
                 // interface directly.
             }
         }
+        if (event.getButtonState() == MotionEvent.BUTTON_SECONDARY
+            && getContext().getPackageName().equals(ApplicationInfo.APPNAME_TENCENT_QQ)) {
+            if(mEditor != null) mEditor.hideContextMenu(true);
+            performLongClick();
+            return true;
+        }
+        if(mEditor != null) mEditor.hideContextMenu(false);
         return super.onGenericMotionEvent(event);
     }
 
