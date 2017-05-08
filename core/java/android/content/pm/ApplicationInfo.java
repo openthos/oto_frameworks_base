@@ -97,6 +97,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                                  = "jackpal.androidterm.Term";
 
     public static final String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
+    public static final String APPNAME_OTO_TEST_IN_FACTORY = "com.openthos.factorytest";
     public static final String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY
                                                = "com.android.otovirtualgui.MainActivity";
     public static final String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
@@ -747,6 +748,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         return (pkgName != null) && ((pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
                                      || (pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_VIRTUAL_GUI) == 0)
+                                     || (pkgName.compareTo(APPNAME_OTO_TEST_IN_FACTORY) == 0)
                                      || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
                                      || (pkgName.compareTo(APPNAME_SANGUOSHA) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
