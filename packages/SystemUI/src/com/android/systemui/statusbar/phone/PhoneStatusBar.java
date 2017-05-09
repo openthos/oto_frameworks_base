@@ -271,6 +271,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int MSG_OPEN_SETTINGS_PANEL = 1002;
     private static final int MSG_LAUNCH_TRANSITION_TIMEOUT = 1003;
     private static final int DEFAULT_CODE = -1;
+    private static final int BACKGROUND_ALPHA_VALUE = 100;
+
     // 1020-1040 reserved for BaseStatusBar
 
     // Time after we abort the launch transition.
@@ -682,6 +684,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     @Override
     protected void setNotificationIconHighlight() {
         mNotification.setBackgroundResource(R.color.notificationHighlight);
+        mNotification.getBackground().setAlpha(BACKGROUND_ALPHA_VALUE);
     }
 
     @Override
