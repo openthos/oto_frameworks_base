@@ -5105,6 +5105,13 @@ public final class Settings {
      */
     public static final class Global extends NameValueTable {
         public static final String SYS_PROP_SETTING_VERSION = "sys.settings_global_version";
+        public static final String SYS_UPGRADE_DEFAULT = "system_upgrade_default";
+        public static final String SYS_UPGRADE_URL = "system_upgrade_url";
+
+        /**
+         * The default url for system upgrade.
+         */
+        public static final String SYS_UPGRADE_DEFAULT_URL = "system_upgrade_default_url";
 
         /**
          * The content:// style URL for global secure settings items.  Not public.
@@ -6861,6 +6868,46 @@ public final class Settings {
          */
         public static boolean putInt(ContentResolver cr, String name, int value) {
             return putString(cr, name, Integer.toString(value));
+        }
+
+        /**
+         * Convenience function for retrieving a single secure settings value
+         * as an boolean.  Note that internally setting values are always
+         * stored as strings; this function converts the string to an integer
+         * for you.  The default value will be returned if the setting is
+         * not defined or not an integer.
+         *
+         * @param cr The ContentResolver to access.
+         * @param name The name of the setting to retrieve.
+         * @param def Value to return if the setting is not defined.
+         *
+         * @return The setting's current value, or 'def' if it is not defined
+         * or not a valid integer.
+         */
+        public static boolean getBoolean(ContentResolver cr, String name, boolean def) {
+            String v = getString(cr, name);
+            try {
+                return v != null ? (Integer.parseInt(v) != 0) : def;
+            } catch (NumberFormatException e) {
+                return def;
+            }
+        }
+
+        /**
+         * Convenience function for updating a single settings value as an
+         * boolean. This will either create a new entry in the table if the
+         * given name does not exist, or modify the value of the existing row
+         * with that name.  Note that internally setting values are always
+         * stored as strings, so this function converts the given value to a
+         * string before storing it.
+         *
+         * @param cr The ContentResolver to access.
+         * @param name The name of the setting to modify.
+         * @param value The new value for the setting.
+         * @return true if the value was set, false on database errors
+         */
+        public static boolean putBoolean(ContentResolver cr, String name, boolean value) {
+            return putString(cr, name, Integer.toString(value ? 1 : 0));
         }
 
         /**

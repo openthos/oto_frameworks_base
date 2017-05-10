@@ -207,4 +207,7 @@
     <!-- Default for Settings.Global.GUEST_USER_ENABLED -->
     <bool name="def_guest_user_enabled">true</bool>
 
+    <!-- Default for Settings.Global.SYS_UPGRADE_DEFAULT_URL -->
+    <string name="def_system_upgrade_url">http://dev.openthos.org/openthos/</string>
+
 </resources>
