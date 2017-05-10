@@ -480,6 +480,8 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
     @ViewDebug.ExportedProperty(category = "layout")
     private int mChildCountWithTransientState = 0;
 
+    private boolean mTopMerginDisabled = false;
+
     /**
      * Currently registered axes for nested scrolling. Flag set consisting of
      * {@link #SCROLL_AXIS_HORIZONTAL} {@link #SCROLL_AXIS_VERTICAL} or {@link #SCROLL_AXIS_NONE}
@@ -5580,11 +5582,21 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
             int parentHeightMeasureSpec, int heightUsed) {
         final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
 
-        if ((getClass().getName().compareTo("com.tencent.mm.ui.tools.TestTimeForChatting") == 0)
-            && (getViewRootImpl() != null)) {
-            View decor = getViewRootImpl().getView();
-            if ((decor != null) && (decor instanceof WindowDecorView)) {
-                mPaddingTop = ((WindowDecorView) decor).getWindowHeaderPadding();
+        if (getContext().getApplicationInfo()
+                             .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0) {
+            String name = getClass().getName();
+            if (name.compareTo("com.tencent.mm.ui.tools.TestTimeForChatting") == 0) {
+                mPaddingTop = 0;
+            } else if (name.compareTo("android.support.v7.widget.ActionBarOverlayLayout") == 0) {
+                if (child.getClass().getName().compareTo(
+                                          "android.support.v7.widget.ActionBarContainer") == 0) {
+                    if (lp.topMargin != 0) {
+                        lp.topMargin = 0;
+                        mTopMerginDisabled = true;
+                    }
+                } else if (mTopMerginDisabled) {
+                    lp.topMargin = 0;
+                }
             }
         }
 

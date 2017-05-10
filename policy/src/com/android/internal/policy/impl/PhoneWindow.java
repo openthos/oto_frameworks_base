@@ -3123,7 +3123,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                     lp.leftMargin = border;
                     lp.rightMargin = border;
                     lp.bottomMargin = border;
-                    // Need not process head, since it is already processed during fit window.
+                    lp.topMargin = getWindowHeaderPadding();
                     view.setLayoutParams(lp);
                 }
             }
