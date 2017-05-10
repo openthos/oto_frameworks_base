@@ -202,6 +202,7 @@ import android.util.Slog;
 import android.util.SparseArray;
 import android.util.TimeUtils;
 import android.util.Xml;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -284,6 +285,7 @@ public final class ActivityManagerService extends ActivityManagerNative
     static final boolean SHOW_ACTIVITY_START_TIME = true;
 
     static final int CLOSE_POS_OFFSET = 10000;
+    static final int DRAG_POS_OFFSET = 200;
 
     // Control over CPU and battery monitoring.
     static final long BATTERY_STATS_TIME = 30*60*1000;      // write battery stats every 30 minutes.
@@ -20025,7 +20027,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 ActivityStack stack = mStackSupervisor.getStack(stackId);
                 if (stack != null) {
                     ActivityRecord activityRecord = stack.topRunningActivityLocked(null);
-                    if (activityRecord != null
+                    if (activityRecord != null && isValidRect(r)
                            && !ApplicationInfo.isRealFullScreenStyleWindow(
                                           activityRecord.packageName)
                            && !ApplicationInfo.isFullScreenStyleWindow(
@@ -20109,5 +20111,11 @@ public final class ActivityManagerService extends ActivityManagerNative
         synchronized (ActivityManagerService.this) {
             return mStackSupervisor.getScreenHeight(stackId);
         }
+    }
+
+    private boolean isValidRect(Rect rect) {
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        return rect.left < metrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
+                    && rect.top < metrics.getHeightPixelsFullScreen() - DRAG_POS_OFFSET;
     }
 }
