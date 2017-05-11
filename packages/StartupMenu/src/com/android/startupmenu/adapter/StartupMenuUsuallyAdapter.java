@@ -4,6 +4,7 @@ import com.android.startupmenu.R;
 import java.util.List;
 import com.android.startupmenu.util.AppInfo;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 import com.android.startupmenu.StartupMenuActivity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -41,7 +42,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
         mStartMenuCommonlHeight = mContext.getResources()
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_height);
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
     }
 
@@ -90,17 +91,21 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         StartupMenuAdapter.openAppBroadcast(mContext);
-                        Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                                new String[] { pkgName });
+                        Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO
+                                       + " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                     new String[] { pkgName });
                         c.moveToNext();
-                        int numbers = c.getInt(c.getColumnIndex("int"));
+                        int numbers = c.getInt(c.getColumnIndex(
+                                                     TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
                         numbers++;
-                        int number = c.getInt(c.getColumnIndex("int"));
-                        number++;
+                        //int number = c.getInt(c.getColumnIndex("int"));
+                        //number++;
                         ContentValues values = new ContentValues();
-                        values.put("int", numbers);
-                        values.put("click", number);
-                        mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+                        values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, numbers);
+                        //values.put("click", number);
+                        mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                                   TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                   new String[] { pkgName });
                         break;
                     case MotionEvent.BUTTON_TERTIARY:
                         break;
@@ -108,7 +113,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         if (position < 0 || position >= mlistViewAppInfo.size()) {
                             return false;
                         }
-                        showMenuDialog1(position,motionEvent);
+                        showMenuDialog(position,motionEvent);
                         break;
                     default :
                         StartupMenuActivity.setFocus(false);
@@ -136,7 +141,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         }
     };
 
-    private void showMenuDialog1(int position,MotionEvent motionEvent){
+    private void showMenuDialog(int position,MotionEvent motionEvent){
         StartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);

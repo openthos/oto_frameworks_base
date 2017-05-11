@@ -28,6 +28,7 @@ import android.database.Cursor;
 import com.android.startupmenu.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 import android.net.Uri;
 import android.provider.Settings;
 import android.content.SharedPreferences;
@@ -70,7 +71,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_usually_menu);
 
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         mRightUsuallyOpen = (TextView) findViewById(R.id.tv_right_usually_open);
         TextView rightPhoneUsuallyRun = (TextView) findViewById(R.id.tv_right_phone_usually_run);
@@ -133,20 +134,20 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             StartupMenuAdapter.openAppBroadcast(mContext);
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                                    new String[] { mPkgName });
+            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                    " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                new String[] { mPkgName });
             c.moveToNext();
-            //(c.moveToFirst()) {
-            int numbers = c.getInt(c.getColumnIndex("int"));
-            numbers++;
-            int number = c.getInt(c.getColumnIndex("click"));
+            //int numbers = c.getInt(c.getColumnIndex("int"));
+            //numbers++;
+            int number = c.getInt(c.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
             number++;
             ContentValues values = new ContentValues();
-            values.put("int", numbers);
-            values.put("click", number);
-            mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
+            //values.put("int", numbers);
+            values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+            mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                       TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[] { mPkgName });
             dialogDismiss();
-            //}
             break;
 
         case R.id.tv_right_phone_usually_run:
@@ -166,14 +167,17 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
             StartupMenuActivity.mListViewEight.remove(mPosition);
             StartupMenuActivity.mUsuallyAdapter.notifyDataSetChanged();
             cancel();
-            Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
-                                    new String[] { mPkgName });
+            Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO  +
+                                         " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                     new String[] { mPkgName });
             cursor.moveToNext();
-            int numClick = cursor.getInt(cursor.getColumnIndex("click"));
+            int numClick = cursor.getInt(cursor.getColumnIndex(
+                                         TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
             numClick = 0;
             ContentValues value = new ContentValues();
-            value.put("click", numClick);
-            mdb.update("perpo", value, "pkname = ?", new String[] { mPkgName });
+            value.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, numClick);
+            mdb.update(TableIndexDefine.TABLE_APP_PERPO, value,
+                       TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[] { mPkgName });
             dialogDismiss();
             break;
         }
@@ -183,17 +187,20 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     private void addUsedNum() {
         String pkgName = "";
         pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-        Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
-                                     new String[] { pkgName });
+        Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO  +
+                                     " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                 new String[] { pkgName });
         cursor.moveToNext();
-        int numbers = cursor.getInt(cursor.getColumnIndex("int"));
-        numbers++;
-        int number = cursor.getInt(cursor.getColumnIndex("click"));
+        //int numbers = cursor.getInt(cursor.getColumnIndex("int"));
+        //numbers++;
+        int number = cursor.getInt(cursor.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
         number++;
         ContentValues values = new ContentValues();
-        values.put("int", numbers);
-        values.put("click", number);
-        mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+        //values.put("int", numbers);
+        values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+        mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                                    TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                    new String[] { pkgName });
         SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                              Context.MODE_PRIVATE);
         Editor editor = sharedPreference.edit();

@@ -28,6 +28,7 @@ import android.database.Cursor;
 import com.android.startupmenu.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
@@ -84,7 +85,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_menu1);
 
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         mLockedAppText = mContext.getResources().getString(R.string.lockedapptext);
         mUnlockedAppText = mContext.getResources().getString(R.string.unlockedapptext);
@@ -168,17 +169,20 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             StartupMenuAdapter.openAppBroadcast(mContext);
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                                    new String[] { mPkgName });
+            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                    " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ? ",
+                                                new String[] { mPkgName });
             c.moveToNext();
-            int numbers = c.getInt(c.getColumnIndex("int"));
-            numbers++;
-            int number = c.getInt(c.getColumnIndex("click"));
+            //int numbers = c.getInt(c.getColumnIndex("int"));
+            //numbers++;
+            int number = c.getInt(c.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
             number++;
             ContentValues values = new ContentValues();
-            values.put("int", numbers);
-            values.put("click", number);
-            mdb.update("perpo", values, "pkname = ?", new String[] { mPkgName });
+            //values.put("int", numbers);
+            values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+            mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                       TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                       new String[] { mPkgName });
             SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                           Context.MODE_PRIVATE);
             Editor editor = sharedPreference.edit();
@@ -268,17 +272,20 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     //Method of save used numbers
     private void addUsedNum() {
         String pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-        Cursor cursor = mdb.rawQuery("select * from perpo where pkname = ?",
+        Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                     " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                                      new String[] { pkgName });
         cursor.moveToNext();
-        int numbers = cursor.getInt(cursor.getColumnIndex("int"));
-        numbers++;
-        int number = cursor.getInt(cursor.getColumnIndex("click"));
+        //int numbers = cursor.getInt(cursor.getColumnIndex("int"));
+        //numbers++;
+        int number = cursor.getInt(cursor.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
         number++;
         ContentValues values = new ContentValues();
-        values.put("int", numbers);
-        values.put("click",number);
-        mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+        //values.put("int", numbers);
+        values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+        mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                   TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                   new String[] { pkgName });
         SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                              Context.MODE_PRIVATE);
         Editor editor = sharedPreference.edit();

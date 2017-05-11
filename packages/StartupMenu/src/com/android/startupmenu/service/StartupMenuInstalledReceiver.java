@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import android.content.ContentValues;
@@ -26,7 +27,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
     private int mNumber;
     @Override
     public void onReceive(Context context, Intent intent) {
-        mMsoh = new StartupMenuSqliteOpenHelper(context, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(context, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         if (intent.getAction().equals("android.intent.action.PACKAGE_ADDED")) {
             String pkName = intent.getData().getSchemeSpecificPart();
@@ -35,7 +36,8 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
         }
         if (intent.getAction().equals("android.intent.action.PACKAGE_REMOVED")) {
             String pkName = intent.getData().getSchemeSpecificPart();
-            mdb.delete("perpo", "pkname = ? ", new String[] { pkName });
+            mdb.delete(TableIndexDefine.TABLE_APP_PERPO, TableIndexDefine.COLUMN_PERPO_PKGNAME
+                                                         + " = ? ", new String[] { pkName });
         }
     }
 
@@ -54,29 +56,39 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
             String appLabel = (String) reInfo.loadLabel(pm);
             Drawable icon = reInfo.loadIcon(pm);
             mIsHasReayDb = false;
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                    new String[] { pkgName });
+            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                    " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                new String[] { pkgName });
             while (c.moveToNext()) {
-                String pkname = c.getString(c.getColumnIndex("pkname"));
+                String pkname = c.getString(c.getColumnIndex(
+                                              TableIndexDefine.COLUMN_PERPO_PKGNAME));
                 if (pkgName.equals(pkname)) {
                     mIsHasReayDb = true;
                     break;
                 }
             }
+
             if (!mIsHasReayDb) {
-                mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
-                                + "values (?,?,?,?,?)",
-                        new Object[] { appLabel, pkgName, systemDate,
-                                mNumber, mNumber});
+                mdb.execSQL("insert into " +
+                    TableIndexDefine.TABLE_APP_PERPO + "(" +
+                    TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                    TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                    TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                    TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                    "values (?, ?, ?, ?)" , new Object[] {
+                    appLabel, pkgName, systemDate, mNumber} );
             }
+
             if(isEnglish(appLabel)) {
-                ContentValues contentvalues = new ContentValues();
-                contentvalues.put("label", appLabel);
-                mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                ContentValues values = new ContentValues();
+                values.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
+                mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                        TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
             } else {
-                ContentValues contentvalues = new ContentValues();
-                contentvalues.put("label", appLabel);
-                mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                ContentValues values = new ContentValues();
+                values.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
+                mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
+                           TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
             }
         }
     }

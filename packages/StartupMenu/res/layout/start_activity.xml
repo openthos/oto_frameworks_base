@@ -33,7 +33,7 @@
                 android:text="@string/common_application" />
 
             <ListView
-                android:id="@+id/lv_view"
+                android:id="@+id/lv_usually_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="#00000000"
@@ -104,7 +104,7 @@
                     android:textColor="#939aa3" />
 
                 <ImageView
-                    android:id="@+id/iv_view"
+                    android:id="@+id/iv_view_search"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:layout_width="@dimen/startupmenu_layout_size_twelve"
@@ -116,7 +116,7 @@
 
                 <View
                     android:id="@+id/line_view"
-                    android:layout_toRightOf="@id/iv_view"
+                    android:layout_toRightOf="@id/iv_view_search"
                     android:layout_width="@dimen/startupmenu_layout_size_four"
                     android:layout_height="match_parent"
                     android:background="#f2e9edf0" />

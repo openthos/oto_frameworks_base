@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import android.content.ContentValues;
@@ -35,8 +36,7 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        mMsoh = new StartupMenuSqliteOpenHelper(context, "Application_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(context, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
         if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
             BackstageRenewalData(context);
@@ -45,26 +45,29 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
         //Accept Message
         if (intent.getAction().equals(Intent.ACTION_SEND_CLICK_INFO)) {
             String pkgName = intent.getStringExtra("keyAddInfo");
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                      new String[] { pkgName });
+            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                           " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +
+                           " = ?", new String[] { pkgName });
             ContentValues values = new ContentValues();
-            int numbers = 0;
+            //int numbers = 0;
             int number = 0;
             if (c.moveToNext()) {
-                numbers = c.getInt(c.getColumnIndex("int"));
-                number = c.getInt(c.getColumnIndex("click"));
-                numbers ++;
+                //numbers = c.getInt(c.getColumnIndex("int"));
+                number = c.getInt(c.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
+                //numbers ++;
                 number ++;
-                values.put("int", numbers);
-                values.put("click", number);
-                mdb.update("perpo", values, "pkname = ?", new String[] { pkgName });
+                values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+                //values.put("click", number);
+                mdb.update(TableIndexDefine.TABLE_APP_PERPO, values, TableIndexDefine
+                                  .COLUMN_PERPO_PKGNAME + " = ? ", new String[] { pkgName });
             } else {
-                numbers ++;
+                //numbers ++;
                 number ++;
-                values.put("pkname", pkgName);
-                values.put("int", numbers);
-                values.put("click", number);
-                mdb.insert("perpo", "pkname", values);
+                values.put(TableIndexDefine.COLUMN_PERPO_PKGNAME, pkgName);
+                //values.put("int", numbers);
+                values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
+                mdb.insert(TableIndexDefine.TABLE_APP_PERPO,
+                           TableIndexDefine.COLUMN_PERPO_PKGNAME, values);
                 BackstageRenewalData(context);
             }
             //Same to open run
@@ -96,10 +99,11 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
             String appLabel = (String) reInfo.loadLabel(pm);
             Drawable icon = reInfo.loadIcon(pm);
             mIsHasReayDb = false;
-            Cursor c = mdb.rawQuery("select * from perpo where pkname = ?",
-                    new String[] { pkgName });
+            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                    " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                new String[] { pkgName });
             while (c.moveToNext()) {
-                String pkname = c.getString(c.getColumnIndex("pkname"));
+                String pkname = c.getString(c.getColumnIndex(TableIndexDefine.COLUMN_PERPO_PKGNAME));
                 if (pkgName.equals(pkname)) {
                     mIsHasReayDb = true;
                     break;
@@ -107,19 +111,26 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
             }
 
             if (!mIsHasReayDb) {
-                mdb.execSQL("insert into perpo(label,pkname,date,int,click) "
-                                + "values (?,?,?,?,?)",
-                        new Object[] { appLabel, pkgName, systemDate,
-                                mNumber,mNumber});
+                 mdb.execSQL("insert into " +
+                             TableIndexDefine.TABLE_APP_PERPO + "(" +
+                             TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                             TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                             TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                             TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                             "values (?, ?, ?, ?)"  ,
+                             new Object[] { appLabel, pkgName, systemDate, mNumber} );
             }
+
             if(isEnglish(appLabel)) {
                 ContentValues contentvalues = new ContentValues();
-                contentvalues.put("label", appLabel);
-                mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                contentvalues.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
+                mdb.update(TableIndexDefine.TABLE_APP_PERPO, contentvalues, TableIndexDefine.
+                                      COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
             } else {
                 ContentValues contentvalues = new ContentValues();
-                contentvalues.put("label", appLabel);
-                mdb.update("perpo", contentvalues, "pkname = ?", new String[]{ pkgName });
+                contentvalues.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
+                mdb.update(TableIndexDefine.TABLE_APP_PERPO, contentvalues, TableIndexDefine.
+                                      COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
             }
         }
     }
