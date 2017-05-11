@@ -531,7 +531,7 @@ public final class Display {
     public int getWidth() {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
-            return mCachedAppWidthCompat;
+            return (mWidthPixels != 0) ? mWidthPixels : mCachedAppWidthCompat;
         }
     }
 
@@ -542,7 +542,7 @@ public final class Display {
     public int getHeight() {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
-            return mCachedAppHeightCompat;
+            return (mHeightPixels != 0) ? mHeightPixels : mCachedAppHeightCompat;
         }
     }
 
