@@ -3139,6 +3139,10 @@
             android:permission="android.permission.MASTER_CLEAR"
             android:exported="true" />
 
+        <service android:name="com.android.internal.os.storage.ExternalStorageMountter"
+            android:permission="android.permission.MASTER_CLEAR"
+            android:exported="true" />
+
         <service android:name="android.hardware.location.GeofenceHardwareService"
             android:permission="android.permission.LOCATION_HARDWARE"
             android:exported="false" />
