@@ -5337,12 +5337,6 @@ public final class ViewRootImpl implements ViewParent,
         return mWinFrame;
     }
 
-    public Rect getWinFrameOrigOnce() {
-        Rect rect = new Rect(mWinFrameOrigOnce);
-        mWinFrameOrigOnce.set(mWinFrame);
-        return rect;
-    }
-
     /**
      * {@inheritDoc}
      */

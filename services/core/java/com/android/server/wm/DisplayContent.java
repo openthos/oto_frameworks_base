@@ -252,9 +252,9 @@ class DisplayContent {
         for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
             final TaskStack stack = mStacks.get(stackNdx);
             stack.getBounds(mTmpRect);
-            if (stack.mMultiWindow != null) {
-                framePadding = stack.mMultiWindow.mShadowPadding;
-                topFramePadding = stack.mMultiWindow.mTopShadowPadding;
+            if (stack.getMultiWindow() != null) {
+                framePadding = stack.getMultiWindow().mShadowPadding;
+                topFramePadding = stack.getMultiWindow().mTopShadowPadding;
             }
             if (mTmpRect.contains(x, y)
                          && mTmpRect.contains(x + framePadding, y)

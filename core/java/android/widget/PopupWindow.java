@@ -36,15 +36,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.ViewRootImpl;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.view.WindowManager;
-import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
-
-import android.util.Log;
 
 /**
  * <p>A popup window that can be used to display an arbitrary view. The popup
@@ -55,18 +51,6 @@ import android.util.Log;
  * @see android.widget.Spinner
  */
 public class PopupWindow {
-
-    private static final String TAG = "PopupWindow";
-
-    private static final String WPS_NAME = "com.kingsoft";
-    private static final String CZ_NAME = "com.chaozhuo";
-    private static final String WPS_EMAIL_NAME = "com.kingsoft.email";
-    private static final String CZ_FILEMANAGER_NAME = "com.chaozhuo.filemanager";
-
-    private static final int COMPARE_NAME_LEN = 12;
-
-    private static final int OFFSET_DIFF = 5;
-
     /**
      * Mode for {@link #setInputMethodMode(int)}: the requirements for the
      * input method should be based on the focusability of the popup.  That is
@@ -92,9 +76,6 @@ public class PopupWindow {
     public static final int INPUT_METHOD_NOT_NEEDED = 2;
 
     private static final int DEFAULT_ANCHORED_GRAVITY = Gravity.TOP | Gravity.START;
-
-    private static final int DEFAULT_POPUP_WINDOW_WIDTH_4_3 = 130;
-    private static final int DEFAULT_POPUP_WINDOW_WIDTH_16_9 = 300;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -152,9 +133,6 @@ public class PopupWindow {
     private boolean mIgnoreCheekPress = false;
 
     private int mAnimationStyle = -1;
-
-    private int mXOffsetAdjust = 0;
-    private int mYOffsetAdjust = 0;
     
     private static final int[] ABOVE_ANCHOR_STATE_SET = new int[] {
         com.android.internal.R.attr.state_above_anchor
@@ -916,49 +894,6 @@ public class PopupWindow {
      * @param y the popup's y location offset
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
-
-        ViewRootImpl root = parent.getViewRootImpl();
-        View view = root.getView();
-
-        mXOffsetAdjust = 0;
-        mYOffsetAdjust = 0;
-        if (view instanceof WindowDecorView) {
-            WindowDecorView decor = (WindowDecorView) view;
-            String name = parent.getContext().getApplicationInfo().packageName;
-            if (decor.isMWWindow() && ((name.compareTo(CZ_FILEMANAGER_NAME) == 0)
-                                       || (name.compareTo(WPS_EMAIL_NAME) == 0))) {
-                String cmpName = ((new Throwable()).getStackTrace())[1].getClassName()
-                                                                    .substring(0, COMPARE_NAME_LEN);
-                Rect rect = root.getWinFrame();
-
-                if (name.compareTo(CZ_FILEMANAGER_NAME) == 0) {
-                    if (cmpName.compareTo(CZ_NAME) == 0) {
-                        x = x - rect.left;
-                        y = y - rect.top;
-                        mXOffsetAdjust = x;
-                        mYOffsetAdjust = y;
-                    }
-                } else {
-                    if (cmpName.compareTo(WPS_NAME) == 0) {
-                        Rect orig = root.getWinFrameOrigOnce();
-                        if (x > 0) {
-                            mXOffsetAdjust = x - rect.left;
-                            x = x - orig.left;
-                        }
-                        if (y > 0) {
-                            mYOffsetAdjust = y - rect.top;
-                            y = y - orig.top;
-                        }
-                    }
-                }
-            } else if (decor.isDialogFromMWParent()) {
-                x = x + decor.getDialogLeftOffset();
-                y = y + decor.getDialogTopOffset();
-                mXOffsetAdjust = x;
-                mYOffsetAdjust = y;
-            }
-        }
-
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
 
@@ -1071,34 +1006,6 @@ public class PopupWindow {
         p.windowAnimations = computeAnimationResource();
 
         invokePopup(p);
-    }
-
-    private int boundXoff(View anchor, int xoff, int width, int gravity) {
-
-        Rect frame = anchor.getViewRootImpl().getWinFrame();
-        Rect rect = new Rect();
-
-        anchor.getBoundsOnScreen(rect);
-        rect.left -= frame.left;
-
-        if ((gravity & Gravity.RIGHT) == Gravity.RIGHT) {
-            width = 0;
-        } else if (width == -1) {
-            width = anchor.getWidth();
-        } else if (width == -2) {
-            // For wrap_content, don't know the real size, so use default width instead of.
-            width = anchor.getContext().getResources().getDisplayMetrics().is_16_9()
-                    ? DEFAULT_POPUP_WINDOW_WIDTH_16_9 : DEFAULT_POPUP_WINDOW_WIDTH_4_3;
-        } else if (width < 0) {
-            width = 0;
-        }
-
-        if (rect.left + xoff + width > frame.width()) {
-            xoff = frame.width() - width - rect.left;
-        } else if (rect.left + xoff < 0) {
-            xoff = 0 - rect.left;
-        }
-        return xoff;
     }
 
     private void updateAboveAnchor(boolean aboveAnchor) {
@@ -1315,16 +1222,6 @@ public class PopupWindow {
      */
     private boolean findDropDownPosition(View anchor, WindowManager.LayoutParams p, int xoff,
             int yoff, int gravity) {
-
-        View view = anchor.getViewRootImpl().getView();
-        if (view instanceof WindowDecorView) {
-            if (((WindowDecorView) view).isMWWindow()) {
-                xoff = boundXoff(anchor, xoff, mPopupWidth, gravity);
-            }
-        }
-        mXOffsetAdjust = 0;
-        mYOffsetAdjust = 0;
-
         final int anchorHeight = anchor.getHeight();
         final int anchorWidth = anchor.getWidth();
         if (mOverlapAnchor) {
@@ -1606,18 +1503,6 @@ public class PopupWindow {
      *              already seems to correspond to the LayoutParams
      */
     public void update(int x, int y, int width, int height, boolean force) {
-
-        if ((mXOffsetAdjust != 0)
-            && (((x - mXOffsetAdjust) > OFFSET_DIFF) || ((mXOffsetAdjust - x) > OFFSET_DIFF))) {
-            x = mXOffsetAdjust;
-        }
-        if ((mYOffsetAdjust != 0)
-            && (((y - mYOffsetAdjust) > OFFSET_DIFF) || ((mYOffsetAdjust - y) > OFFSET_DIFF))) {
-            y = mYOffsetAdjust;
-        }
-        mXOffsetAdjust = x;
-        mYOffsetAdjust = y;
-
         if (width != -1) {
             mLastWidth = width;
             setWidth(width);

@@ -31,6 +31,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_INPUT_METHOD;
 import static android.view.WindowManager.LayoutParams.TYPE_INPUT_METHOD_DIALOG;
 import static android.view.WindowManager.LayoutParams.TYPE_APPLICATION_STARTING;
 import static android.view.WindowManager.LayoutParams.TYPE_WALLPAPER;
+import static android.view.WindowManager.MultiWindow.*;
 
 import android.app.AppOpsManager;
 import android.os.Debug;
@@ -609,11 +610,27 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             y = mAttrs.y;
         }
 
-        Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
-                (int) (x + mAttrs.horizontalMargin * pw),
-                (int) (y + mAttrs.verticalMargin * ph), mFrame);
-
-        //System.out.println("Out: " + mFrame);
+        if (this.toString().contains("PopupWindow")) {
+            if (("com.kingsoft.email".equals(mAttrs.packageName) && x != 0.0) // login popup
+                    || ("com.tencent.mobileqq".equals(mAttrs.packageName)
+                        && mAttrs.toString().contains("wrap"))) {
+                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                        (int) (x + mAttrs.horizontalMargin * pw),
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame, mDisplayFrame);
+            } else {
+                if ("com.kingsoft.email".equals(mAttrs.packageName) && x == 0.0) { // send/recv box
+                    x = x + stack.getMultiWindow().getFramePadding();
+                    y = y - mContainingFrame.top;
+                }
+                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                        (int) (x + mAttrs.horizontalMargin * pw),
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame);
+            }
+        } else {
+            Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                    (int) (x + mAttrs.horizontalMargin * pw),
+                    (int) (y + mAttrs.verticalMargin * ph), mFrame);
+        }
 
         if ((stack == null) || (!stack.isFloating())) {
             // Now make sure the window fits in the overall display.

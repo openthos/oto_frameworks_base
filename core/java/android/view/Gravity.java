@@ -268,6 +268,84 @@ public class Gravity
         }
     }
 
+    public static void apply(int gravity, int w, int h, Rect container,
+            int xAdj, int yAdj, Rect outRect, Rect displayRect) {
+        switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_X_SHIFT)) {
+            case 0:
+                outRect.left = container.left + ((container.right - container.left - w) / 2) + xAdj;
+                outRect.right = outRect.left + w;
+                if ((gravity&(AXIS_CLIP<<AXIS_X_SHIFT)) == (AXIS_CLIP<<AXIS_X_SHIFT)) {
+                    if (outRect.left < container.left) {
+                        outRect.left = container.left;
+                    }
+                    if (outRect.right > container.right) {
+                        outRect.right = container.right;
+                    }
+                }
+                break;
+            case AXIS_PULL_BEFORE<<AXIS_X_SHIFT:
+                outRect.left = container.left + (xAdj - (container.left - displayRect.left));
+                outRect.right = outRect.left + w;
+                if ((gravity&(AXIS_CLIP<<AXIS_X_SHIFT)) == (AXIS_CLIP<<AXIS_X_SHIFT)) {
+                    if (outRect.right > container.right) {
+                        outRect.right = container.right;
+                    }
+                }
+                break;
+            case AXIS_PULL_AFTER<<AXIS_X_SHIFT:
+                outRect.right = container.right - (xAdj - (displayRect.right - container.right));
+                outRect.left = outRect.right - w;
+                if ((gravity&(AXIS_CLIP<<AXIS_X_SHIFT)) == (AXIS_CLIP<<AXIS_X_SHIFT)) {
+                    if (outRect.left < container.left) {
+                        outRect.left = container.left;
+                    }
+                }
+                break;
+            default:
+                outRect.left = container.left + xAdj;
+                outRect.right = container.right + xAdj;
+                break;
+        }
+
+        switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_Y_SHIFT)) {
+            case 0:
+                outRect.top = container.top + ((container.bottom - container.top - h) / 2) + yAdj;
+                outRect.bottom = outRect.top + h;
+                if ((gravity&(AXIS_CLIP<<AXIS_Y_SHIFT)) == (AXIS_CLIP<<AXIS_Y_SHIFT)) {
+                    if (outRect.top < container.top) {
+                        outRect.top = container.top;
+                    }
+                    if (outRect.bottom > container.bottom) {
+                        outRect.bottom = container.bottom;
+                    }
+                }
+                break;
+            case AXIS_PULL_BEFORE<<AXIS_Y_SHIFT:
+                outRect.top = container.top + (yAdj - (container.top - displayRect.top));
+                outRect.bottom = outRect.top + h;
+                if ((gravity&(AXIS_CLIP<<AXIS_Y_SHIFT)) == (AXIS_CLIP<<AXIS_Y_SHIFT)) {
+                    if (outRect.bottom > container.bottom) {
+                        outRect.bottom = container.bottom;
+                    }
+                }
+                break;
+            case AXIS_PULL_AFTER<<AXIS_Y_SHIFT:
+                outRect.bottom = container.bottom - (
+                                     yAdj - (displayRect.bottom - container.bottom));
+                outRect.top = outRect.bottom - h;
+                if ((gravity&(AXIS_CLIP<<AXIS_Y_SHIFT)) == (AXIS_CLIP<<AXIS_Y_SHIFT)) {
+                    if (outRect.top < container.top) {
+                        outRect.top = container.top;
+                    }
+                }
+                break;
+            default:
+                outRect.top = container.top + yAdj;
+                outRect.bottom = container.bottom + yAdj;
+                break;
+        }
+    }
+
     /**
      * Apply a gravity constant to an object.
      *

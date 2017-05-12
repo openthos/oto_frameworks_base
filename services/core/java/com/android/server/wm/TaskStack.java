@@ -91,7 +91,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
     /** Detach this stack from its display when animation completes. */
     boolean mDeferDetach;
 
-    WindowManager.MultiWindow mMultiWindow;
+    private WindowManager.MultiWindow mMultiWindow;
     Rect mDialogRect;
     boolean mEnableMultiWindow = false;
     long mCurrentDownTime;
@@ -680,5 +680,9 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
 
     public int getScreenHeight(int stackId) {
         return mDisplayContent.getDisplayInfo().logicalHeight;
+    }
+
+    public WindowManager.MultiWindow getMultiWindow() {
+        return mMultiWindow;
     }
 }
