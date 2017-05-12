@@ -166,9 +166,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
     private final static int FRAME_THICK_FACTOR = 2;
 
-    private static int mWidthPixels = 0;
-    private static int mHeightPixels = 0;
-
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
             (1 << FEATURE_CONTENT_TRANSITIONS) |
@@ -5838,28 +5835,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 Context.WINDOW_SERVICE);
         if (windowService != null) {
             final Display display = windowService.getDefaultDisplay();
-            Resources resources = getContext().getResources();
             DisplayMetrics metrics = new DisplayMetrics();
 
             display.getMetrics(metrics, false); // get system wide metrics
-            if (mWidthPixels == 0) {
-                mWidthPixels = metrics.widthPixels;
-            }
-            if (mHeightPixels == 0) {
-                mHeightPixels = metrics.heightPixels;
-            }
-
             width -= 2 * getFramePadding();
             height -= getTopFramePadding() + getHeaderHeight() + getFramePadding();
 
-            metrics.widthPixelsFullScreen = mWidthPixels;
-            metrics.heightPixelsFullScreen = mHeightPixels;
-            metrics.widthPixels = width;
-            metrics.heightPixels = height;
-
-            display.setSizePixels(width, height);
-            resources.updateConfiguration(resources.getConfiguration(), metrics,
-                                          resources.getCompatibilityInfo());
+            DisplayMetrics.setFullScreenSize(metrics.widthPixels, metrics.heightPixels);
+            Display.setSizePixels(width, height);
+            Resources.setVirtualScreenSize(width, height);
         }
     }
 

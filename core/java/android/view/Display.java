@@ -80,8 +80,8 @@ public final class Display {
     private int mCachedAppWidthCompat;
     private int mCachedAppHeightCompat;
 
-    private int mWidthPixels = 0;
-    private int mHeightPixels = 0;
+    private static int mWidthPixels = 0;
+    private static int mHeightPixels = 0;
 
     /**
      * The default Display id, which is the id of the built-in primary display
@@ -695,7 +695,7 @@ public final class Display {
         }
     }
 
-    public void setSizePixels(int widthPixels, int heightPixels) {
+    public static void setSizePixels(int widthPixels, int heightPixels) {
         mWidthPixels = widthPixels;
         mHeightPixels = heightPixels;
     }

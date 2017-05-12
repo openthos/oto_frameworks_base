@@ -155,8 +155,8 @@ public class DisplayMetrics {
      */
     public int heightPixels;
 
-    public int widthPixelsFullScreen = 0;
-    public int heightPixelsFullScreen = 0;
+    private static int widthPixelsFullScreen = 0;
+    private static int heightPixelsFullScreen = 0;
 
     /**
      * The logical density of the display.  This is a scaling factor for the
@@ -355,6 +355,11 @@ public class DisplayMetrics {
             heightPixelsFullScreen = heightPixels;
         }
         return heightPixelsFullScreen;
+    }
+
+    public static void setFullScreenSize(int width, int height) {
+        widthPixelsFullScreen = width;
+        heightPixelsFullScreen = height;
     }
 
     public boolean is_16_9() {

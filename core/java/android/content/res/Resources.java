@@ -140,6 +140,9 @@ public class Resources {
 
     private CompatibilityInfo mCompatibilityInfo = CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO;
 
+    private static int mWidthPixelsWindow = 0;
+    private static int mHeightPixelsWindow = 0;
+
     @SuppressWarnings("unused")
     private WeakReference<IBinder> mToken;
 
@@ -147,6 +150,11 @@ public class Resources {
         sPreloadedDrawables = new LongSparseArray[2];
         sPreloadedDrawables[0] = new LongSparseArray<ConstantState>();
         sPreloadedDrawables[1] = new LongSparseArray<ConstantState>();
+    }
+
+    public static void setVirtualScreenSize(int width, int height) {
+        mWidthPixelsWindow = width;
+        mHeightPixelsWindow = height;
     }
 
     /**
@@ -1772,9 +1780,6 @@ public class Resources {
     public void updateConfiguration(Configuration config,
             DisplayMetrics metrics, CompatibilityInfo compat) {
         synchronized (mAccessLock) {
-            int widthPixels = 0;
-            int heightPixels = 0;
-
             if (false) {
                 Slog.i(TAG, "**** Updating config of " + this + ": old config is "
                         + mConfiguration + " old compat is " + mCompatibilityInfo);
@@ -1785,8 +1790,6 @@ public class Resources {
                 mCompatibilityInfo = compat;
             }
             if (metrics != null) {
-                widthPixels = metrics.widthPixels;
-                heightPixels = metrics.heightPixels;
                 mMetrics.setTo(metrics);
             }
             // NOTE: We should re-arrange this code to create a Display
@@ -1799,12 +1802,6 @@ public class Resources {
             // consistently dealing with a compatible display everywhere in
             // the framework.
             mCompatibilityInfo.applyToDisplayMetrics(mMetrics);
-            if (metrics != null) { // Set mMetrics by force for multiwindow
-                mMetrics.widthPixels = widthPixels;
-                mMetrics.heightPixels = heightPixels;
-                mMetrics.widthPixelsFullScreen = metrics.widthPixelsFullScreen;
-                mMetrics.heightPixelsFullScreen = metrics.heightPixelsFullScreen;
-            }
 
             int configChanges = calcConfigChanges(config);
             if (mConfiguration.locale == null) {
@@ -1985,6 +1982,14 @@ public class Resources {
     public DisplayMetrics getDisplayMetrics() {
         if (DEBUG_CONFIG) Slog.v(TAG, "Returning DisplayMetrics: " + mMetrics.widthPixels
                 + "x" + mMetrics.heightPixels + " " + mMetrics.density);
+        if (mMetrics != null) {
+            if (mWidthPixelsWindow != 0) {
+                mMetrics.widthPixels = mWidthPixelsWindow;
+            }
+            if (mHeightPixelsWindow != 0) {
+                mMetrics.heightPixels = mHeightPixelsWindow;
+            }
+        }
         return mMetrics;
     }
 
