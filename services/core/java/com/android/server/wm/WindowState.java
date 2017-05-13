@@ -44,6 +44,7 @@ import android.view.IWindowId;
 import com.android.server.input.InputWindowHandle;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
@@ -621,6 +622,10 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                 if ("com.kingsoft.email".equals(mAttrs.packageName) && x == 0.0) { // send/recv box
                     x = x + stack.getMultiWindow().getFramePadding();
                     y = y - mContainingFrame.top;
+                } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
+                       && (y > ApplicationInfo.WECHAT_POPUPWINDOW_DIFF_POS_Y)) {
+                    x = mContainingFrame.right - mService.getCurrentPointerX() - w
+                        + 2 * stack.getMultiWindow().getFramePadding();
                 }
                 Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                         (int) (x + mAttrs.horizontalMargin * pw),

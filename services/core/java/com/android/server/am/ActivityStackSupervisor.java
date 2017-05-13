@@ -1795,12 +1795,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
         if (r != null) {
             if (isHomeActivity(r)) {
                 /*
-                 * When show statu bar, change 'toFront' to false.
-                 * if 'toFront' is true, StartUpMenu will open application appear fullScreen.
+                 * When show statusbar, change 'toFront' to false.
+                 * if 'toFront' is true, StartupMenu will open application appear fullScreen.
                  * Todo: need to research.
                  */
                 //moveHomeStack(true, reason);
-                moveHomeStack(mWindowManager.mStatusBarAutoHide, reason);
+                moveHomeStack(mWindowManager.isStatusBarAutoHide(), reason);
             } else {
                 setFocusedStack(r.task.stack.mStackId);
             }

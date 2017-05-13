@@ -673,10 +673,13 @@ public class WindowManagerService extends IWindowManager.Stub
     // For frozen screen animations.
     int mExitAnimId, mEnterAnimId;
 
-    int mStatusBarHeight = 0;
-    public boolean mStatusBarAutoHide = true;
-    boolean mStatusBarLock = false;
-    boolean mStatusBarSkipSense = false;
+    private int mStatusBarHeight = 0;
+    private boolean mStatusBarAutoHide = true;
+    private boolean mStatusBarLock = false;
+    private boolean mStatusBarSkipSense = false;
+
+    private int mCurrentPointerX = 0;
+    private int mCurrentPointerY = 0;
 
     class LockMachine {
         public boolean mLocked;
@@ -7699,9 +7702,9 @@ public class WindowManagerService extends IWindowManager.Stub
         public static final int POINTER_EVENT_ACTION_UP = 41;
         public static final int POINTER_EVENT_ACTION_HOVER_MOVE = 42;
 
-        boolean mActionDown = false;
-        int mCurrentStackId = -1;
-        TaskStack mStack;
+        private boolean mActionDown = false;
+        private int mCurrentStackId = -1;
+        private TaskStack mStack;
 
         private void hoverEnter(int stackId, int x, int y) {
             mCurrentStackId = stackId;
@@ -7784,6 +7787,8 @@ public class WindowManagerService extends IWindowManager.Stub
                         mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y, dcAndMe.downTime);
                         mStack = null;
                     }
+                    mCurrentPointerX = x;
+                    mCurrentPointerY = y;
                     // Fall through
                 default:
                     mCurrentStackId = -1;
@@ -12195,5 +12200,13 @@ public class WindowManagerService extends IWindowManager.Stub
              */
             //mLockMachine.screenTryTurnOff();
         }
+    }
+
+    public int getCurrentPointerX() {
+        return mCurrentPointerX;
+    }
+
+    public int getCurrentPointerY() {
+        return mCurrentPointerY;
     }
 }

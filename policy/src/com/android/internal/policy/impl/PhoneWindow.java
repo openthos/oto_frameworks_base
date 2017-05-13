@@ -3137,6 +3137,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         @Override
+        public int getWindowTopBorderPadding() {
+            return getTopFramePadding();
+        }
+
+        @Override
         public void draw(Canvas canvas) {
             super.draw(canvas);
 

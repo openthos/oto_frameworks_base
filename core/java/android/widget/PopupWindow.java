@@ -20,6 +20,7 @@ import com.android.internal.R;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Insets;
@@ -36,9 +37,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewRootImpl;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.view.WindowManager;
+import android.widget.WindowDecorView;
 
 import java.lang.ref.WeakReference;
 
@@ -894,6 +897,20 @@ public class PopupWindow {
      * @param y the popup's y location offset
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
+        ViewRootImpl root = parent.getViewRootImpl();
+        View view = root.getView();
+        if ((view instanceof WindowDecorView) && ((WindowDecorView) view).isMWWindow()
+              && (parent.getContext().getApplicationInfo().packageName.compareTo(
+                                           ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0)) {
+            int paddingTop = ((WindowDecorView) view).getWindowTopBorderPadding();
+            x += ((WindowDecorView) view).getWindowBorderPadding(); // align right top
+            y += paddingTop;
+            if (y > ApplicationInfo.WECHAT_POPUPWINDOW_DIFF_POS_Y) {
+                Rect rect = root.getWinFrame();
+                y -= rect.top + paddingTop;
+                mHeight += rect.top + paddingTop; // restore Wechat popup menu height.
+            }
+        }
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
 

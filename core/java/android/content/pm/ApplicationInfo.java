@@ -126,6 +126,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
 
+    public static final int WECHAT_POPUPWINDOW_DIFF_POS_Y = 150;
+
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 
