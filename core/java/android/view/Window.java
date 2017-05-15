@@ -456,6 +456,8 @@ public abstract class Window {
         mContext = context;
         mFeatures = mLocalFeatures = getDefaultFeatures(context);
         mMultiWindow = new WindowManager.MultiWindow(context);
+        mHeaderHeightReal = getContext().getResources().getDimensionPixelSize(
+                                           com.android.internal.R.dimen.mw_header_border);
     }
 
     /**
@@ -1896,6 +1898,8 @@ public abstract class Window {
 
     private Window mChildWindow = null;
 
+    private int mHeaderHeightReal = 0;
+
     public void setChildWindow(Window child) {
         mChildWindow = child;
     }
@@ -2022,16 +2026,20 @@ public abstract class Window {
         }
     }
 
-     public int getTopShadowPadding() {
+    public int getTopShadowPadding() {
         return mMultiWindow.mTopShadowPadding;
+    }
+
+    public int getHeaderHeightReal() {
+        return mHeaderHeightReal;
     }
 
     public int getHeaderHeight() {
         return mMultiWindow.mHeaderHeight;
     }
 
-    public void setHeaderHeight(int height) {
-        mMultiWindow.mHeaderHeight = height;
+    public void setHeaderHeight(boolean useHeader) {
+        mMultiWindow.mHeaderHeight = useHeader ? mHeaderHeightReal : 0;
     }
 
     public void setButtons(View back, View min, View max, View close) {

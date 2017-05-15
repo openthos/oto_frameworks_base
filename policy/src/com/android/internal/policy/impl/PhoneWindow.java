@@ -165,6 +165,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
     private final static int DEFAULT_BACKGROUND_FADE_DURATION_MS = 300;
     private final static int FRAME_THICK_FACTOR = 2;
+    private final static int WINDOW_HEADER_SENSE_HEIGHT = 2;
 
     private static final int CUSTOM_TITLE_COMPATIBLE_FEATURES = DEFAULT_FEATURES |
             (1 << FEATURE_CUSTOM_TITLE) |
@@ -324,6 +325,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     private Rect mFrameOrig;
     private boolean mWMSEnabled = false;
 
+    private boolean mMaximizedMode = false;
+
     @Override
     public void SyncChildWindow() {
         Window window = getChildWindow();
@@ -391,15 +394,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         if (isMWWindow()) {
             boolean useShadow = isShadow();
             boolean useBorder = hasOuterBorder();
+            boolean useHeader = hasHeader();
 
             setTopShadowPadding(useShadow);
             setShadowPadding(useShadow);
             setBorderPadding(useBorder);
             setTopBorderPadding(useBorder);
-            if (hasHeader()) {
-                setHeaderHeight(getContext().getResources().getDimensionPixelSize(
-                                                    com.android.internal.R.dimen.mw_header_border));
-            }
+            setHeaderHeight(useHeader);
 
             try {
                 Rect r = ActivityManagerNative.getDefault().getStackBounds(getStackId());
@@ -2657,12 +2658,32 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             return false;
         }
 
+        private boolean processHeaderEvent(MotionEvent ev) {
+            if (!mMaximizedMode) {
+                return false;
+            }
+
+            int y = (int) ev.getRawY();
+            boolean shown = mDecorMW.isHeaderShown();
+
+            if ((y < WINDOW_HEADER_SENSE_HEIGHT) && !shown) {
+                mDecorMW.showHeader(true);
+                return true;
+            } else if ((y > getHeaderHeightReal()) && shown) {
+                mDecorMW.showHeader(false);
+            }
+            return false;
+        }
+
         @Override
         public boolean dispatchTouchEvent(MotionEvent ev) {
             if (processScrollBarTouchEvent(ev)) {
                 return true;
             }
-            if (ev.getAction() == MotionEvent.ACTION_UP) {
+            int action = ev.getAction();
+            if ((action == MotionEvent.ACTION_DOWN) && processHeaderEvent(ev)) {
+                return true;
+            } else if (action == MotionEvent.ACTION_UP) {
                 mScrollDragH = false;
                 mScrollDragV = false;
             }
@@ -2682,6 +2703,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+            if ((ev.getAction() == MotionEvent.ACTION_HOVER_MOVE) && processHeaderEvent(ev)) {
+                return true;
+            }
             final Callback cb = getCallback();
             ev = prepareEvent(ev);
             return cb != null && !isDestroyed() && mFeatureId < 0 ? cb.dispatchGenericMotionEvent(ev)
@@ -4166,8 +4190,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private String mPackageName;
         private BackgroundDrawable mDrawable;
 
+        private boolean mOldMaximized = false;
+
         public boolean isEmpty() {
-            return mContentRoot.getHeight() <= mHeader.getHeight() + getFramePadding()
+            return mContentRoot.getHeight() <= getHeaderHeight() + getFramePadding()
                                                                    + getTopFramePadding();
         }
 
@@ -4222,7 +4248,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
         }
 
-        public DecorMW(ViewGroup root) {
+        public DecorMW() {
+        }
+
+        public void init(ViewGroup root) {
             boolean useShadow = isShadow();
             boolean useBorder = hasOuterBorder();
             boolean useHeader = hasHeader();
@@ -4238,14 +4267,19 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             mMinimizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMinimizeBtn);
 
             mPackageName = setMWWindowTitle(root);
+
+            setFramePaddingPolicy(useShadow, useBorder, useHeader);
+
             try {
+                Rect r = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                // During initialization, need consider about real full screen mode for useHeader
+                mMaximizedMode = r.equals(getFullScreen()) && useHeader;
+                toggleMaximizedMode(mMaximizedMode);
                 ActivityManagerNative.getDefault().createStatusbarActivity(getStackId(),
                                                                            mPackageName);
             } catch (RemoteException e) {
                 Log.e(TAG, "create statusbar activity failed", e);
             }
-
-            setFramePaddingPolicy(useShadow, useBorder, useHeader);
 
             if (useBorder || needHidePointer()) {
                 mOuterBorder.setOnHoverListener(new HoverListener());
@@ -4263,52 +4297,58 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 }
             }
 
-            if (useHeader) {
-                mHeader.setOnTouchListener(new TouchListener(
-                                              new WindowManager.MultiWindow.MoveWindow(), true));
+            mHeader.setOnTouchListener(new TouchListener(
+                                          new WindowManager.MultiWindow.MoveWindow(), true));
 
-                mCloseBtn.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (getContext().getPackageName().equals(ApplicationInfo.APPNAME_WPS)
-                                && (getContext().getClass().getName()
-                                        .contains(ActivityInfo.ISSUE_WIN_WPS_WRITER)
-                                    | getContext().getClass().getName()
-                                        .contains(ActivityInfo.ISSUE_WIN_WPS_SPREADSHEET))) {
-                            KeyEvent.sendKeyEventBack();
-                        } else {
-                            try {
-                                ActivityManagerNative.getDefault().closeActivity(getStackId());
-                            } catch (RemoteException e) {
-                                Log.e(TAG, "Close button failes", e);
-                            }
+            mCloseBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getContext().getPackageName().equals(ApplicationInfo.APPNAME_WPS)
+                            && (getContext().getClass().getName()
+                                    .contains(ActivityInfo.ISSUE_WIN_WPS_WRITER)
+                                | getContext().getClass().getName()
+                                    .contains(ActivityInfo.ISSUE_WIN_WPS_SPREADSHEET))) {
+                        KeyEvent.sendKeyEventBack();
+                    } else {
+                        try {
+                            ActivityManagerNative.getDefault().closeActivity(getStackId());
+                        } catch (RemoteException e) {
+                            Log.e(TAG, "Close button failes", e);
                         }
                     }
-                });
+                }
+            });
 
-                mLaunchBtn.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        KeyEvent.sendKeyEventBack();
-                    }
-                });
+            mLaunchBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    KeyEvent.sendKeyEventBack();
+                }
+            });
 
-                mMaximizeBtn.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        syncFrame(toggleFullScreen(getActivityFrame()));
-                    }
-                });
+            mMaximizeBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    syncFrame(toggleFullScreen(getActivityFrame()));
+                }
+            });
 
-                mMinimizeBtn.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onMinimize(getActivityFrame());
-                    }
-                });
-            }
+            mMinimizeBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onMinimize(getActivityFrame());
+                }
+            });
 
             setFocusedStack();
+        }
+
+        public void showHeader(boolean show) {
+            mHeader.setVisibility(show ? View.VISIBLE: View.INVISIBLE);
+        }
+
+        public boolean isHeaderShown() {
+            return mHeader.getVisibility() == View.VISIBLE;
         }
 
         private void setFramePaddingPolicy(boolean useShadow,
@@ -4323,15 +4363,30 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mShadow.setVisibility(View.GONE);
             }
 
-            if (!useHeader) {
-                mHeader.setVisibility(View.GONE);
+            ((ViewGroup) mHeader.getParent()).removeView(mHeader);
+            if (useHeader) {
+                ((ViewGroup) mOuterBorder).addView(mHeader, 0);
+            } else {
+                ((ViewGroup) mOuterBorder.getParent()).addView(mHeader, -1);
             }
+            setHeaderHeight(useHeader);
+            showHeader(useHeader);
 
             if (!useBorder) {
                 mOuterBorder.setPadding(0,0,0,0);
             }
 
             updateScreenFrame();
+        }
+
+        public void toggleMaximizedMode(boolean maximized) {
+            if (mOldMaximized == maximized) {
+                return;
+            }
+            mOldMaximized = maximized;
+            setHeader(!maximized);
+            setFramePaddingPolicy(isShadow(), hasOuterBorder(), hasHeader());
+            mDecor.invalidate();
         }
 
         private String setMWWindowTitleDefault(ViewGroup root) {
@@ -4663,7 +4718,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mContentRoot = (ViewGroup) in;
         if(isMWWindow()) {
-            mDecorMW = new DecorMW(mContentRoot);
+            mDecorMW = new DecorMW();
+            mDecorMW.init(mContentRoot);
         }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
@@ -5853,6 +5909,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     }
 
     public void relayoutWindow(int stackId, Rect rect) {
+        mMaximizedMode = rect.equals(getFullScreen());
+        mDecorMW.toggleMaximizedMode(mMaximizedMode);
         try {
             updateDisplayMetrics(rect.width(), rect.height());
             ActivityManagerNative.getDefault().relayoutWindow(stackId, rect);
