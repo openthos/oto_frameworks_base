@@ -3096,14 +3096,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         //The first boot
         if (mSet.size() == 0 && sets.size() == 0) {
             loadDockedApk(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
-            loadDockedApk(ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            loadDockedApk(ApplicationInfo.APPNAME_FENNEC);
             mSet.add(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
-            mSet.add(ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            mSet.add(ApplicationInfo.APPNAME_FENNEC);
             mEditorPkg.putString(ApplicationInfo.APPNAME_OTO_FILEMANAGER, "");
-            mEditorPkg.putString(ApplicationInfo.APPNAME_ANDROID_BROWSER, "");
+            mEditorPkg.putString(ApplicationInfo.APPNAME_FENNEC, "");
             mValues.put("pkgname", ApplicationInfo.APPNAME_OTO_FILEMANAGER);
             mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
-            mValues.put("pkgname", ApplicationInfo.APPNAME_ANDROID_BROWSER);
+            mValues.put("pkgname", ApplicationInfo.APPNAME_FENNEC);
             mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
         }
     }

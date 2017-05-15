@@ -1336,7 +1336,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         try {
             PackageManager manager = mContext.getPackageManager();
             Intent intent1 = new Intent();
-            intent1 = manager.getLaunchIntentForPackage("com.android.browser");
+            intent1 = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_FENNEC);
             intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(intent1);
         } catch (ActivityNotFoundException e) {

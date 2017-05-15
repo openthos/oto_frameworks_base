@@ -142,8 +142,8 @@ public abstract class WindowDecorView extends FrameLayout {
 
         pkgName = getContext().getApplicationInfo().packageName;
         if((pkgName.compareTo(ApplicationInfo.APPNAME_OFFICE_EXCEL) != 0)
-              && (pkgName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) != 0)
-              && (pkgName.compareTo(ApplicationInfo.APPNAME_ANDROID_BROWSER) != 0)) {
+              && (pkgName.compareTo(ApplicationInfo.APPNAME_OFFICE_WORD) != 0)) {
+              //&& (pkgName.compareTo(ApplicationInfo.APPNAME_ANDROID_BROWSER) != 0)) {
             return false;
         }
 

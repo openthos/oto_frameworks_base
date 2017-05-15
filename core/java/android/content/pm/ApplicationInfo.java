@@ -76,7 +76,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_XUETANGX_MOBILE = "com.xuetangx.mobile";
     public static final String APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN
                                                      = "com.google.android.inputmethod.pinyin";
-    public static final String APPNAME_ANDROID_BROWSER = "com.android.browser";
+    //public static final String APPNAME_ANDROID_BROWSER = "com.android.browser";
     public static final String APPNAME_ANDROID_SETTINGS = "com.android.settings";
     public static final String APPNAME_ANDROID_GALLERY3D = "com.android.gallery3d";
     public static final String APPNAME_QUICK_PIC = "com.alensw.PicFolder";
@@ -700,7 +700,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_XUETANGX_MOBILE) == 0)
                                      || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
                                          == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
                                      || (pkgName.compareTo(APPNAME_QUICK_PIC) == 0)
@@ -740,7 +740,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
                                      || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
                                      || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
                                      || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
                                      || (pkgName.compareTo(APPNAME_FENNEC) == 0)
                                      || (pkgName.compareTo(APPNAME_GAODE_MAP) == 0)
