@@ -260,7 +260,6 @@ public final class ViewRootImpl implements ViewParent,
      * TietoTODO: find a better way for getting current window position
      */
     private final Rect mWinFrame; // frame given by window manager.
-    private final Rect mWinFrameOrigOnce; // original frame of mWinFrame, only once.
 
     final Rect mPendingOverscanInsets = new Rect();
     final Rect mPendingVisibleInsets = new Rect();
@@ -374,7 +373,6 @@ public final class ViewRootImpl implements ViewParent,
         mTempRect = new Rect();
         mVisRect = new Rect();
         mWinFrame = new Rect();
-        mWinFrameOrigOnce = new Rect();
         mWindow = new W(this);
         mTargetSdkVersion = context.getApplicationInfo().targetSdkVersion;
         mViewVisibility = View.GONE;
@@ -5325,7 +5323,6 @@ public final class ViewRootImpl implements ViewParent,
             mTranslator.translateRectInScreenToAppWindow(mPendingVisibleInsets);
             mTranslator.translateRectInScreenToAppWindow(mPendingStableInsets);
         }
-        mWinFrameOrigOnce.set(mWinFrame);
         return relayoutResult;
     }
 

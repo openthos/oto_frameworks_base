@@ -20030,7 +20030,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     if (activityRecord != null && isValidRect(r)
                            && !ApplicationInfo.isRealFullScreenStyleWindow(
                                           activityRecord.packageName)
-                           && !ApplicationInfo.isFullScreenStyleWindow(
+                           && !ApplicationInfo.isMaximizedStyleWindow(
                                           activityRecord.packageName)
                            && !activityRecord.packageName.equals(
                                           ApplicationInfo.APPNAME_ANDROID_SETTINGS)) {

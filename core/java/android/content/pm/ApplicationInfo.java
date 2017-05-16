@@ -684,7 +684,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static boolean isPhoneStyleWindow(String pkgName) {
         return (pkgName != null) && !isDesktopStyleWindow(pkgName)
-                                     && !isFullScreenStyleWindow(pkgName);
+                                     && !isMaximizedStyleWindow(pkgName);
     }
 
     public static boolean isDesktopStyleWindow(String pkgName) {
@@ -719,12 +719,13 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     }
 
-    public static boolean isFullScreenStyleWindow(String pkgName) {
+    public static boolean isMaximizedStyleWindow(String pkgName) {
         return (pkgName != null) && ((pkgName.compareTo(APPNAME_CAMERA2) == 0)
                                      || (pkgName.compareTo(APPNAME_WPS) == 0)
                                      || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_EXCEL) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_WORD) == 0)
+                                     || (pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
                                      || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
                                      || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)
                                      || (pkgName.compareTo(APPNAME_ORG_MOZILLA_FIREFOX) == 0)
@@ -747,8 +748,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     }
 
     public static boolean isRealFullScreenStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
-                                     || (pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
+        return (pkgName != null) && ((pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_VIRTUAL_GUI) == 0)
                                      || (pkgName.compareTo(APPNAME_OTO_TEST_IN_FACTORY) == 0)
                                      || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)

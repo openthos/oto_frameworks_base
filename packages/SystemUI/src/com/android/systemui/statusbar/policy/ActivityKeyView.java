@@ -273,7 +273,7 @@ public class ActivityKeyView extends ImageView {
         TextView pcMode = (TextView) rbmDocked.findViewById(R.id.rbm_pc_mode);
         pcMode.setOnTouchListener(mPcMode);
         pcMode.setOnHoverListener(hoverListener);
-        if (ApplicationInfo.isFullScreenStyleWindow(mActivity.mPkgName)) {
+        if (ApplicationInfo.isMaximizedStyleWindow(mActivity.mPkgName)) {
             phoneMode.setEnabled(false);
             phoneMode.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
         }

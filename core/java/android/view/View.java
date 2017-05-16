@@ -16,8 +16,6 @@
 
 package android.view;
 
-import android.content.pm.ApplicationInfo;
-import android.content.Intent;
 import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
 import android.annotation.IntDef;
@@ -711,11 +709,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @hide
      */
     public static final String DEBUG_LAYOUT_PROPERTY = "debug.layout";
-
-    public static final String OFFICE_PPT_SLIDESHOWVIEW_FULL =
-                                      "com.microsoft.office.powerpoint.widgets.SlideShowView";
-    public static final String OFFICE_PPT_AIRSPACELAYER =
-                                      "com.microsoft.office.airspace.AirspaceLayer";
 
     /**
      * When set to true, this view will save its attribute data.
@@ -17828,17 +17821,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                     ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
                 }
             }
-        }
-        if (getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
-               && getClass().getName().compareTo(OFFICE_PPT_SLIDESHOWVIEW_FULL) == 0) {
-             Intent intent = new Intent();
-             intent.setAction(Intent.HEADER_BAR_HIDE);
-             mContext.sendBroadcast(intent);
-        } else if (getContext().getPackageName().equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)
-               && getClass().getName().compareTo(OFFICE_PPT_AIRSPACELAYER) == 0 ) {
-             Intent intent = new Intent();
-             intent.setAction(intent.HEADER_BAR_SHOW);
-             mContext.sendBroadcast(intent);
         }
 
         mMeasuredWidth = measuredWidth;

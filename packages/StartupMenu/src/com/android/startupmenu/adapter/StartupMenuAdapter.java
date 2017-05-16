@@ -139,7 +139,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                 case MotionEvent.BUTTON_SECONDARY:
                     mPositionItem = position;
                     strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
-                    mIsFullScreen = ApplicationInfo.isFullScreenStyleWindow(strPkgName);
+                    mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(strPkgName);
                     if (position < 0 || position >= mlistAppInfo.size())
                         return false;
                     showMenuDialog1(position,motionEvent);

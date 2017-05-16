@@ -37,9 +37,6 @@ import com.android.internal.widget.ActionBarContextView;
 import com.android.internal.widget.BackgroundFallback;
 import com.android.internal.widget.DecorContentParent;
 import com.android.internal.widget.SwipeDismissLayout;
-import android.content.IntentFilter;
-import android.os.UserHandle;
-import android.content.BroadcastReceiver;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -380,13 +377,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         super(context);
         mLayoutInflater = LayoutInflater.from(context);
         setCallback(this);
-        if (context.getPackageName().
-                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
-            IntentFilter filterHide = new IntentFilter(Intent.HEADER_BAR_HIDE);
-            IntentFilter filterShow = new IntentFilter(Intent.HEADER_BAR_SHOW);
-            context.registerReceiver(mBroadcastReceiverHide, filterHide);
-            context.registerReceiver(mBroadcastReceiverShow, filterShow);
-        }
     }
 
     @Override
@@ -4174,12 +4164,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     }
 
     class DecorMW {
-
-        private static final int COLOR_OFFICE_WORD = 0xff4444cc;
-        private static final int COLOR_OFFICE_EXCEL = 0xff448844;
-        private static final int COLOR_OFFICE_POWERPOINT = 0xff884422;
-        private static final int COLOR_TENCENT_APP = 0xFFEEEEEE;
-
         private LinearLayout mHeader;
         private RelativeLayout mShadow;
         private ImageButton mCloseBtn;
@@ -4285,7 +4269,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mOuterBorder.setOnHoverListener(new HoverListener());
                 mShadow.setOnHoverListener(new HoverListener());
                 if (useBorder) {
-                    if (ApplicationInfo.isFullScreenStyleWindow(mPackageName)) {
+                    if (ApplicationInfo.isMaximizedStyleWindow(mPackageName)) {
                         toggleFullScreen(getContext().getResources().getDisplayMetrics()
                               .getDefaultFrameRect(
                                     getContext().getApplicationInfo().isPhoneStyleWindow()));
@@ -5909,8 +5893,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     }
 
     public void relayoutWindow(int stackId, Rect rect) {
-        mMaximizedMode = rect.equals(getFullScreen());
-        mDecorMW.toggleMaximizedMode(mMaximizedMode);
+        DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+        if ((rect.left < dm.getWidthPixelsFullScreen())
+                && (rect.top < dm.getHeightPixelsFullScreen())
+                && (rect.right > 0) && (rect.bottom > 0)
+                && (rect.width() > 0) && (rect.height() > 0)) {
+            mMaximizedMode = rect.equals(getFullScreen());
+            mDecorMW.toggleMaximizedMode(mMaximizedMode);
+        }
         try {
             updateDisplayMetrics(rect.width(), rect.height());
             ActivityManagerNative.getDefault().relayoutWindow(stackId, rect);
@@ -5958,24 +5948,4 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
         return getContext().getResources().getDisplayMetrics().getHeightPixelsFullScreen();
     }
-
-    private BroadcastReceiver mBroadcastReceiverHide = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.HEADER_BAR_HIDE) && mDecorMW != null &&
-                    mDecorMW.mHeader.getVisibility() != View.GONE && context.getPackageName().
-                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
-                mDecorMW.mHeader.setVisibility(View.GONE);
-            }
-        }
-    };
-
-    private BroadcastReceiver mBroadcastReceiverShow = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.HEADER_BAR_SHOW) && mDecorMW != null &&
-                    mDecorMW.mHeader.getVisibility() != View.VISIBLE && context.getPackageName().
-                    equals(ApplicationInfo.APPNAME_OFFICE_POWERPOINT)) {
-                mDecorMW.mHeader.setVisibility(View.VISIBLE);
-            }
-        }
-    };
 }

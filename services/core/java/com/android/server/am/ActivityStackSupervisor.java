@@ -1760,7 +1760,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         switch (android.provider.Settings.Global.getInt(
                            mService.mContext.getContentResolver(), pkgName, 0)) {
             case ApplicationInfo.AUTO_STARTUP_MODE:
-                if (ApplicationInfo.isFullScreenStyleWindow(pkgName)) {
+                if (ApplicationInfo.isMaximizedStyleWindow(pkgName)) {
                     return new Rect(0, 0, mActivityDisplays.get(displayId).mDisplayInfo.
                            logicalWidth, mActivityDisplays.get(displayId).mDisplayInfo.
                            logicalHeight - mWindowManager.getStatusBarHeight());
