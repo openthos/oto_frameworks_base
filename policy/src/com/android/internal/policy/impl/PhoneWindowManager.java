@@ -2840,7 +2840,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (event.isCtrlPressed() && event.isAltPressed()) {
             if (!down && keyCode == KeyEvent.KEYCODE_FORWARD_DEL) {
                 ActivityManagerNative.callPowerSource(mContext);
-                return -1;
+                return 0;
             }
         }
 
