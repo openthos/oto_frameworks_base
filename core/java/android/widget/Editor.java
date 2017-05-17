@@ -2978,7 +2978,6 @@ public class Editor {
             if (view == mPasteTextView && mTextView.canPaste()) {
                 mTextView.onTextContextMenuItem(TextView.ID_PASTE);
                 hide();
-                getSelectionController().hide();
             } else if (view == mCopyTextView && mTextView.canCopy()) {
                 mTextView.onTextContextMenuItem(TextView.ID_COPY);
                 getSelectionController().hide();
