@@ -623,7 +623,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                     x = x + stack.getMultiWindow().getFramePadding();
                     y = y - mContainingFrame.top;
                 } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
-                       && (y > ApplicationInfo.WECHAT_POPUPWINDOW_DIFF_POS_Y)) {
+                       && ApplicationInfo.isWeChatIssuePopupWindow(mAttrs.gravity, (int) y)) {
                     x = mContainingFrame.right - mService.getCurrentPointerX() - w
                         + 2 * stack.getMultiWindow().getFramePadding();
                 }

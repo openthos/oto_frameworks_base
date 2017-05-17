@@ -905,7 +905,7 @@ public class PopupWindow {
             int paddingTop = ((WindowDecorView) view).getWindowTopBorderPadding();
             x += ((WindowDecorView) view).getWindowBorderPadding(); // align right top
             y += paddingTop;
-            if (y > ApplicationInfo.WECHAT_POPUPWINDOW_DIFF_POS_Y) {
+            if (ApplicationInfo.isWeChatIssuePopupWindow(gravity, y)) {
                 Rect rect = root.getWinFrame();
                 y -= rect.top + paddingTop;
                 mHeight += rect.top + paddingTop; // restore Wechat popup menu height.

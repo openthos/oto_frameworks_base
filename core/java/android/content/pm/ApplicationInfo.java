@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Printer;
+import android.view.Gravity;
 
 import com.android.internal.util.ArrayUtils;
 
@@ -754,6 +755,10 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
                                      || (pkgName.compareTo(APPNAME_SANGUOSHA) == 0)
                                      || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
+    }
+
+    public static boolean isWeChatIssuePopupWindow(int gravity, int y) { // assume it's WeChat pkg.
+        return (y > WECHAT_POPUPWINDOW_DIFF_POS_Y) && (gravity == (Gravity.RIGHT | Gravity.TOP));
     }
 
     public boolean needShadow() {
