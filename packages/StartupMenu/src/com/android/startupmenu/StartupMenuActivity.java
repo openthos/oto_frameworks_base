@@ -1002,25 +1002,33 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                         " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                                                     new String[] { pkgName });
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        if (pkgName.equals(cursor.getString(cursor.getColumnIndex(
-                                                  TableIndexDefine.COLUMN_PERPO_PKGNAME)))) {
-                            break;
-                        }
-                    }
-                    if (!cursor.moveToNext()) {
-                         mdb.execSQL("insert into " +
-                                     TableIndexDefine.TABLE_APP_PERPO + "(" +
-                                     TableIndexDefine.COLUMN_PERPO_LABEL + "," +
-                                     TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
-                                     TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
-                                     TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
-                                     "values (?, ?, ?, ?)"  ,
-                                     new Object[] { appLabel, pkgName, systemDate, clickNumber} );
+                insertData(cursor, pkgName, appLabel, systemDate, clickNumber);
+                cursor.close();
+            }
+        }
+
+        /**
+         * Insert data /pkgName/label/date/num into
+         * StartupMenu_database.db {@link StartupMenuSqliteOpenHelper}
+         * could Reusing in {@link StartupMenuInstallReceiver}
+         */
+        public void insertData(Cursor cursor, String pkgName, String appLabel,
+                                              Date systemDate, int clickNumber) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    if (pkgName.equals(cursor.getString(cursor.getColumnIndex(
+                                              TableIndexDefine.COLUMN_PERPO_PKGNAME)))) {
+                        return;
                     }
                 }
-                cursor.close();
+                mdb.execSQL("insert into " +
+                           TableIndexDefine.TABLE_APP_PERPO + "(" +
+                           TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                           TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                           TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                           TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                           "values (?, ?, ?, ?)"  ,
+                           new Object[] { appLabel, pkgName, systemDate, clickNumber} );
             }
         }
 

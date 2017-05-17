@@ -29,6 +29,8 @@ import com.android.startupmenu.StartupMenuActivity;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
+import com.android.startupmenu.util.StartupMenuUtil;
+
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.Log;
@@ -169,6 +171,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
             StartupMenuAdapter.openAppBroadcast(mContext);
+            /*
             Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                     " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ? ",
                                                 new String[] { mPkgName });
@@ -193,6 +196,8 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             editor.putString("type", type);
             editor.putInt("order", order);
             editor.commit();
+            */
+            StartupMenuUtil.updateDataStorage(mContext, mPkgName);
             dialogDismiss();
             break;
         case R.id.tv_right_phone_run:
@@ -272,6 +277,8 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     //Method of save used numbers
     private void addUsedNum() {
         String pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+        StartupMenuUtil.updateDataStorage(mContext, pkgName);
+        /*
         Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                      " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                                      new String[] { pkgName });
@@ -292,6 +299,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         editor.clear();
         editor.putBoolean("isClick", true);
         editor.commit();
+        */
     }
 
     private boolean queryData(String str) {

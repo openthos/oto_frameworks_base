@@ -21,6 +21,7 @@ import com.android.startupmenu.dialog.StartMenuDialog;
 import com.android.startupmenu.StartupMenuActivity;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
+import com.android.startupmenu.util.StartupMenuUtil;
 
 import android.os.UserHandle;
 import android.content.IntentFilter;
@@ -105,6 +106,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(intent);
                     openAppBroadcast(mContext);
+                    /*
                     Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                             " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +
                                             " = ? ", new String[] { pkgName });
@@ -131,7 +133,8 @@ public class StartupMenuAdapter extends BaseAdapter {
                         editor.putInt("order", order);
                         //editor.putInt("isSql", 1);
                         editor.commit();
-                    }
+                    }*/
+                    StartupMenuUtil.updateDataStorage(mContext, pkgName);
                     mStartupMenuActivity.killStartupMenu();
                     break;
                 case MotionEvent.BUTTON_TERTIARY:
