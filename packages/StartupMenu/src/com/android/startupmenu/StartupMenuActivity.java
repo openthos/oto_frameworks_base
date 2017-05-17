@@ -159,7 +159,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private SQLiteDatabase mdb;
         BaseSettingDialog targetDialog;
 
-        private boolean mListViewOpen = false;
+        //private boolean mListViewOpen = false;
         private boolean mIsHasReayDb;
         private boolean mOnlyNameSort = false;
 
@@ -183,10 +183,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         private int mClickSortStatus = 1;
         private int CLICKS = 0;
         private int mOrder;
-        private int mFinishFlag = 0;
-        private int mGetValueFlag = 1;
-        private int mGridViewFlag = 2;
-        private int mIsClick;
+        private boolean mIsClick;
         private int mStrCount;
 
         @Override
@@ -258,7 +255,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         mListView.setAdapter(mUsuallyAdapter);
                     } else if (msg.what == 1) {
                         selectAppShow();
-                        queryCommonlyUsedSoftware();
+                        queryCommonAppInfo();
                     } else if (msg.what == 2) {
                         mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                                                                    mlistAppInfo ,isCheckedMap);
@@ -273,14 +270,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         class mThread extends Thread {
             public void run(){
-                mIsClick = mSharedPreference.getInt("isClick", 0);
+                mIsClick = mSharedPreference.getBoolean("isClick", false);
                 mType = mSharedPreference.getString("type", "sortName");
                 mOrder = mSharedPreference.getInt("order", 0);
-                if (mIsClick == 1) {
+                if (mIsClick) {
                     Message m = new Message();
                     m.what = 1;
                     mHandler.sendMessage(m);
-                    mListViewOpen = true;
+                    //mListViewOpen = true;
                 } else {
                     queryAppInfo();
                     Message msg = new Message();
@@ -293,18 +290,19 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public boolean onHover(View view, MotionEvent motionEvent) {
             int what = motionEvent.getAction();
-            int isSql = mSharedPreference.getInt("isSql", 0);
+            //int isSql = mSharedPreference.getInt("isSql", 0);
             switch(what) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    if (mIsClick == 0) {
-                        if (isSql == 0) {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO);
-                            sendBroadcast(intent);
-                            SharedPreferences.Editor edit = mSharedPreference.edit();
-                            edit.putInt("isSql", 1);
-                            edit.commit();
-                        }
+                    if (!mIsClick) {
+                        /*if (isSql == 0) {
+                           Intent intent = new Intent();
+                           intent.setAction(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO);
+                           sendBroadcast(intent);
+                           SharedPreferences.Editor edit = mSharedPreference.edit();
+                           edit.putInt("isSql", 1);
+                           edit.commit();
+                        }*/
+                        new SyncDataThread().start();
                     }
                     break;
             }
@@ -513,17 +511,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mPopupWindow.dismiss();
                 timeSort();
                 break;
-            /*case R.id.type_sort:
-                mPopupWindow.dismiss();
-                if (CLICKS == 3) {
-                    CLICKS = 0;
-                }
-                CLICKS++;
-                mEditText.setText("");
-                mlistAppInfo.clear();
-                mBrowseAppAdapter.notifyDataSetChanged();
-                typeSort(CLICKS);
-                break;*/
             case R.id.click_sort:
                 mTvSortShow.setText(R.string.click_sort);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
@@ -538,6 +525,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
         }
 
+        /*
+         * Reverse sorting of A-Z/date/frequent.
+         */
         private void selectShow(View v) {
             mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
             if (v instanceof TextView) {
@@ -594,24 +584,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
             mlistAppInfo.clear();
             for (ResolveInfo reInfo : resolveInfos) {
-                /*
-                File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-                Date systemDate = new Date(file.lastModified());
-                ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
-                String activityName = reInfo.activityInfo.name;
-                String pkgName = reInfo.activityInfo.packageName;
-                String appLabel = (String) reInfo.loadLabel(pm);
-                Drawable icon = reInfo.loadIcon(pm);
-                Intent launchIntent = new Intent();
-                launchIntent.setComponent(new ComponentName(pkgName, activityName));
-                AppInfo appInfo = new AppInfo();
-                appInfo.setAppLabel(appLabel);
-                appInfo.setPkgName(pkgName);
-                appInfo.setDate(systemDate);
-                appInfo.setAppIcon(icon);
-                appInfo.setIntent(launchIntent);
-                mlistAppInfo.add(appInfo);
-                */
                 appData(pm, reInfo);
             }
             if (!TextUtils.isEmpty(mEtext)) {
@@ -627,9 +599,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         }
 
-        // Used left numbers
-        public void queryCommonlyUsedSoftware() {
-            if (mListViewOpen) {
+        /* query sqlDataBase , sort by getNumber.
+         * then show in left side listView.
+         */
+        public void queryCommonAppInfo() {
+           // if (mListViewOpen) {
                 mlistViewAppInfo = new ArrayList<AppInfo>();
                 Cursor cs = mdb.rawQuery("select distinct * from " + TableIndexDefine.
                                         TABLE_APP_PERPO, new String[] {});
@@ -685,7 +659,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Message m = new Message();
                 m.what = 0;
                 mHandler.sendMessage(m);
-            }
+           // }
         }
 
         private void nameSort() {
@@ -1010,24 +984,50 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             gv_view.setAdapter(mBroAdapter);
         }
 
-        /*public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String pkgName = mlistAppInfo.get(position).getPkgName();
-            Intent intent = mlistAppInfo.get(position).getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            doUpdate(pkgName);
-        }*/
+        public void initStartupMenuData(Context context) {
+            PackageManager pkgManager = context.getPackageManager();
+            Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            List<ResolveInfo> resolveInfos = pkgManager.queryIntentActivities(intent, 0);
+            Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pkgManager));
+            int clickNumber = 0;
+            for (ResolveInfo reInfo : resolveInfos) {
+                File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
+                Date systemDate = new Date(file.lastModified());
+                //ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
+                //String activityName = reInfo.activityInfo.name;
+                String pkgName = reInfo.activityInfo.packageName;
+                String appLabel = (String) reInfo.loadLabel(pkgManager);
+                //Drawable icon = reInfo.loadIcon(pkgManager);
+                Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+                                        " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
+                                                    new String[] { pkgName });
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        if (pkgName.equals(cursor.getString(cursor.getColumnIndex(
+                                                  TableIndexDefine.COLUMN_PERPO_PKGNAME)))) {
+                            break;
+                        }
+                    }
+                    if (!cursor.moveToNext()) {
+                         mdb.execSQL("insert into " +
+                                     TableIndexDefine.TABLE_APP_PERPO + "(" +
+                                     TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                                     TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                                     TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                                     TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                                     "values (?, ?, ?, ?)"  ,
+                                     new Object[] { appLabel, pkgName, systemDate, clickNumber} );
+                    }
+                }
+                cursor.close();
+            }
+        }
 
-        public void doUpdate(String pkgName) {
-            Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
-                                    "where pkname = ?", new String[] { pkgName });
-            c.moveToNext();
-            int numbers = c.getInt(c.getColumnIndex("int"));
-            numbers++;
-            ContentValues values = new ContentValues();
-            values.put("int", numbers);
-            mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
-                       TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[] { pkgName });
+        class SyncDataThread extends Thread {
+            public void run() {
+                initStartupMenuData(mContext);
+            }
         }
 
         @Override

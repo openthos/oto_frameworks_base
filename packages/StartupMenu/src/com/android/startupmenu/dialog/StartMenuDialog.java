@@ -189,7 +189,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             String type = sharedPreference.getString("type", "sortName");
             int order = sharedPreference.getInt("order", 0);
             editor.clear();
-            editor.putInt("isClick", 1);
+            editor.putBoolean("isClick", true);
             editor.putString("type", type);
             editor.putInt("order", order);
             editor.commit();
@@ -290,7 +290,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
                                                              Context.MODE_PRIVATE);
         Editor editor = sharedPreference.edit();
         editor.clear();
-        editor.putInt("isClick",1);
+        editor.putBoolean("isClick", true);
         editor.commit();
     }
 

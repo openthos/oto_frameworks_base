@@ -38,9 +38,9 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         mMsoh = new StartupMenuSqliteOpenHelper(context, "StartupMenu_database.db", null, 1);
         mdb = mMsoh.getWritableDatabase();
-        if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
-            BackstageRenewalData(context);
-        }
+        //if (intent.getAction().equals(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO)) {
+        //     BackstageRenewalData(context);
+        // }
 
         //Accept Message
         if (intent.getAction().equals(Intent.ACTION_SEND_CLICK_INFO)) {
@@ -77,7 +77,7 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
             String type = sharedPreference.getString("type", "sortName");
             int order = sharedPreference.getInt("order", 0);
             editor.clear();
-            editor.putInt("isClick", 1);
+            editor.putBoolean("isClick", true);
             editor.putString("type", type);
             editor.putInt("order", order);
             editor.commit();

@@ -126,10 +126,10 @@ public class StartupMenuAdapter extends BaseAdapter {
                         String type = sharedPreference.getString("type", "sortName");
                         int order = sharedPreference.getInt("order", 0);
                         editor.clear();
-                        editor.putInt("isClick", 1);
+                        editor.putBoolean("isClick", true);
                         editor.putString("type", type);
                         editor.putInt("order", order);
-                        editor.putInt("isSql", 1);
+                        //editor.putInt("isSql", 1);
                         editor.commit();
                     }
                     mStartupMenuActivity.killStartupMenu();
