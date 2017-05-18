@@ -123,6 +123,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_SANGUOSHA = "com.bf.sgs.hdexp";
 
+    public static final String APPNAME_SYSTEM_RECOVERY = "com.example.junzhen.systemrecovery";
+
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
@@ -701,6 +703,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
                                          == 0)
                                      //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     || (pkgName.compareTo(APPNAME_SYSTEM_RECOVERY) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
                                      || (pkgName.compareTo(APPNAME_QUICK_PIC) == 0)
