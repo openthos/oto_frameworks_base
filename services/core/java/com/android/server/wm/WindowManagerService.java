@@ -4072,13 +4072,15 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     void setFocusedStackFrame() {
-        final TaskStack stack;
+        TaskStack stack = null;
         if (mFocusedApp != null) {
             Task task = mTaskIdToTask.get(mFocusedApp.groupId);
-            stack = task.mStack;
-            final DisplayContent displayContent = task.getDisplayContent();
-            if (displayContent != null) {
-                displayContent.setTouchExcludeRegion(stack);
+            if (task != null) {
+                stack = task.mStack;
+                final DisplayContent displayContent = task.getDisplayContent();
+                if (displayContent != null) {
+                    displayContent.setTouchExcludeRegion(stack);
+                }
             }
         } else {
             stack = null;
@@ -4895,12 +4897,17 @@ public class WindowManagerService extends IWindowManager.Stub
                         + " animating=" + wtoken.mAppAnimator.animating);
                 if (DEBUG_ADD_REMOVE || DEBUG_TOKEN_MOVEMENT) Slog.v(TAG, "removeAppToken: "
                         + wtoken + " delayed=" + delayed + " Callers=" + Debug.getCallers(4));
-                final TaskStack stack = mTaskIdToTask.get(wtoken.groupId).mStack;
+                TaskStack stack = null;
+                if (mTaskIdToTask.get(wtoken.groupId) != null) {
+                    stack = mTaskIdToTask.get(wtoken.groupId).mStack;
+                }
                 if (delayed && !wtoken.allAppWindows.isEmpty()) {
                     // set the token aside because it has an active animation to be finished
                     if (DEBUG_ADD_REMOVE || DEBUG_TOKEN_MOVEMENT) Slog.v(TAG,
                             "removeAppToken make exiting: " + wtoken);
-                    stack.mExitingAppTokens.add(wtoken);
+                    if (stack != null) {
+                        stack.mExitingAppTokens.add(wtoken);
+                    }
                     wtoken.mDeferRemoval = true;
                 } else {
                     // Make sure there is no animation running on this token,
@@ -5274,6 +5281,7 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     public void removeStack(int stackId) {
+        detachStack(stackId);
         mStackIdToStack.remove(stackId);
     }
 

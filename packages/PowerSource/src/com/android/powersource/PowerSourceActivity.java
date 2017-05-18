@@ -168,13 +168,4 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                 System.exit(0);
         }
     }
-
-    @Override
-    public void finish() {
-        try {
-            ActivityManagerNative.getDefault().closeActivity(getWindow().getStackId());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
 }

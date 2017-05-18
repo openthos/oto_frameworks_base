@@ -366,7 +366,10 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
     }
 
     boolean isAnimating() {
-        for (int taskNdx = mTasks.size() - 1; taskNdx >= 0; --taskNdx) {
+        /**
+          For Openthos, the animations has no obvious effects,and next to improve.
+        */
+        /*for (int taskNdx = mTasks.size() - 1; taskNdx >= 0; --taskNdx) {
             final ArrayList<AppWindowToken> activities = mTasks.get(taskNdx).mAppTokens;
             for (int activityNdx = activities.size() - 1; activityNdx >= 0; --activityNdx) {
                 final ArrayList<WindowState> windows = activities.get(activityNdx).allAppWindows;
@@ -377,7 +380,7 @@ public class TaskStack  implements WindowManager.MultiWindow.Callback {
                     }
                 }
             }
-        }
+        }*/
         return false;
     }
 

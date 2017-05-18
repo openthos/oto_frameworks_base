@@ -19991,7 +19991,7 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         }
 
-        if (!individual) {
+        if (!individual && activities > 0) {
             return true;
         }
 
@@ -19999,8 +19999,13 @@ public final class ActivityManagerService extends ActivityManagerNative
         long ident = Binder.clearCallingIdentity();
         StackInfo stack = getStackInfo(stackId);
         if (stack != null) {
+            recordValidRect(stackId);
             for (int next = stack.taskIds.length - 1; next >= 0; --next) {
                 removeTask(stack.taskIds[next]);
+                mWindowManager.removeTask(stack.taskIds[next]);
+            }
+            if (stackId > HOME_STACK_ID) {
+                mWindowManager.removeStack(stackId);
             }
             succeed = true;
         } else {
@@ -20020,40 +20025,9 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     @Override
     public boolean closeActivity(int stackId) {
-        boolean ret = false;
         synchronized (ActivityManagerService.this) {
-            if (stackId > HOME_STACK_ID) {
-                Rect r = getStackBounds(stackId);
-                ActivityStack stack = mStackSupervisor.getStack(stackId);
-                if (stack != null) {
-                    ActivityRecord activityRecord = stack.topRunningActivityLocked(null);
-                    if (activityRecord != null && isValidRect(r)
-                           && !ApplicationInfo.isRealFullScreenStyleWindow(
-                                          activityRecord.packageName)
-                           && !ApplicationInfo.isMaximizedStyleWindow(
-                                          activityRecord.packageName)
-                           && !activityRecord.packageName.equals(
-                                          ApplicationInfo.APPNAME_ANDROID_SETTINGS)) {
-                        final long token = Binder.clearCallingIdentity();
-                        Settings.Global.putRect(mContext.getContentResolver(),
-                                                        activityRecord.packageName, r);
-                        Binder.restoreCallingIdentity(token);
-                    }
-                }
-                relayoutWindow(stackId, new Rect(r.left + CLOSE_POS_OFFSET,
-                                                 r.top +  CLOSE_POS_OFFSET,
-                                                 r.right + CLOSE_POS_OFFSET,
-                                                 r.bottom + CLOSE_POS_OFFSET));
-            }
-            ret = closeActivity(stackId, true, 0);
+            return closeActivity(stackId, true, 0);
         }
-
-        int nextStackId = getFocusedStackId();
-        if (nextStackId >= 0) {
-            setFocusedStack(nextStackId);
-        }
-
-        return ret;
     }
 
     @Override
@@ -20113,10 +20087,30 @@ public final class ActivityManagerService extends ActivityManagerNative
         }
     }
 
-    private boolean isValidRect(Rect rect) {
+    public boolean isValidRect(Rect rect) {
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         return rect.right > DRAG_POS_OFFSET
                     && rect.left < metrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
                     && rect.top < metrics.getHeightPixelsFullScreen() - DRAG_POS_OFFSET;
+    }
+
+    private void recordValidRect(int stackId) {
+        if (stackId > HOME_STACK_ID) {
+            Rect r = getStackBounds(stackId);
+            ActivityStack activityStack = mStackSupervisor.getStack(stackId);
+            if (activityStack != null) {
+                ActivityRecord activityRecord = activityStack.topRunningActivityLocked(null);
+                if (activityRecord != null && isValidRect(r)
+                       && !ApplicationInfo.isRealFullScreenStyleWindow(activityRecord.packageName)
+                       && !ApplicationInfo.isMaximizedStyleWindow(activityRecord.packageName)
+                       && !activityRecord.packageName.equals(
+                                      ApplicationInfo.APPNAME_ANDROID_SETTINGS)) {
+                    final long token = Binder.clearCallingIdentity();
+                    Settings.Global.putRect(mContext.getContentResolver(),
+                                                    activityRecord.packageName, r);
+                    Binder.restoreCallingIdentity(token);
+                }
+            }
+        }
     }
 }

@@ -1736,7 +1736,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
         //resume recorded rect
         Rect rect = Settings.Global.getRect(
                           mService.mContext.getContentResolver(), pkgName, null);
-        if (rect != null) {
+        if (rect != null && mService.isValidRect(rect)) {
             return rect;
         }
 
