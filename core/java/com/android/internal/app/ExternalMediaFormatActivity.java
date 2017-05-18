@@ -25,6 +25,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Environment;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.storage.IMountService;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.util.Log;
 
 /**
@@ -32,6 +39,7 @@ import android.util.Log;
  * It uses the alert dialog style. It will be launched from a notification, or from settings
  */
 public class ExternalMediaFormatActivity extends AlertActivity implements DialogInterface.OnClickListener {
+    private StorageManager mStorageManager = null;
 
     private static final int POSITIVE_BUTTON = AlertDialog.BUTTON_POSITIVE;
 
@@ -54,7 +62,9 @@ public class ExternalMediaFormatActivity extends AlertActivity implements Dialog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (mStorageManager == null) {
+            mStorageManager = (StorageManager) getSystemService(Context.STORAGE_SERVICE);
+        }
         Log.d("ExternalMediaFormatActivity", "onCreate!");
         // Set up the "dialog"
         final AlertController.AlertParams p = mAlertParams;
@@ -90,14 +100,31 @@ public class ExternalMediaFormatActivity extends AlertActivity implements Dialog
      * {@inheritDoc}
      */
     public void onClick(DialogInterface dialog, int which) {
-
         if (which == POSITIVE_BUTTON) {
             Intent intent = new Intent(ExternalStorageFormatter.FORMAT_ONLY);
             intent.setComponent(ExternalStorageFormatter.COMPONENT_NAME);
+            try {
+                StorageVolume[] vols = getMountService().getVolumeList();
+                for (StorageVolume i : vols) {
+                    if (mStorageManager.getVolumeState(i.getPath())
+                            .equals((Environment.MEDIA_NOFS))) {
+                        intent.putExtra(StorageVolume.EXTRA_STORAGE_VOLUME, i);
+                        break;
+                    }
+                }
+            } catch (RemoteException e) {
+            }
             startService(intent);
         }
-
         // No matter what, finish the activity
         finish();
+    }
+
+    private IMountService getMountService() {
+        IBinder iBinder = ServiceManager.getService("mount");
+        if (iBinder != null) {
+            return IMountService.Stub.asInterface(iBinder);
+        }
+        return null;
     }
 }
