@@ -73,6 +73,7 @@ import android.view.animation.Interpolator;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
+import android.widget.WindowDecorView;
 
 import com.android.internal.R;
 import com.android.internal.os.SomeArgs;
@@ -1220,6 +1221,30 @@ public final class ViewRootImpl implements ViewParent,
                 mDispatchStableInsets, isRound));
     }
 
+    private Point getInitialDecorSize(View host, WindowManager.LayoutParams lp) {
+        Point size = new Point();
+        if (lp.type == WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL
+                || lp.type == WindowManager.LayoutParams.TYPE_INPUT_METHOD) {
+            // NOTE -- system code, won't try to do compat mode.
+            mDisplay.getRealSize(size);
+        } else {
+            Rect r = null;
+            if (host instanceof WindowDecorView) {
+                r = ((WindowDecorView) host).getDecorBounds();
+            }
+            if (r != null) {
+                size.x = r.width();
+                size.y = r.height();
+            } else {
+                DisplayMetrics packageMetrics =
+                    mView.getContext().getResources().getDisplayMetrics();
+                size.x = packageMetrics.widthPixels;
+                size.y = packageMetrics.heightPixels;
+            }
+        }
+        return size;
+    }
+
     private void performTraversals() {
         // cache mView since it is used so much below...
         final View host = mView;
@@ -1274,19 +1299,9 @@ public final class ViewRootImpl implements ViewParent,
             mFullRedrawNeeded = true;
             mLayoutRequested = true;
 
-            if (lp.type == WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL
-                    || lp.type == WindowManager.LayoutParams.TYPE_INPUT_METHOD) {
-                // NOTE -- system code, won't try to do compat mode.
-                Point size = new Point();
-                mDisplay.getRealSize(size);
-                desiredWindowWidth = size.x;
-                desiredWindowHeight = size.y;
-            } else {
-                DisplayMetrics packageMetrics =
-                    mView.getContext().getResources().getDisplayMetrics();
-                desiredWindowWidth = packageMetrics.widthPixels;
-                desiredWindowHeight = packageMetrics.heightPixels;
-            }
+            Point size = getInitialDecorSize(host, lp);
+            desiredWindowWidth = size.x;
+            desiredWindowHeight = size.y;
 
             // We used to use the following condition to choose 32 bits drawing caches:
             // PixelFormat.hasAlpha(lp.format) || lp.format == PixelFormat.RGBX_8888
@@ -1366,18 +1381,9 @@ public final class ViewRootImpl implements ViewParent,
                         || lp.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
                     windowSizeMayChange = true;
 
-                    if (lp.type == WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL
-                            || lp.type == WindowManager.LayoutParams.TYPE_INPUT_METHOD) {
-                        // NOTE -- system code, won't try to do compat mode.
-                        Point size = new Point();
-                        mDisplay.getRealSize(size);
-                        desiredWindowWidth = size.x;
-                        desiredWindowHeight = size.y;
-                    } else {
-                        DisplayMetrics packageMetrics = res.getDisplayMetrics();
-                        desiredWindowWidth = packageMetrics.widthPixels;
-                        desiredWindowHeight = packageMetrics.heightPixels;
-                    }
+                    Point size = getInitialDecorSize(host, lp);
+                    desiredWindowWidth = size.x;
+                    desiredWindowHeight = size.y;
                 }
             }
 

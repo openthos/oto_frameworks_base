@@ -3156,6 +3156,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         @Override
+        public Rect getDecorBounds() {
+            if (isMWWindow()) {
+                try {
+                    return ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                } catch (RemoteException e) {
+                }
+            }
+            return null;
+        }
+
+        @Override
         public void draw(Canvas canvas) {
             super.draw(canvas);
 
