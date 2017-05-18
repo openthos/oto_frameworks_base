@@ -453,8 +453,8 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(mTempMetrics, mDisplayAdjustments);
-            outSize.x = mTempMetrics.widthPixels;
-            outSize.y = mTempMetrics.heightPixels;
+            outSize.x = (mWidthPixels != 0) ? mWidthPixels : mTempMetrics.widthPixels;
+            outSize.y = (mHeightPixels != 0) ? mHeightPixels : mTempMetrics.heightPixels;
         }
     }
 
@@ -468,7 +468,8 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(mTempMetrics, mDisplayAdjustments);
-            outSize.set(0, 0, mTempMetrics.widthPixels, mTempMetrics.heightPixels);
+            outSize.set(0, 0, (mWidthPixels != 0) ? mWidthPixels : mTempMetrics.widthPixels,
+                        (mHeightPixels != 0) ? mHeightPixels : mTempMetrics.heightPixels);
         }
     }
 
@@ -581,6 +582,9 @@ public final class Display {
     public int getRotation() {
         synchronized (this) {
             updateDisplayInfoLocked();
+            if ((mWidthPixels != 0) && (mHeightPixels != 0)) {
+                return (mWidthPixels < mHeightPixels) ? Surface.ROTATION_0 : Surface.ROTATION_90;
+            }
             return mDisplayInfo.rotation;
         }
     }
@@ -715,8 +719,8 @@ public final class Display {
     public void getRealSize(Point outSize) {
         synchronized (this) {
             updateDisplayInfoLocked();
-            outSize.x = mDisplayInfo.logicalWidth;
-            outSize.y = mDisplayInfo.logicalHeight;
+            outSize.x = (mWidthPixels != 0) ? mWidthPixels : mDisplayInfo.logicalWidth;
+            outSize.y = (mHeightPixels != 0) ? mHeightPixels : mDisplayInfo.logicalHeight;
         }
     }
 
@@ -737,6 +741,12 @@ public final class Display {
             mDisplayInfo.getLogicalMetrics(outMetrics,
                     CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO,
                     mDisplayAdjustments.getActivityToken());
+            if (mWidthPixels != 0) {
+                outMetrics.widthPixels = mWidthPixels;
+            }
+            if (mHeightPixels != 0) {
+                outMetrics.heightPixels = mHeightPixels;
+            }
         }
     }
 
