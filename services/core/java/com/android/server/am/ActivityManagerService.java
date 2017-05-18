@@ -20115,7 +20115,8 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     private boolean isValidRect(Rect rect) {
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-        return rect.left < metrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
+        return rect.right > DRAG_POS_OFFSET
+                    && rect.left < metrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
                     && rect.top < metrics.getHeightPixelsFullScreen() - DRAG_POS_OFFSET;
     }
 }
