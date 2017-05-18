@@ -2359,9 +2359,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             setWillNotDraw(getBackground() == null && !mBackgroundFallback.hasFallback());
         }
 
-        private boolean isWhiteList() {
-            return getContext().getApplicationInfo()
-                                    .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) != 0;
+        private boolean isWhiteList(View child) {
+            return (child instanceof ViewGroup)
+                       && (getContext().getApplicationInfo()
+                                    .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) != 0);
         }
 
         public Rect getContentRect() {
@@ -2408,7 +2409,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index) {
-            if (isWhiteList() && (child instanceof ViewGroup)) {
+            if (isWhiteList(child)) {
                 adjustChildView((ViewGroup) child);
                 super.addView(child, index);
             } else {
@@ -2419,7 +2420,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void removeView(View view) {
-            if (isWhiteList()) {
+            if (isWhiteList(view)) {
                 super.removeView(view);
             } else {
                 /* Forbid to remove root view, explicitly */
@@ -3122,6 +3123,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private void adjustChildView(ViewGroup parent) {
             int border = getFramePadding();
             int count = parent.getChildCount();
+
+            if ((ViewGroup) mContentRoot.getParent() != parent) {
+                return;
+            }
 
             for (int i = 0; i < count; i++) {
                 View view = parent.getChildAt(i);
