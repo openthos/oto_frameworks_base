@@ -141,6 +141,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         public static final int FILTER_SYSYTEM_APP = 2;
         public static final int FILTER_THIRD_APP = 3;
         public static final int EDITTEXT_LENGTH_MAX = 10;
+        public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
 
         public static StartMenuDialog mStartMenuDialog;
         public static StartMenuUsuallyDialog mStartMenuUsuallyDialog;
@@ -270,7 +271,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         class mThread extends Thread {
             public void run(){
-                mIsClick = mSharedPreference.getBoolean("isClick", false);
+                mIsClick = mSharedPreference.getBoolean("isClickApp", false);
                 mType = mSharedPreference.getString("type", "sortName");
                 mOrder = mSharedPreference.getInt("order", 0);
                 if (mIsClick) {
@@ -302,7 +303,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                            edit.putInt("isSql", 1);
                            edit.commit();
                         }*/
-                        new SyncDataThread().start();
+                        initStartupMenuData(mContext);
                     }
                     break;
             }
@@ -1021,20 +1022,20 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                         return;
                     }
                 }
-                mdb.execSQL("insert into " +
-                           TableIndexDefine.TABLE_APP_PERPO + "(" +
-                           TableIndexDefine.COLUMN_PERPO_LABEL + "," +
-                           TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
-                           TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
-                           TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
-                           "values (?, ?, ?, ?)"  ,
-                           new Object[] { appLabel, pkgName, systemDate, clickNumber} );
-            }
-        }
-
-        class SyncDataThread extends Thread {
-            public void run() {
-                initStartupMenuData(mContext);
+                /**
+                 * Because the factory test tool is used only once,
+                 * it is not shown in the usual list.
+                 */
+                if (!pkgName.equals(FACTORY_TEST_PKGNAME)) {
+                    mdb.execSQL("insert into " +
+                               TableIndexDefine.TABLE_APP_PERPO + "(" +
+                               TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                               TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                               TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                               TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                               "values (?, ?, ?, ?)"  ,
+                               new Object[] { appLabel, pkgName, systemDate, clickNumber} );
+                }
             }
         }
 

@@ -77,7 +77,7 @@ public class StartupMenuSqlReceiver extends BroadcastReceiver {
             String type = sharedPreference.getString("type", "sortName");
             int order = sharedPreference.getInt("order", 0);
             editor.clear();
-            editor.putBoolean("isClick", true);
+            editor.putBoolean("isClickApp", true);
             editor.putString("type", type);
             editor.putInt("order", order);
             editor.commit();

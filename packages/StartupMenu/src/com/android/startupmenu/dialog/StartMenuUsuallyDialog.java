@@ -205,7 +205,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                                                              Context.MODE_PRIVATE);
         Editor editor = sharedPreference.edit();
         editor.clear();
-        editor.putBoolean("isClick", true);
+        editor.putBoolean("isClickApp", true);
         editor.commit();
     }
 
