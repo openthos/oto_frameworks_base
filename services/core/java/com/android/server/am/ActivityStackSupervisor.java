@@ -1733,13 +1733,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     Rect getInitializingRect(int intentFlags, int displayId, String pkgName) {
-        //resume recorded rect
-        Rect rect = Settings.Global.getRect(
-                          mService.mContext.getContentResolver(), pkgName, null);
-        if (rect != null && mService.isValidRect(rect)) {
-            return rect;
-        }
-
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU) != 0) {
             return new Rect(0, 0, DisplayMetrics.getStartupMenuWidth(mService.mContext),
                              mActivityDisplays.get(displayId).mDisplayInfo.logicalHeight
@@ -1754,6 +1747,13 @@ public final class ActivityStackSupervisor implements DisplayListener {
         //run pc mode
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PC_MODE) != 0) {
             return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+        }
+
+        //resume recorded rect
+        Rect rect = Settings.Global.getRect(
+                          mService.mContext.getContentResolver(), pkgName, null);
+        if (rect != null && mService.isValidRect(rect)) {
+            return rect;
         }
 
         //run default mode
