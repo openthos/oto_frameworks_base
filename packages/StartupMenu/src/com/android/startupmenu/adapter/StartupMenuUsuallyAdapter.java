@@ -1,11 +1,14 @@
 package com.android.startupmenu.adapter;
 
 import com.android.startupmenu.R;
+
 import java.util.List;
+
 import com.android.startupmenu.util.AppInfo;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
 import com.android.startupmenu.StartupMenuActivity;
+
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -19,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.SharedPreferences;
 
 public class StartupMenuUsuallyAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
@@ -35,9 +37,9 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
 
     public StartupMenuUsuallyAdapter(Context context, List<AppInfo> apps) {
         mInfater = (LayoutInflater) context
-        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                       .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistViewAppInfo = apps;
-        mContext=context;
+        mContext = context;
         mStartMenuCommonlWidth = mContext.getResources()
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
         mStartMenuCommonlHeight = mContext.getResources()
@@ -93,7 +95,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         StartupMenuAdapter.openAppBroadcast(mContext);
                         Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO
                                        + " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
-                                                     new String[] { pkgName });
+                                                     new String[]{pkgName});
                         c.moveToNext();
                         int numbers = c.getInt(c.getColumnIndex(
                                                      TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
@@ -105,7 +107,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         //values.put("click", number);
                         mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
                                    TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
-                                   new String[] { pkgName });
+                                   new String[]{pkgName});
                         break;
                     case MotionEvent.BUTTON_TERTIARY:
                         break;
@@ -113,9 +115,9 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         if (position < 0 || position >= mlistViewAppInfo.size()) {
                             return false;
                         }
-                        showMenuDialog(position,motionEvent);
+                        showMenuDialog(position, motionEvent);
                         break;
-                    default :
+                    default:
                         StartupMenuActivity.setFocus(false);
                         break;
                 }
@@ -141,13 +143,13 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
         }
     };
 
-    private void showMenuDialog(int position,MotionEvent motionEvent){
+    private void showMenuDialog(int position, MotionEvent motionEvent) {
         StartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
-                (int)motionEvent.getRawX() - location[0],
-                (int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
+                (int) motionEvent.getRawX() - location[0],
+                (int) motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
                 mStartMenuCommonlWidth, mStartMenuCommonlHeight);
     }
 
@@ -162,5 +164,4 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
             // this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
     }
-
 }

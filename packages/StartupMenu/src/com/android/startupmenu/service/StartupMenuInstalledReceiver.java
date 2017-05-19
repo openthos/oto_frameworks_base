@@ -4,20 +4,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
+
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 import android.content.ContentValues;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import static com.android.startupmenu.StartupMenuActivity.isEnglish;
 
 public class StartupMenuInstalledReceiver extends BroadcastReceiver {
@@ -25,6 +28,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
     private SQLiteDatabase mdb;
     private boolean mIsHasReayDb;
     private int mNumber;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         mMsoh = new StartupMenuSqliteOpenHelper(context, "StartupMenu_database.db", null, 1);
@@ -37,7 +41,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.PACKAGE_REMOVED")) {
             String pkName = intent.getData().getSchemeSpecificPart();
             mdb.delete(TableIndexDefine.TABLE_APP_PERPO, TableIndexDefine.COLUMN_PERPO_PKGNAME
-                                                         + " = ? ", new String[] { pkName });
+                                                         + " = ? ", new String[]{pkName});
         }
     }
 
@@ -46,7 +50,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
-        Collections.sort(resolveInfos,new ResolveInfo.DisplayNameComparator(pm));
+        Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pm));
         for (ResolveInfo reInfo : resolveInfos) {
             File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
             Date systemDate = new Date(file.lastModified());
@@ -58,7 +62,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
             mIsHasReayDb = false;
             Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                     " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
-                                                new String[] { pkgName });
+                                                new String[]{pkgName});
             while (c.moveToNext()) {
                 String pkname = c.getString(c.getColumnIndex(
                                               TableIndexDefine.COLUMN_PERPO_PKGNAME));
@@ -70,25 +74,25 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
 
             if (!mIsHasReayDb) {
                 mdb.execSQL("insert into " +
-                    TableIndexDefine.TABLE_APP_PERPO + "(" +
-                    TableIndexDefine.COLUMN_PERPO_LABEL + "," +
-                    TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
-                    TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
-                    TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
-                    "values (?, ?, ?, ?)" , new Object[] {
-                    appLabel, pkgName, systemDate, mNumber} );
+                        TableIndexDefine.TABLE_APP_PERPO + "(" +
+                        TableIndexDefine.COLUMN_PERPO_LABEL + "," +
+                        TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
+                        TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
+                        TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
+                        "values (?, ?, ?, ?)", new Object[]{
+                        appLabel, pkgName, systemDate, mNumber});
             }
 
-            if(isEnglish(appLabel)) {
+            if (isEnglish(appLabel)) {
                 ContentValues values = new ContentValues();
                 values.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
                 mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
-                        TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
+                        TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{pkgName});
             } else {
                 ContentValues values = new ContentValues();
                 values.put(TableIndexDefine.COLUMN_PERPO_LABEL, appLabel);
                 mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
-                           TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{ pkgName });
+                        TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{pkgName});
             }
         }
     }

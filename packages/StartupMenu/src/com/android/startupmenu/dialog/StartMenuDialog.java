@@ -1,42 +1,34 @@
 package com.android.startupmenu.dialog;
 
 import com.android.startupmenu.R;
+
 import android.graphics.Color;
-import android.R.layout;
 import android.os.Bundle;
 import android.content.Context;
-import android.text.TextWatcher;
-import android.text.Editable;
-import android.text.TextUtils;
 import android.app.Dialog;
-import android.widget.Toast;
 import android.content.Intent;
 import android.view.Window;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.View.OnGenericMotionListener;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.android.startupmenu.StartupMenuActivity;
+
 import android.database.sqlite.SQLiteDatabase;
+
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
-import com.android.startupmenu.util.TableIndexDefine;
 import com.android.startupmenu.util.StartupMenuUtil;
 
 import android.net.Uri;
 import android.provider.Settings;
-import android.util.Log;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+
 import com.android.startupmenu.adapter.StartupMenuAdapter;
+
 import android.os.Handler;
 import android.os.Message;
 import android.content.ContentResolver;
@@ -82,7 +74,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         super(context, cancelable, cancelListener);
     }
 
-     @Override
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_menu1);
@@ -137,8 +129,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager m = dialogWindow.getWindowManager();
         Display d = m.getDefaultDisplay();
-        if (x > (d.getWidth() - dialogWindow.getAttributes().width))
-        {
+        if (x > (d.getWidth() - dialogWindow.getAttributes().width)) {
             lp.x = d.getWidth() - dialogWindow.getAttributes().width;
         } else {
             lp.x = x;
@@ -164,13 +155,13 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
-        case R.id.tv_right_open:
-            Intent intent;
-            mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intent);
-            StartupMenuAdapter.openAppBroadcast(mContext);
+            case R.id.tv_right_open:
+                Intent intent;
+                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+                StartupMenuAdapter.openAppBroadcast(mContext);
             /*
             Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                     " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ? ",
@@ -197,46 +188,46 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
             editor.putInt("order", order);
             editor.commit();
             */
-            StartupMenuUtil.updateDataStorage(mContext, mPkgName);
-            dialogDismiss();
-            break;
-        case R.id.tv_right_phone_run:
-            runPhoneMode();
-            addUsedNum();
-            dialogDismiss();
-            break;
-        case R.id.tv_right_desktop_run:
-            runPcMode();
-            addUsedNum();
-            dialogDismiss();
-            break;
-        case R.id.tv_right_fixed_taskbar:
-            //String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            if (mflagChange) {
-                Intent intentSend = new Intent();
-                intentSend.putExtra("keyInfo", mStrTextView);
-                intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
-                mContext.sendBroadcast(intentSend);
-                mRightFixedTaskbar.setText(mUnlockedAppText);
-                new Thread(new QueryCursorData()).start();
-            } else {
-                Intent intentUnlock = new Intent();
-                intentUnlock.putExtra("unlockapk", mStrTextView);
-                intentUnlock.setAction(Intent.STARTMENU_UNLOCKED);
-                mContext.sendBroadcast(intentUnlock);
-                mRightFixedTaskbar.setText(mLockedAppText);
-                new Thread(new QueryCursorData()).start();
-            }
-            dialogDismiss();
-            break;
-        case R.id.tv_right_uninstall:
-            mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-            Uri uri = Uri.parse("package:" + mPkgName);
-            Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-            intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mContext.startActivity(intents);
-            dialogDismiss();
-            break;
+                StartupMenuUtil.updateDataStorage(mContext, mPkgName);
+                dialogDismiss();
+                break;
+            case R.id.tv_right_phone_run:
+                runPhoneMode();
+                addUsedNum();
+                dialogDismiss();
+                break;
+            case R.id.tv_right_desktop_run:
+                runPcMode();
+                addUsedNum();
+                dialogDismiss();
+                break;
+            case R.id.tv_right_fixed_taskbar:
+                //String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                if (mflagChange) {
+                    Intent intentSend = new Intent();
+                    intentSend.putExtra("keyInfo", mStrTextView);
+                    intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
+                    mContext.sendBroadcast(intentSend);
+                    mRightFixedTaskbar.setText(mUnlockedAppText);
+                    new Thread(new QueryCursorData()).start();
+                } else {
+                    Intent intentUnlock = new Intent();
+                    intentUnlock.putExtra("unlockapk", mStrTextView);
+                    intentUnlock.setAction(Intent.STARTMENU_UNLOCKED);
+                    mContext.sendBroadcast(intentUnlock);
+                    mRightFixedTaskbar.setText(mLockedAppText);
+                    new Thread(new QueryCursorData()).start();
+                }
+                dialogDismiss();
+                break;
+            case R.id.tv_right_uninstall:
+                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                Uri uri = Uri.parse("package:" + mPkgName);
+                Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+                intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intents);
+                dialogDismiss();
+                break;
         }
         return true;
     }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.android.startupmenu.R;
 
 public class AppInfo implements Parcelable {
@@ -149,16 +150,16 @@ public class AppInfo implements Parcelable {
     public String limitNameLength(String appName, Context mContext, AppInfo appInfo) {
         int mCharacterCount = 0;
         int mInputNum = 0;
-        for (int i = 0; i<appName.length(); i++) {
-             String str = appName.substring(i, i + 1);
-             mInputNum++;
-             mCharacterCount += regexInput(str);
-             if (mCharacterCount > MAX_CHARACTER_COUNT) {
+        for (int i = 0; i < appName.length(); i++) {
+            String str = appName.substring(i, i + 1);
+            mInputNum++;
+            mCharacterCount += regexInput(str);
+            if (mCharacterCount > MAX_CHARACTER_COUNT) {
                 break;
-             }
+            }
         }
         if (mCharacterCount > MAX_CHARACTER_COUNT && (mCharacterCount % 2 == 0)) {
-            appName = appName.substring(0,mInputNum);
+            appName = appName.substring(0, mInputNum);
             if (!appName.equals(appInfo.getAppLabel())) {
                 appName += mContext.getString(R.string.omit);
             }

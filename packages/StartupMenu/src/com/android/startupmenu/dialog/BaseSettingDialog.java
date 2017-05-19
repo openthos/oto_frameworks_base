@@ -2,7 +2,6 @@ package com.android.startupmenu.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,7 +48,7 @@ public class BaseSettingDialog extends Dialog {
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        Log.d("umic","has focus"+hasFocus);
+        Log.d("umic", "has focus" + hasFocus);
         if (!hasFocus) {
             dismiss();
         }

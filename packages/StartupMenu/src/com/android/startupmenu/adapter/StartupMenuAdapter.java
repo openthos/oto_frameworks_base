@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.android.startupmenu.R;
-import android.content.ContentValues;
 import com.android.startupmenu.util.AppInfo;
-import android.database.Cursor;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -17,26 +16,20 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.android.startupmenu.dialog.StartMenuDialog;
 import com.android.startupmenu.StartupMenuActivity;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
-import com.android.startupmenu.util.TableIndexDefine;
 import com.android.startupmenu.util.StartupMenuUtil;
 
-import android.os.UserHandle;
-import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
-import android.content.SharedPreferences;
-import android.util.Log;
 import android.content.pm.ApplicationInfo;
-import com.android.startupmenu.dialog.StartMenuDialog;
 
 public class StartupMenuAdapter extends BaseAdapter {
     public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
     public static String strPkgName;
 
     private List<AppInfo> mlistAppInfo = null;
-    private Map<Integer,Boolean> isCheckedMap;
+    private Map<Integer, Boolean> isCheckedMap;
     LayoutInflater infater = null;
     private Context mContext;
     private StartupMenuActivity mStartupMenuActivity;
@@ -100,12 +93,13 @@ public class StartupMenuAdapter extends BaseAdapter {
                 int what = motionEvent.getButtonState();
                 StartupMenuActivity.setFocus(true);
                 switch (what) {
-                case MotionEvent.BUTTON_PRIMARY:
-                    String pkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
-                    Intent intent = StartupMenuActivity.mlistAppInfo.get(position).getIntent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(intent);
-                    openAppBroadcast(mContext);
+                    case MotionEvent.BUTTON_PRIMARY:
+                        String pkgName = StartupMenuActivity.mlistAppInfo
+                                                                  .get(position).getPkgName();
+                        Intent intent = StartupMenuActivity.mlistAppInfo.get(position).getIntent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                        openAppBroadcast(mContext);
                     /*
                     Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                             " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +
@@ -134,27 +128,27 @@ public class StartupMenuAdapter extends BaseAdapter {
                         //editor.putInt("isSql", 1);
                         editor.commit();
                     }*/
-                    StartupMenuUtil.updateDataStorage(mContext, pkgName);
-                    mStartupMenuActivity.killStartupMenu();
-                    break;
-                case MotionEvent.BUTTON_TERTIARY:
-                    break;
-                case MotionEvent.BUTTON_SECONDARY:
-                    mPositionItem = position;
-                    strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
-                    mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(strPkgName) ||
-                                    ApplicationInfo.isRealFullScreenStyleWindow(strPkgName);
-                    if (position < 0 || position >= mlistAppInfo.size())
-                        return false;
-                    showMenuDialog1(position,motionEvent);
-                    break;
-                default :
-                    StartupMenuActivity.setFocus(false);
-                    break;
+                        StartupMenuUtil.updateDataStorage(mContext, pkgName);
+                        mStartupMenuActivity.killStartupMenu();
+                        break;
+                    case MotionEvent.BUTTON_TERTIARY:
+                        break;
+                    case MotionEvent.BUTTON_SECONDARY:
+                        mPositionItem = position;
+                        strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
+                        mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(strPkgName) ||
+                                ApplicationInfo.isRealFullScreenStyleWindow(strPkgName);
+                        if (position < 0 || position >= mlistAppInfo.size())
+                            return false;
+                        showMenuDialog1(position, motionEvent);
+                        break;
+                    default:
+                        StartupMenuActivity.setFocus(false);
+                        break;
                 }
                 return false;
-                }
-            });
+            }
+        });
         view.setOnHoverListener(hoverListener);
         return view;
     }
@@ -180,25 +174,25 @@ public class StartupMenuAdapter extends BaseAdapter {
         }
     };
 
-    private void showMenuDialog1(int position,MotionEvent motionEvent){
+    private void showMenuDialog1(int position, MotionEvent motionEvent) {
         StartupMenuActivity.mStartMenuDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartMenuDialog startMenuDialog = new StartMenuDialog(mContext, R.style.dialog);
-        startMenuDialog.showDialog((int)motionEvent.getRawX() - location[0]
-                    ,(int)motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
-                    , mStartMenuAppWidth, mStartMenuAppHeight);
+        startMenuDialog.showDialog((int) motionEvent.getRawX() - location[0]
+                , (int) motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
+                , mStartMenuAppWidth, mStartMenuAppHeight);
     }
 
     class ViewHolder {
         ImageView appIcon;
         TextView tvAppLabel;
-      //TextView tvPkgName;
+        //TextView tvPkgName;
 
         public ViewHolder(View view) {
             this.appIcon = (ImageView) view.findViewById(R.id.package_image);
             this.tvAppLabel = (TextView) view.findViewById(R.id.package_name);
-        //  this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
+            //  this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
     }
 

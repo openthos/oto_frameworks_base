@@ -1,9 +1,6 @@
 package com.android.startupmenu.util;
 
-import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
-import com.android.startupmenu.util.TableIndexDefine;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.database.Cursor;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,21 +15,21 @@ public class StartupMenuUtil {
     * When run app, need change SqlDataBase and sharedPreference.
     */
     public static void updateDataStorage(Context mContext, String pkgName) {
-        StartupMenuSqliteOpenHelper  msoh = new StartupMenuSqliteOpenHelper(mContext,
+        StartupMenuSqliteOpenHelper msoh = new StartupMenuSqliteOpenHelper(mContext,
                                                  "StartupMenu_database.db", null, 1);
         SQLiteDatabase mdb = msoh.getWritableDatabase();
         Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                        " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +
-                                       " = ? ", new String[] { pkgName });
+                                       " = ? ", new String[]{pkgName});
         cursor.moveToNext();
         if (cursor.moveToFirst()) {
             int numbers = cursor.getInt(cursor.getColumnIndex(
                                      TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
-            numbers ++;
+            numbers++;
             ContentValues values = new ContentValues();
             values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, numbers);
             mdb.update(TableIndexDefine.TABLE_APP_PERPO, values, TableIndexDefine.
-                       COLUMN_PERPO_PKGNAME + " = ?", new String[] { pkgName });
+                       COLUMN_PERPO_PKGNAME + " = ?", new String[]{pkgName});
             SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
                                                                  Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreference.edit();
