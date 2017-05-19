@@ -583,7 +583,7 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             if ((mWidthPixels != 0) && (mHeightPixels != 0)) {
-                return (mWidthPixels < mHeightPixels) ? Surface.ROTATION_0 : Surface.ROTATION_90;
+                return (mWidthPixels < mHeightPixels) ? Surface.ROTATION_90 : Surface.ROTATION_0;
             }
             return mDisplayInfo.rotation;
         }
