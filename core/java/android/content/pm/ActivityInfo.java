@@ -53,6 +53,11 @@ public class ActivityInfo extends ComponentInfo
     public static final String LAUNCHERNAME_TENCENT_QQ =
                  "com.tencent.mobileqq.activity.RegisterGuideActivity";
 
+    public static final String DOCUMENTS_ACTIVITY = "com.android.documentsui.DocumentsActivity";
+
+    public static final String FILEMANAGER_PICKER_ACTIVITY =
+                                                      "com.openthos.filemanager.PickerActivity";
+
     /**
      * A style resource identifier (in the package's resources) of this
      * activity's theme.  From the "theme" attribute or, if not set, 0.

@@ -254,6 +254,18 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
             return;
         }
 
+        DisplayResolveInfo doc = mAdapter.getDocumentsActivity();
+        if (doc != null) {
+            Intent docin = intentForDisplayResolveInfo(doc);
+            docin.setComponent(new ComponentName(ApplicationInfo.APPNAME_OTO_FILEMANAGER,
+                                              ActivityInfo.FILEMANAGER_PICKER_ACTIVITY));
+            safelyStartActivity(docin);
+            mPackageMonitor.unregister();
+            mRegistered = false;
+            finish();
+            return;
+        }
+
         int count = mAdapter.mList.size();
         if (count > 1 || (count == 1 && mAdapter.getOtherProfile() != null)) {
             setContentView(layoutId);
@@ -788,6 +800,8 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
         private final int mLaunchedFromUid;
         private final LayoutInflater mInflater;
 
+        private DisplayResolveInfo mDocumentsActivity;
+
         List<DisplayResolveInfo> mList;
         List<ResolveInfo> mOrigResolveList;
 
@@ -849,6 +863,7 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
             }
 
             mList.clear();
+            mDocumentsActivity = null;
             if (mBaseResolveList != null) {
                 currentResolveList = mOrigResolveList = mBaseResolveList;
             } else {
@@ -1029,7 +1044,14 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
             }
         }
 
+        public DisplayResolveInfo getDocumentsActivity() {
+            return mDocumentsActivity;
+        }
+
         private void addResolveInfo(DisplayResolveInfo dri) {
+            if (dri.ri.activityInfo.name.equals(ActivityInfo.DOCUMENTS_ACTIVITY)) {
+                mDocumentsActivity = dri;
+            }
             if (dri.ri.targetUserId != UserHandle.USER_CURRENT && mOtherProfile == null) {
                 // So far we only support a single other profile at a time.
                 // The first one we see gets special treatment.
