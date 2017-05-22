@@ -22,17 +22,9 @@ public class LocknActivity extends Activity {
         mComponentName = new ComponentName(LocknActivity.this, LockReceiver.class);
         if (mDevicePolicyManager.isAdminActive(mComponentName)) {
             mDevicePolicyManager.lockNow();
-            finish();
         } else {
-            activeManager();
+            mDevicePolicyManager.setActiveAdmin(mComponentName, true);
         }
-    }
-
-    private void activeManager() {
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, mComponentName);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "set the lock screen");
-        startActivity(intent);
         finish();
     }
 
