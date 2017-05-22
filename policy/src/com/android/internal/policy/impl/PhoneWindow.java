@@ -2410,7 +2410,6 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         @Override
         public void addView(View child, int index) {
             if (isWhiteList(child)) {
-                adjustChildView((ViewGroup) child);
                 super.addView(child, index);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2985,6 +2984,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             final int widthMode = getMode(widthMeasureSpec);
             final int heightMode = getMode(heightMeasureSpec);
 
+            adjustChildView();
+
             boolean fixedWidth = false;
             if (widthMode == AT_MOST) {
                 final TypedValue tvw = isPortrait ? mFixedWidthMinor : mFixedWidthMajor;
@@ -3120,28 +3121,24 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             return height;
         }
 
-        private void adjustChildView(ViewGroup parent) {
-            int border = getFramePadding();
-            int count = parent.getChildCount();
-
-            if ((ViewGroup) mContentRoot.getParent() != parent) {
-                return;
-            }
-
-            for (int i = 0; i < count; i++) {
-                View view = parent.getChildAt(i);
-                if (view == mContentRoot) {
-                    continue;
+        private void adjustChildView() {
+            View view = (View) getChildAt(0);
+            while ((view != (View) mContentRoot) && (view != null) && (view instanceof ViewGroup)) {
+                int border = getFramePadding();
+                int borderTop = getWindowHeaderPadding();
+                int count = ((ViewGroup) view).getChildCount();
+                for (int i = 1; i < count; i++) { // must skip 1st one
+                    View child = ((ViewGroup) view).getChildAt(i);
+                    if (child.getLayoutParams() instanceof MarginLayoutParams) {
+                        MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+                        lp.leftMargin = border;
+                        lp.rightMargin = border;
+                        lp.bottomMargin = border;
+                        lp.topMargin = borderTop;
+                        child.setLayoutParams(lp);
+                    }
                 }
-
-                if (view.getLayoutParams() instanceof MarginLayoutParams) {
-                    MarginLayoutParams lp = (MarginLayoutParams) view.getLayoutParams();
-                    lp.leftMargin = border;
-                    lp.rightMargin = border;
-                    lp.bottomMargin = border;
-                    lp.topMargin = getWindowHeaderPadding();
-                    view.setLayoutParams(lp);
-                }
+                view = (View) ((ViewGroup) view).getChildAt(0);
             }
         }
 
