@@ -2978,8 +2978,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             final DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-            final boolean isPortrait =
-                       metrics.getWidthPixelsFullScreen() < metrics.getHeightPixelsFullScreen();
+            final boolean isPortrait = metrics.widthPixels < metrics.heightPixels;
 
             final int widthMode = getMode(widthMeasureSpec);
             final int heightMode = getMode(heightMeasureSpec);
@@ -2987,15 +2986,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             adjustChildView();
 
             boolean fixedWidth = false;
-            if (widthMode == AT_MOST) {
+            if ((widthMode == AT_MOST) && !isMWWindow()) {
                 final TypedValue tvw = isPortrait ? mFixedWidthMinor : mFixedWidthMajor;
                 if (tvw != null && tvw.type != TypedValue.TYPE_NULL) {
                     int w;
                     if (tvw.type == TypedValue.TYPE_DIMENSION) {
                         w = (int) tvw.getDimension(metrics);
                     } else if (tvw.type == TypedValue.TYPE_FRACTION) {
-                        w = (int) tvw.getFraction(metrics.getWidthPixelsFullScreen(),
-                                                  metrics.getWidthPixelsFullScreen());
+                        w = (int) tvw.getFraction(metrics.widthPixels, metrics.widthPixels);
                     } else {
                         w = 0;
                     }
@@ -3013,15 +3011,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 }
             }
 
-            if (heightMode == AT_MOST) {
+            if ((heightMode == AT_MOST) && !isMWWindow()) {
                 final TypedValue tvh = isPortrait ? mFixedHeightMajor : mFixedHeightMinor;
                 if (tvh != null && tvh.type != TypedValue.TYPE_NULL) {
                     int h;
                     if (tvh.type == TypedValue.TYPE_DIMENSION) {
                         h = (int) tvh.getDimension(metrics);
                     } else if (tvh.type == TypedValue.TYPE_FRACTION) {
-                        h = (int) tvh.getFraction(metrics.getHeightPixelsFullScreen(),
-                                                  metrics.getHeightPixelsFullScreen());
+                        h = (int) tvh.getFraction(metrics.heightPixels, metrics.heightPixels);
                     } else {
                         h = 0;
                     }
@@ -3054,15 +3051,14 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, EXACTLY);
 
-            if (!fixedWidth && widthMode == AT_MOST) {
+            if (!fixedWidth && (widthMode == AT_MOST) && !isMWWindow()) {
                 final TypedValue tv = isPortrait ? mMinWidthMinor : mMinWidthMajor;
                 if (tv.type != TypedValue.TYPE_NULL) {
                     int min;
                     if (tv.type == TypedValue.TYPE_DIMENSION) {
                         min = (int)tv.getDimension(metrics);
                     } else if (tv.type == TypedValue.TYPE_FRACTION) {
-                        min = (int)tv.getFraction(metrics.getWidthPixelsFullScreen(),
-                                                  metrics.getWidthPixelsFullScreen());
+                        min = (int)tv.getFraction(metrics.widthPixels, metrics.widthPixels);
                     } else {
                         min = 0;
                     }
