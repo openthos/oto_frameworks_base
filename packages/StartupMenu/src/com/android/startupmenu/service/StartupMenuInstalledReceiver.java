@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
+import com.android.startupmenu.StartupMenuActivity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
@@ -72,7 +73,7 @@ public class StartupMenuInstalledReceiver extends BroadcastReceiver {
                 }
             }
 
-            if (!mIsHasReayDb) {
+            if (!mIsHasReayDb && !pkgName.equals(StartupMenuActivity.FACTORY_TEST_PKGNAME)) {
                 mdb.execSQL("insert into " +
                         TableIndexDefine.TABLE_APP_PERPO + "(" +
                         TableIndexDefine.COLUMN_PERPO_LABEL + "," +
