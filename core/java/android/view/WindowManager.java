@@ -2275,6 +2275,10 @@ public interface WindowManager extends ViewManager {
             return mTopShadowPadding + mTopBorderPadding;
         }
 
+        public int getHeaderHeight() {
+            return mHeaderHeight;
+        }
+
         public Rect toggleFullScreen(Rect frame) {
             if (!frame.equals(mFullScreen)) {
                 mOldSize.set(frame);

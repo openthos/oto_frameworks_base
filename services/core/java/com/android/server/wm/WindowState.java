@@ -617,7 +617,10 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                         && mAttrs.toString().contains("wrap"))) {
                 Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                         (int) (x + mAttrs.horizontalMargin * pw),
-                        (int) (y + mAttrs.verticalMargin * ph), mFrame, mDisplayFrame);
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame, mDisplayFrame,
+                        stack.getMultiWindow().getFramePadding(),
+                        stack.getMultiWindow().getTopFramePadding()
+                            + stack.getMultiWindow().getHeaderHeight());
             } else {
                 if ("com.kingsoft.email".equals(mAttrs.packageName) && x == 0.0) { // send/recv box
                     x = x + stack.getMultiWindow().getFramePadding();
@@ -629,7 +632,10 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                 }
                 Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                         (int) (x + mAttrs.horizontalMargin * pw),
-                        (int) (y + mAttrs.verticalMargin * ph), mFrame);
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame,
+                        stack.getMultiWindow().getFramePadding(),
+                        stack.getMultiWindow().getTopFramePadding()
+                            + stack.getMultiWindow().getHeaderHeight());
             }
         } else {
             Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,

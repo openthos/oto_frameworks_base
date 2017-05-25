@@ -269,19 +269,11 @@ public class Gravity
     }
 
     public static void apply(int gravity, int w, int h, Rect container,
-            int xAdj, int yAdj, Rect outRect, Rect displayRect) {
+            int xAdj, int yAdj, Rect outRect, Rect displayRect, int padding, int topOffset) {
         switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_X_SHIFT)) {
             case 0:
                 outRect.left = container.left + ((container.right - container.left - w) / 2) + xAdj;
                 outRect.right = outRect.left + w;
-                if ((gravity&(AXIS_CLIP<<AXIS_X_SHIFT)) == (AXIS_CLIP<<AXIS_X_SHIFT)) {
-                    if (outRect.left < container.left) {
-                        outRect.left = container.left;
-                    }
-                    if (outRect.right > container.right) {
-                        outRect.right = container.right;
-                    }
-                }
                 break;
             case AXIS_PULL_BEFORE<<AXIS_X_SHIFT:
                 outRect.left = container.left + (xAdj - (container.left - displayRect.left));
@@ -309,14 +301,6 @@ public class Gravity
             case 0:
                 outRect.top = container.top + ((container.bottom - container.top - h) / 2) + yAdj;
                 outRect.bottom = outRect.top + h;
-                if ((gravity&(AXIS_CLIP<<AXIS_Y_SHIFT)) == (AXIS_CLIP<<AXIS_Y_SHIFT)) {
-                    if (outRect.top < container.top) {
-                        outRect.top = container.top;
-                    }
-                    if (outRect.bottom > container.bottom) {
-                        outRect.bottom = container.bottom;
-                    }
-                }
                 break;
             case AXIS_PULL_BEFORE<<AXIS_Y_SHIFT:
                 outRect.top = container.top + (yAdj - (container.top - displayRect.top));
@@ -339,6 +323,83 @@ public class Gravity
                 outRect.top = container.top + yAdj;
                 outRect.bottom = container.bottom + yAdj;
                 break;
+        }
+
+        if (outRect.left < container.left) {
+            outRect.left = container.left + padding;
+            outRect.right = outRect.left + w;
+        }
+        if (outRect.right > container.right) {
+            outRect.right = container.right - padding;
+            outRect.left = outRect.right - w;
+        }
+        if (outRect.top < container.top) {
+            outRect.top = container.top + topOffset;
+            outRect.bottom = outRect.top + h;
+        }
+        if (outRect.bottom > container.bottom) {
+            outRect.bottom = container.bottom - padding;
+            outRect.top = outRect.bottom - h;
+        }
+    }
+
+    public static void apply(int gravity, int w, int h, Rect container,
+            int xAdj, int yAdj, Rect outRect, int padding, int topOffset) {
+        switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_X_SHIFT)) {
+            case 0:
+                outRect.left = container.left
+                        + ((container.right - container.left - w) / 2) + xAdj;
+                outRect.right = outRect.left + w;
+                break;
+            case AXIS_PULL_BEFORE<<AXIS_X_SHIFT:
+                outRect.left = container.left + xAdj;
+                outRect.right = outRect.left + w;
+                break;
+            case AXIS_PULL_AFTER<<AXIS_X_SHIFT:
+                outRect.right = container.right - xAdj;
+                outRect.left = outRect.right - w;
+                break;
+            default:
+                outRect.left = container.left + xAdj;
+                outRect.right = container.right + xAdj;
+                break;
+        }
+
+        switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_Y_SHIFT)) {
+            case 0:
+                outRect.top = container.top
+                        + ((container.bottom - container.top - h) / 2) + yAdj;
+                outRect.bottom = outRect.top + h;
+                break;
+            case AXIS_PULL_BEFORE<<AXIS_Y_SHIFT:
+                outRect.top = container.top + yAdj;
+                outRect.bottom = outRect.top + h;
+                break;
+            case AXIS_PULL_AFTER<<AXIS_Y_SHIFT:
+                outRect.bottom = container.bottom - yAdj;
+                outRect.top = outRect.bottom - h;
+                break;
+            default:
+                outRect.top = container.top + yAdj;
+                outRect.bottom = container.bottom + yAdj;
+                break;
+        }
+
+        if (outRect.left < container.left) {
+            outRect.left = container.left + padding;
+            outRect.right = outRect.left + w;
+        }
+        if (outRect.right > container.right) {
+            outRect.right = container.right - padding;
+            outRect.left = outRect.right - w;
+        }
+        if (outRect.top < container.top) {
+            outRect.top = container.top + topOffset;
+            outRect.bottom = outRect.top + h;
+        }
+        if (outRect.bottom > container.bottom) {
+            outRect.bottom = container.bottom - padding;
+            outRect.top = outRect.bottom - h;
         }
     }
 
