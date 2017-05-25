@@ -2042,7 +2042,7 @@ public abstract class Window {
         mMultiWindow.mHeaderHeight = useHeader ? mHeaderHeightReal : 0;
     }
 
-    public void setButtons(View back, View min, View max, View close) {
+    public void setButtons(View back, View rotate, View min, View max, View close) {
         int padding = getBorderPadding();  // For top header, can still use border padding.
 
         mMultiWindow.mBack.left = padding;
@@ -2064,6 +2064,11 @@ public abstract class Window {
         mMultiWindow.mMin.mHeight = min.getHeight();
         mMultiWindow.mMin.mOffTop = padding;
         mMultiWindow.mMin.mOffRight = mMultiWindow.mMin.mWidth + mMultiWindow.mMax.mOffRight;
+
+        mMultiWindow.mRotate.mWidth = rotate.getWidth();
+        mMultiWindow.mRotate.mHeight = rotate.getHeight();
+        mMultiWindow.mRotate.mOffTop = padding;
+        mMultiWindow.mRotate.mOffRight = mMultiWindow.mRotate.mWidth + mMultiWindow.mMin.mOffRight;
     }
 
     public WindowManager.MultiWindow getMultiWindow() {
@@ -2092,6 +2097,10 @@ public abstract class Window {
 
     public Rect toggleFullScreen(Rect frame) {
         return mMultiWindow.toggleFullScreen(frame);
+    }
+
+    public Rect togglePhoneScreen(Rect frame) {
+        return mMultiWindow.togglePhoneScreen(frame);
     }
 
     public void onMinimize(Rect orig) {

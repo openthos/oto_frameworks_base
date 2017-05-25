@@ -4179,6 +4179,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         private ImageButton mLaunchBtn;
         private ImageButton mMaximizeBtn;
         private ImageButton mMinimizeBtn;
+        private ImageButton mRotateBtn;
         private View mOuterBorder;
         private String mPackageName;
         private BackgroundDrawable mDrawable;
@@ -4203,7 +4204,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             if (isEmpty() || !isCoverShowed()) {
                 return;
             }
-            setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
+            setButtons(mLaunchBtn, mRotateBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
             try {
                 ((PhoneWindow) getActivityWindow()).prepareOldSize();
                 ActivityManagerNative.getDefault().enableMultiWindowToWindowManager(
@@ -4215,7 +4216,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         public void syncMultiWindowToWindowManager() {
-            setButtons(mLaunchBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
+            setButtons(mLaunchBtn, mRotateBtn, mMinimizeBtn, mMaximizeBtn, mCloseBtn);
             try {
                 ActivityManagerNative.getDefault().syncMultiWindowToWindowManager(
                                                   getActivityWindow().getMultiWindow());
@@ -4258,6 +4259,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             mLaunchBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwLaunchBtn);
             mMaximizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMaximizeBtn);
             mMinimizeBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwMinimizeBtn);
+            mRotateBtn = (ImageButton)root.findViewById(com.android.internal.R.id.mwRotateBtn);
 
             mPackageName = setMWWindowTitle(root);
 
@@ -4330,6 +4332,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 @Override
                 public void onClick(View v) {
                     onMinimize(getActivityFrame());
+                }
+            });
+
+            mRotateBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    syncFrame(togglePhoneScreen(getActivityFrame()));
                 }
             });
 

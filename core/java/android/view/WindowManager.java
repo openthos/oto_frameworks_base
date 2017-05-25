@@ -2084,11 +2084,14 @@ public interface WindowManager extends ViewManager {
         public AlignRight mMin;
         public AlignRight mMax;
         public AlignRight mClose;
+        public AlignRight mRotate;
 
         public Rect mOldSize;
         public Rect mFullScreen;
         public Rect mLeftDockFrame;
         public Rect mRightDockFrame;
+        private Rect mOldPcSize;
+        private Rect mOldPhoneSize;
 
         public Callback mCallback;
         public boolean mShadow;
@@ -2139,10 +2142,13 @@ public interface WindowManager extends ViewManager {
 
         public MultiWindow(Context context) {
             mOldSize = new Rect();
+            mOldPcSize = new Rect();
+            mOldPhoneSize = new Rect();
             mFullScreen = new Rect();
             mLeftDockFrame = new Rect();
             mRightDockFrame = new Rect();
             mBack = new Rect();
+            mRotate = new AlignRight();
             mMin = new AlignRight();
             mMax = new AlignRight();
             mClose = new AlignRight();
@@ -2179,6 +2185,10 @@ public interface WindowManager extends ViewManager {
             out.writeInt(mBack.top);
             out.writeInt(mBack.right);
             out.writeInt(mBack.bottom);
+            out.writeInt(mRotate.mOffRight);
+            out.writeInt(mRotate.mOffTop);
+            out.writeInt(mRotate.mWidth);
+            out.writeInt(mRotate.mHeight);
             out.writeInt(mMin.mOffRight);
             out.writeInt(mMin.mOffTop);
             out.writeInt(mMin.mWidth);
@@ -2195,6 +2205,14 @@ public interface WindowManager extends ViewManager {
             out.writeInt(mOldSize.top);
             out.writeInt(mOldSize.right);
             out.writeInt(mOldSize.bottom);
+            out.writeInt(mOldPcSize.left);
+            out.writeInt(mOldPcSize.top);
+            out.writeInt(mOldPcSize.right);
+            out.writeInt(mOldPcSize.bottom);
+            out.writeInt(mOldPhoneSize.left);
+            out.writeInt(mOldPhoneSize.top);
+            out.writeInt(mOldPhoneSize.right);
+            out.writeInt(mOldPhoneSize.bottom);
             out.writeInt(mFullScreen.left);
             out.writeInt(mFullScreen.top);
             out.writeInt(mFullScreen.right);
@@ -2223,6 +2241,10 @@ public interface WindowManager extends ViewManager {
             mBack.top = in.readInt();
             mBack.right = in.readInt();
             mBack.bottom = in.readInt();
+            mRotate.mOffRight = in.readInt();
+            mRotate.mOffTop = in.readInt();
+            mRotate.mWidth = in.readInt();
+            mRotate.mHeight = in.readInt();
             mMin.mOffRight = in.readInt();
             mMin.mOffTop = in.readInt();
             mMin.mWidth = in.readInt();
@@ -2239,6 +2261,14 @@ public interface WindowManager extends ViewManager {
             mOldSize.top = in.readInt();
             mOldSize.right = in.readInt();
             mOldSize.bottom = in.readInt();
+            mOldPcSize.left = in.readInt();
+            mOldPcSize.top = in.readInt();
+            mOldPcSize.right = in.readInt();
+            mOldPcSize.bottom = in.readInt();
+            mOldPhoneSize.left = in.readInt();
+            mOldPhoneSize.top = in.readInt();
+            mOldPhoneSize.right = in.readInt();
+            mOldPhoneSize.bottom = in.readInt();
             mFullScreen.left = in.readInt();
             mFullScreen.top = in.readInt();
             mFullScreen.right = in.readInt();
@@ -2258,13 +2288,15 @@ public interface WindowManager extends ViewManager {
 
         public String toString() {
             return "padding: " + getFramePadding() + "; height " + mHeaderHeight + ";  back: "
-                   + mBack + ";  min: " + mMin.mOffRight + ", " + mMin.mOffTop + " - " + mMin.mWidth
-                   + ", " + mMin.mHeight + ";  max: " + mMax.mOffRight + ", " + mMax.mOffTop
-                   + " - " + mMax.mWidth + ", " + mMax.mHeight + ";  close: " + mClose.mOffRight
-                   + ", " + mClose.mOffTop + " - " + mClose.mWidth + ", " + mClose.mHeight
-                   + "; full: " + mFullScreen + "; left: " + mLeftDockFrame + "; right: "
-                   + mRightDockFrame + "; old: " + mOldSize + ";  top padding: "
-                   + getTopFramePadding();
+                   + mBack + ";  rotate: " + mRotate.mOffRight + ", " + mRotate.mOffTop + " - "
+                   + mRotate.mWidth + ", " + mRotate.mHeight + ";  min: " + mMin.mOffRight + ", "
+                   + mMin.mOffTop + " - " + mMin.mWidth + ", " + mMin.mHeight + ";  max: "
+                   + mMax.mOffRight + ", " + mMax.mOffTop + " - " + mMax.mWidth + ", "
+                   + mMax.mHeight + ";  close: " + mClose.mOffRight + ", " + mClose.mOffTop
+                   + " - " + mClose.mWidth + ", " + mClose.mHeight + "; full: " + mFullScreen
+                   + "; left: " + mLeftDockFrame + "; right: " + mRightDockFrame + "; old: "
+                   + mOldSize + "; oldPc: " + mOldPcSize + "; oldPhone: " + mOldPhoneSize
+                   + ";  top padding: " + getTopFramePadding();
         }
 
         public int getFramePadding() {
@@ -2294,6 +2326,48 @@ public interface WindowManager extends ViewManager {
                 }
             }
             return mFrame;
+        }
+
+        public Rect togglePhoneScreen(Rect frame) {
+            if (frame.width() > frame.height()) {
+                mOldPcSize.set(frame);
+                if (mCallback != null) {
+                    prepareOldPhoneSize(frame);
+                    mCallback.relayoutWindow(mStackId, mOldPhoneSize);
+                    mFrame.set(mOldPhoneSize);
+                }
+            } else {
+                mOldPhoneSize.set(frame);
+                if (mCallback != null) {
+                    prepareOldPcSize(frame);
+                    mCallback.relayoutWindow(mStackId, mOldPcSize);
+                    mFrame.set(mOldPcSize);
+                }
+            }
+            return mFrame;
+        }
+
+        private void prepareOldPhoneSize(Rect frame) {
+            Rect rect = frame;
+            Rect originalPhoneFrame = mContext.getResources()
+                                .getDisplayMetrics().getDefaultFrameRect(true);
+            rect.left = rect.left < 0 ? 0 : rect.left;
+            rect.right = rect.left + (mOldPhoneSize.width() == 0 ?
+                                 originalPhoneFrame.width() : mOldPhoneSize.width());
+            rect.bottom = rect.top + (mOldPhoneSize.width() == 0 ?
+                                 originalPhoneFrame.height() : mOldPhoneSize.height());
+            mOldPhoneSize.set(rect);
+        }
+
+        private void prepareOldPcSize(Rect frame) {
+            Rect rect = frame;
+            Rect originalPcFrame = mContext.getResources()
+                                .getDisplayMetrics().getDefaultFrameRect(false);
+            rect.right = rect.left + (mOldPcSize.width() == 0 ?
+                                 originalPcFrame.width() : mOldPcSize.width());
+            rect.bottom = rect.top + (mOldPcSize.width() == 0 ?
+                                 originalPcFrame.height() : mOldPcSize.height());
+            mOldPcSize.set(rect);
         }
 
         private void prepareOldSize(Rect frame) {
