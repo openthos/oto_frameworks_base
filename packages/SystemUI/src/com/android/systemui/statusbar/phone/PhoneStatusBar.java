@@ -791,6 +791,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         && (event.getAction()) ==  MotionEvent.ACTION_DOWN) {
                     showDialog(dialogViewHide(), (int)event.getX(), (int)event.getY(),  0);
                 }
+
+                if ((event.getButtonState()) == MotionEvent.BUTTON_PRIMARY
+                        && (event.getAction() == MotionEvent.ACTION_DOWN)) {
+                    dismissDialog();
+                }
+                ActivityKeyView.dismissDialog();
                 return true;
             }
         });
@@ -3160,6 +3166,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             StatusbarActivity sa = new StatusbarActivity(ActivityManager.NOT_RUNNING_STACK_ID, pkg,
                                                          true, false);
             ActivityKeyView akv = (ActivityKeyView) ll.getChildAt(0);
+            akv.setPhoneStatusBar(this);
             akv.setStatusbarActivity(sa);
             akv.setFocusedView(ll.findViewById(R.id.activity_focused));
             akv.setRunningView(ll.findViewById(R.id.activity_run));
