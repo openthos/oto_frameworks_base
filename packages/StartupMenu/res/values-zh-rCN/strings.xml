@@ -16,7 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">电源</string>
+    <string name="app_label">开始菜单</string>
     <string name="startup_menu">"Startup menu"</string>
     <string name="startup_menu_app">"Applicatoin"</string>
     <string name="startup_menu_start">"Start"</string>
