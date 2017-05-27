@@ -51,6 +51,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     public StartMenuUsuallyDialog(Context context, int themeResId) {
         super(context, themeResId);
         mContext = context;
+        mStartupMenuActivity = (StartupMenuActivity) context;
     }
 
     public void setPosition(int pos) {
@@ -125,8 +126,8 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         switch (view.getId()) {
             case R.id.tv_right_usually_open:
                 Intent intent;
-                mPkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+                mPkgName = mStartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+                intent = mStartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 StartupMenuAdapter.openAppBroadcast(mContext);
@@ -157,11 +158,12 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                 dialogDismiss();
                 break;
             case R.id.tv_removed_list:
-                mPkgName = StartupMenuActivity.mListViewEight.get(mPosition).getPkgName();
-                String label = StartupMenuActivity.mListViewEight.get(mPosition).getAppLabel();
-                Toast.makeText(mContext, "移除应用：" + label, 0).show();
-                StartupMenuActivity.mListViewEight.remove(mPosition);
-                StartupMenuActivity.mUsuallyAdapter.notifyDataSetChanged();
+                mPkgName = mStartupMenuActivity.mListViewEight.get(mPosition).getPkgName();
+                String label = mStartupMenuActivity.mListViewEight.get(mPosition).getAppLabel();
+                Toast.makeText(mContext, mContext.getString(R.string.remove_application) + label,
+                                                                     Toast.LENGTH_SHORT).show();
+                mStartupMenuActivity.mListViewEight.remove(mPosition);
+                mStartupMenuActivity.mUsuallyAdapter.notifyDataSetChanged();
                 cancel();
                 Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                 " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
@@ -182,7 +184,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of save used database
     private void addUsedNum() {
         String pkgName = "";
-        pkgName = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
+        pkgName = mStartupMenuActivity.mlistViewAppInfo.get(mPosition).getPkgName();
         Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                      " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                                                  new String[]{pkgName});
@@ -208,7 +210,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of run pc mode
     private void runPcMode() {
         Intent intent;
-        intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+        intent = mStartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -216,7 +218,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
     //Method of run phone mode
     private void runPhoneMode() {
         Intent intent;
-        intent = StartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
+        intent = mStartupMenuActivity.mlistViewAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
                             | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -240,6 +242,6 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
 
     private void dialogDismiss() {
         dismiss();
-        StartupMenuActivity.setFocus(false);
+        mStartupMenuActivity.setFocus(false);
     }
 }

@@ -91,12 +91,12 @@ public class StartupMenuAdapter extends BaseAdapter {
             @Override
             public boolean onGenericMotion(View view, MotionEvent motionEvent) {
                 int what = motionEvent.getButtonState();
-                StartupMenuActivity.setFocus(true);
+                mStartupMenuActivity.setFocus(true);
                 switch (what) {
                     case MotionEvent.BUTTON_PRIMARY:
-                        String pkgName = StartupMenuActivity.mlistAppInfo
+                        String pkgName = mStartupMenuActivity.mListAppInfo
                                                                   .get(position).getPkgName();
-                        Intent intent = StartupMenuActivity.mlistAppInfo.get(position).getIntent();
+                        Intent intent = mStartupMenuActivity.mListAppInfo.get(position).getIntent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         openAppBroadcast(mContext);
@@ -135,7 +135,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                         break;
                     case MotionEvent.BUTTON_SECONDARY:
                         mPositionItem = position;
-                        strPkgName = StartupMenuActivity.mlistAppInfo.get(position).getPkgName();
+                        strPkgName = mStartupMenuActivity.mListAppInfo.get(position).getPkgName();
                         mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(strPkgName) ||
                                 ApplicationInfo.isRealFullScreenStyleWindow(strPkgName);
                         if (position < 0 || position >= mlistAppInfo.size())
@@ -143,7 +143,7 @@ public class StartupMenuAdapter extends BaseAdapter {
                         showMenuDialog1(position, motionEvent);
                         break;
                     default:
-                        StartupMenuActivity.setFocus(false);
+                        mStartupMenuActivity.setFocus(false);
                         break;
                 }
                 return false;
@@ -175,7 +175,7 @@ public class StartupMenuAdapter extends BaseAdapter {
     };
 
     private void showMenuDialog1(int position, MotionEvent motionEvent) {
-        StartupMenuActivity.mStartMenuDialog.setPosition(position);
+        mStartupMenuActivity.mStartMenuDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartMenuDialog startMenuDialog = new StartMenuDialog(mContext, R.style.dialog);

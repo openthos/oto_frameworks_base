@@ -34,12 +34,14 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
     private StartupMenuSqliteOpenHelper mMsoh;
     private int mStartMenuCommonlWidth;
     private int mStartMenuCommonlHeight;
+    private StartupMenuActivity mStartupMenuActivity;
 
     public StartupMenuUsuallyAdapter(Context context, List<AppInfo> apps) {
         mInfater = (LayoutInflater) context
                                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistViewAppInfo = apps;
         mContext = context;
+        mStartupMenuActivity = (StartupMenuActivity) context;
         mStartMenuCommonlWidth = mContext.getResources()
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
         mStartMenuCommonlHeight = mContext.getResources()
@@ -83,12 +85,12 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
             @Override
             public boolean onGenericMotion(View view, MotionEvent motionEvent) {
                 int what = motionEvent.getButtonState();
-                StartupMenuActivity.setFocus(true);
+                mStartupMenuActivity.setFocus(true);
                 switch (what) {
                     case MotionEvent.BUTTON_PRIMARY:
-                        String pkgName = StartupMenuActivity.mlistViewAppInfo
+                        String pkgName = mStartupMenuActivity.mlistViewAppInfo
                                                             .get(position).getPkgName();
-                        Intent intent = StartupMenuActivity.mlistViewAppInfo
+                        Intent intent = mStartupMenuActivity.mlistViewAppInfo
                                                             .get(position).getIntent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
@@ -118,7 +120,7 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                         showMenuDialog(position, motionEvent);
                         break;
                     default:
-                        StartupMenuActivity.setFocus(false);
+                        mStartupMenuActivity.setFocus(false);
                         break;
                 }
                 return false;
@@ -144,10 +146,10 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
     };
 
     private void showMenuDialog(int position, MotionEvent motionEvent) {
-        StartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
+        mStartupMenuActivity.mStartMenuUsuallyDialog.setPosition(position);
         int[] location = new int[2];
         //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
-        StartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
+        mStartupMenuActivity.mStartMenuUsuallyDialog.showDialog(
                 (int) motionEvent.getRawX() - location[0],
                 (int) motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER,
                 mStartMenuCommonlWidth, mStartMenuCommonlHeight);

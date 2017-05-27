@@ -98,21 +98,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     public static final int EDITTEXT_LENGTH_MAX = 10;
     public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
 
-    public static StartMenuDialog mStartMenuDialog;
-    public static StartMenuUsuallyDialog mStartMenuUsuallyDialog;
-    public static ArrayList<AppInfo> mlistAppInfo = null;
-    public static StartupMenuActivity StartupMenuActivity;
-    public static ArrayList<AppInfo> mlistViewAppInfo = null;
-    public static StartupMenuUsuallyAdapter mUsuallyAdapter;
-    private static boolean mFocus;
-    public static List<AppInfo> mListViewEight;
+    public StartMenuDialog mStartMenuDialog;
+    public StartMenuUsuallyDialog mStartMenuUsuallyDialog;
+    public ArrayList<AppInfo> mListAppInfo = null;
+    public StartupMenuActivity StartupMenuActivity;
+    public ArrayList<AppInfo> mlistViewAppInfo = null;
+    public StartupMenuUsuallyAdapter mUsuallyAdapter;
+    private boolean mFocus;
+    public List<AppInfo> mListViewEight;
 
-    private Map<Integer, Boolean> isCheckedMap = null;
+    private Map<Integer, Boolean> mIsCheckedMap = null;
     private Context mContext = this;
     private PopupWindow mPopupWindow;
     private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
     private StartupMenuSqliteOpenHelper mMsoh;
-    private SQLiteDatabase mdb;
+    private SQLiteDatabase mDb;
     BaseSettingDialog targetDialog;
 
     //private boolean mListViewOpen = false;
@@ -121,7 +121,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
     private LinearLayout mSelectLayout;
     private LinearLayout mSortClickView;
-    private GridView gv_view;
+    private GridView mGridView;
     private ListView mListView;
     private EditText mEditText;
     private ImageView mIvArrowGray;
@@ -141,6 +141,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     private int mOrder;
     private boolean mIsClick;
     private int mStrCount;
+    private ImageView mSearch;
+    private LinearLayout mArrowWhite;
+    private LinearLayout mLayout;
+    private TextView mFileManager;
+    private TextView mPowerOff;
+    private TextView mSystemSetting;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -158,44 +164,39 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
         setContentView(R.layout.start_activity);
 
-        mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
-                "StartupMenu_database.db", null, 1);
-        mdb = mMsoh.getWritableDatabase();
-        mSharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
+        initView();
 
-        StartupMenuActivity.this.setFinishOnTouchOutside(true);
-        mlistAppInfo = new ArrayList<AppInfo>();
-        isCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-        mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
-        mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
-        //gv_view.setOnItemClickListener(this);
+        initData();
 
-        gv_view = (GridView) findViewById(R.id.gv_view);
+        initListener();
+    }
+
+    private void initView() {
+        mGridView = (GridView) findViewById(R.id.gv_view);
         mListView = (ListView) findViewById(R.id.lv_usually_view);
         mSortClickView = (LinearLayout) findViewById(R.id.sort_click_view);
-        ImageView imView = (ImageView) findViewById(R.id.iv_view_search);
+        mSearch = (ImageView) findViewById(R.id.iv_view_search);
         mIvArrowGray = (ImageView) findViewById(R.id.iv_arrow_gray);
         mTvSortShow = (TextView) findViewById(R.id.tv_sort_show);
         mEditText = (EditText) findViewById(R.id.et_text);
-        LinearLayout lvArrowWhite = (LinearLayout) findViewById(R.id.iv_arrow_white);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.ll_layout);
-        View openthosFileManager = (TextView) findViewById(R.id.openthos_file_manager);
-        TextView powerOff = (TextView) findViewById(R.id.power_off);
-        TextView systemSetting = (TextView) findViewById(R.id.system_setting);
+        mArrowWhite = (LinearLayout) findViewById(R.id.iv_arrow_white);
+        mLayout = (LinearLayout) findViewById(R.id.ll_layout);
+        mFileManager = (TextView) findViewById(R.id.openthos_file_manager);
+        mPowerOff = (TextView) findViewById(R.id.power_off);
+        mSystemSetting = (TextView) findViewById(R.id.system_setting);
+    }
 
-        openthosFileManager.setOnHoverListener(hoverListener);
-        systemSetting.setOnHoverListener(hoverListener);
-        powerOff.setOnHoverListener(hoverListener);
-        ll.setOnHoverListener(this);
+    private void initData() {
+        mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
+                "StartupMenu_database.db", null, 1);
+        mDb = mMsoh.getWritableDatabase();
+        mSharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
 
-        systemSetting.setOnClickListener(this);
-        openthosFileManager.setOnClickListener(this);
-        lvArrowWhite.setOnClickListener(this);
-        mTvSortShow.setOnClickListener(this);
-        imView.setOnClickListener(this);
-        mEditText.setOnEditorActionListener(this);
-        mEditText.addTextChangedListener(watcher);
+        mListAppInfo = new ArrayList<AppInfo>();
+        mIsCheckedMap = new HashMap<Integer, Boolean>();
+        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+        mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
+        mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
 
         initSelectLayout();
         mTvSortShow.setText("");
@@ -214,14 +215,31 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     queryCommonAppInfo();
                 } else if (msg.what == 2) {
                     mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                            mlistAppInfo, isCheckedMap);
-                    gv_view.setAdapter(mBrowseAppAdapter);
+                            mListAppInfo, mIsCheckedMap);
+                    mGridView.setAdapter(mBrowseAppAdapter);
                 }
             }
         };
         new mThread().start();
         mFocus = false;
         showStatusBar();
+    }
+
+    public void initListener() {
+        StartupMenuActivity.this.setFinishOnTouchOutside(true);
+
+        mFileManager.setOnHoverListener(hoverListener);
+        mSystemSetting.setOnHoverListener(hoverListener);
+        mPowerOff.setOnHoverListener(hoverListener);
+        mLayout.setOnHoverListener(this);
+
+        mSystemSetting.setOnClickListener(this);
+        mFileManager.setOnClickListener(this);
+        mArrowWhite.setOnClickListener(this);
+        mTvSortShow.setOnClickListener(this);
+        mSearch.setOnClickListener(this);
+        mEditText.setOnEditorActionListener(this);
+        mEditText.addTextChangedListener(watcher);
     }
 
     class mThread extends Thread {
@@ -334,8 +352,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         } else {
             queryAppInfo();
             mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                    mlistAppInfo, isCheckedMap);
-            gv_view.setAdapter(mBrowseAppAdapter);
+                    mListAppInfo, mIsCheckedMap);
+            mGridView.setAdapter(mBrowseAppAdapter);
         }
     }
 
@@ -344,16 +362,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         if ((actionId == EditorInfo.IME_ACTION_SEND)
                 || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
             mEtext = mEditText.getText().toString().trim();
-            mlistAppInfo.clear();
+            mListAppInfo.clear();
             mBrowseAppAdapter.notifyDataSetChanged();
-            mlistAppInfo = new ArrayList<AppInfo>();
+            mListAppInfo = new ArrayList<AppInfo>();
             querySqlAppinfo();
             querySort();
-            isCheckedMap = new HashMap<Integer, Boolean>();
-            mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
+            mIsCheckedMap = new HashMap<Integer, Boolean>();
+            mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
             //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-            //                                            mlistAppInfo);
-            gv_view.setAdapter(mBrowseAppAdapter);
+            //                                            mListAppInfo);
+            mGridView.setAdapter(mBrowseAppAdapter);
             return true;
         }
         return false;
@@ -382,17 +400,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         @Override
         public void afterTextChanged(Editable s) {
             mEtext = mEditText.getText().toString().trim();
-            mlistAppInfo.clear();
+            mListAppInfo.clear();
             mBrowseAppAdapter.notifyDataSetChanged();
-            mlistAppInfo = new ArrayList<AppInfo>();
+            mListAppInfo = new ArrayList<AppInfo>();
             querySqlAppinfo();
             querySort();
             //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-            //                                           mlistAppInfo);
-            isCheckedMap = new HashMap<Integer, Boolean>();
+            //                                           mListAppInfo);
+            mIsCheckedMap = new HashMap<Integer, Boolean>();
             mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                    mlistAppInfo, isCheckedMap);
-            gv_view.setAdapter(mBrowseAppAdapter);
+                    mListAppInfo, mIsCheckedMap);
+            mGridView.setAdapter(mBrowseAppAdapter);
             if (mStrCount > EDITTEXT_LENGTH_MAX) {
                 CharSequence subSequence = null;
                 for (int i = 0; i < s.length(); i++) {
@@ -417,8 +435,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         switch (v.getId()) {
             case R.id.openthos_file_manager:
                 /* start FileManager */
-                for (int i = 0; i < mlistAppInfo.size(); i++) {
-                    AppInfo appInfo = mlistAppInfo.get(i);
+                for (int i = 0; i < mListAppInfo.size(); i++) {
+                    AppInfo appInfo = mListAppInfo.get(i);
                     PackageManager pm = this.getPackageManager();
                     String packName = appInfo.getPkgName();
                     if (packName.compareTo(ApplicationInfo.APPNAME_OTO_FILEMANAGER) == 0) {
@@ -439,16 +457,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 break;
             case R.id.iv_view_search:
                 mEtext = mEditText.getText().toString().trim();
-                mlistAppInfo.clear();
+                mListAppInfo.clear();
                 mBrowseAppAdapter.notifyDataSetChanged();
-                mlistAppInfo = new ArrayList<AppInfo>();
+                mListAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
                 querySort();
                 //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                //                                           mlistAppInfo);
-                isCheckedMap = new HashMap<Integer, Boolean>();
-                mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-                gv_view.setAdapter(mBrowseAppAdapter);
+                //                                           mListAppInfo);
+                mIsCheckedMap = new HashMap<Integer, Boolean>();
+                mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+                mGridView.setAdapter(mBrowseAppAdapter);
                 break;
             case R.id.tv_sort_show:
                 //sortShow();
@@ -539,19 +557,19 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         for (ResolveInfo china : listChina) {
             resolveInfos.add(china);
         }
-        mlistAppInfo.clear();
+        mListAppInfo.clear();
         for (ResolveInfo reInfo : resolveInfos) {
             appData(pm, reInfo);
         }
         if (!TextUtils.isEmpty(mEtext)) {
             List<AppInfo> list = new ArrayList<>();
-            for (AppInfo app : mlistAppInfo) {
+            for (AppInfo app : mListAppInfo) {
                 if (app.getAppLabel().toLowerCase().indexOf(mEtext.toLowerCase()) != -1) {
                     list.add(app);
                 }
             }
-            mlistAppInfo.clear();
-            mlistAppInfo.addAll(list);
+            mListAppInfo.clear();
+            mListAppInfo.addAll(list);
         }
 
     }
@@ -562,13 +580,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     public void queryCommonAppInfo() {
         // if (mListViewOpen) {
         mlistViewAppInfo = new ArrayList<AppInfo>();
-        Cursor cs = mdb.rawQuery("select distinct * from " + TableIndexDefine.
+        Cursor cs = mDb.rawQuery("select distinct * from " + TableIndexDefine.
                 TABLE_APP_PERPO, new String[]{});
         int perpoPkgName = cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_PKGNAME);
         while (cs.moveToNext()) {
             String pkgName = cs.getString(perpoPkgName);
             String label = "Application";
-            for (AppInfo info : mlistAppInfo) {
+            for (AppInfo info : mListAppInfo) {
                 if (info.getPkgName().equals(pkgName)) {
                     label = info.getAppLabel();
                 }
@@ -626,7 +644,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         edit.putInt("order", 1);
         edit.commit();
         if (mNameSortStatus == -1 && mOnlyNameSort) {
-            Collections.reverse(mlistAppInfo);
+            Collections.reverse(mListAppInfo);
             mOnlyNameSort = false;
             mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
             edit.putString("type", mNameSort.getText().toString());
@@ -634,16 +652,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             edit.commit();
         }
 
-        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
-        isCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-        gv_view.setAdapter(mBrowseAppAdapter);
+        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mListAppInfo);
+        mIsCheckedMap = new HashMap<Integer, Boolean>();
+        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+        mGridView.setAdapter(mBrowseAppAdapter);
     }
 
     private void timeSort() {
-        mlistAppInfo.clear();
+        mListAppInfo.clear();
         mBrowseAppAdapter.notifyDataSetChanged();
-        mlistAppInfo = new ArrayList<AppInfo>();
+        mListAppInfo = new ArrayList<AppInfo>();
         queryAppInfo();
         SharedPreferences.Editor edit = mSharedPreference.edit();
         edit.putString("type", mTimeSort.getText().toString());
@@ -651,18 +669,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         edit.commit();
 
         timeAlgorithm();
-        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mlistAppInfo);
-        isCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-        gv_view.setAdapter(mBrowseAppAdapter);
+        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mListAppInfo);
+        mIsCheckedMap = new HashMap<Integer, Boolean>();
+        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+        mGridView.setAdapter(mBrowseAppAdapter);
     }
 
     private void clickSort() {
-        mlistAppInfo.clear();
+        mListAppInfo.clear();
         mBrowseAppAdapter.notifyDataSetChanged();
-        mlistAppInfo = new ArrayList<AppInfo>();
+        mListAppInfo = new ArrayList<AppInfo>();
         querySqlAppinfo();
-        Collections.sort(mlistAppInfo, new Comparator<AppInfo>() {
+        Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
             public int compare(AppInfo lhs, AppInfo rhs) {
                 Double rScore = (double) rhs.getNumber();
                 Double iScore = (double) lhs.getNumber();
@@ -674,17 +692,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         editor.putInt("order", 1);
         editor.commit();
         if (mClickSortStatus == -1) {
-            Collections.reverse(mlistAppInfo);
+            Collections.reverse(mListAppInfo);
             mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
             SharedPreferences.Editor edit = mSharedPreference.edit();
             edit.putString("type", mClickSort.getText().toString());
             edit.putInt("order", -1);
             edit.commit();
         }
-        //mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
-        isCheckedMap = new HashMap<Integer, Boolean>();
-        mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-        gv_view.setAdapter(mBroAdapter);
+        //mBroAdapter = new StartupMenuAdapter(this, mListAppInfo);
+        mIsCheckedMap = new HashMap<Integer, Boolean>();
+        mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+        mGridView.setAdapter(mBroAdapter);
     }
 
     private void querySqlAppinfo() {
@@ -693,7 +711,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
         Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pm));
-        mlistAppInfo.clear();
+        mListAppInfo.clear();
         for (ResolveInfo reInfo : resolveInfos) {
             File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
             Date systemDate = new Date(file.lastModified());
@@ -703,7 +721,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             Drawable icon = reInfo.loadIcon(pm);
             Intent launchIntent = new Intent();
             launchIntent.setComponent(new ComponentName(pkgName, activityName));
-            Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO
+            Cursor cursor = mDb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO
                             + " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + "  = ?",
                     new String[]{pkgName});
             cursor.moveToNext();
@@ -720,7 +738,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     appInfo.setAppIcon(icon);
                     appInfo.setNumber(numbers);
                     appInfo.setIntent(intent);
-                    mlistAppInfo.add(appInfo);
+                    mListAppInfo.add(appInfo);
                 }
             }
             cursor.close();
@@ -730,7 +748,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     private void querySort() {
         String tvSortShow = mTvSortShow.getText().toString();
         if (tvSortShow.equals(mClickSort.getText().toString())) {
-            Collections.sort(mlistAppInfo, new Comparator<AppInfo>() {
+            Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
                 public int compare(AppInfo lhs, AppInfo rhs) {
                     Double rScore = (double) rhs.getNumber();
                     Double iScore = (double) lhs.getNumber();
@@ -738,10 +756,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             });
             if (mClickSortStatus == -1) {
-                Collections.reverse(mlistAppInfo);
+                Collections.reverse(mListAppInfo);
             }
         } else if (tvSortShow.equals(mTimeSort.getText().toString())) {
-            Collections.sort(mlistAppInfo, new Comparator<Object>() {
+            Collections.sort(mListAppInfo, new Comparator<Object>() {
                 public int compare(Object lhs, Object rhs) {
                     AppInfo p1 = (AppInfo) lhs;
                     AppInfo p2 = (AppInfo) rhs;
@@ -749,18 +767,18 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             });
             if (mTimeSortStatus == -1) {
-                Collections.reverse(mlistAppInfo);
+                Collections.reverse(mListAppInfo);
             }
         } else {
             queryAppInfo();
             if (mNameSortStatus == -1) {
-                Collections.reverse(mlistAppInfo);
+                Collections.reverse(mListAppInfo);
             }
         }
     }
 
     private void timeAlgorithm() {
-        Collections.sort(mlistAppInfo, new Comparator<Object>() {
+        Collections.sort(mListAppInfo, new Comparator<Object>() {
             public int compare(Object lhs, Object rhs) {
                 AppInfo p1 = (AppInfo) lhs;
                 AppInfo p2 = (AppInfo) rhs;
@@ -768,7 +786,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             }
         });
         if (mTimeSortStatus == -1) {
-            Collections.reverse(mlistAppInfo);
+            Collections.reverse(mListAppInfo);
             mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
             SharedPreferences.Editor editor = mSharedPreference.edit();
             editor.putString("type", mTimeSort.getText().toString());
@@ -793,7 +811,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         appInfo.setDate(systemDate);
         appInfo.setAppIcon(icon);
         appInfo.setIntent(launchIntent);
-        mlistAppInfo.add(appInfo);
+        mListAppInfo.add(appInfo);
     }
 
     private boolean isSystemApp(ApplicationInfo applicationInfo) {
@@ -828,7 +846,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("gridview", mlistAppInfo);
+        outState.putParcelableArrayList("gridview", mListAppInfo);
         outState.putParcelableArrayList("listview", mlistViewAppInfo);
         super.onSaveInstanceState(outState);
     }
@@ -843,7 +861,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         super.onWindowFocusChanged(hasFocus);
     }
 
-    public static void setFocus(boolean hFocus) {
+    public void setFocus(boolean hFocus) {
         mFocus = hFocus;
     }
 
@@ -919,8 +937,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
         Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pm));
-        if (mlistAppInfo != null) {
-            mlistAppInfo.clear();
+        if (mListAppInfo != null) {
+            mListAppInfo.clear();
             for (ResolveInfo reInfo : resolveInfos) {
                 ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
                 if (a == FILTER_ALL_APP) {
@@ -935,10 +953,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             }
         }
-        //mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo);
-        isCheckedMap = new HashMap<Integer, Boolean>();
-        mBroAdapter = new StartupMenuAdapter(this, mlistAppInfo, isCheckedMap);
-        gv_view.setAdapter(mBroAdapter);
+        //mBroAdapter = new StartupMenuAdapter(this, mListAppInfo);
+        mIsCheckedMap = new HashMap<Integer, Boolean>();
+        mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
+        mGridView.setAdapter(mBroAdapter);
     }
 
     public void initStartupMenuData(Context context) {
@@ -956,7 +974,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             String pkgName = reInfo.activityInfo.packageName;
             String appLabel = (String) reInfo.loadLabel(pkgManager);
             //Drawable icon = reInfo.loadIcon(pkgManager);
-            Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
+            Cursor cursor = mDb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                             " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                     new String[]{pkgName});
             insertData(cursor, pkgName, appLabel, systemDate, clickNumber);
@@ -967,7 +985,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     /**
      * Insert data /pkgName/label/date/num into
      * StartupMenu_database.db {@link StartupMenuSqliteOpenHelper}
-     * could Reusing in {@link StartupMenuInstallReceiver}
      */
     public void insertData(Cursor cursor, String pkgName, String appLabel,
                            Date systemDate, int clickNumber) {
@@ -983,7 +1000,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
              * it is not shown in the usual list.
              */
             if (!pkgName.equals(FACTORY_TEST_PKGNAME)) {
-                mdb.execSQL("insert into " +
+                mDb.execSQL("insert into " +
                                 TableIndexDefine.TABLE_APP_PERPO + "(" +
                                 TableIndexDefine.COLUMN_PERPO_LABEL + "," +
                                 TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
@@ -998,8 +1015,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mdb != null) {
-            mdb.close();
+        if (mDb != null) {
+            mDb.close();
         }
     }
 

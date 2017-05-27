@@ -48,4 +48,5 @@
     <string name="lockedapptext">固定到任务栏</string>
     <string name="unlockedapptext">解除固定</string>
     <string name="software_search" msgid="1103867596330271848">"软件搜索"</string>
+    <string name="remove_application">移除应用：</string>
 </resources>

@@ -63,6 +63,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     public StartMenuDialog(Context context, int themeResId) {
         super(context, themeResId);
         mContext = context;
+        mStartupMenuActivity = (StartupMenuActivity) context;
     }
 
     public void setPosition(int pos) {
@@ -157,8 +158,8 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         switch (view.getId()) {
             case R.id.tv_right_open:
                 Intent intent;
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
-                intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+                mPkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
+                intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 StartupMenuAdapter.openAppBroadcast(mContext);
@@ -202,7 +203,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
                 dialogDismiss();
                 break;
             case R.id.tv_right_fixed_taskbar:
-                //String pkgInfo = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                //String pkgInfo = StartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
                 if (mflagChange) {
                     Intent intentSend = new Intent();
                     intentSend.putExtra("keyInfo", mStrTextView);
@@ -221,7 +222,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
                 dialogDismiss();
                 break;
             case R.id.tv_right_uninstall:
-                mPkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+                mPkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
                 Uri uri = Uri.parse("package:" + mPkgName);
                 Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
                 intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -249,7 +250,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
 
     //Method of run phone mode
     private void runPhoneMode() {
-        Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        Intent intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
                             | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -258,7 +259,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
 
     //Method of run pc mode
     private void runPcMode() {
-        Intent intent = StartupMenuActivity.mlistAppInfo.get(mPosition).getIntent();
+        Intent intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
         intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PC_MODE
                             | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -267,7 +268,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
 
     //Method of save used numbers
     private void addUsedNum() {
-        String pkgName = StartupMenuActivity.mlistAppInfo.get(mPosition).getPkgName();
+        String pkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
         StartupMenuUtil.updateDataStorage(mContext, pkgName);
         /*
         Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
@@ -321,7 +322,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
 
     private void dialogDismiss() {
         dismiss();
-        StartupMenuActivity.setFocus(false);
+        mStartupMenuActivity.setFocus(false);
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {

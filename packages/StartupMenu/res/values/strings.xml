@@ -43,5 +43,6 @@
     <string name="my_mobile_phone_mode_run">Phone Mode</string>
     <string name="lockedapptext">locked app</string>
     <string name="unlockedapptext">unlocked app</string>
+    <string name="remove_application">Remove application</string>
 
 </resources>

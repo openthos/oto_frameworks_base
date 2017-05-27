@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.android.startupmenu.StartupMenuActivity;
 import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
-import com.android.startupmenu.StartupMenuActivity;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
