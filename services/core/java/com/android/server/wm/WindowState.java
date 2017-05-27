@@ -611,7 +611,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             y = mAttrs.y;
         }
 
-        if (this.toString().contains("PopupWindow")) {
+        if (!mIsImWindow && this.toString().contains("PopupWindow")) { // ignore input method
             if (("com.kingsoft.email".equals(mAttrs.packageName) && x != 0.0) // login popup
                     || ("com.tencent.mobileqq".equals(mAttrs.packageName)
                         && mAttrs.toString().contains("wrap"))) {
