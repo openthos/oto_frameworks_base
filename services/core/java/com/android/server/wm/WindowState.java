@@ -630,12 +630,19 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                     x = mContainingFrame.right - mService.getCurrentPointerX() - w
                         + 2 * stack.getMultiWindow().getFramePadding();
                 }
-                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
-                        (int) (x + mAttrs.horizontalMargin * pw),
-                        (int) (y + mAttrs.verticalMargin * ph), mFrame,
-                        stack.getMultiWindow().getFramePadding(),
-                        stack.getMultiWindow().getTopFramePadding()
-                            + stack.getMultiWindow().getHeaderHeight());
+                if (stack.getMultiWindow() != null) {
+                    Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                            (int) (x + mAttrs.horizontalMargin * pw),
+                            (int) (y + mAttrs.verticalMargin * ph), mFrame,
+                            stack.getMultiWindow().getFramePadding(),
+                            stack.getMultiWindow().getTopFramePadding()
+                                + stack.getMultiWindow().getHeaderHeight());
+
+                } else {
+                    Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                            (int) (x + mAttrs.horizontalMargin * pw),
+                            (int) (y + mAttrs.verticalMargin * ph), mFrame, 0, 0);
+                }
             }
         } else {
             Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
