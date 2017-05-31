@@ -62,7 +62,6 @@ public class ActivityKeyView extends ImageView {
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
     View mFocusedView;
     View mRunningView;
-    PhoneStatusBar mPhoneBar;
 
     private static final String TAG = "ActivityKeyView";
     private static Dialog mDialog = null;   /* Define a Singleton dialog as tools. */
@@ -461,7 +460,6 @@ public class ActivityKeyView extends ImageView {
         int action = e.getAction();
 
         if(button == MotionEvent.BUTTON_SECONDARY && action == MotionEvent.ACTION_DOWN) {
-            mPhoneBar.dismissDialog();
             dismissDialog();
             mShowRBM = true;
             showDialog(getRbmView(), mChangeDimension);
@@ -520,10 +518,6 @@ public class ActivityKeyView extends ImageView {
             }
             return false;
         }
-    }
-
-    public void setPhoneStatusBar(PhoneStatusBar bar) {
-        mPhoneBar = bar;
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
