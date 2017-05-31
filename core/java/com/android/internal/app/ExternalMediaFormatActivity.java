@@ -107,14 +107,16 @@ public class ExternalMediaFormatActivity extends AlertActivity implements Dialog
                 StorageVolume[] vols = getMountService().getVolumeList();
                 for (StorageVolume i : vols) {
                     if (mStorageManager.getVolumeState(i.getPath())
-                            .equals((Environment.MEDIA_NOFS))) {
+                            .equals(Environment.MEDIA_NOFS)
+                            || mStorageManager.getVolumeState(i.getPath())
+                            .equals(Environment.MEDIA_UNMOUNTABLE)) {
                         intent.putExtra(StorageVolume.EXTRA_STORAGE_VOLUME, i);
+                        startService(intent);
                         break;
                     }
                 }
             } catch (RemoteException e) {
             }
-            startService(intent);
         }
         // No matter what, finish the activity
         finish();
