@@ -98,6 +98,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     public static final int EDITTEXT_LENGTH_MAX = 10;
     public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
 
+    public static final int COMMON_APP_SHOW = 0;
+    public static final int QUERY_APP   = 1;
+    public static final int ALL_APP_SHOW = 2;
+
     public StartMenuDialog mStartMenuDialog;
     public StartMenuUsuallyDialog mStartMenuUsuallyDialog;
     public ArrayList<AppInfo> mListAppInfo = null;
@@ -206,14 +210,15 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if (msg.what == 0) {
+                if (msg.what == COMMON_APP_SHOW) {
                     mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
                             mListViewEight);
                     mListView.setAdapter(mUsuallyAdapter);
-                } else if (msg.what == 1) {
+                } else if (msg.what == QUERY_APP) {
                     selectAppShow();
                     queryCommonAppInfo();
-                } else if (msg.what == 2) {
+                } else if (msg.what == ALL_APP_SHOW) {
+                    selectAppShow();
                     mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                             mListAppInfo, mIsCheckedMap);
                     mGridView.setAdapter(mBrowseAppAdapter);
@@ -249,13 +254,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mOrder = mSharedPreference.getInt("order", 0);
             if (mIsClick) {
                 Message m = new Message();
-                m.what = 1;
+                m.what = QUERY_APP;
                 mHandler.sendMessage(m);
                 //mListViewOpen = true;
             } else {
                 queryAppInfo();
                 Message msg = new Message();
-                msg.what = 2;
+                msg.what = ALL_APP_SHOW;
                 mHandler.sendMessage(msg);
             }
         }
@@ -632,7 +637,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mListViewEight.add(appInfo);
         }
         Message m = new Message();
-        m.what = 0;
+        m.what = COMMON_APP_SHOW;
         mHandler.sendMessage(m);
         // }
     }
