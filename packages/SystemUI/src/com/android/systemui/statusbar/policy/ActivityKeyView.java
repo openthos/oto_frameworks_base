@@ -60,6 +60,7 @@ public class ActivityKeyView extends ImageView {
     OnTouchListener mPcMode;
 
     StatusbarActivity mActivity;    /* Related StatusbarActivity. */
+    PhoneStatusBar mPhoneBar;
     View mFocusedView;
     View mRunningView;
 
@@ -325,6 +326,10 @@ public class ActivityKeyView extends ImageView {
         mDialog.dismiss();
     }
 
+    public void setPhoneStatusBar(PhoneStatusBar phoneBar) {
+        mPhoneBar = phoneBar;
+    }
+
     public static boolean preventResponseHover() {
         return mShowRBM && mDialog.isShowing();
     }
@@ -460,6 +465,7 @@ public class ActivityKeyView extends ImageView {
         int action = e.getAction();
 
         if(button == MotionEvent.BUTTON_SECONDARY && action == MotionEvent.ACTION_DOWN) {
+            mPhoneBar.dismissDialog();
             dismissDialog();
             mShowRBM = true;
             showDialog(getRbmView(), mChangeDimension);
