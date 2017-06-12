@@ -46,7 +46,8 @@ public class StartupMenuUsuallyAdapter extends BaseAdapter {
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
         mStartMenuCommonlHeight = mContext.getResources()
                                   .getDimensionPixelSize(R.dimen.start_menu_commonl_height);
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(
+                mContext, "StartupMenu_database.db", null, StartupMenuActivity.SQL_VERSION_CODE);
         mdb = mMsoh.getWritableDatabase();
     }
 

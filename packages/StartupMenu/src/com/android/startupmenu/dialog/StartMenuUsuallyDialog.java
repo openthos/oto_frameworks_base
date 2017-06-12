@@ -68,7 +68,8 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_usually_menu);
 
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
+        mMsoh = new StartupMenuSqliteOpenHelper(
+                mContext, "StartupMenu_database.db", null, StartupMenuActivity.SQL_VERSION_CODE);
         mdb = mMsoh.getWritableDatabase();
         mRightUsuallyOpen = (TextView) findViewById(R.id.tv_right_usually_open);
         TextView rightPhoneUsuallyRun = (TextView) findViewById(R.id.tv_right_phone_usually_run);
@@ -135,12 +136,9 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                                 " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                         new String[]{mPkgName});
                 c.moveToNext();
-                //int numbers = c.getInt(c.getColumnIndex("int"));
-                //numbers++;
                 int number = c.getInt(c.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
                 number++;
                 ContentValues values = new ContentValues();
-                //values.put("int", numbers);
                 values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
                 mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
                         TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?", new String[]{mPkgName});
@@ -169,9 +167,7 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                                 " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                         new String[]{mPkgName});
                 cursor.moveToNext();
-                int numClick = cursor.getInt(cursor.getColumnIndex(
-                        TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
-                numClick = 0;
+                int numClick = 0;
                 ContentValues value = new ContentValues();
                 value.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, numClick);
                 mdb.update(TableIndexDefine.TABLE_APP_PERPO, value,
@@ -189,12 +185,9 @@ public class StartMenuUsuallyDialog extends Dialog implements OnClickListener {
                                      " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                                                  new String[]{pkgName});
         cursor.moveToNext();
-        //int numbers = cursor.getInt(cursor.getColumnIndex("int"));
-        //numbers++;
         int number = cursor.getInt(cursor.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
         number++;
         ContentValues values = new ContentValues();
-        //values.put("int", numbers);
         values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, number);
         mdb.update(TableIndexDefine.TABLE_APP_PERPO, values,
                                     TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",

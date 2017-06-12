@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,13 +97,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
 
     public static final int COMMON_APP_SHOW = 0;
-    public static final int QUERY_APP   = 1;
+    public static final int QUERY_APP = 1;
     public static final int ALL_APP_SHOW = 2;
+
+    public static final int SQL_VERSION_CODE = 2;
 
     public StartMenuDialog mStartMenuDialog;
     public StartMenuUsuallyDialog mStartMenuUsuallyDialog;
     public ArrayList<AppInfo> mListAppInfo = null;
-    public StartupMenuActivity StartupMenuActivity;
     public ArrayList<AppInfo> mlistViewAppInfo = null;
     public StartupMenuUsuallyAdapter mUsuallyAdapter;
     private boolean mFocus;
@@ -119,8 +118,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     private SQLiteDatabase mDb;
     BaseSettingDialog targetDialog;
 
-    //private boolean mListViewOpen = false;
-    private boolean mIsHasReayDb;
     private boolean mOnlyNameSort = false;
 
     private LinearLayout mSelectLayout;
@@ -192,7 +189,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
     private void initData() {
         mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
-                "StartupMenu_database.db", null, 1);
+                "StartupMenu_database.db", null, SQL_VERSION_CODE);
         mDb = mMsoh.getWritableDatabase();
         mSharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
 
@@ -256,7 +253,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Message m = new Message();
                 m.what = QUERY_APP;
                 mHandler.sendMessage(m);
-                //mListViewOpen = true;
             } else {
                 queryAppInfo();
                 Message msg = new Message();
@@ -269,18 +265,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     @Override
     public boolean onHover(View view, MotionEvent motionEvent) {
         int what = motionEvent.getAction();
-        //int isSql = mSharedPreference.getInt("isSql", 0);
         switch (what) {
             case MotionEvent.ACTION_HOVER_ENTER:
                 if (!mIsClick) {
-                        /*if (isSql == 0) {
-                           Intent intent = new Intent();
-                           intent.setAction(Intent.ACTION_STARTMENU_SEND_SQLITE_INFO);
-                           sendBroadcast(intent);
-                           SharedPreferences.Editor edit = mSharedPreference.edit();
-                           edit.putInt("isSql", 1);
-                           edit.commit();
-                        }*/
                     initStartupMenuData(mContext);
                 }
                 break;
@@ -374,8 +361,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             querySort();
             mIsCheckedMap = new HashMap<Integer, Boolean>();
             mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-            //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-            //                                            mListAppInfo);
             mGridView.setAdapter(mBrowseAppAdapter);
             return true;
         }
@@ -410,8 +395,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mListAppInfo = new ArrayList<AppInfo>();
             querySqlAppinfo();
             querySort();
-            //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-            //                                           mListAppInfo);
             mIsCheckedMap = new HashMap<Integer, Boolean>();
             mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
                     mListAppInfo, mIsCheckedMap);
@@ -431,7 +414,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
                 mEditText.setText(subSequence.toString());
             }
-
         }
     };
 
@@ -467,14 +449,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 mListAppInfo = new ArrayList<AppInfo>();
                 querySqlAppinfo();
                 querySort();
-                //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                //                                           mListAppInfo);
                 mIsCheckedMap = new HashMap<Integer, Boolean>();
                 mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
                 mGridView.setAdapter(mBrowseAppAdapter);
                 break;
             case R.id.tv_sort_show:
-                //sortShow();
                 selectShow(v);
                 break;
             case R.id.name_sort:
@@ -576,14 +555,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             mListAppInfo.clear();
             mListAppInfo.addAll(list);
         }
-
     }
 
     /* query sqlDataBase , sort by getNumber.
      * then show in left side listView.
      */
     public void queryCommonAppInfo() {
-        // if (mListViewOpen) {
         mlistViewAppInfo = new ArrayList<AppInfo>();
         Cursor cs = mDb.rawQuery("select distinct * from " + TableIndexDefine.
                 TABLE_APP_PERPO, new String[]{});
@@ -596,13 +573,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     label = info.getAppLabel();
                 }
             }
-            String stringDate = cs.getString(cs.getColumnIndex(TableIndexDefine.
+            long installTime = cs.getLong(cs.getColumnIndex(TableIndexDefine.
                     COLUMN_PERPO_INSTALL_DATE));
             Drawable icon = null;
-            Date date = null;
             try {
                 icon = getPackageManager().getApplicationIcon(pkgName);
-                date = ConverToDate(stringDate);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -612,7 +587,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 AppInfo appInfo = new AppInfo();
                 appInfo.setAppLabel(label);
                 appInfo.setPkgName(pkgName);
-                appInfo.setDate(date);
+                appInfo.setInstallTime(installTime);
                 appInfo.setAppIcon(icon);
                 appInfo.setNumber(number);
                 appInfo.setIntent(intent);
@@ -623,9 +598,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
         Collections.sort(mlistViewAppInfo, new Comparator<AppInfo>() {
             public int compare(AppInfo lhs, AppInfo rhs) {
-                Double rScore = (double) rhs.getNumber();
-                Double iScore = (double) lhs.getNumber();
-                return (rScore.compareTo(iScore));
+                return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
             }
         });
         mListViewEight = new ArrayList<>();
@@ -639,7 +612,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         Message m = new Message();
         m.what = COMMON_APP_SHOW;
         mHandler.sendMessage(m);
-        // }
     }
 
     private void nameSort() {
@@ -657,7 +629,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             edit.commit();
         }
 
-        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mListAppInfo);
         mIsCheckedMap = new HashMap<Integer, Boolean>();
         mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
         mGridView.setAdapter(mBrowseAppAdapter);
@@ -674,7 +645,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         edit.commit();
 
         timeAlgorithm();
-        //mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this, mListAppInfo);
         mIsCheckedMap = new HashMap<Integer, Boolean>();
         mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
         mGridView.setAdapter(mBrowseAppAdapter);
@@ -704,7 +674,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
             edit.putInt("order", -1);
             edit.commit();
         }
-        //mBroAdapter = new StartupMenuAdapter(this, mListAppInfo);
         mIsCheckedMap = new HashMap<Integer, Boolean>();
         mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
         mGridView.setAdapter(mBroAdapter);
@@ -719,7 +688,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mListAppInfo.clear();
         for (ResolveInfo reInfo : resolveInfos) {
             File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-            Date systemDate = new Date(file.lastModified());
+            long installTime = file.lastModified();
             String activityName = reInfo.activityInfo.name;
             String pkgName = reInfo.activityInfo.packageName;
             String appLabel = (String) reInfo.loadLabel(pm);
@@ -739,7 +708,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                     AppInfo appInfo = new AppInfo();
                     appInfo.setAppLabel(appLabel);
                     appInfo.setPkgName(pkgName);
-                    appInfo.setDate(systemDate);
+                    appInfo.setInstallTime(installTime);
                     appInfo.setAppIcon(icon);
                     appInfo.setNumber(numbers);
                     appInfo.setIntent(intent);
@@ -764,11 +733,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 Collections.reverse(mListAppInfo);
             }
         } else if (tvSortShow.equals(mTimeSort.getText().toString())) {
-            Collections.sort(mListAppInfo, new Comparator<Object>() {
-                public int compare(Object lhs, Object rhs) {
-                    AppInfo p1 = (AppInfo) lhs;
-                    AppInfo p2 = (AppInfo) rhs;
-                    return p2.getDate().compareTo(p1.getDate());
+            Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
+                public int compare(AppInfo lhs, AppInfo rhs) {
+                    return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
                 }
             });
             if (mTimeSortStatus == -1) {
@@ -783,11 +750,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     }
 
     private void timeAlgorithm() {
-        Collections.sort(mListAppInfo, new Comparator<Object>() {
-            public int compare(Object lhs, Object rhs) {
-                AppInfo p1 = (AppInfo) lhs;
-                AppInfo p2 = (AppInfo) rhs;
-                return p2.getDate().compareTo(p1.getDate());
+        Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
+            public int compare(AppInfo lhs, AppInfo rhs) {
+                return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
             }
         });
         if (mTimeSortStatus == -1) {
@@ -803,7 +768,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
 
     public void appData(PackageManager pm, ResolveInfo reInfo) {
         File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-        Date systemDate = new Date(file.lastModified());
+        long installTime = file.lastModified();
         String activityName = reInfo.activityInfo.name;
         String pkgName = reInfo.activityInfo.packageName;
         String appLabel = (String) reInfo.loadLabel(pm);
@@ -813,7 +778,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         AppInfo appInfo = new AppInfo();
         appInfo.setAppLabel(appLabel);
         appInfo.setPkgName(pkgName);
-        appInfo.setDate(systemDate);
+        appInfo.setInstallTime(installTime);
         appInfo.setAppIcon(icon);
         appInfo.setIntent(launchIntent);
         mListAppInfo.add(appInfo);
@@ -931,11 +896,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         return str.matches("^[a-zA-Z]*");
     }
 
-    public static Date ConverToDate(String StrDate) throws Exception {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.parse(StrDate);
-    }
-
     private void typeSort(int a) {
         PackageManager pm = this.getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
@@ -958,7 +918,6 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                 }
             }
         }
-        //mBroAdapter = new StartupMenuAdapter(this, mListAppInfo);
         mIsCheckedMap = new HashMap<Integer, Boolean>();
         mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
         mGridView.setAdapter(mBroAdapter);
@@ -973,16 +932,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         int clickNumber = 0;
         for (ResolveInfo reInfo : resolveInfos) {
             File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-            Date systemDate = new Date(file.lastModified());
-            //ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
-            //String activityName = reInfo.activityInfo.name;
+            long installTime = file.lastModified();
             String pkgName = reInfo.activityInfo.packageName;
             String appLabel = (String) reInfo.loadLabel(pkgManager);
-            //Drawable icon = reInfo.loadIcon(pkgManager);
             Cursor cursor = mDb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                             " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
                     new String[]{pkgName});
-            insertData(cursor, pkgName, appLabel, systemDate, clickNumber);
+            insertData(cursor, pkgName, appLabel, installTime, clickNumber);
             cursor.close();
         }
     }
@@ -992,7 +948,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
      * StartupMenu_database.db {@link StartupMenuSqliteOpenHelper}
      */
     public void insertData(Cursor cursor, String pkgName, String appLabel,
-                           Date systemDate, int clickNumber) {
+                           long installTime, int clickNumber) {
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 if (pkgName.equals(cursor.getString(cursor.getColumnIndex(
@@ -1012,7 +968,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
                                 TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
                                 TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
                                 "values (?, ?, ?, ?)",
-                        new Object[]{appLabel, pkgName, systemDate, clickNumber});
+                        new Object[]{appLabel, pkgName, installTime, clickNumber});
             }
         }
     }
@@ -1023,14 +979,5 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         if (mDb != null) {
             mDb.close();
         }
-    }
-
-    // used to test
-    public String refFormatNowDate() {
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss:SSS");
-        String retStrFormatNowDate = sdFormatter.format(date);
-        return retStrFormatNowDate;
     }
 }

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.ContentValues;
 
+import com.android.startupmenu.StartupMenuActivity;
+
 /*
 * Created by Cao Yongren on 15-5-2017
 */
@@ -15,8 +17,8 @@ public class StartupMenuUtil {
     * When run app, need change SqlDataBase and sharedPreference.
     */
     public static void updateDataStorage(Context mContext, String pkgName) {
-        StartupMenuSqliteOpenHelper msoh = new StartupMenuSqliteOpenHelper(mContext,
-                                                 "StartupMenu_database.db", null, 1);
+        StartupMenuSqliteOpenHelper msoh = new StartupMenuSqliteOpenHelper(
+                mContext, "StartupMenu_database.db", null, StartupMenuActivity.SQL_VERSION_CODE);
         SQLiteDatabase mdb = msoh.getWritableDatabase();
         Cursor cursor = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
                                        " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +

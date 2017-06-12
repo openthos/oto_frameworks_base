@@ -18,7 +18,7 @@ public class AppInfo implements Parcelable {
     private Drawable appIcon;
     private Intent intent;
     private String pkgName;
-    private Date date;
+    private long installTime;
     private int number;
 
     private long cachesize;
@@ -115,12 +115,12 @@ public class AppInfo implements Parcelable {
         this.pkgName = pkgName;
     }
 
-    public Date getDate() {
-        return date;
+    public long getInstallTime() {
+        return installTime;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setInstallTime(long installTime) {
+        this.installTime = installTime;
     }
 
     public void setNumber(int number) {

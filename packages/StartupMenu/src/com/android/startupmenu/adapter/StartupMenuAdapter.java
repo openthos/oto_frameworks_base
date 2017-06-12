@@ -15,11 +15,9 @@ import android.view.MotionEvent;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.android.startupmenu.dialog.StartMenuDialog;
 import com.android.startupmenu.StartupMenuActivity;
-import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
 import com.android.startupmenu.util.StartupMenuUtil;
 
 import android.content.pm.ApplicationInfo;
@@ -33,8 +31,6 @@ public class StartupMenuAdapter extends BaseAdapter {
     LayoutInflater infater = null;
     private Context mContext;
     private StartupMenuActivity mStartupMenuActivity;
-    private SQLiteDatabase mdb;
-    private StartupMenuSqliteOpenHelper mMsoh;
     private int mStartMenuAppWidth;
     private int mStartMenuAppHeight;
     public static boolean mIsFullScreen;
@@ -51,8 +47,6 @@ public class StartupMenuAdapter extends BaseAdapter {
                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mlistAppInfo = apps;
         this.isCheckedMap = isCheckedMap;
-        mMsoh = new StartupMenuSqliteOpenHelper(mContext, "StartupMenu_database.db", null, 1);
-        mdb = mMsoh.getWritableDatabase();
         mStartupMenuActivity = getStartupMenuActivity();
     }
 
@@ -100,34 +94,6 @@ public class StartupMenuAdapter extends BaseAdapter {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         openAppBroadcast(mContext);
-                    /*
-                    Cursor c = mdb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
-                                            " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME +
-                                            " = ? ", new String[] { pkgName });
-                    c.moveToNext();
-                    if (c.moveToFirst()) {
-                        int numbers = c.getInt(c.getColumnIndex(
-                                                 TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
-                        numbers++;
-                        //int number = c.getInt(c.getColumnIndex("click"));
-                        //number++;
-                        ContentValues values = new ContentValues();
-                        values.put(TableIndexDefine.COLUMN_PERPO_CLICK_NUM, numbers);
-                        //values.put("click", number);
-                        mdb.update(TableIndexDefine.TABLE_APP_PERPO, values, TableIndexDefine.
-                                   COLUMN_PERPO_PKGNAME + " = ?", new String[] { pkgName });
-                        SharedPreferences sharedPreference = mContext.getSharedPreferences("click",
-                                                                             Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreference.edit();
-                        String type = sharedPreference.getString("type", "sortName");
-                        int order = sharedPreference.getInt("order", 0);
-                        editor.clear();
-                        editor.putBoolean("isClick", true);
-                        editor.putString("type", type);
-                        editor.putInt("order", order);
-                        //editor.putInt("isSql", 1);
-                        editor.commit();
-                    }*/
                         StartupMenuUtil.updateDataStorage(mContext, pkgName);
                         mStartupMenuActivity.killStartupMenu();
                         break;
@@ -177,7 +143,6 @@ public class StartupMenuAdapter extends BaseAdapter {
     private void showMenuDialog1(int position, MotionEvent motionEvent) {
         mStartupMenuActivity.mStartMenuDialog.setPosition(position);
         int[] location = new int[2];
-        //((StartupMenuActivity)infater).mBackBtn.getLocationOnScreen(location);
         StartMenuDialog startMenuDialog = new StartMenuDialog(mContext, R.style.dialog);
         startMenuDialog.showDialog((int) motionEvent.getRawX() - location[0]
                 , (int) motionEvent.getRawY() - location[1] + START_MENU_RIGHT_MOUSE_UI_NUMBER
@@ -187,12 +152,10 @@ public class StartupMenuAdapter extends BaseAdapter {
     class ViewHolder {
         ImageView appIcon;
         TextView tvAppLabel;
-        //TextView tvPkgName;
 
         public ViewHolder(View view) {
             this.appIcon = (ImageView) view.findViewById(R.id.package_image);
             this.tvAppLabel = (TextView) view.findViewById(R.id.package_name);
-            //  this.tvPkgName = (TextView) view.findViewById(R.id.tvPkgName);
         }
     }
 
