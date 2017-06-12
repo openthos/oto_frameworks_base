@@ -8037,7 +8037,10 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
         }
         if (event.getButtonState() == MotionEvent.BUTTON_SECONDARY
             && getContext().getPackageName().equals(ApplicationInfo.APPNAME_TENCENT_QQ)) {
-            if(mEditor != null) mEditor.hideContextMenu(true);
+            if(mEditor != null) {
+                mEditor.hideContextMenu(true);
+                mEditor.setRightClickEvent(event);
+            }
             performLongClick();
             return true;
         }

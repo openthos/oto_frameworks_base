@@ -105,6 +105,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.Drawables;
 import android.widget.TextView.OnEditorActionListener;
+import android.content.pm.ApplicationInfo;
 
 import java.text.BreakIterator;
 import java.util.Arrays;
@@ -895,6 +896,11 @@ public class Editor {
         return handled;
     }
 
+    public void setRightClickEvent(MotionEvent event) {
+        mLastDownPositionX = event.getX();
+        mLastDownPositionY = event.getY();
+    }
+
     private long getLastTouchOffsets() {
         SelectionModifierCursorController selectionController = getSelectionController();
         final int minOffset = selectionController.getMinTouchOffset();
@@ -1641,6 +1647,10 @@ public class Editor {
         if (mSelectionActionMode != null) {
             // This will hide the mSelectionModifierCursorController
             mSelectionActionMode.finish();
+        } else if (getSelectionController() != null
+                && mTextView.getContext().getPackageName()
+                    .equals(ApplicationInfo.APPNAME_TENCENT_QQ)) {
+            getSelectionController().hide();
         }
     }
 
