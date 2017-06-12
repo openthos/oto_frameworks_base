@@ -611,38 +611,54 @@ final class WindowState implements WindowManagerPolicy.WindowState {
             y = mAttrs.y;
         }
 
-        if (!mIsImWindow && this.toString().contains("PopupWindow")) { // ignore input method
-            if (("com.kingsoft.email".equals(mAttrs.packageName) && x != 0.0) // login popup
-                    || ("com.tencent.mobileqq".equals(mAttrs.packageName)
-                        && mAttrs.toString().contains("wrap"))) {
-                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
-                        (int) (x + mAttrs.horizontalMargin * pw),
-                        (int) (y + mAttrs.verticalMargin * ph), mFrame, mDisplayFrame,
-                        stack.getMultiWindow().getFramePadding(),
-                        stack.getMultiWindow().getTopFramePadding()
-                            + stack.getMultiWindow().getHeaderHeight());
-            } else {
-                if ("com.kingsoft.email".equals(mAttrs.packageName) && x == 0.0) { // send/recv box
-                    x = x + stack.getMultiWindow().getFramePadding();
-                    y = y - mContainingFrame.top;
-                } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
-                       && ApplicationInfo.isWeChatIssuePopupWindow(mAttrs.gravity, (int) y)) {
-                    x = mContainingFrame.right - mService.getCurrentPointerX() - w
-                        + 2 * stack.getMultiWindow().getFramePadding();
-                }
-                if (stack.getMultiWindow() != null) {
+        boolean isMultiWindow = stack != null && stack.getMultiWindow() != null;
+        if (isMultiWindow) {
+            if (this.toString().contains("PopupWindow")) {
+                if ((ApplicationInfo.APPNAME_KINGSOFT_EMAIL.equals(mAttrs.packageName) && x != 0.0
+                            && !mAttrs.toString().contains("wrap")) // login popup
+                        || (ApplicationInfo.APPNAME_TENCENT_QQ.equals(mAttrs.packageName)
+                            && mAttrs.toString().contains("wrap"))) {
+                    Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                            (int) (x + mAttrs.horizontalMargin * pw),
+                            (int) (y + mAttrs.verticalMargin * ph), mFrame, mDisplayFrame,
+                            stack.getMultiWindow().getFramePadding(),
+                            stack.getMultiWindow().getTopFramePadding()
+                                + stack.getMultiWindow().getHeaderHeight());
+                } else {
+                    if (ApplicationInfo.APPNAME_KINGSOFT_EMAIL.equals(mAttrs.packageName)
+                            && x == 0.0) { // send/recv box
+                        x = x + stack.getMultiWindow().getFramePadding();
+                        y = y - mContainingFrame.top;
+                    } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
+                           && ApplicationInfo.isWeChatIssuePopupWindow(mAttrs.gravity, (int) y)) {
+                        x = mContainingFrame.right - mService.getCurrentPointerX() - w
+                            + 2 * stack.getMultiWindow().getFramePadding();
+                    } else if (ApplicationInfo.APPNAME_OFFICE_OUTLOOK.equals(mAttrs.packageName)
+                               && w == pw) { // receiver tips
+                        x = x + stack.getMultiWindow().getFramePadding();
+                        w = w - stack.getMultiWindow().getFramePadding() * 2;
+                        y = y + stack.getMultiWindow().getFramePadding() * 4;
+                        h = h - stack.getMultiWindow().getFramePadding() * 6;
+                    }
                     Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                             (int) (x + mAttrs.horizontalMargin * pw),
                             (int) (y + mAttrs.verticalMargin * ph), mFrame,
                             stack.getMultiWindow().getFramePadding(),
                             stack.getMultiWindow().getTopFramePadding()
                                 + stack.getMultiWindow().getHeaderHeight());
-
-                } else {
-                    Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
-                            (int) (x + mAttrs.horizontalMargin * pw),
-                            (int) (y + mAttrs.verticalMargin * ph), mFrame, 0, 0);
                 }
+            } else if (ApplicationInfo.APPNAME_OFFICE_OUTLOOK.equals(mAttrs.packageName)
+                           && w != pw) { // bottom menu
+                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                        (int) (x + mAttrs.horizontalMargin * pw),
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame,
+                        stack.getMultiWindow().getFramePadding(),
+                        stack.getMultiWindow().getTopFramePadding()
+                            + stack.getMultiWindow().getHeaderHeight());
+            } else {
+                Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
+                        (int) (x + mAttrs.horizontalMargin * pw),
+                        (int) (y + mAttrs.verticalMargin * ph), mFrame);
             }
         } else {
             Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
