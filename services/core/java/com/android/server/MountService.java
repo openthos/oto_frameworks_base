@@ -2559,6 +2559,11 @@ class MountService extends IMountService.Stub
         }
     }
 
+    @Override
+    public StorageVolume[] getVolumeList(int userId, String packageName, int flags) {
+        return getVolumeList();
+    }
+
     private void addObbStateLocked(ObbState obbState) throws RemoteException {
         final IBinder binder = obbState.getBinder();
         List<ObbState> obbStates = mObbMounts.get(binder);

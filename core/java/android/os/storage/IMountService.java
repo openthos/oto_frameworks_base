@@ -773,6 +773,11 @@ public interface IMountService extends IInterface {
                 return _result;
             }
 
+            public StorageVolume[] getVolumeList(int userId, String packageName, int flags)
+                    throws RemoteException {
+                return getVolumeList();
+            }
+
             /*
              * Returns the filesystem path of a mounted secure container.
              */
@@ -1608,6 +1613,9 @@ public interface IMountService extends IInterface {
      * Returns list of all mountable volumes.
      */
     public StorageVolume[] getVolumeList() throws RemoteException;
+
+    public StorageVolume[] getVolumeList(int userId, String packageName, int flags)
+            throws RemoteException;
 
     /**
      * Gets the path on the filesystem for the ASEC container itself.
