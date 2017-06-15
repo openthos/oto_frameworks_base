@@ -98,7 +98,15 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                     case HttpURLConnection.HTTP_OK:
                         Bundle b = msg.getData();
                         String result = b.getString("result");
-                        String code = result.split(":")[1].split("\"")[1].trim();
+                        String code = null;
+                        if (result.split(":").length > 1
+                                          && result.split(":")[1].split("\"").length > 1) {
+                            code = result.split(":")[1].split("\"")[1].trim();
+                        } else {
+                            Toast.makeText(OpenthosIDSetupActivity.this,
+                                    getText(R.string.toast_network_not_connect),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         if(CODE_WRONG_USERNAME.equals(code)) {
                             Toast.makeText(OpenthosIDSetupActivity.this,
                                     getText(R.string.toast_openthos_id_invalid),
@@ -115,6 +123,9 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                             values.put("OpenthosID", openthosID);
                             values.put("password", password);
                             mResolver.insert(uriInsert, values);
+                            Toast.makeText(OpenthosIDSetupActivity.this,
+                                    getText(R.string.toast_verify_successful),
+                                    Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case MSG_GET_CSRF:
