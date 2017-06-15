@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SHUTDOWN" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".StartupMenuApplication"
@@ -20,29 +21,36 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
        <!--  <receiver android:name=".PackageReceiver">
-             <intent-filter>
-                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
-                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
-                 <data android:scheme="package" />
-             </intent-filter>
-         </receiver> -->
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver> -->
 
-         <receiver android:name=".service.StartupMenuInstalledReceiver">
-             <intent-filter>
-                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                 <action android:name="android.intent.action.PACKAGE_ADDED" />
-                 <data android:scheme="package" />
-             </intent-filter>
-         </receiver>
+        <receiver android:name=".service.StartupMenuInstalledReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
 
-         <receiver
-             android:name=".service.StartupMenuSqlReceiver"
-             android:enabled="true">
-             <intent-filter>
-                 <action android:name="com.android.startupmenu.SQLITE_CHANGE" />
-                 <action android:name="com.android.action.PACKAGE_SEND"/>
-             </intent-filter>
-         </receiver>
+        <receiver
+            android:name=".service.StartupMenuSqlReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.android.startupmenu.SQLITE_CHANGE" />
+                <action android:name="com.android.action.PACKAGE_SEND"/>
+            </intent-filter>
+        </receiver>
 
+        <receiver android:name=".KeepReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".KeepService" />
     </application>
 </manifest>
