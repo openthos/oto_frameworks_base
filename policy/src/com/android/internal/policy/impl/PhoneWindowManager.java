@@ -644,6 +644,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean mHomeKeyHasEffect;
     private boolean mHomeKeyDown;
+    private boolean mOtoSetupWizardProcess = true;
 
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
@@ -2886,7 +2887,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 startupMenu();
             }
         } else if (keyCode == KeyEvent.KEYCODE_HOME) {
-            if (down) {
+            if (down && !isOtoSetupWizardProcess()) {
                 if (repeatCount == 0) {
                     mHomeKeyHasEffect = true;
                     mHomeKeyDown = true;
@@ -6873,4 +6874,19 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     public void setSleepingFlag(boolean status) {
         mSleeping = status;
     }
+
+    private boolean isOtoSetupWizardProcess() {
+        if (mOtoSetupWizardProcess) {
+            ActivityManager manager = (ActivityManager)mContext
+                                           .getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
+                if(process.processName.equals("com.otosoft.setupwizard")) {
+                    return mOtoSetupWizardProcess;
+                }
+            }
+            mOtoSetupWizardProcess = false;
+        }
+        return mOtoSetupWizardProcess;
+    }
+
 }
