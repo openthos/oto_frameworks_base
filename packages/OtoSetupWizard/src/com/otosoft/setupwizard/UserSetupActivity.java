@@ -7,6 +7,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.SystemProperties;
 import android.app.admin.DevicePolicyManager;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.content.Context;
+import android.content.DialogInterface;
 
 import java.io.IOException;
 import java.io.DataOutputStream;
@@ -150,11 +152,33 @@ public class UserSetupActivity extends BaseActivity {
         });
         this.mSkip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                showWarningDialog();
+            }
+        });
+    }
+
+    private void showWarningDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getText(R.string.warning_dialog_message));
+        builder.setTitle(getText(R.string.warning_dialog_title));
+        builder.setPositiveButton(getText(R.string.warning_dialog_ok),
+                                          new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent();
                 intent.setAction("com.android.wizard.STARTUSE");
                 startActivity(intent);
+                dialog.dismiss();
             }
         });
+        builder.setNegativeButton(getText(R.string.warning_dialog_cancel),
+                                         new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     public void onResume() {
