@@ -27,7 +27,9 @@
     <string name="verify_openthos_summary">如果您已经有openthosID,请在此输入相应的的信息并与此台计算机绑定.</string>
     <string name="setup_language_title">选择语言</string>
     <string name="toast_openthos_id_invalid">输入的openthos Id不存在</string>
+    <string name="toast_openthos_id_empty">openthosId不能为空</string>
     <string name="toast_openthos_password_wrong">密码输入有误</string>
+    <string name="toast_openthos_password_empty">密码不能为空</string>
     <string name="toast_network_not_connect">未接入互联网,请检查网络设置</string>
     <string name="toast_openthos_register_cancel">取消openthos　Id注册</string>
     <string name="toast_openthos_register_password_wrong">您的密码未输入或者两次输入密码不一致</string>

@@ -106,6 +106,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                             Toast.makeText(OpenthosIDSetupActivity.this,
                                     getText(R.string.toast_network_not_connect),
                                     Toast.LENGTH_SHORT).show();
+                            break;
                         }
                         if(CODE_WRONG_USERNAME.equals(code)) {
                             Toast.makeText(OpenthosIDSetupActivity.this,
@@ -164,9 +165,19 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                             Toast.LENGTH_SHORT).show();
                 }
                 //verify openthos id and password
-                params.put("username", openthosID);
-                params.put("password", password);
-                submitPostData(params, encode);
+                if (openthosID.isEmpty()) {
+                    Toast.makeText(OpenthosIDSetupActivity.this,
+                            getText(R.string.toast_openthos_id_empty),
+                            Toast.LENGTH_SHORT).show();
+                } else if (password.isEmpty()) {
+                    Toast.makeText(OpenthosIDSetupActivity.this,
+                            getText(R.string.toast_openthos_password_empty),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    params.put("username", openthosID);
+                    params.put("password", password);
+                    submitPostData(params, encode);
+                }
             }
         });
         mPrev.setOnClickListener(new OnClickListener() {

@@ -27,7 +27,9 @@
     <string name="verify_openthos_summary">If you have had openthos ID,please input related info to bind computer</string>
     <string name="setup_language_title">setting language</string>
     <string name="toast_openthos_id_invalid">openthos Id is not invalid</string>
+    <string name="toast_openthos_id_empty">openthos Id is empty</string>
     <string name="toast_openthos_password_wrong">passowrd is wrong</string>
+    <string name="toast_openthos_password_empty">password is empty</string>
     <string name="toast_network_not_connect">Not connected to the Internet, please check the network settings</string>
     <string name="toast_openthos_register_cancel">you have canceled</string>
     <string name="toast_openthos_register_password_wrong">you have null input or the twice password was not the same</string>
