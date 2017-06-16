@@ -17,30 +17,25 @@
 package com.android.startupmenu;
 
 import java.io.File;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.android.startupmenu.util.AppInfo;
-import com.android.startupmenu.dialog.BaseSettingDialog;
-import com.android.startupmenu.dialog.StartMenuDialog;
-import com.android.startupmenu.dialog.StartMenuUsuallyDialog;
-import com.android.startupmenu.adapter.StartupMenuAdapter;
-import com.android.startupmenu.adapter.StartupMenuUsuallyAdapter;
-import com.android.startupmenu.util.StartupMenuSqliteOpenHelper;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.adapter.AppAdapter;
+import com.android.startupmenu.adapter.CommonAppAdapter;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
 
-import android.content.pm.ApplicationInfo;
+import android.os.RemoteException;
+import android.os.UserHandle;
 import android.util.Slog;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RemoteException;
 import android.app.Activity;
 import android.app.ActivityManagerNative;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,8 +43,6 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Message;
 import android.text.TextWatcher;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -73,7 +66,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.SharedPreferences;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
 /*
  * Annotation
  *
@@ -87,38 +79,27 @@ import java.util.Calendar;
  *
  */
 
-public class StartupMenuActivity extends Activity implements OnClickListener,
-        OnEditorActionListener, View.OnHoverListener {
+public class StartupMenuActivity extends Activity
+        implements OnClickListener, OnEditorActionListener {
 
-    public static final int FILTER_ALL_APP = 1;
-    public static final int FILTER_SYSYTEM_APP = 2;
-    public static final int FILTER_THIRD_APP = 3;
-    public static final int EDITTEXT_LENGTH_MAX = 10;
-    public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
+    public static final int NAME_SORT = 1;
+    public static final int NAME_SORT_REVERSE = -1;
+    public static final int TIME_SORT = 2;
+    public static final int TIME_SORT_REVERSE = -2;
+    public static final int CLICK_SORT = 3;
+    public static final int CLICK_SORT_REVERSE = -3;
 
-    public static final int COMMON_APP_SHOW = 0;
-    public static final int QUERY_APP = 1;
-    public static final int ALL_APP_SHOW = 2;
+    private ArrayList<AppInfo> mAllAppInfos;
+    public ArrayList<AppInfo> mDisplayAppInfos;
+    public ArrayList<AppInfo> mCommonAppInfos;
 
-    public static final int SQL_VERSION_CODE = 2;
+    public AppAdapter mGridAdapter;
+    public CommonAppAdapter mListAdapter;
 
-    public StartMenuDialog mStartMenuDialog;
-    public StartMenuUsuallyDialog mStartMenuUsuallyDialog;
-    public ArrayList<AppInfo> mListAppInfo = null;
-    public ArrayList<AppInfo> mlistViewAppInfo = null;
-    public StartupMenuUsuallyAdapter mUsuallyAdapter;
     private boolean mFocus;
-    public List<AppInfo> mListViewEight;
 
-    private Map<Integer, Boolean> mIsCheckedMap = null;
     private Context mContext = this;
     private PopupWindow mPopupWindow;
-    private StartupMenuAdapter mBrowseAppAdapter, mBroAdapter;
-    private StartupMenuSqliteOpenHelper mMsoh;
-    private SQLiteDatabase mDb;
-    BaseSettingDialog targetDialog;
-
-    private boolean mOnlyNameSort = false;
 
     private LinearLayout mSelectLayout;
     private LinearLayout mSortClickView;
@@ -132,19 +113,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     private TextView mNameSort;
     private View mSelectView;
     private SharedPreferences mSharedPreference;
-    private Handler mHandler;
-    private String mType;
-    private String mEtext;
-    private int mNameSortStatus = 1;
-    private int mTimeSortStatus = 1;
-    private int mClickSortStatus = 1;
-    private int CLICKS = 0;
-    private int mOrder;
-    private boolean mIsClick;
+    private int mType;
     private int mStrCount;
     private ImageView mSearch;
     private LinearLayout mArrowWhite;
-    private LinearLayout mLayout;
     private TextView mFileManager;
     private TextView mPowerOff;
     private TextView mSystemSetting;
@@ -152,7 +124,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        System.exit(0);
+        finish();
     }
 
     @Override
@@ -181,50 +153,47 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mTvSortShow = (TextView) findViewById(R.id.tv_sort_show);
         mEditText = (EditText) findViewById(R.id.et_text);
         mArrowWhite = (LinearLayout) findViewById(R.id.iv_arrow_white);
-        mLayout = (LinearLayout) findViewById(R.id.ll_layout);
         mFileManager = (TextView) findViewById(R.id.openthos_file_manager);
         mPowerOff = (TextView) findViewById(R.id.power_off);
         mSystemSetting = (TextView) findViewById(R.id.system_setting);
     }
 
     private void initData() {
-        mMsoh = new StartupMenuSqliteOpenHelper(StartupMenuActivity.this,
-                "StartupMenu_database.db", null, SQL_VERSION_CODE);
-        mDb = mMsoh.getWritableDatabase();
-        mSharedPreference = getSharedPreferences("click", Context.MODE_PRIVATE);
+        mSharedPreference = getSharedPreferences("clicks", Context.MODE_PRIVATE);
 
-        mListAppInfo = new ArrayList<AppInfo>();
-        mIsCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-        mStartMenuDialog = new StartMenuDialog(this, R.style.dialog);
-        mStartMenuUsuallyDialog = new StartMenuUsuallyDialog(this, R.style.dialog);
+        mAllAppInfos = new ArrayList<>();
+        mDisplayAppInfos = new ArrayList<>();
+        mCommonAppInfos = new ArrayList<>();
+
+        mGridAdapter = new AppAdapter(this, mDisplayAppInfos);
+        mListAdapter = new CommonAppAdapter(this, mCommonAppInfos);
+        mGridView.setAdapter(mGridAdapter);
+        mListView.setAdapter(mListAdapter);
 
         initSelectLayout();
+
         mTvSortShow.setText("");
         mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-
-        mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.what == COMMON_APP_SHOW) {
-                    mUsuallyAdapter = new StartupMenuUsuallyAdapter(StartupMenuActivity.this,
-                            mListViewEight);
-                    mListView.setAdapter(mUsuallyAdapter);
-                } else if (msg.what == QUERY_APP) {
-                    selectAppShow();
-                    queryCommonAppInfo();
-                } else if (msg.what == ALL_APP_SHOW) {
-                    selectAppShow();
-                    mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                            mListAppInfo, mIsCheckedMap);
-                    mGridView.setAdapter(mBrowseAppAdapter);
-                }
-            }
-        };
-        new mThread().start();
+        mType = mSharedPreference.getInt("sortType", NAME_SORT);
         mFocus = false;
+
         showStatusBar();
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                queryAppInfo();
+                queryCommonAppInfo();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sortOrder();
+                        mGridAdapter.notifyDataSetChanged();
+                        mListAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }.start();
     }
 
     public void initListener() {
@@ -233,10 +202,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mFileManager.setOnHoverListener(hoverListener);
         mSystemSetting.setOnHoverListener(hoverListener);
         mPowerOff.setOnHoverListener(hoverListener);
-        mLayout.setOnHoverListener(this);
 
         mSystemSetting.setOnClickListener(this);
         mFileManager.setOnClickListener(this);
+        mPowerOff.setOnClickListener(this);
+
         mArrowWhite.setOnClickListener(this);
         mTvSortShow.setOnClickListener(this);
         mSearch.setOnClickListener(this);
@@ -244,41 +214,181 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mEditText.addTextChangedListener(watcher);
     }
 
-    class mThread extends Thread {
-        public void run() {
-            mIsClick = mSharedPreference.getBoolean("isClickApp", false);
-            mType = mSharedPreference.getString("type", "sortName");
-            mOrder = mSharedPreference.getInt("order", 0);
-            if (mIsClick) {
-                Message m = new Message();
-                m.what = QUERY_APP;
-                mHandler.sendMessage(m);
-            } else {
-                queryAppInfo();
-                Message msg = new Message();
-                msg.what = ALL_APP_SHOW;
-                mHandler.sendMessage(msg);
-            }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+            killStartupMenu();
         }
+        // Delegate everything else to Activity.
+        return super.onTouchEvent(event);
     }
 
+
+    View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.drawable.power_background);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.appUsuallyBackground);
+                    break;
+            }
+            return false;
+        }
+    };
+
+    View.OnHoverListener hoverListenerSort = new View.OnHoverListener() {
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.showSortBackground);
+                    break;
+            }
+            return false;
+        }
+    };
+
     @Override
-    public boolean onHover(View view, MotionEvent motionEvent) {
-        int what = motionEvent.getAction();
-        switch (what) {
-            case MotionEvent.ACTION_HOVER_ENTER:
-                if (!mIsClick) {
-                    initStartupMenuData(mContext);
-                }
-                break;
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if ((actionId == EditorInfo.IME_ACTION_SEND)
+                || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            initDisplayAppInfos();
+            sortOrder();
+            mGridAdapter.notifyDataSetChanged();
+            return true;
         }
         return false;
     }
 
+    private TextWatcher watcher = new TextWatcher() {
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            mStrCount = before + count;
+            if (mStrCount > Constants.EDITTEXT_LENGTH_MAX) {
+                mEditText.setSelection(mEditText.length());
+            }
+            try {
+                mStrCount = mEditText.getText().toString().getBytes("GBK").length;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            initDisplayAppInfos();
+            sortOrder();
+            mGridAdapter.notifyDataSetChanged();
+            if (mStrCount > Constants.EDITTEXT_LENGTH_MAX) {
+                CharSequence subSequence = null;
+                for (int i = 0; i < s.length(); i++) {
+                    subSequence = s.subSequence(0, i);
+                    try {
+                        if (subSequence.toString().getBytes("GBK").length == mStrCount) {
+                            mEditText.setText(subSequence.toString());
+                            break;
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+                mEditText.setText(subSequence.toString());
+            }
+        }
+    };
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (!hasFocus) {
+            if (!mFocus) {
+                finish();
+            }
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.openthos_file_manager:
+                /* start FileManager */
+                for (int i = 0; i < mAllAppInfos.size(); i++) {
+                    AppInfo appInfo = mAllAppInfos.get(i);
+                    PackageManager pm = this.getPackageManager();
+                    String packName = appInfo.getPkgName();
+                    if (packName.compareTo(Constants.APPNAME_OTO_FILEMANAGER) == 0) {
+                        Intent intent = appInfo.getIntent();
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                }
+                break;
+            case R.id.system_setting:
+                if (android.os.Build.VERSION.SDK_INT > 13) {
+                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                } else {
+                    startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                }
+                break;
+            case R.id.power_off:
+                powerOff();
+                break;
+            case R.id.iv_view_search:
+                initDisplayAppInfos();
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
+            case R.id.tv_sort_show:
+                mType = mType * -1;
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
+            case R.id.name_sort:
+                mEditText.setText("");
+                mPopupWindow.dismiss();
+                mType = NAME_SORT;
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
+            case R.id.time_sort:
+                mEditText.setText("");
+                mPopupWindow.dismiss();
+                mType = TIME_SORT;
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
+            case R.id.click_sort:
+                mPopupWindow.dismiss();
+                mEditText.setText("");
+                mType = CLICK_SORT;
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
+            case R.id.iv_arrow_white:
+                mFocus = true;
+                sortShow();
+                break;
+        }
+    }
+
     /*
-     * Choose 'install time' 'A - Z ' 'click numbers' to sort.
-     * Follow up also needs to expand.
-     */
+    * Choose 'install time' 'A - Z ' 'click numbers' to sort.
+    * Follow up also needs to expand.
+    */
     public void initSelectLayout() {
         mSelectLayout = new LinearLayout(StartupMenuActivity.this);
         mSelectLayout.setBackgroundColor(Color.WHITE);
@@ -302,495 +412,219 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
         mSelectLayout.addView(mSelectView);
     }
 
-    /*
-    *  1. Sort by type (A-Z, name , date)
-    *  2. Sort up or down.
-    */
-    public void selectAppShow() {
-        if (mType.equals("sortName")) {
-            mTvSortShow.setText(R.string.name_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-            nameSort();
-        } else if (mType.equals(mNameSort.getText().toString()) && mOrder == 1) {
-            mTvSortShow.setText(R.string.name_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-            nameSort();
-        } else if (mType.equals(mNameSort.getText().toString()) && mOrder == -1) {
-            mTvSortShow.setText(R.string.name_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            mNameSortStatus = -1;
-            mOnlyNameSort = true;
-            nameSort();
-        } else if (mType.equals(mTimeSort.getText().toString()) && mOrder == 1) {
-            mTvSortShow.setText(R.string.time_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-            timeSort();
-        } else if (mType.equals(mTimeSort.getText().toString()) && mOrder == -1) {
-            mTvSortShow.setText(R.string.time_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            mTimeSortStatus = -1;
-            timeSort();
-        } else if (mType.equals(mClickSort.getText().toString()) && mOrder == 1) {
-            mTvSortShow.setText(R.string.click_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-            mEditText.setText("");
-            clickSort();
-        } else if (mType.equals(mClickSort.getText().toString()) && mOrder == -1) {
-            mTvSortShow.setText(R.string.click_sort);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            mEditText.setText("");
-            mClickSortStatus = -1;
-            clickSort();
-        } else {
-            queryAppInfo();
-            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                    mListAppInfo, mIsCheckedMap);
-            mGridView.setAdapter(mBrowseAppAdapter);
-        }
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if ((actionId == EditorInfo.IME_ACTION_SEND)
-                || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            mEtext = mEditText.getText().toString().trim();
-            mListAppInfo.clear();
-            mBrowseAppAdapter.notifyDataSetChanged();
-            mListAppInfo = new ArrayList<AppInfo>();
-            querySqlAppinfo();
-            querySort();
-            mIsCheckedMap = new HashMap<Integer, Boolean>();
-            mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-            mGridView.setAdapter(mBrowseAppAdapter);
-            return true;
-        }
-        return false;
-    }
-
-    private TextWatcher watcher = new TextWatcher() {
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            mStrCount = before + count;
-            if (mStrCount > EDITTEXT_LENGTH_MAX) {
-                mEditText.setSelection(mEditText.length());
-            }
-            try {
-                mStrCount = mEditText.getText().toString().getBytes("GBK").length;
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            mEtext = mEditText.getText().toString().trim();
-            mListAppInfo.clear();
-            mBrowseAppAdapter.notifyDataSetChanged();
-            mListAppInfo = new ArrayList<AppInfo>();
-            querySqlAppinfo();
-            querySort();
-            mIsCheckedMap = new HashMap<Integer, Boolean>();
-            mBrowseAppAdapter = new StartupMenuAdapter(StartupMenuActivity.this,
-                    mListAppInfo, mIsCheckedMap);
-            mGridView.setAdapter(mBrowseAppAdapter);
-            if (mStrCount > EDITTEXT_LENGTH_MAX) {
-                CharSequence subSequence = null;
-                for (int i = 0; i < s.length(); i++) {
-                    subSequence = s.subSequence(0, i);
-                    try {
-                        if (subSequence.toString().getBytes("GBK").length == mStrCount) {
-                            mEditText.setText(subSequence.toString());
-                            break;
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mEditText.setText(subSequence.toString());
-            }
-        }
-    };
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.openthos_file_manager:
-                /* start FileManager */
-                for (int i = 0; i < mListAppInfo.size(); i++) {
-                    AppInfo appInfo = mListAppInfo.get(i);
-                    PackageManager pm = this.getPackageManager();
-                    String packName = appInfo.getPkgName();
-                    if (packName.compareTo(ApplicationInfo.APPNAME_OTO_FILEMANAGER) == 0) {
-                        Intent intent = appInfo.getIntent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    }
-                }
-                break;
-            case R.id.system_setting:
-                if (android.os.Build.VERSION.SDK_INT > 13) {
-                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                } else {
-                    startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                }
-                break;
-            case R.id.iv_view_search:
-                mEtext = mEditText.getText().toString().trim();
-                mListAppInfo.clear();
-                mBrowseAppAdapter.notifyDataSetChanged();
-                mListAppInfo = new ArrayList<AppInfo>();
-                querySqlAppinfo();
-                querySort();
-                mIsCheckedMap = new HashMap<Integer, Boolean>();
-                mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-                mGridView.setAdapter(mBrowseAppAdapter);
-                break;
-            case R.id.tv_sort_show:
-                selectShow(v);
-                break;
-            case R.id.name_sort:
-                mEditText.setText("");
-                mTvSortShow.setText(R.string.name_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-                mPopupWindow.dismiss();
-                nameSort();
-                break;
-            case R.id.time_sort:
-                mEditText.setText("");
-                mTvSortShow.setText(R.string.time_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-                mPopupWindow.dismiss();
-                timeSort();
-                break;
-            case R.id.click_sort:
-                mTvSortShow.setText(R.string.click_sort);
-                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-                mPopupWindow.dismiss();
-                mEditText.setText("");
-                clickSort();
-                break;
-            case R.id.iv_arrow_white:
-                mFocus = true;
-                sortShow();
-                break;
-        }
-    }
-
-    /*
-     * Reverse sorting of A-Z/date/frequent.
-     */
-    private void selectShow(View v) {
-        mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
-        if (v instanceof TextView) {
-            TextView textView = (TextView) v;
-            String textViewText = textView.getText().toString();
-            if (textViewText.equals(mNameSort.getText().toString())) {
-                mNameSortStatus = mNameSortStatus * -1;
-                mOnlyNameSort = true;
-                nameSort();
-            } else if (textViewText.equals(mTimeSort.getText().toString())) {
-                mTimeSortStatus = mTimeSortStatus * -1;
-                timeSort();
-            } else if (textViewText.equals(mClickSort.getText().toString())) {
-                mClickSortStatus = mClickSortStatus * -1;
-                clickSort();
-            }
-        }
+    private void showStatusBar() {
+        Intent intent = new Intent();
+        intent.setAction(Constants.STATUS_BAR_SHOW_SUGGEST);
+        sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
     public void queryAppInfo() {
+        mAllAppInfos.clear();
         PackageManager pm = this.getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
-        // Sort to resolveInfos.
-        List<ResolveInfo> listEnglish = new ArrayList<>();
-        List<ResolveInfo> listChina = new ArrayList<>();
-        List<ResolveInfo> listNumber = new ArrayList<>();
-        for (ResolveInfo info : resolveInfos) {
-            String str = info.loadLabel(pm).toString().trim();
-            int ch = str.charAt(0);
-            if (ch >= '0' && ch <= '9') {
-                listNumber.add(info);
-            } else {
-                if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
-                    listEnglish.add(info);
-                } else {
-                    listChina.add(info);
-                }
-            }
-        }
-        Collections.sort(listEnglish, new ResolveInfo.DisplayNameComparator(pm));
-        Collections.sort(listChina, new ResolveInfo.DisplayNameComparator(pm));
-        Collections.sort(listNumber, new ResolveInfo.DisplayNameComparator(pm));
-        resolveInfos.clear();
-        for (ResolveInfo number : listNumber) {
-            resolveInfos.add(number);
-        }
-        for (ResolveInfo english : listEnglish) {
-            resolveInfos.add(english);
-        }
-        for (ResolveInfo china : listChina) {
-            resolveInfos.add(china);
-        }
-        mListAppInfo.clear();
+        AppInfo appInfo;
         for (ResolveInfo reInfo : resolveInfos) {
-            appData(pm, reInfo);
+            appInfo = new AppInfo();
+            appInfo.setAppLabel((String) reInfo.loadLabel(pm));
+            appInfo.setPkgName(reInfo.activityInfo.packageName);
+            appInfo.setInstallTime(
+                    new File(reInfo.activityInfo.applicationInfo.sourceDir).lastModified());
+            appInfo.setAppIcon(reInfo.loadIcon(pm));
+            appInfo.setActivityName(reInfo.activityInfo.name);
+            appInfo.setClickCounts(0);
+            mAllAppInfos.add(appInfo);
         }
-        if (!TextUtils.isEmpty(mEtext)) {
-            List<AppInfo> list = new ArrayList<>();
-            for (AppInfo app : mListAppInfo) {
-                if (app.getAppLabel().toLowerCase().indexOf(mEtext.toLowerCase()) != -1) {
-                    list.add(app);
-                }
-            }
-            mListAppInfo.clear();
-            mListAppInfo.addAll(list);
-        }
+        initDisplayAppInfos();
     }
 
-    /* query sqlDataBase , sort by getNumber.
+    /* query sqlDataBase , sort by getClickCounts.
      * then show in left side listView.
      */
     public void queryCommonAppInfo() {
-        mlistViewAppInfo = new ArrayList<AppInfo>();
-        Cursor cs = mDb.rawQuery("select distinct * from " + TableIndexDefine.
+        SqliteOpenHelper sqliteOpenHelper = SqliteOpenHelper.getInstance(this);
+        SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
+        List<AppInfo> tempAppInfo = new ArrayList<>();
+        mCommonAppInfos.clear();
+        Cursor cs = db.rawQuery("select distinct * from " + TableIndexDefine.
                 TABLE_APP_PERPO, new String[]{});
-        int perpoPkgName = cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_PKGNAME);
         while (cs.moveToNext()) {
-            String pkgName = cs.getString(perpoPkgName);
-            String label = "Application";
-            for (AppInfo info : mListAppInfo) {
-                if (info.getPkgName().equals(pkgName)) {
-                    label = info.getAppLabel();
-                }
-            }
-            long installTime = cs.getLong(cs.getColumnIndex(TableIndexDefine.
-                    COLUMN_PERPO_INSTALL_DATE));
-            Drawable icon = null;
-            try {
-                icon = getPackageManager().getApplicationIcon(pkgName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            String pkgName = cs.getString(cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_PKGNAME));
             int number = cs.getInt(cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
             if (number > 0) {
-                Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
-                AppInfo appInfo = new AppInfo();
-                appInfo.setAppLabel(label);
-                appInfo.setPkgName(pkgName);
-                appInfo.setInstallTime(installTime);
-                appInfo.setAppIcon(icon);
-                appInfo.setNumber(number);
-                appInfo.setIntent(intent);
-                mlistViewAppInfo.add(appInfo);
+                for (AppInfo info : mAllAppInfos) {
+                    if (info.getPkgName().equals(pkgName)) {
+                        info.setClickCounts(number);
+                        tempAppInfo.add(info);
+                        break;
+                    }
+                }
             }
         }
         cs.close();
+        db.close();
 
-        Collections.sort(mlistViewAppInfo, new Comparator<AppInfo>() {
+        Collections.sort(tempAppInfo, new Comparator<AppInfo>() {
             public int compare(AppInfo lhs, AppInfo rhs) {
-                return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
+                int rhsNumber = rhs.getClickCounts();
+                int lhsNumber = lhs.getClickCounts();
+                if (rhsNumber > lhsNumber) {
+                    return 1;
+                } else if (lhsNumber == rhsNumber) {
+                    return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
+                } else {
+                    return -1;
+                }
             }
         });
-        mListViewEight = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            if (i >= mlistViewAppInfo.size()) {
-                break;
+        mCommonAppInfos.addAll(
+                tempAppInfo.subList(0, Math.min(tempAppInfo.size(), Constants.COMMON_APP_NUM)));
+    }
+
+    private void initDisplayAppInfos() {
+        mDisplayAppInfos.clear();
+        String searText = mEditText.getText().toString().trim();
+        if (TextUtils.isEmpty(searText)) {
+            mDisplayAppInfos.addAll(mAllAppInfos);
+        } else {
+            for (AppInfo appInfo : mAllAppInfos) {
+                if (appInfo.getAppLabel().contains(searText)) {
+                    mDisplayAppInfos.add(appInfo);
+                }
             }
-            AppInfo appInfo = mlistViewAppInfo.get(i);
-            mListViewEight.add(appInfo);
         }
-        Message m = new Message();
-        m.what = COMMON_APP_SHOW;
-        mHandler.sendMessage(m);
+    }
+
+    private void sortOrder() {
+        switch (mType) {
+            case NAME_SORT:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
+                mTvSortShow.setText(R.string.name_sort);
+                nameSort();
+                break;
+            case NAME_SORT_REVERSE:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
+                mTvSortShow.setText(R.string.name_sort);
+                nameSort();
+                Collections.reverse(mDisplayAppInfos);
+                break;
+            case TIME_SORT:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
+                mTvSortShow.setText(R.string.time_sort);
+                timeSort();
+                break;
+            case TIME_SORT_REVERSE:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
+                mTvSortShow.setText(R.string.time_sort);
+                timeSort();
+                Collections.reverse(mDisplayAppInfos);
+                break;
+            case CLICK_SORT:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
+                mTvSortShow.setText(R.string.click_sort);
+                clickSort();
+                break;
+            case CLICK_SORT_REVERSE:
+                mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
+                mTvSortShow.setText(R.string.click_sort);
+                clickSort();
+                Collections.reverse(mDisplayAppInfos);
+                break;
+            default:
+                break;
+        }
+        saveSortTypeToSP(mType);
     }
 
     private void nameSort() {
-        queryAppInfo();
-        SharedPreferences.Editor edit = mSharedPreference.edit();
-        edit.putString("type", mNameSort.getText().toString());
-        edit.putInt("order", 1);
-        edit.commit();
-        if (mNameSortStatus == -1 && mOnlyNameSort) {
-            Collections.reverse(mListAppInfo);
-            mOnlyNameSort = false;
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            edit.putString("type", mNameSort.getText().toString());
-            edit.putInt("order", -1);
-            edit.commit();
+        List<AppInfo> listEnglish = new ArrayList<>();
+        List<AppInfo> listChina = new ArrayList<>();
+        List<AppInfo> listNumber = new ArrayList<>();
+        for (AppInfo appInfo : mDisplayAppInfos) {
+            String appLabel = appInfo.getAppLabel();
+            char ch = appLabel.charAt(0);
+            if (ch >= '0' && ch <= '9') {
+                listNumber.add(appInfo);
+            } else {
+                if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')) {
+                    listEnglish.add(appInfo);
+                } else {
+                    listChina.add(appInfo);
+                }
+            }
         }
+        Collections.sort(listEnglish, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo o1, AppInfo o2) {
+                return o1.getAppLabel().compareTo(o2.getAppLabel());
+            }
+        });
 
-        mIsCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-        mGridView.setAdapter(mBrowseAppAdapter);
+        Collections.sort(listNumber, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo o1, AppInfo o2) {
+                return o1.getAppLabel().compareTo(o2.getAppLabel());
+            }
+        });
+        final Collator collator = Collator.getInstance();
+        Collections.sort(listChina, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo o1, AppInfo o2) {
+                return collator.getCollationKey(o1.getAppLabel()).
+                        compareTo(collator.getCollationKey(o2.getAppLabel()));
+            }
+        });
+        mDisplayAppInfos.clear();
+        mDisplayAppInfos.addAll(listNumber);
+        mDisplayAppInfos.addAll(listEnglish);
+        mDisplayAppInfos.addAll(listChina);
     }
 
     private void timeSort() {
-        mListAppInfo.clear();
-        mBrowseAppAdapter.notifyDataSetChanged();
-        mListAppInfo = new ArrayList<AppInfo>();
-        queryAppInfo();
-        SharedPreferences.Editor edit = mSharedPreference.edit();
-        edit.putString("type", mTimeSort.getText().toString());
-        edit.putInt("order", 1);
-        edit.commit();
-
-        timeAlgorithm();
-        mIsCheckedMap = new HashMap<Integer, Boolean>();
-        mBrowseAppAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-        mGridView.setAdapter(mBrowseAppAdapter);
-    }
-
-    private void clickSort() {
-        mListAppInfo.clear();
-        mBrowseAppAdapter.notifyDataSetChanged();
-        mListAppInfo = new ArrayList<AppInfo>();
-        querySqlAppinfo();
-        Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
-            public int compare(AppInfo lhs, AppInfo rhs) {
-                Double rScore = (double) rhs.getNumber();
-                Double iScore = (double) lhs.getNumber();
-                return (rScore.compareTo(iScore));
-            }
-        });
-        SharedPreferences.Editor editor = mSharedPreference.edit();
-        editor.putString("type", mClickSort.getText().toString());
-        editor.putInt("order", 1);
-        editor.commit();
-        if (mClickSortStatus == -1) {
-            Collections.reverse(mListAppInfo);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            SharedPreferences.Editor edit = mSharedPreference.edit();
-            edit.putString("type", mClickSort.getText().toString());
-            edit.putInt("order", -1);
-            edit.commit();
-        }
-        mIsCheckedMap = new HashMap<Integer, Boolean>();
-        mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-        mGridView.setAdapter(mBroAdapter);
-    }
-
-    private void querySqlAppinfo() {
-        PackageManager pm = this.getPackageManager();
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
-        Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pm));
-        mListAppInfo.clear();
-        for (ResolveInfo reInfo : resolveInfos) {
-            File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-            long installTime = file.lastModified();
-            String activityName = reInfo.activityInfo.name;
-            String pkgName = reInfo.activityInfo.packageName;
-            String appLabel = (String) reInfo.loadLabel(pm);
-            Drawable icon = reInfo.loadIcon(pm);
-            Intent launchIntent = new Intent();
-            launchIntent.setComponent(new ComponentName(pkgName, activityName));
-            Cursor cursor = mDb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO
-                            + " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + "  = ?",
-                    new String[]{pkgName});
-            cursor.moveToNext();
-            if (cursor.moveToFirst()) {
-                int numbers = cursor.getInt(cursor.getColumnIndex(
-                        TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
-                if (appLabel.toLowerCase().indexOf(mEtext.toLowerCase()) != -1
-                        || TextUtils.isEmpty(mEtext)) {
-                    Intent intent = getPackageManager().getLaunchIntentForPackage(pkgName);
-                    AppInfo appInfo = new AppInfo();
-                    appInfo.setAppLabel(appLabel);
-                    appInfo.setPkgName(pkgName);
-                    appInfo.setInstallTime(installTime);
-                    appInfo.setAppIcon(icon);
-                    appInfo.setNumber(numbers);
-                    appInfo.setIntent(intent);
-                    mListAppInfo.add(appInfo);
-                }
-            }
-            cursor.close();
-        }
-    }
-
-    private void querySort() {
-        String tvSortShow = mTvSortShow.getText().toString();
-        if (tvSortShow.equals(mClickSort.getText().toString())) {
-            Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
-                public int compare(AppInfo lhs, AppInfo rhs) {
-                    Double rScore = (double) rhs.getNumber();
-                    Double iScore = (double) lhs.getNumber();
-                    return (rScore.compareTo(iScore));
-                }
-            });
-            if (mClickSortStatus == -1) {
-                Collections.reverse(mListAppInfo);
-            }
-        } else if (tvSortShow.equals(mTimeSort.getText().toString())) {
-            Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
-                public int compare(AppInfo lhs, AppInfo rhs) {
-                    return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
-                }
-            });
-            if (mTimeSortStatus == -1) {
-                Collections.reverse(mListAppInfo);
-            }
-        } else {
-            queryAppInfo();
-            if (mNameSortStatus == -1) {
-                Collections.reverse(mListAppInfo);
-            }
-        }
-    }
-
-    private void timeAlgorithm() {
-        Collections.sort(mListAppInfo, new Comparator<AppInfo>() {
+        Collections.sort(mDisplayAppInfos, new Comparator<AppInfo>() {
             public int compare(AppInfo lhs, AppInfo rhs) {
                 return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
             }
         });
-        if (mTimeSortStatus == -1) {
-            Collections.reverse(mListAppInfo);
-            mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-            SharedPreferences.Editor editor = mSharedPreference.edit();
-            editor.putString("type", mTimeSort.getText().toString());
-            editor.putInt("order", -1);
-            editor.commit();
+    }
+
+    private void clickSort() {
+        Collections.sort(mDisplayAppInfos, new Comparator<AppInfo>() {
+            public int compare(AppInfo lhs, AppInfo rhs) {
+                int rhsNumber = rhs.getClickCounts();
+                int lhsNumber = lhs.getClickCounts();
+                if (rhsNumber > lhsNumber) {
+                    return 1;
+                } else if (lhsNumber == rhsNumber) {
+                    return rhs.getInstallTime() > lhs.getInstallTime() ? 1 : -1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+    }
+
+    private void saveSortTypeToSP(int type) {
+        SharedPreferences.Editor edit = mSharedPreference.edit();
+        edit.putInt("sortType", type);
+        edit.commit();
+    }
+
+    public void powerOff() {
+        ActivityManagerNative.callPowerSource(mContext);
+        finish();
+    }
+
+    public void killStartupMenu() {
+        try {
+            ActivityManagerNative.getDefault().killStartupMenu();
+            finish();
+        } catch (RemoteException e) {
         }
-
     }
-
-    public void appData(PackageManager pm, ResolveInfo reInfo) {
-        File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-        long installTime = file.lastModified();
-        String activityName = reInfo.activityInfo.name;
-        String pkgName = reInfo.activityInfo.packageName;
-        String appLabel = (String) reInfo.loadLabel(pm);
-        Drawable icon = reInfo.loadIcon(pm);
-        Intent launchIntent = new Intent();
-        launchIntent.setComponent(new ComponentName(pkgName, activityName));
-        AppInfo appInfo = new AppInfo();
-        appInfo.setAppLabel(appLabel);
-        appInfo.setPkgName(pkgName);
-        appInfo.setInstallTime(installTime);
-        appInfo.setAppIcon(icon);
-        appInfo.setIntent(launchIntent);
-        mListAppInfo.add(appInfo);
-    }
-
-    private boolean isSystemApp(ApplicationInfo applicationInfo) {
-        return (applicationInfo.flags & applicationInfo.FLAG_SYSTEM) > 0;
-    }
-
 
     public void sortShow() {
-        mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
         int mSortLyoutWidth = mContext.getResources()
                 .getDimensionPixelSize(R.dimen.sort_layout_width);
         int mSortLyoutHeight = mContext.getResources()
@@ -806,178 +640,11 @@ public class StartupMenuActivity extends Activity implements OnClickListener,
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-            killStartupMenu();
-        }
-        // Delegate everything else to Activity.
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("gridview", mListAppInfo);
-        outState.putParcelableArrayList("listview", mlistViewAppInfo);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (!hasFocus) {
-            if (!mFocus) {
-                finish();
-            }
-        }
-        super.onWindowFocusChanged(hasFocus);
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     public void setFocus(boolean hFocus) {
         mFocus = hFocus;
-    }
-
-    View.OnHoverListener hoverListenerSort = new View.OnHoverListener() {
-        public boolean onHover(View v, MotionEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case MotionEvent.ACTION_HOVER_ENTER:
-                    v.setBackgroundResource(R.color.rightMenuFocus);
-                    break;
-                case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.color.showSortBackground);
-                    break;
-            }
-            return false;
-        }
-    };
-
-    View.OnHoverListener hoverListener = new View.OnHoverListener() {
-        public boolean onHover(View v, MotionEvent event) {
-            int action = event.getAction();
-            switch (action) {
-                case MotionEvent.ACTION_HOVER_ENTER:
-                    v.setBackgroundResource(R.drawable.power_background);
-                    break;
-                case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.color.appUsuallyBackground);
-                    break;
-            }
-            return false;
-        }
-    };
-
-    private void showStatusBar() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.STATUS_BAR_SHOW_SUGGEST);
-        sendBroadcast(intent);
-    }
-
-    public void powerOff(View v) {
-        ActivityManagerNative.callPowerSource(mContext);
-        finish();
-    }
-
-    public void killStartupMenu() {
-        try {
-            ActivityManagerNative.getDefault().killStartupMenu();
-            //System.exit(0);
-            finish();
-        } catch (RemoteException e) {
-        }
-    }
-
-    private void dismisTargetDialog(BaseSettingDialog newDialog) {
-        if (targetDialog != null) {
-            targetDialog.dismiss();
-        }
-        targetDialog = newDialog;
-    }
-
-    public static boolean isEnglish(String str) {
-        return str.matches("^[a-zA-Z]*");
-    }
-
-    private void typeSort(int a) {
-        PackageManager pm = this.getPackageManager();
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
-        Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pm));
-        if (mListAppInfo != null) {
-            mListAppInfo.clear();
-            for (ResolveInfo reInfo : resolveInfos) {
-                ApplicationInfo applicationInfo = reInfo.activityInfo.applicationInfo;
-                if (a == FILTER_ALL_APP) {
-                    appData(pm, reInfo);
-                } else if (a == FILTER_SYSYTEM_APP && isSystemApp(applicationInfo)) {
-                    appData(pm, reInfo);
-                } else if (a == FILTER_THIRD_APP && !isSystemApp(applicationInfo)) {
-                    appData(pm, reInfo);
-                    if (CLICKS == 3) {
-                        CLICKS = 0;
-                    }
-                }
-            }
-        }
-        mIsCheckedMap = new HashMap<Integer, Boolean>();
-        mBroAdapter = new StartupMenuAdapter(this, mListAppInfo, mIsCheckedMap);
-        mGridView.setAdapter(mBroAdapter);
-    }
-
-    public void initStartupMenuData(Context context) {
-        PackageManager pkgManager = context.getPackageManager();
-        Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> resolveInfos = pkgManager.queryIntentActivities(intent, 0);
-        Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(pkgManager));
-        int clickNumber = 0;
-        for (ResolveInfo reInfo : resolveInfos) {
-            File file = new File(reInfo.activityInfo.applicationInfo.sourceDir);
-            long installTime = file.lastModified();
-            String pkgName = reInfo.activityInfo.packageName;
-            String appLabel = (String) reInfo.loadLabel(pkgManager);
-            Cursor cursor = mDb.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
-                            " where " + TableIndexDefine.COLUMN_PERPO_PKGNAME + " = ?",
-                    new String[]{pkgName});
-            insertData(cursor, pkgName, appLabel, installTime, clickNumber);
-            cursor.close();
-        }
-    }
-
-    /**
-     * Insert data /pkgName/label/date/num into
-     * StartupMenu_database.db {@link StartupMenuSqliteOpenHelper}
-     */
-    public void insertData(Cursor cursor, String pkgName, String appLabel,
-                           long installTime, int clickNumber) {
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                if (pkgName.equals(cursor.getString(cursor.getColumnIndex(
-                        TableIndexDefine.COLUMN_PERPO_PKGNAME)))) {
-                    return;
-                }
-            }
-            /**
-             * Because the factory test tool is used only once,
-             * it is not shown in the usual list.
-             */
-            if (!pkgName.equals(FACTORY_TEST_PKGNAME)) {
-                mDb.execSQL("insert into " +
-                                TableIndexDefine.TABLE_APP_PERPO + "(" +
-                                TableIndexDefine.COLUMN_PERPO_LABEL + "," +
-                                TableIndexDefine.COLUMN_PERPO_PKGNAME + "," +
-                                TableIndexDefine.COLUMN_PERPO_INSTALL_DATE + "," +
-                                TableIndexDefine.COLUMN_PERPO_CLICK_NUM + ")" +
-                                "values (?, ?, ?, ?)",
-                        new Object[]{appLabel, pkgName, installTime, clickNumber});
-            }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mDb != null) {
-            mDb.close();
-        }
     }
 }

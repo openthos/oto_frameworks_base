@@ -8,9 +8,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SHUTDOWN" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
-        android:name=".StartupMenuApplication"
         android:label="@string/app_label"
         android:supportsRtl="true">
         <activity
@@ -28,7 +28,7 @@
             </intent-filter>
         </receiver> -->
 
-        <receiver android:name=".service.StartupMenuInstalledReceiver">
+        <receiver android:name=".InstalledReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
@@ -37,7 +37,7 @@
         </receiver>
 
         <receiver
-            android:name=".service.StartupMenuSqlReceiver"
+            android:name=".SqliteReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.android.startupmenu.SQLITE_CHANGE" />

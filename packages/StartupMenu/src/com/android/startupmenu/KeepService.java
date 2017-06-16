@@ -8,7 +8,7 @@ import android.os.IBinder;
  * Created by wang on 6/15/17.
  */
 
-public class KeepService extends Service{
+public class KeepService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {

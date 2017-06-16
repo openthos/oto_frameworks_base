@@ -2,6 +2,7 @@ package com.android.startupmenu.dialog;
 
 import com.android.startupmenu.R;
 
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.content.Context;
@@ -19,55 +20,44 @@ import android.database.Cursor;
 
 import com.android.startupmenu.StartupMenuActivity;
 
-import com.android.startupmenu.util.StartupMenuUtil;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOperate;
 
 import android.net.Uri;
 import android.provider.Settings;
 
-import com.android.startupmenu.adapter.StartupMenuAdapter;
+import com.android.startupmenu.adapter.AppAdapter;
 
 import android.os.Handler;
 import android.os.Message;
 import android.content.ContentResolver;
 
-public class StartMenuDialog extends Dialog implements OnTouchListener {
-    public static int STARTMENU_WIDTH = 55;
+public class AppDialog extends Dialog implements OnTouchListener {
+    public static final int STARTMENU_WIDTH = 55;
     public static final int STATE_CODE_SEND_DATA = 0;
     public static final String URI_CONTENT_STATUS_BAR =
-                        "content://com.android.systemui.util/status_bar_tb";
-    public static final String TEXT_COLOR_GRAY = "#8B8970";
-    private Context mContext;
-    private boolean mFlag;
-    private int mPosition;
-    private TextView mRightOpen;
-    private StartupMenuActivity mStartupMenuActivity;
+            "content://com.android.systemui.util/status_bar_tb";
+    private StartupMenuActivity mActivity;
     private String mPkgName;
-    private boolean mBooleanFlag;
-    private String mStrTextView;
-    private TextView mRightFixedTaskbar;
-    private boolean mflagChange;
     private String mLockedAppText;
     private String mUnlockedAppText;
-    private TextView mRightPhoneRun;
+    private AppInfo mAppInfo;
+    private boolean mBooleanFlag;
+    private boolean mIsFullScreen;
 
-    public StartMenuDialog(Context context) {
-        super(context);
-        mContext = context;
-    }
+    private TextView mOpen;
+    private TextView mRunAsPhone;
+    private TextView mRunAsDesktop;
+    private TextView mRightFixedTaskbar;
+    private TextView mUninstall;
 
-    public StartMenuDialog(Context context, int themeResId) {
+
+    public AppDialog(Context context, int themeResId, AppInfo appInfo) {
         super(context, themeResId);
-        mContext = context;
-        mStartupMenuActivity = (StartupMenuActivity) context;
-    }
-
-    public void setPosition(int pos) {
-        mPosition = pos;
-    }
-
-    protected StartMenuDialog(Context context, boolean cancelable,
-                              OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
+        mActivity = (StartupMenuActivity) context;
+        mAppInfo = appInfo;
+        mPkgName = appInfo.getPkgName();
     }
 
     @Override
@@ -75,41 +65,42 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.right_click_menu1);
 
-        mLockedAppText = mContext.getResources().getString(R.string.lockedapptext);
-        mUnlockedAppText = mContext.getResources().getString(R.string.unlockedapptext);
-        mRightOpen = (TextView) findViewById(R.id.tv_right_open);
-        mRightPhoneRun = (TextView) findViewById(R.id.tv_right_phone_run);
-        TextView rightDesktopRun = (TextView) findViewById(R.id.tv_right_desktop_run);
+        mLockedAppText = mActivity.getResources().getString(R.string.lockedapptext);
+        mUnlockedAppText = mActivity.getResources().getString(R.string.unlockedapptext);
+
+        mOpen = (TextView) findViewById(R.id.tv_right_open);
+        mRunAsPhone = (TextView) findViewById(R.id.tv_right_phone_run);
+        mRunAsDesktop = (TextView) findViewById(R.id.tv_right_desktop_run);
         mRightFixedTaskbar = (TextView) findViewById(R.id.tv_right_fixed_taskbar);
-        TextView rightUninstall = (TextView) findViewById(R.id.tv_right_uninstall);
-        mStrTextView = StartupMenuAdapter.strPkgName;
+        mUninstall = (TextView) findViewById(R.id.tv_right_uninstall);
+
         new Thread(new QueryCursorData()).start();
-        if (StartupMenuAdapter.mIsFullScreen) {
-            mRightPhoneRun.setEnabled(false);
-            mRightPhoneRun.setTextColor(Color.parseColor(TEXT_COLOR_GRAY));
+
+        mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(mPkgName) ||
+                ApplicationInfo.isRealFullScreenStyleWindow(mPkgName);
+        if (mIsFullScreen) {
+            mRunAsPhone.setEnabled(false);
+            mRunAsPhone.setTextColor(Color.parseColor(Constants.TEXT_COLOR_GRAY));
         }
-        mFlag = true;
-        mRightOpen.setOnTouchListener(this);
-        mRightPhoneRun.setOnTouchListener(this);
-        mPosition = StartupMenuAdapter.mPositionItem;
+        mOpen.setOnTouchListener(this);
+        mRunAsPhone.setOnTouchListener(this);
 
-        rightDesktopRun.setOnTouchListener(this);
+        mRunAsDesktop.setOnTouchListener(this);
         mRightFixedTaskbar.setOnTouchListener(this);
-        rightUninstall.setOnTouchListener(this);
+        mUninstall.setOnTouchListener(this);
 
-        mRightOpen.setOnHoverListener(hoverListener);
-        mRightPhoneRun.setOnHoverListener(hoverListener);
-        rightDesktopRun.setOnHoverListener(hoverListener);
+        mOpen.setOnHoverListener(hoverListener);
+        mRunAsPhone.setOnHoverListener(hoverListener);
+        mRunAsDesktop.setOnHoverListener(hoverListener);
         mRightFixedTaskbar.setOnHoverListener(hoverListener);
-        rightUninstall.setOnHoverListener(hoverListener);
+        mUninstall.setOnHoverListener(hoverListener);
     }
 
     public void setEnableOpenwith(boolean can) {
-        mFlag = can;
         if (can) {
-            mRightOpen.setTextColor(Color.parseColor("#000000"));
+            mOpen.setTextColor(Color.parseColor("#000000"));
         } else {
-            mRightOpen.setTextColor(Color.parseColor("#b19898"));
+            mOpen.setTextColor(Color.parseColor("#b19898"));
         }
     }
 
@@ -128,8 +119,8 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         } else {
             lp.x = x;
         }
-        int statusBarHeight = mContext.getResources()
-                .getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
+        int statusBarHeight = mActivity.getResources()
+                       .getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
         if (dialogWindow.getAttributes().height < 0
                 && y > (d.getHeight() - height)) {
             lp.y = d.getHeight() - height - statusBarHeight;
@@ -149,49 +140,44 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
             case R.id.tv_right_open:
-                Intent intent;
-                mPkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
-                intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
+                Intent intent = mAppInfo.getIntent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
-                StartupMenuAdapter.openAppBroadcast(mContext);
-                StartupMenuUtil.updateDataStorage(mContext, mPkgName);
+                mActivity.startActivity(intent);
+                AppAdapter.openAppBroadcast(mActivity);
                 dialogDismiss();
+                SqliteOperate.updateDataStorage(mActivity, mAppInfo);
                 break;
             case R.id.tv_right_phone_run:
                 runPhoneMode();
-                addUsedNum();
                 dialogDismiss();
+                SqliteOperate.updateDataStorage(mActivity, mAppInfo);
                 break;
             case R.id.tv_right_desktop_run:
                 runPcMode();
-                addUsedNum();
                 dialogDismiss();
+                SqliteOperate.updateDataStorage(mActivity, mAppInfo);
                 break;
             case R.id.tv_right_fixed_taskbar:
-                if (mflagChange) {
+                if (mRightFixedTaskbar.getText().toString().equals(mLockedAppText)) {
                     Intent intentSend = new Intent();
-                    intentSend.putExtra("keyInfo", mStrTextView);
-                    intentSend.setAction(Intent.ACTION_STARTUPMENU_SEND_INFO_LOCK);
-                    mContext.sendBroadcast(intentSend);
+                    intentSend.putExtra("keyInfo", mPkgName);
+                    intentSend.setAction(Constants.ACTION_STARTUPMENU_SEND_INFO_LOCK);
+                    mActivity.sendBroadcast(intentSend);
                     mRightFixedTaskbar.setText(mUnlockedAppText);
-                    new Thread(new QueryCursorData()).start();
                 } else {
                     Intent intentUnlock = new Intent();
-                    intentUnlock.putExtra("unlockapk", mStrTextView);
-                    intentUnlock.setAction(Intent.STARTMENU_UNLOCKED);
-                    mContext.sendBroadcast(intentUnlock);
+                    intentUnlock.putExtra("unlockapk", mPkgName);
+                    intentUnlock.setAction(Constants.STARTMENU_UNLOCKED);
+                    mActivity.sendBroadcast(intentUnlock);
                     mRightFixedTaskbar.setText(mLockedAppText);
-                    new Thread(new QueryCursorData()).start();
                 }
                 dialogDismiss();
                 break;
             case R.id.tv_right_uninstall:
-                mPkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
                 Uri uri = Uri.parse("package:" + mPkgName);
                 Intent intents = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
                 intents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intents);
+                mActivity.startActivity(intents);
                 dialogDismiss();
                 break;
         }
@@ -215,31 +201,25 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
 
     //Method of run phone mode
     private void runPhoneMode() {
-        Intent intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PHONE_MODE
-                            | Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        mContext.startActivity(intent);
+        Intent intent = mAppInfo.getIntent();
+        intent.addFlags(Constants.FLAG_ACTIVITY_RUN_PHONE_MODE
+                | Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mActivity.startActivity(intent);
     }
 
     //Method of run pc mode
     private void runPcMode() {
-        Intent intent = mStartupMenuActivity.mListAppInfo.get(mPosition).getIntent();
-        intent.addFlags(Intent.FLAG_ACTIVITY_RUN_PC_MODE
-                            | Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        mContext.startActivity(intent);
-    }
-
-    //Method of save used numbers
-    private void addUsedNum() {
-        String pkgName = mStartupMenuActivity.mListAppInfo.get(mPosition).getPkgName();
-        StartupMenuUtil.updateDataStorage(mContext, pkgName);
+        Intent intent = mAppInfo.getIntent();
+        intent.addFlags(Constants.FLAG_ACTIVITY_RUN_PC_MODE
+                | Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        mActivity.startActivity(intent);
     }
 
     private boolean queryData(String str) {
         Uri uri = Uri.parse(URI_CONTENT_STATUS_BAR);
-        ContentResolver contentResolver = mContext.getContentResolver();
+        ContentResolver contentResolver = mActivity.getContentResolver();
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -253,19 +233,9 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         return false;
     }
 
-    private void changeTextViewText(boolean flag) {
-        if (flag) {
-            mRightFixedTaskbar.setText(mUnlockedAppText);
-            mflagChange = false;
-        } else {
-            mRightFixedTaskbar.setText(mLockedAppText);
-            mflagChange = true;
-        }
-    }
-
     private void dialogDismiss() {
         dismiss();
-        mStartupMenuActivity.setFocus(false);
+        mActivity.setFocus(false);
     }
 
     private Handler mHandler = new Handler(new Handler.Callback() {
@@ -273,7 +243,11 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case STATE_CODE_SEND_DATA:
-                    changeTextViewText(mBooleanFlag);
+                    if (mBooleanFlag) {
+                        mRightFixedTaskbar.setText(mUnlockedAppText);
+                    } else {
+                        mRightFixedTaskbar.setText(mLockedAppText);
+                    }
                     break;
             }
             return false;
@@ -283,7 +257,7 @@ public class StartMenuDialog extends Dialog implements OnTouchListener {
     class QueryCursorData implements Runnable {
         @Override
         public void run() {
-            mBooleanFlag = queryData(mStrTextView);
+            mBooleanFlag = queryData(mPkgName);
             mHandler.sendEmptyMessage(STATE_CODE_SEND_DATA);
         }
     }
