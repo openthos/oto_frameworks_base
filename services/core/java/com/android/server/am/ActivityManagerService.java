@@ -19991,6 +19991,21 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
         }
 
+        ActivityStack startupMenuStack = mStackSupervisor.getStack(stackId);
+        if (startupMenuStack.isStartupMenuStack()) {
+            /**
+             * Remove StartupMenu from screen,
+             * Avoid kill StartupMenu process.
+             */
+            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+            Rect rect = new Rect(getStackBounds(stackId).left + metrics.getWidthPixelsFullScreen(),
+                                 getStackBounds(stackId).top  + metrics.getHeightPixelsFullScreen(),
+                                 getStackBounds(stackId).right + metrics.getWidthPixelsFullScreen(),
+                                 getStackBounds(stackId).bottom + metrics.getHeightPixelsFullScreen());
+            mWindowManager.relayoutWindow(stackId, rect);
+            return true;
+        }
+
         if (!individual && activities > 0) {
             return true;
         }
