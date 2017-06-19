@@ -1197,6 +1197,8 @@ public final class Settings {
      */
     public static final class System extends NameValueTable {
         public static final String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
+        public static final String SYS_PROPERTY_HOST = "sys.property.host";
+        public static final String SYS_PROPERTY_USER = "sys.property.user";
 
         /**
          * The content:// style URL for this table

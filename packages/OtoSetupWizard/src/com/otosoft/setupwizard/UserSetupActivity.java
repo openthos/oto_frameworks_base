@@ -23,6 +23,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.provider.Settings;
 
 import java.io.IOException;
 import java.io.DataOutputStream;
@@ -117,14 +118,19 @@ public class UserSetupActivity extends BaseActivity {
                 newPassword = mNewPassword.getText().toString().trim();
 
                 //grant permission
-                ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
+                //ChangeBuildPropTools.exec("chmod -R 777  /system/build.prop");
                 //save computer name
-                ChangeBuildPropTools.setPropertyName(
-                              ChangeBuildPropTools.getPropertyName(RO_PROPERTY_HOST,computerName));
+                //ChangeBuildPropTools.setPropertyName(
+                //              ChangeBuildPropTools.getPropertyName(RO_PROPERTY_HOST,computerName));
                 //save user name
-                ChangeBuildPropTools.setPropertyName(
-                                  ChangeBuildPropTools.getPropertyName(RO_PROPERTY_USER,userName));
-                ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
+                //ChangeBuildPropTools.setPropertyName(
+                //                  ChangeBuildPropTools.getPropertyName(RO_PROPERTY_USER,userName));
+                //ChangeBuildPropTools.exec("chmod -R 644  /system/build.prop");
+
+                Settings.System.putString(getContentResolver(),
+                                          Settings.System.SYS_PROPERTY_HOST, computerName);
+                Settings.System.putString(getContentResolver(),
+                                          Settings.System.SYS_PROPERTY_USER, userName);
 
                 String oldUserName = UserManager.get(UserSetupActivity.this).getUserName();
                 String newUserName = UserSetupActivity.this.mEditTextUsername.getText().toString();
