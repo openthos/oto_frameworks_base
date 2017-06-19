@@ -19985,25 +19985,25 @@ public final class ActivityManagerService extends ActivityManagerNative
     private boolean closeActivity(int stackId, boolean individual, int activities) {
         boolean succeed;
 
-        synchronized (mSBAThread) {
-            if(individual && activities == 0) {
-                removeStatusbarActivity(stackId);
-            }
-        }
-
-        ActivityStack startupMenuStack = mStackSupervisor.getStack(stackId);
-        if (startupMenuStack.isStartupMenuStack()) {
+        ActivityStack activityStack = mStackSupervisor.getStack(stackId);
+        if (activityStack != null && activityStack.isStartupMenuStack()) {
             /**
              * Remove StartupMenu from screen,
              * Avoid kill StartupMenu process.
              */
             DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
             Rect rect = new Rect(getStackBounds(stackId).left + metrics.getWidthPixelsFullScreen(),
-                                 getStackBounds(stackId).top  + metrics.getHeightPixelsFullScreen(),
-                                 getStackBounds(stackId).right + metrics.getWidthPixelsFullScreen(),
-                                 getStackBounds(stackId).bottom + metrics.getHeightPixelsFullScreen());
+                             getStackBounds(stackId).top  + metrics.getHeightPixelsFullScreen(),
+                             getStackBounds(stackId).right + metrics.getWidthPixelsFullScreen(),
+                             getStackBounds(stackId).bottom + metrics.getHeightPixelsFullScreen());
             mWindowManager.relayoutWindow(stackId, rect);
             return true;
+        }
+
+        synchronized (mSBAThread) {
+            if(individual && activities == 0) {
+                removeStatusbarActivity(stackId);
+            }
         }
 
         if (!individual && activities > 0) {
