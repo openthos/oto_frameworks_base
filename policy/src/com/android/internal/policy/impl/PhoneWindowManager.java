@@ -1496,6 +1496,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startupMenuInternal() {
+        // Don't need use 'killStartupMenu()'.
+        /*
         try {
             if (ActivityManagerNative.getDefault().killStartupMenu()) {
                 return;
@@ -1503,6 +1505,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } catch (RemoteException e) {
             Log.e("LADEHUNTER","Exception when try to kill starup menu !!!!",null);
         }
+        */
 
         final Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.android.startupmenu",
