@@ -79,8 +79,7 @@ import java.io.UnsupportedEncodingException;
  *
  */
 
-public class StartupMenuActivity extends Activity
-        implements OnClickListener, OnEditorActionListener {
+public class StartupMenuActivity extends Activity implements OnClickListener {
 
     public static final int NAME_SORT = 1;
     public static final int NAME_SORT_REVERSE = -1;
@@ -90,15 +89,14 @@ public class StartupMenuActivity extends Activity
     public static final int CLICK_SORT_REVERSE = -3;
 
     private ArrayList<AppInfo> mAllAppInfos;
-    public ArrayList<AppInfo> mDisplayAppInfos;
+    private ArrayList<AppInfo> mDisplayAppInfos;
     public ArrayList<AppInfo> mCommonAppInfos;
 
-    public AppAdapter mGridAdapter;
+    private AppAdapter mGridAdapter;
     public CommonAppAdapter mListAdapter;
 
     private boolean mFocus;
 
-    private Context mContext = this;
     private PopupWindow mPopupWindow;
 
     private LinearLayout mSelectLayout;
@@ -136,11 +134,8 @@ public class StartupMenuActivity extends Activity
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
         getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
         setContentView(R.layout.start_activity);
-
         initView();
-
         initData();
-
         initListener();
     }
 
@@ -160,7 +155,6 @@ public class StartupMenuActivity extends Activity
 
     private void initData() {
         mSharedPreference = getSharedPreferences("clicks", Context.MODE_PRIVATE);
-
         mAllAppInfos = new ArrayList<>();
         mDisplayAppInfos = new ArrayList<>();
         mCommonAppInfos = new ArrayList<>();
@@ -184,10 +178,10 @@ public class StartupMenuActivity extends Activity
                 super.run();
                 queryAppInfo();
                 queryCommonAppInfo();
+                sortOrder();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        sortOrder();
                         mGridAdapter.notifyDataSetChanged();
                         mListAdapter.notifyDataSetChanged();
                     }
@@ -197,7 +191,7 @@ public class StartupMenuActivity extends Activity
     }
 
     public void initListener() {
-        StartupMenuActivity.this.setFinishOnTouchOutside(true);
+        setFinishOnTouchOutside(true);
 
         mFileManager.setOnHoverListener(hoverListener);
         mSystemSetting.setOnHoverListener(hoverListener);
@@ -210,7 +204,6 @@ public class StartupMenuActivity extends Activity
         mArrowWhite.setOnClickListener(this);
         mTvSortShow.setOnClickListener(this);
         mSearch.setOnClickListener(this);
-        mEditText.setOnEditorActionListener(this);
         mEditText.addTextChangedListener(watcher);
     }
 
@@ -254,18 +247,6 @@ public class StartupMenuActivity extends Activity
         }
     };
 
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if ((actionId == EditorInfo.IME_ACTION_SEND)
-                || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            initDisplayAppInfos();
-            sortOrder();
-            mGridAdapter.notifyDataSetChanged();
-            return true;
-        }
-        return false;
-    }
-
     private TextWatcher watcher = new TextWatcher() {
 
         @Override
@@ -282,8 +263,7 @@ public class StartupMenuActivity extends Activity
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         @Override
@@ -324,33 +304,17 @@ public class StartupMenuActivity extends Activity
         switch (v.getId()) {
             case R.id.openthos_file_manager:
                 /* start FileManager */
-                for (int i = 0; i < mAllAppInfos.size(); i++) {
-                    AppInfo appInfo = mAllAppInfos.get(i);
-                    PackageManager pm = this.getPackageManager();
-                    String packName = appInfo.getPkgName();
-                    if (packName.compareTo(Constants.APPNAME_OTO_FILEMANAGER) == 0) {
-                        Intent intent = appInfo.getIntent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    }
-                }
+                PackageManager pm = getPackageManager();
+                Intent intent = pm.getLaunchIntentForPackage(Constants.APPNAME_OTO_FILEMANAGER);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 break;
             case R.id.system_setting:
-                if (android.os.Build.VERSION.SDK_INT > 13) {
-                    startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                } else {
-                    startActivity(new Intent(android.provider.Settings.ACTION_APN_SETTINGS)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                }
+                startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 break;
             case R.id.power_off:
                 powerOff();
-                break;
-            case R.id.iv_view_search:
-                initDisplayAppInfos();
-                sortOrder();
-                mGridAdapter.notifyDataSetChanged();
                 break;
             case R.id.tv_sort_show:
                 mType = mType * -1;
@@ -418,9 +382,8 @@ public class StartupMenuActivity extends Activity
         sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
-    public void queryAppInfo() {
-        mAllAppInfos.clear();
-        PackageManager pm = this.getPackageManager();
+    private void queryAppInfo() {
+        PackageManager pm = getPackageManager();
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
@@ -442,14 +405,15 @@ public class StartupMenuActivity extends Activity
     /* query sqlDataBase , sort by getClickCounts.
      * then show in left side listView.
      */
-    public void queryCommonAppInfo() {
+    private void queryCommonAppInfo() {
         SqliteOpenHelper sqliteOpenHelper = SqliteOpenHelper.getInstance(this);
         SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
         List<AppInfo> tempAppInfo = new ArrayList<>();
         mCommonAppInfos.clear();
-        Cursor cs = db.rawQuery("select distinct * from " + TableIndexDefine.
-                TABLE_APP_PERPO, new String[]{});
-        while (cs.moveToNext()) {
+        Cursor cs = db.rawQuery("select distinct * from " + TableIndexDefine.TABLE_APP_PERPO
+                + " order by " + TableIndexDefine.COLUMN_PERPO_CLICK_NUM + " desc", new String[]{});
+        int i = 0;
+        while (cs.moveToNext() && i < Constants.COMMON_APP_NUM) {
             String pkgName = cs.getString(cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_PKGNAME));
             int number = cs.getInt(cs.getColumnIndex(TableIndexDefine.COLUMN_PERPO_CLICK_NUM));
             if (number > 0) {
@@ -461,6 +425,7 @@ public class StartupMenuActivity extends Activity
                     }
                 }
             }
+            i++;
         }
         cs.close();
         db.close();
@@ -611,8 +576,8 @@ public class StartupMenuActivity extends Activity
         edit.commit();
     }
 
-    public void powerOff() {
-        ActivityManagerNative.callPowerSource(mContext);
+    private void powerOff() {
+        ActivityManagerNative.callPowerSource(this);
         finish();
     }
 
@@ -624,10 +589,10 @@ public class StartupMenuActivity extends Activity
         }
     }
 
-    public void sortShow() {
-        int mSortLyoutWidth = mContext.getResources()
+    private void sortShow() {
+        int mSortLyoutWidth = getResources()
                 .getDimensionPixelSize(R.dimen.sort_layout_width);
-        int mSortLyoutHeight = mContext.getResources()
+        int mSortLyoutHeight = getResources()
                 .getDimensionPixelSize(R.dimen.sort_layout_height);
         mPopupWindow = new PopupWindow(mSelectLayout, mSortLyoutWidth, mSortLyoutHeight);
         mPopupWindow.setFocusable(true);
@@ -637,11 +602,6 @@ public class StartupMenuActivity extends Activity
         int[] location = new int[2];
         mSortClickView.getLocationOnScreen(location);
         mPopupWindow.showAsDropDown(mSortClickView);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     public void setFocus(boolean hFocus) {
