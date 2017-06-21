@@ -178,10 +178,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
                 super.run();
                 queryAppInfo();
                 queryCommonAppInfo();
-                sortOrder();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        sortOrder();
                         mGridAdapter.notifyDataSetChanged();
                         mListAdapter.notifyDataSetChanged();
                     }
