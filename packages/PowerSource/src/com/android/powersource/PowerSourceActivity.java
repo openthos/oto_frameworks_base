@@ -158,6 +158,7 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intentLock);
                 PowerSourceActivity.this.finish();
+                break;
             case R.id.power_sleep:
                 closeButtonShowStatusBar();
                 finishStatusbarPowerLayout();
