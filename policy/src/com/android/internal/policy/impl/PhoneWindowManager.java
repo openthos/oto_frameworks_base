@@ -63,6 +63,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.PowerManager;
+import android.os.BatteryManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
@@ -3048,6 +3049,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 brightness = Math.min(max, brightness);
                 brightness = Math.max(min, brightness);
 
+                Settings.System.putIntForUser(mContext.getContentResolver(),
+                        isCharging() ? Settings.System.SCREEN_BRIGHTNESS_CHARGING
+                                     : Settings.System.SCREEN_BRIGHTNESS_UNCHARGE, brightness,
+                        UserHandle.USER_CURRENT_OR_SELF);
                 Settings.System.putIntForUser(mContext.getContentResolver(),
                         Settings.System.SCREEN_BRIGHTNESS, brightness,
                         UserHandle.USER_CURRENT_OR_SELF);
@@ -6892,4 +6897,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         return mOtoSetupWizardProcess;
     }
 
+    private boolean isCharging() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = mContext.registerReceiver(null, filter);
+
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        return (status == BatteryManager.BATTERY_STATUS_CHARGING)
+                             || (status == BatteryManager.BATTERY_STATUS_FULL);
+    }
 }

@@ -18,12 +18,15 @@ package com.android.systemui.settings;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IPowerManager;
 import android.os.PowerManager;
+import android.os.BatteryManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.UserHandle;
@@ -206,6 +209,10 @@ public class BrightnessController implements ToggleSlider.Listener {
                 AsyncTask.execute(new Runnable() {
                         public void run() {
                             Settings.System.putIntForUser(mContext.getContentResolver(),
+                                    isCharging() ? Settings.System.SCREEN_BRIGHTNESS_CHARGING
+                                                 : Settings.System.SCREEN_BRIGHTNESS_UNCHARGE,
+                                    val, UserHandle.USER_CURRENT);
+                            Settings.System.putIntForUser(mContext.getContentResolver(),
                                     Settings.System.SCREEN_BRIGHTNESS, val,
                                     UserHandle.USER_CURRENT);
                         }
@@ -292,4 +299,12 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
+    private boolean isCharging() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = mContext.registerReceiver(null, filter);
+
+        int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        return (status == BatteryManager.BATTERY_STATUS_CHARGING)
+                             || (status == BatteryManager.BATTERY_STATUS_FULL);
+    }
 }

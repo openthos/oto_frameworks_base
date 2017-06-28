@@ -1288,6 +1288,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
                 boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                                      status == BatteryManager.BATTERY_STATUS_FULL;
+                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                int chargingBrightness = pm.getMaximumScreenBrightnessSetting();
+                int unChargingBrightness = pm.getDefaultScreenBrightnessSetting();
+                int brightness = Settings.System.getInt(context.getContentResolver(),
+                                 isCharging ? Settings.System.SCREEN_BRIGHTNESS_CHARGING
+                                            : Settings.System.SCREEN_BRIGHTNESS_UNCHARGE,
+                                 isCharging ? chargingBrightness : unChargingBrightness);
+                Settings.System.putInt(context.getContentResolver(),
+                                 Settings.System.SCREEN_BRIGHTNESS, brightness);
                 if (isCharging) {
                     mBatteryButton.setImageDrawable(mContext.getDrawable(
                                                     R.drawable.statusbar_battery));

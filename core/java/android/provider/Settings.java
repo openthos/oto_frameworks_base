@@ -2014,10 +2014,20 @@ public final class Settings {
          */
         public static final String SCREEN_OFF_TIMEOUT = "screen_off_timeout";
 
+	/**
+	 * The screen backlight brightness between 0 and 255.
+	 */
+	public static final String SCREEN_BRIGHTNESS = "screen_brightness";
+
         /**
-         * The screen backlight brightness between 0 and 255.
+         * The screen charging backlight brightness between 0 and 255.
          */
-        public static final String SCREEN_BRIGHTNESS = "screen_brightness";
+        public static final String SCREEN_BRIGHTNESS_CHARGING = "screen_brightness_charging";
+
+        /**
+         * The screen notcharging backlight brightness between 0 and 255.
+         */
+        public static final String SCREEN_BRIGHTNESS_UNCHARGE = "screen_brightness_uncharge";
 
         /**
          * Control whether to enable automatic brightness mode.
