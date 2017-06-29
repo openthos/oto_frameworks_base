@@ -1869,7 +1869,8 @@ public class InputMethodService extends AbstractInputMethodService {
         Intent intent = new Intent(Intent.ACTION_DESKTOP_INTERCEPT);
         intent.putExtra(Intent.EXTRA_DESKTOP_ISCTRLPRESS, event.isCtrlPressed());
         intent.putExtra(Intent.EXTRA_DESKTOP_ISSHIFTPRESS, event.isShiftPressed());
-        if (mIsLauncher) {
+        if (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE && keyCode != KeyEvent.KEYCODE_VOLUME_UP
+                && keyCode != KeyEvent.KEYCODE_VOLUME_DOWN && mIsLauncher) {
             Bundle bundle = new Bundle();
             bundle.putInt(Intent.EXTRA_DESKTOP_KEYCODE, keyCode);
             bundle.putParcelable(Intent.EXTRA_DESKTOP_KEYEVENT, event);
