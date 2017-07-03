@@ -17,12 +17,6 @@
 <resources>
     <bool name="show_as_dialog">true</bool>
 
-    <dimen name="start_menu_app_width">133dp</dimen>
-    <dimen name="start_menu_app_height">120dp</dimen>
-
-    <dimen name="start_menu_commonl_width">110dp</dimen>
-    <dimen name="start_menu_commonl_height">120dp</dimen>
-
     <dimen name="dp180">129dp</dimen>
     <dimen name="dp384">274dp</dimen>
 

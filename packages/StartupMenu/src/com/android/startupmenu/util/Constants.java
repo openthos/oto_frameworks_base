@@ -13,7 +13,6 @@ public class Constants {
 
     public static final int EDITTEXT_LENGTH_MAX = 10;
     public static final int COMMON_APP_NUM = 8;
-    public static final int START_MENU_RIGHT_MOUSE_UI_NUMBER = 57;
 
 //    public static final String APPNAME_OTO_FILEMANAGER = ApplicationInfo.APPNAME_OTO_FILEMANAGER;
 //    public static final String STATUS_BAR_SHOW_SUGGEST = Intent.STATUS_BAR_SHOW_SUGGEST;

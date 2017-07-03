@@ -25,15 +25,9 @@ public class AppAdapter extends BaseAdapter {
 
     private List<AppInfo> mAppInfos;
     private StartupMenuActivity mActivity;
-    private int mStartMenuAppWidth;
-    private int mStartMenuAppHeight;
 
     public AppAdapter(Context context, List<AppInfo> appInfos) {
         mActivity = (StartupMenuActivity) context;
-        mStartMenuAppWidth =
-                mActivity.getResources().getDimensionPixelSize(R.dimen.start_menu_app_width);
-        mStartMenuAppHeight = mActivity.getResources()
-                .getDimensionPixelSize(R.dimen.start_menu_app_height);
         mAppInfos = appInfos;
     }
 
@@ -104,14 +98,21 @@ public class AppAdapter extends BaseAdapter {
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        private View mTempView;
         public boolean onHover(View v, MotionEvent event) {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_HOVER_ENTER:
+                    if (mTempView != null && mTempView != v) {
+                        mTempView.setBackgroundResource(android.R.color.transparent);
+                    }
                     v.setBackgroundResource(R.color.app_background);
+                    mTempView = v;
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(android.R.color.transparent);
+                    if (mTempView != v) {
+                        v.setBackgroundResource(android.R.color.transparent);
+                    }
                     break;
             }
             return false;
@@ -120,11 +121,7 @@ public class AppAdapter extends BaseAdapter {
 
     private void showMenuDialog(MotionEvent motionEvent, AppInfo appInfo) {
         AppDialog appDialog = new AppDialog(mActivity, R.style.dialog, appInfo);
-        appDialog.showDialog(
-                (int) motionEvent.getRawX(),
-                (int) motionEvent.getRawY() + Constants.START_MENU_RIGHT_MOUSE_UI_NUMBER,
-                mStartMenuAppWidth,
-                mStartMenuAppHeight);
+        appDialog.showDialog((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
     }
 
     class ViewHolder {

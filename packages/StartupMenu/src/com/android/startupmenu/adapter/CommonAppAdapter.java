@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import com.android.startupmenu.dialog.CommonAppDialog;
 import com.android.startupmenu.bean.AppInfo;
-import com.android.startupmenu.util.Constants;
 import com.android.startupmenu.util.SqliteOperate;
 
 import android.content.Context;
@@ -24,17 +23,11 @@ import android.widget.TextView;
 public class CommonAppAdapter extends BaseAdapter {
 
     private ArrayList<AppInfo> mAppInfos;
-    private int mStartMenuCommonlWidth;
-    private int mStartMenuCommonlHeight;
     private StartupMenuActivity mActivity;
 
     public CommonAppAdapter(Context context, ArrayList<AppInfo> appInfos) {
         mAppInfos = appInfos;
         mActivity = (StartupMenuActivity) context;
-        mStartMenuCommonlWidth = mActivity.getResources()
-                .getDimensionPixelSize(R.dimen.start_menu_commonl_width);
-        mStartMenuCommonlHeight = mActivity.getResources()
-                .getDimensionPixelSize(R.dimen.start_menu_commonl_height);
     }
 
     @Override
@@ -84,9 +77,6 @@ public class CommonAppAdapter extends BaseAdapter {
                     case MotionEvent.BUTTON_TERTIARY:
                         break;
                     case MotionEvent.BUTTON_SECONDARY:
-                        if (position < 0 || position >= mAppInfos.size()) {
-                            return false;
-                        }
                         showMenuDialog(motionEvent, appInfo);
                         break;
                     default:
@@ -101,15 +91,23 @@ public class CommonAppAdapter extends BaseAdapter {
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {
+        private View mTempView;
         public boolean onHover(View v, MotionEvent event) {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_HOVER_ENTER:
+                    if (mTempView != null && mTempView != v) {
+                        mTempView.setBackgroundResource(R.color.appUsuallyBackground);
+                    }
                     v.setBackgroundResource(R.drawable.power_background);
+                    mTempView = v;
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(R.color.appUsuallyBackground);
+                    if (mTempView != v) {
+                        v.setBackgroundResource(R.color.appUsuallyBackground);
+                    }
                     break;
+
             }
             return false;
         }
@@ -118,11 +116,7 @@ public class CommonAppAdapter extends BaseAdapter {
     private void showMenuDialog(MotionEvent motionEvent, AppInfo appInfo) {
         CommonAppDialog commonAppDialog =
                 new CommonAppDialog(mActivity, R.style.dialog, appInfo);
-        commonAppDialog.showDialog(
-                (int) motionEvent.getRawX(),
-                (int) motionEvent.getRawY() + Constants.START_MENU_RIGHT_MOUSE_UI_NUMBER,
-                mStartMenuCommonlWidth,
-                mStartMenuCommonlHeight);
+        commonAppDialog.showDialog((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
     }
 
     class ViewHolder {

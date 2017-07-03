@@ -454,7 +454,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
             mDisplayAppInfos.addAll(mAllAppInfos);
         } else {
             for (AppInfo appInfo : mAllAppInfos) {
-                if (appInfo.getAppLabel().contains(searText)) {
+                if (appInfo.getAppLabel().toLowerCase().contains(searText.toLowerCase())) {
                     mDisplayAppInfos.add(appInfo);
                 }
             }

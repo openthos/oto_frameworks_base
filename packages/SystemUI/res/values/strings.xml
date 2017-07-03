@@ -999,6 +999,6 @@
    <string name="morning">AM</string>
    <string name="afternoon">PM</string>
    <string name="status_bar_info_hide">Auto hide</string>
-   <string name="status_bar_info_show">Alway show</string>
+   <string name="status_bar_info_show">Always show</string>
    <string name="status_bar_ethernet">set ethernet</string>
 </resources>

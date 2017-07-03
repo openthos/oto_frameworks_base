@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.database.Cursor;
 
@@ -45,12 +46,14 @@ public class AppDialog extends Dialog implements OnTouchListener {
     private AppInfo mAppInfo;
     private boolean mBooleanFlag;
     private boolean mIsFullScreen;
+    private int mDialogHeight;
 
     private TextView mOpen;
     private TextView mRunAsPhone;
     private TextView mRunAsDesktop;
     private TextView mRightFixedTaskbar;
     private TextView mUninstall;
+    private LinearLayout mLayout;
 
 
     public AppDialog(Context context, int themeResId, AppInfo appInfo) {
@@ -63,11 +66,12 @@ public class AppDialog extends Dialog implements OnTouchListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.right_click_menu1);
+        setContentView(R.layout.right_click_menu);
 
         mLockedAppText = mActivity.getResources().getString(R.string.lockedapptext);
         mUnlockedAppText = mActivity.getResources().getString(R.string.unlockedapptext);
 
+        mLayout = (LinearLayout) findViewById(R.id.right_click_menu);
         mOpen = (TextView) findViewById(R.id.tv_right_open);
         mRunAsPhone = (TextView) findViewById(R.id.tv_right_phone_run);
         mRunAsDesktop = (TextView) findViewById(R.id.tv_right_desktop_run);
@@ -94,6 +98,9 @@ public class AppDialog extends Dialog implements OnTouchListener {
         mRunAsDesktop.setOnHoverListener(hoverListener);
         mRightFixedTaskbar.setOnHoverListener(hoverListener);
         mUninstall.setOnHoverListener(hoverListener);
+
+        mLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        mDialogHeight = mLayout.getMeasuredHeight();
     }
 
     public void setEnableOpenwith(boolean can) {
@@ -104,7 +111,7 @@ public class AppDialog extends Dialog implements OnTouchListener {
         }
     }
 
-    public void showDialog(int x, int y, int height, int width) {
+    public void showDialog(int x, int y) {
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -114,25 +121,12 @@ public class AppDialog extends Dialog implements OnTouchListener {
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
         WindowManager m = dialogWindow.getWindowManager();
         Display d = m.getDefaultDisplay();
-        if (x > (d.getWidth() - dialogWindow.getAttributes().width)) {
-            lp.x = d.getWidth() - dialogWindow.getAttributes().width;
+        lp.x = x;
+        if (y > (d.getHeight() - mDialogHeight)) {
+            lp.y = y - mDialogHeight;
         } else {
-            lp.x = x;
+            lp.y = y;
         }
-        int statusBarHeight = mActivity.getResources()
-                       .getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
-        if (dialogWindow.getAttributes().height < 0
-                && y > (d.getHeight() - height)) {
-            lp.y = d.getHeight() - height - statusBarHeight;
-        } else {
-            if (y > (d.getHeight() - dialogWindow.getAttributes().height)) {
-                lp.y = d.getHeight() - dialogWindow.getAttributes().height - statusBarHeight;
-            } else {
-                lp.y = y - STARTMENU_WIDTH;
-            }
-        }
-        lp.width = width;
-        lp.height = height;
         dialogWindow.setAttributes(lp);
     }
 

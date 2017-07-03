@@ -11,7 +11,6 @@ import android.app.Dialog;
 import android.widget.Toast;
 import android.content.Intent;
 import android.view.Window;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,8 +25,6 @@ import com.android.startupmenu.util.SqliteOperate;
 import com.android.startupmenu.adapter.AppAdapter;
 
 public class CommonAppDialog extends Dialog implements OnClickListener {
-    public static int STARTMENU_WIDTH = 65;
-    public static int STARTMENU_LOCATION = 330;
     private TextView mOpen;
     private StartupMenuActivity mActivity;
     private AppInfo mAppInfo;
@@ -82,27 +79,15 @@ public class CommonAppDialog extends Dialog implements OnClickListener {
         }
     }
 
-    public void showDialog(int x, int y, int height, int width) {
+    public void showDialog(int x, int y) {
         show();
         Window dialogWindow = getWindow();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.dimAmount = 0.0f;
         dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
-        WindowManager m = dialogWindow.getWindowManager();
-        Display d = m.getDefaultDisplay();
-        if (x > (d.getWidth() - dialogWindow.getAttributes().width)) {
-            lp.x = d.getWidth() - dialogWindow.getAttributes().width;
-        } else {
-            lp.x = x;
-        }
-        if (y > (d.getHeight() - dialogWindow.getAttributes().height)) {
-            lp.y = d.getHeight() - dialogWindow.getAttributes().height - STARTMENU_LOCATION;
-        } else {
-            lp.y = y - STARTMENU_WIDTH;
-        }
-        lp.width = width;
-        lp.height = height;
+        lp.x = x;
+        lp.y = y;
         dialogWindow.setAttributes(lp);
     }
 
