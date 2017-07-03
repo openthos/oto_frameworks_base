@@ -2335,6 +2335,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             loadUISoundEffectsSettings(stmt);
 
+            loadIntegerSetting(stmt, Settings.System.TEXT_SHOW_PASSWORD,
+                    R.integer.def_text_show_password);
+
             loadIntegerSetting(stmt, Settings.System.POINTER_SPEED,
                     R.integer.def_pointer_speed);
         } finally {
