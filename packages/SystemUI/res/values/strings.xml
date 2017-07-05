@@ -69,12 +69,12 @@
 
     <string name="status_bar_maxmize">Maxmize window</string>
     <string name="status_bar_minimize">Minimize window</string>
-    <string name="status_bar_dock">Dock</string>
-    <string name="status_bar_undock">Undock</string>
-    <string name="status_bar_open">Open application</string>
-    <string name="status_bar_close">Close application</string>
-    <string name="status_bar_phone_mode">phone mode </string>
-    <string name="status_bar_pc_mode">pc mode</string>
+    <string name="status_bar_dock">Lock app</string>
+    <string name="status_bar_undock">Unlock app</string>
+    <string name="status_bar_open">Open</string>
+    <string name="status_bar_close">Close</string>
+    <string name="status_bar_phone_mode">Phone Mode </string>
+    <string name="status_bar_pc_mode">Desktop Mode</string>
 
     <!-- The label in the bar at the top of the status bar when there are no notifications
          showing.  [CHAR LIMIT=40]-->

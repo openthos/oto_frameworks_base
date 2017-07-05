@@ -203,11 +203,12 @@
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"
                     android:textAppearance="@style/TextAppearance.StatusBar.Clock"
-                    android:layout_width="@dimen/systemui_width_big"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:textSize="@dimen/systemui_textsize_twelve"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/systemui_size_five"
+                    android:paddingLeft="@dimen/systemui_size_eight"
+                    android:paddingRight="@dimen/systemui_size_eight"
                     android:gravity="center" />
 
             </com.android.keyguard.AlphaOptimizedLinearLayout>

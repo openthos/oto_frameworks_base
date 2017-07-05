@@ -46,8 +46,8 @@ public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
     @Override
     protected void handleClick() {
         setEnabled(!mState.value);
-        handleUpdateState(mState, null);
         mController.setBluetoothEnabled(!mState.value);
+        handleRefreshState(null);
     }
 
     private void setEnabled(boolean enabled) {
@@ -71,7 +71,7 @@ public class IsolationModeTile extends QSTile<QSTile.BooleanState> {
         state.visible = true;
         state.label = mContext.getResources().getString(
                       R.string.quick_settings_isolation_mode_label);
-        if (isolationMode) {
+        if (!isolationMode) {
             state.icon = ResourceIcon.get(R.drawable.ic_notification_isolation_on);
             state.contentDescription =  mContext.getString(
                       R.string.accessibility_quick_settings_airplane_on);
