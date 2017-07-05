@@ -42,7 +42,7 @@
 
         <Button
             android:id="@+id/notificationManager"
-            android:layout_width="@dimen/systemui_size_fortyeight"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/clearAll"
             android:layout_marginRight="@dimen/systemui_size_sixteen"
@@ -54,7 +54,7 @@
 
         <Button
             android:id="@+id/clearAll"
-            android:layout_width="@dimen/systemui_size_fortyeight"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/systemui_size_sixteen"
             android:layout_alignParentRight="true"

@@ -4,50 +4,27 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    android:paddingBottom = "@dimen/systemui_size_five" >
+    android:paddingBottom="@dimen/systemui_size_five">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/rbm_open"
-            style="@style/Mstyle"
-            android:text="@string/status_bar_open" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/rbm_open"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_open"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/rbm_undock"
-            style="@style/Mstyle"
-            android:text="@string/status_bar_undock" />
+    <TextView
+        android:id="@+id/rbm_undock"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_undock"/>
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/rbm_phone_mode"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_phone_mode"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/rbm_phone_mode"
-            style="@style/Mstyle"
-            android:text="@string/status_bar_phone_mode" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView
-            android:id="@+id/rbm_pc_mode"
-            style="@style/Mstyle"
-            android:text="@string/status_bar_pc_mode" />
-
-    </LinearLayout>
-
+    <TextView
+        android:id="@+id/rbm_pc_mode"
+        style="@style/Mstyle"
+        android:text="@string/status_bar_pc_mode"/>
 
 </LinearLayout>
