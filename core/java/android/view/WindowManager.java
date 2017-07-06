@@ -2351,7 +2351,7 @@ public interface WindowManager extends ViewManager {
             Rect rect = frame;
             Rect originalPhoneFrame = mContext.getResources()
                                 .getDisplayMetrics().getDefaultFrameRect(true);
-            rect.left = rect.left < 0 ? 0 : rect.left;
+            rect.left = rect.left <= 0 ? 0 - getFramePadding() : rect.left;
             rect.right = rect.left + (mOldPhoneSize.width() == 0 ?
                                  originalPhoneFrame.width() : mOldPhoneSize.width());
             rect.bottom = rect.top + (mOldPhoneSize.width() == 0 ?
@@ -2752,6 +2752,9 @@ public interface WindowManager extends ViewManager {
                     }
                 }
             } else if(MotionEvent.ACTION_UP == what) {
+                if (mNewFrame.height() > mFullScreen.height()) {
+                    mNewFrame.bottom = mNewFrame.top + mFullScreen.height();
+                }
                 mFrame.set(mNewFrame);
                 if (isResizing()
                     || (mNewFrame == mLeftDockFrame) || (mNewFrame == mRightDockFrame)) {
