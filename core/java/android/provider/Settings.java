@@ -2013,6 +2013,8 @@ public final class Settings {
          * when it expires.
          */
         public static final String SCREEN_OFF_TIMEOUT = "screen_off_timeout";
+        public static final String SCREEN_OFF_TIMEOUT_CHARGING = "screen_off_timeout_charging";
+        public static final String SCREEN_OFF_TIMEOUT_UNCHARGE = "screen_off_timeout_uncharge";
 
 	/**
 	 * The screen backlight brightness between 0 and 255.
