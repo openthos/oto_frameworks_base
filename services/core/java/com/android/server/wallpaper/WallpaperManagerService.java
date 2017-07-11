@@ -1253,22 +1253,26 @@ public class WallpaperManagerService extends IWallpaperManager.Stub {
             wallpaper.padding.set(0, 0, 0, 0);
             wallpaper.name = "";
         }
-
         // We always want to have some reasonable width hint.
-        int baseSize = getMaximumSizeDimension();
-        if (wallpaper.width < baseSize) {
-            wallpaper.width = baseSize;
+        // int baseSize = getMaximumSizeDimension();
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display d = wm.getDefaultDisplay();
+        Point small = new Point();
+        Point large = new Point();
+        d.getCurrentSizeRange(small, large);
+        if (wallpaper.width != Math.max(large.x, large.y)) {
+            wallpaper.width = Math.max(large.x, large.y);
         }
-        if (wallpaper.height < baseSize) {
-            wallpaper.height = baseSize;
+        if (wallpaper.height != Math.max(small.x, small.y)) {
+            wallpaper.height = Math.max(small.x, small.y);
         }
     }
 
-    private int getMaximumSizeDimension() {
-        WindowManager wm = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
-        Display d = wm.getDefaultDisplay();
-        return d.getMaximumSizeDimension();
-    }
+    // private int getMaximumSizeDimension() {
+    //     WindowManager wm = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
+    //     Display d = wm.getDefaultDisplay();
+    //     return d.getMaximumSizeDimension();
+    // }
 
     // Called by SystemBackupAgent after files are restored to disk.
     public void settingsRestored() {
