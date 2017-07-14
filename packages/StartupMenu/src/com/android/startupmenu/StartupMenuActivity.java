@@ -590,17 +590,12 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
     }
 
     private void sortShow() {
-        int mSortLyoutWidth = getResources()
-                .getDimensionPixelSize(R.dimen.sort_layout_width);
-        int mSortLyoutHeight = getResources()
-                .getDimensionPixelSize(R.dimen.sort_layout_height);
-        mPopupWindow = new PopupWindow(mSelectLayout, mSortLyoutWidth, mSortLyoutHeight);
+        mPopupWindow = new PopupWindow(mSelectLayout,
+                          LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         mPopupWindow.setFocusable(true);
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 
-        int[] location = new int[2];
-        mSortClickView.getLocationOnScreen(location);
         mPopupWindow.showAsDropDown(mSortClickView);
     }
 

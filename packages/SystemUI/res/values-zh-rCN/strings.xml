@@ -421,5 +421,15 @@
     <string name="afternoon">下午 </string>
     <string name="status_bar_info_hide">隐藏任务栏</string>
     <string name="status_bar_info_show">显示任务栏</string>
-    <string name="status_bar_ethernet">设置以太网</string>
+    <string name="status_bar_ethernet">配置以太网</string>
+    <string name="wifi_enable">无线网已开启</string>
+    <string name="wifi_unable">无线网已关闭</string>
+
+    <string name="monday">一</string>
+    <string name="tuesday">二</string>
+    <string name="wednesday">三</string>
+    <string name="thursday">四</string>
+    <string name="friday">五</string>
+    <string name="saturday">六</string>
+    <string name="sunday">日</string>
 </resources>

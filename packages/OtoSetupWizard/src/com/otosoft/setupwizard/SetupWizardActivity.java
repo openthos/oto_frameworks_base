@@ -49,10 +49,6 @@ public class SetupWizardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
-        if (mCurrentLocale == null) {
-            mCurrentLocale = Locale.CHINA;
-            updateLocale(mCurrentLocale);
-        }
         setContentView(R.layout.activity_setupwizard);
         //send broadcast to control status bar
         Intent intent1 = new Intent();

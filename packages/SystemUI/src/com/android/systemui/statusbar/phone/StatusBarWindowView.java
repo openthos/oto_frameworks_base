@@ -18,6 +18,7 @@ package com.android.systemui.statusbar.phone;
 
 import android.app.StatusBarManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -32,14 +33,15 @@ import android.view.View;
 import android.view.ViewRootImpl;
 import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.DragDownHelper;
 import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
-
 
 public class StatusBarWindowView extends FrameLayout {
     public static final String TAG = "StatusBarWindowView";
@@ -246,5 +248,21 @@ public class StatusBarWindowView extends FrameLayout {
             mStackScrollLayout.cancelExpandHelper();
         }
     }
-}
 
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        refreshLayout();
+    }
+
+    private void refreshLayout() {
+        TextView printMessage = (TextView) findViewById(R.id.print_message);
+        Button printManager = (Button) findViewById(R.id.printManager);
+        printMessage.setTextSize(
+                getResources().getDimension(R.dimen.qs_tile_text_size_big));
+        printManager.setTextSize(
+                getResources().getDimension(R.dimen.qs_tile_text_size_small));
+        printMessage.setText(R.string.print_message);
+        printManager.setText(R.string.notification_manager);
+    }
+}

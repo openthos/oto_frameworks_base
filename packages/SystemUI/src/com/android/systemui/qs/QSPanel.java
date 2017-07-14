@@ -184,6 +184,7 @@ public class QSPanel extends ViewGroup {
                 detailView.dispatchConfigurationChanged(newConfig);
             }
         }
+        refreshAllTiles();
         mFooter.onConfigurationChanged();
     }
 

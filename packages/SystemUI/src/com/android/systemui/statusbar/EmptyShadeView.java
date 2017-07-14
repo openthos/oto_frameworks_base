@@ -42,6 +42,7 @@ public class EmptyShadeView extends StackScrollerDecorView {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        refreshLayout();
     }
 
     @Override
@@ -76,5 +77,19 @@ public class EmptyShadeView extends StackScrollerDecorView {
                 mBar.clearAllNotifications();
             }
         });
+    }
+
+    private void refreshLayout() {
+        TextView notificationCenter = (TextView) findViewById(R.id.notification_center);
+        Button notificationManager = (Button) findViewById(R.id.notificationManager);
+        Button clearAll = (Button) findViewById(R.id.clearAll);
+        notificationCenter.setTextSize(
+                getResources().getDimension(R.dimen.qs_tile_text_size_big));
+        notificationManager.setTextSize(
+                getResources().getDimension(R.dimen.qs_tile_text_size_small));
+        clearAll.setTextSize(getResources().getDimension(R.dimen.qs_tile_text_size_small));
+        notificationCenter.setText(R.string.notification_center);
+        notificationManager.setText(R.string.notification_manager);
+        clearAll.setText(R.string.clear_all);
     }
 }

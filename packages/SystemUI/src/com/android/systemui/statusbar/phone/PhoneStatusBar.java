@@ -4078,6 +4078,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateShowSearchHoldoff();
         updateRowStates();
         mScreenPinningRequest.onConfigurationChanged();
+        rebuildDialog();
+    }
+
+    public void rebuildDialog() {
+        mInputMethodPopupWindow = new InputMethodDialog(mContext);
+        mBatteryPopupWindow = new BatteryDialog(mContext);
+        mWifiPopupWindow = new WifiDialog(mContext);
+        mCalendarDialog = new CalendarDialog(mContext);
     }
 
     @Override

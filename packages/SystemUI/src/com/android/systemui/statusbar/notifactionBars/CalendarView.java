@@ -55,6 +55,7 @@ public class CalendarView extends ViewFlipper implements
     private int mCalendarMonth;
     private Date mThisday = new Date();
     private Date mCalendarday;
+    private Context mContext;
 
     private LinearLayout mFirstCalendar;
     private LinearLayout mSecondCalendar;
@@ -67,10 +68,12 @@ public class CalendarView extends ViewFlipper implements
 
     public CalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         init();
     }
     public CalendarView(Context context) {
         super(context);
+        mContext = context;
         init();
     }
 
@@ -108,7 +111,14 @@ public class CalendarView extends ViewFlipper implements
     }
 
     private void drawFrame(LinearLayout oneCalendar) {
-        String[] weekday = new String[] { "日", "一", "二", "三", "四", "五", "六" };
+        String[] weekday = new String[] {
+                mContext.getString(R.string.sunday),
+                mContext.getString(R.string.monday),
+                mContext.getString(R.string.tuesday),
+                mContext.getString(R.string.wednesday),
+                mContext.getString(R.string.thursday),
+                mContext.getString(R.string.friday),
+                mContext.getString(R.string.saturday)};
         LinearLayout title = new LinearLayout(getContext());
         title.setBackgroundColor(COLOR_TX_WEEK_TITLE);
         title.setOrientation(LinearLayout.HORIZONTAL);

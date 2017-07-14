@@ -22,10 +22,10 @@
     <string name="print_area">This is print area</string>
 
     <!-- Name of notification center -->
-    <string name="notification_center">Notification Center</string>
+    <string name="notification_center">Notifications</string>
 
     <!-- Name of notification manager -->
-    <string name="notification_manager">Notification Manager</string>
+    <string name="notification_manager">Manager</string>
 
     <!-- Name of clear all -->
     <string name="clear_all">Clear All</string>
@@ -964,8 +964,8 @@
     <string name="wifi_try_cnt">Connect</string>
     <string name="wifi_discnt">Disconnect</string>
     <string name="wifi_cnting">Connecting</string>
-    <string name="wifi_enable">Enable</string>
-    <string name="wifi_unable">Unable</string>
+    <string name="wifi_enable">WLAN Switched On</string>
+    <string name="wifi_unable">WLAN Switched Off</string>
 
     <!--printer-->
     <string name="print_error">Error</string>
@@ -1000,5 +1000,13 @@
    <string name="afternoon">PM</string>
    <string name="status_bar_info_hide">Auto hide</string>
    <string name="status_bar_info_show">Always show</string>
-   <string name="status_bar_ethernet">set ethernet</string>
+   <string name="status_bar_ethernet">Configure Ethernet</string>
+
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
 </resources>

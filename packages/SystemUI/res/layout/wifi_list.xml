@@ -21,7 +21,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
-        android:padding="@dimen/systemui_size_ten"
+        android:paddingLeft="@dimen/systemui_padding_thirty"
         android:layout_height="@dimen/systemui_size_fifty">
         <TextView
             android:id="@+id/wifi_enable"
@@ -30,7 +30,7 @@
             android:textSize="@dimen/systemui_textsize_twelve"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:layout_width="@dimen/systemui_size_hundred"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <Switch
             android:id="@+id/wifi_enable_btn"

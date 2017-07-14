@@ -9,6 +9,8 @@ import android.provider.Settings.Global;
 import android.provider.Settings.Secure;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
+import com.android.internal.app.LocalePicker;
 
 public class SetupWizardApplication extends Application {
     private final ComponentName REAL_HOME = new ComponentName("com.otosoft.filemanager", "com.otosoft.launcher.Launcher");
@@ -24,6 +26,12 @@ public class SetupWizardApplication extends Application {
             Secure.putInt(SetupWizardApplication.this.getContentResolver(), "user_setup_complete", 1);
         }
     };
+
+    @Override
+    public void onCreate() {
+        LocalePicker.updateLocale(Locale.CHINA);
+        super.onCreate();
+    }
 
     public void onSetupFinished(Activity activity) {
         Intent i = new Intent(this, SetupWizardActivity.class);

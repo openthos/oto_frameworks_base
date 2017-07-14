@@ -25,6 +25,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
+    android:layout_marginBottom="@dimen/status_bar_height_real"
     >
 
     <include
@@ -101,6 +102,7 @@
                 android:background="#1Affffff">
 
                 <TextView
+                    android:id="@+id/print_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/systemui_size_sixteen"
