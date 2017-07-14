@@ -245,7 +245,7 @@ public class DisplayMetrics {
 
     public DisplayMetrics() {
     }
-    
+
     public void setTo(DisplayMetrics o) {
         widthPixels = o.widthPixels;
         heightPixels = o.heightPixels;
@@ -262,7 +262,7 @@ public class DisplayMetrics {
         noncompatXdpi = o.noncompatXdpi;
         noncompatYdpi = o.noncompatYdpi;
     }
-    
+
     public void setToDefaults() {
         widthPixels = 0;
         heightPixels = 0;

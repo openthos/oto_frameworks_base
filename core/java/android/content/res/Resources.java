@@ -143,6 +143,9 @@ public class Resources {
     private static int mWidthPixelsWindow = 0;
     private static int mHeightPixelsWindow = 0;
 
+    private static int initScreenWidth = 0;
+    private static int baseWidth = 1600;
+
     @SuppressWarnings("unused")
     private WeakReference<IBinder> mToken;
 
@@ -264,6 +267,7 @@ public class Resources {
         mToken = new WeakReference<IBinder>(token);
         updateConfiguration(config, metrics);
         assets.ensureStringBlocks();
+        adjustDisplayParameter();
     }
 
     /**
@@ -2731,6 +2735,18 @@ public class Resources {
         }
     }
 
+    private void adjustDisplayParameter() {
+        if (initScreenWidth == 0) {
+            initScreenWidth = mMetrics.widthPixels;
+            if (initScreenWidth == 1366) {
+                mMetrics.density = mMetrics.scaledDensity * initScreenWidth / baseWidth;
+            } else if (initScreenWidth == 1920) {
+                mMetrics.scaledDensity = mMetrics.scaledDensity * initScreenWidth / baseWidth;
+            }
+        }
+
+    }
+
     private Resources() {
         mAssets = AssetManager.getSystem();
         // NOTE: Intentionally leaving this uninitialized (all values set
@@ -2740,5 +2756,6 @@ public class Resources {
         mMetrics.setToDefaults();
         updateConfiguration(null, null);
         mAssets.ensureStringBlocks();
+        adjustDisplayParameter();
     }
 }
