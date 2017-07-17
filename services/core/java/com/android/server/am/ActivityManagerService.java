@@ -20126,6 +20126,9 @@ public final class ActivityManagerService extends ActivityManagerNative
                     Binder.restoreCallingIdentity(token);
                 }
             }
+            mWindowManager.relayoutWindow(stackId,
+                           new Rect(r.left + CLOSE_POS_OFFSET, r.top + CLOSE_POS_OFFSET,
+                                    r.right + CLOSE_POS_OFFSET, r.bottom + CLOSE_POS_OFFSET));
         }
     }
 }
