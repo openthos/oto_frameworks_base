@@ -4135,8 +4135,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
      * meantime, just update the things that we know change.
      */
     void updateResources() {
+        if (mEmptyShadeView != null) {
+            mEmptyShadeView.refreshLayout();
+        }
+        if (mStatusBarWindow != null) {
+            mStatusBarWindow.refreshLayout();
+        }
         // Update the quick setting tiles
         if (mQSPanel != null) {
+            mQSPanel.setListening(true);
             mQSPanel.updateResources();
         }
 

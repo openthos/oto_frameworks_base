@@ -42,7 +42,6 @@ public class EmptyShadeView extends StackScrollerDecorView {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        refreshLayout();
     }
 
     @Override
@@ -79,7 +78,7 @@ public class EmptyShadeView extends StackScrollerDecorView {
         });
     }
 
-    private void refreshLayout() {
+    public void refreshLayout() {
         TextView notificationCenter = (TextView) findViewById(R.id.notification_center);
         Button notificationManager = (Button) findViewById(R.id.notificationManager);
         Button clearAll = (Button) findViewById(R.id.clearAll);

@@ -252,10 +252,9 @@ public class StatusBarWindowView extends FrameLayout {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        refreshLayout();
     }
 
-    private void refreshLayout() {
+    public void refreshLayout() {
         TextView printMessage = (TextView) findViewById(R.id.print_message);
         Button printManager = (Button) findViewById(R.id.printManager);
         printMessage.setTextSize(
