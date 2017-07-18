@@ -1,14 +1,11 @@
 package com.android.systemui.adapter;
 
 import java.util.List;
-import java.util.Map;
 
 import com.android.systemui.R;
-import android.content.ContentValues;
 import com.android.systemui.util.InputAppInfo;
-import android.database.Cursor;
+
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,47 +13,30 @@ import android.view.MotionEvent;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.provider.Settings;
-import android.os.UserHandle;
-import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
-import android.content.SharedPreferences;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodInfo;
 
 public class InputMethodAdapter extends BaseAdapter {
-    private List<InputAppInfo> mListAppInfo = null;
-    LayoutInflater mInfater = null;
+    private List<InputAppInfo> mInputAppInfos;
     private Context mContext;
-    private List mBeSelectedData;
-    private Map<Integer, Boolean> mIsSelected;
-    private InputMethodManager input_method;
-    private final String mCurrentInputMethodId;
-    private final List<InputMethodInfo> mInputMethodList;
+    private InputMethodManager mInputMethodManager;
 
-    public InputMethodAdapter(Context context, List<InputAppInfo> apps,
-                      Map<Integer, Boolean> isSelected, List beSelectedData) {
-        mInfater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mListAppInfo = apps;
+    public InputMethodAdapter(Context context,
+                              List<InputAppInfo> apps,InputMethodManager inputMethodManager) {
         mContext = context;
-        input_method = (InputMethodManager) context.getSystemService("input_method");
-        mInputMethodList = input_method.getInputMethodList();
-        mCurrentInputMethodId = Settings.Secure.getString(context.getContentResolver(),
-                Settings.Secure.DEFAULT_INPUT_METHOD);
-        mBeSelectedData = beSelectedData;
-        mIsSelected = isSelected;
+        mInputAppInfos = apps;
+        mInputMethodManager = inputMethodManager;
     }
 
     @Override
     public int getCount() {
-        return mListAppInfo.size();
+        return mInputAppInfos.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mListAppInfo.get(position);
+        return mInputAppInfos.get(position);
     }
 
     @Override
@@ -69,39 +49,40 @@ public class InputMethodAdapter extends BaseAdapter {
         View view = null;
         ViewHolder holder = null;
         if (convertview == null || convertview.getTag() == null) {
-            view = mInfater.inflate(R.layout.status_bar_inputmethod_item, null);
+            view = LayoutInflater.from(mContext).
+                         inflate(R.layout.status_bar_inputmethod_item, null);
             holder = new ViewHolder(view);
             view.setTag(holder);
         } else {
             view = convertview;
             holder = (ViewHolder) convertview.getTag();
         }
-        InputAppInfo appInfo = (InputAppInfo) getItem(position);
-        String appName = appInfo.getName();
-        holder.tvAppLabel.setText(appName);
+        final InputAppInfo appInfo = mInputAppInfos.get(position);
+        holder.tvAppLabel.setText(appInfo.getName());
         view.setOnHoverListener(hoverListener);
-        String imiId = mInputMethodList.get(position).getId();
-        mIsSelected.put(position, imiId.equals(mCurrentInputMethodId));
         view.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (mIsSelected.get(position)) {
+                if (appInfo.isSelected()) {
                     return;
                 }
-                boolean cu = !mIsSelected.get(position);
-                for (Integer p : mIsSelected.keySet()) {
-                    mIsSelected.put(p, false);
-                }
-                mIsSelected.put(position, cu);
-                InputMethodAdapter.this.notifyDataSetChanged();
-                mBeSelectedData.clear();
-                if (cu) {
-                    mBeSelectedData.add(mListAppInfo.get(position));
-                }
-                input_method.showInputMethodPicker();
+                mInputMethodManager.showInputMethodPicker();
             }
         });
-        holder.checkBox.setChecked(mIsSelected.get(position));
+        holder.checkBox.setChecked(appInfo.isSelected());
         return view;
+    }
+
+    private void setSelected(InputAppInfo appInfo) {
+        if (appInfo.isSelected()) {
+            return;
+        }
+        appInfo.setSelected(true);
+        for (int i = 0; i < mInputAppInfos.size(); i++) {
+            InputAppInfo inputAppInfo = mInputAppInfos.get(i);
+            if (inputAppInfo.isSelected()) {
+                inputAppInfo.setSelected(false);
+            }
+        }
     }
 
     View.OnHoverListener hoverListener = new View.OnHoverListener() {

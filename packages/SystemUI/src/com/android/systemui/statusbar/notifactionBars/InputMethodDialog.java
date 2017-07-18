@@ -4,43 +4,27 @@ import java.util.List;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.AdapterView;
 import android.content.pm.PackageManager;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView.OnItemClickListener;
+
 import com.android.systemui.util.InputAppInfo;
 import com.android.systemui.adapter.InputMethodAdapter;
 import com.android.systemui.R;
-import java.util.Map;
-import java.util.HashMap;
-import android.content.Intent;
-import android.util.Log;
+
 import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.widget.Toast;
 
 public class InputMethodDialog extends BaseSettingDialog {
     private ListView mInputListView;
-    private String mFirstInputName, mLastInputName;
     private InputMethodAdapter mInputMethodAdapter;
-    private CharSequence mCharName;
-    private Map<Integer,Boolean> mIsSelected ;
-    private List mBeSelectedData = new ArrayList();
     private List<InputMethodInfo> mMethodList;
-    public static ArrayList<InputAppInfo> mListViewAppInfo = null;
-    private InputMethodManager mImm;
+    private ArrayList<InputAppInfo> mListViewAppInfo;
+    private InputMethodManager mInputMethodManager;
     private PackageManager mPm;
 
     public InputMethodDialog(Context context) {
@@ -65,60 +49,56 @@ public class InputMethodDialog extends BaseSettingDialog {
 
     @Override
     protected void initViews() {
-        if (mIsSelected != null) {
-            mIsSelected = null;
-        }
-        mIsSelected = new HashMap<Integer, Boolean>();
-        final AudioManager audioManager = (AudioManager) mContext.getSystemService(
-                                                                Context.AUDIO_SERVICE);
-        View mediaView = LayoutInflater.from(mContext)
-                                       .inflate(R.layout.status_bar_input_method, null);
-        setContentView(mediaView);
-        mInputListView = (ListView) mediaView.findViewById(R.id.input_lv_view);
-        mContentView = mediaView;
+        mContentView = LayoutInflater.from(mContext)
+                .inflate(R.layout.status_bar_input_method, null);
+        setContentView(mContentView);
+        mInputListView = (ListView) mContentView.findViewById(R.id.input_lv_view);
+        initData();
+    }
+
+    private void initData() {
         mListViewAppInfo = new ArrayList<InputAppInfo>();
-        inputMethod();
-        mInputMethodAdapter = new InputMethodAdapter(mContext, mListViewAppInfo,
-                                                     mIsSelected, mBeSelectedData);
+        mInputMethodManager = (InputMethodManager) mContext.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        mPm = mContext.getPackageManager();
+        mInputMethodAdapter =
+                new InputMethodAdapter(mContext, mListViewAppInfo, mInputMethodManager);
         mInputListView.setAdapter(mInputMethodAdapter);
         mInputListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
-    public void inputMethod() {
-        mImm = (InputMethodManager) mContext.getSystemService(
-                                                    Context.INPUT_METHOD_SERVICE);
-        mPm = mContext.getPackageManager();
-        mMethodList = mImm.getInputMethodList();
-    }
-
     public void updateInputMethod() {
-        if (mIsSelected != null) {
-            mIsSelected = null;
-        }
-        mIsSelected = new HashMap<Integer, Boolean>();
         String currentInputMethodId = Settings.Secure.getString(
-               mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+                mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
         mListViewAppInfo.clear();
-        mMethodList.clear();
-        mMethodList = mImm.getInputMethodList();
+        mMethodList = mInputMethodManager.getInputMethodList();
+        InputAppInfo appInfo;
         for (InputMethodInfo mi : mMethodList) {
-            mCharName = mi.loadLabel(mPm);
-            String name = (String) mCharName;
-            InputAppInfo appInfo = new InputAppInfo();
+            appInfo = new InputAppInfo();
+            String name = (String) mi.loadLabel(mPm);
             appInfo.setName(name);
+            appInfo.setSelected(currentInputMethodId.equals(mi.getId()));
             mListViewAppInfo.add(appInfo);
         }
-        for (int i = 0; i< mListViewAppInfo.size(); i++) {
-            mIsSelected.put(i, false);
+        mInputMethodAdapter.notifyDataSetChanged();
+        setListviewParams();
+    }
+
+    public void setListviewParams() {
+        int maxWidth = 0;
+        int height = 0;
+        for (int i = 0; i < mInputMethodAdapter.getCount(); i++) {
+            View listItem = mInputMethodAdapter.getView(i, null, mInputListView);
+            listItem.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int width = listItem.getMeasuredWidth();
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
+            height = height + listItem.getMeasuredHeight();
         }
-        if (mBeSelectedData.size() > 0) {
-            mBeSelectedData.clear();
-        }
-        if (mInputMethodAdapter != null) {
-            mInputMethodAdapter = null;
-        }
-        mInputMethodAdapter = new InputMethodAdapter(mContext, mListViewAppInfo,
-                                                     mIsSelected, mBeSelectedData);
-        mInputListView.setAdapter(mInputMethodAdapter);
+        ViewGroup.LayoutParams params = mInputListView.getLayoutParams();
+        params.width = maxWidth;
+        params.height = height;
+        mInputListView.setLayoutParams(params);
     }
 }
