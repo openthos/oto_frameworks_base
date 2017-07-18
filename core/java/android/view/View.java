@@ -48,6 +48,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManagerGlobal;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17763,6 +17764,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         } else if ((this instanceof SurfaceView) && isDecorValid()
                    && (getClass().getName().compareTo(
                            "org.mozilla.gecko.gfx.LayerView$LayerSurfaceView") != 0)
+                   && !(this instanceof GLSurfaceView)
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
