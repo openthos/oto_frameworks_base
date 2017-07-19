@@ -1636,7 +1636,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
             int intentFlags = 0;
 
             // FIXME: mContext is not merged into 5.1 originally.
-            if (multiwindowEnabled() && (r.intent != null)) {
+            if (multiwindowEnabled() && (r.intent != null)
+                                     && r.packageName != "com.android.systemui") {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             }
             if (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
