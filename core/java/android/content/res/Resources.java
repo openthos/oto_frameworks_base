@@ -143,8 +143,8 @@ public class Resources {
     private static int mWidthPixelsWindow = 0;
     private static int mHeightPixelsWindow = 0;
 
-    private static int initScreenWidth = 0;
-    private static int baseWidth = 1600;
+    private float scaledDensity_1920;
+    private float density_1366;
 
     @SuppressWarnings("unused")
     private WeakReference<IBinder> mToken;
@@ -267,7 +267,6 @@ public class Resources {
         mToken = new WeakReference<IBinder>(token);
         updateConfiguration(config, metrics);
         assets.ensureStringBlocks();
-        adjustDisplayParameter();
     }
 
     /**
@@ -1867,6 +1866,7 @@ public class Resources {
                 mPluralRule = NativePluralRules.forLocale(config.locale);
             }
         }
+        adjustDisplayParameter();
     }
 
     /**
@@ -2736,15 +2736,15 @@ public class Resources {
     }
 
     private void adjustDisplayParameter() {
-        if (initScreenWidth == 0) {
-            initScreenWidth = mMetrics.widthPixels;
-            if (initScreenWidth == 1366) {
-                mMetrics.density = mMetrics.scaledDensity * initScreenWidth / baseWidth;
-            } else if (initScreenWidth == 1920) {
-                mMetrics.scaledDensity = mMetrics.scaledDensity * initScreenWidth / baseWidth;
-            }
+        if (mMetrics.getWidthPixelsFullScreen() == 1920
+                && scaledDensity_1920 != mMetrics.scaledDensity) {
+            mMetrics.scaledDensity = mMetrics.scaledDensity * 1920 / 1600;
+            scaledDensity_1920 = mMetrics.scaledDensity;
+        } else if (mMetrics.getWidthPixelsFullScreen() == 1366
+                && density_1366 != mMetrics.density) {
+            mMetrics.density = mMetrics.density * 1366 / 1600;
+            density_1366 = mMetrics.density;
         }
-
     }
 
     private Resources() {
@@ -2756,6 +2756,5 @@ public class Resources {
         mMetrics.setToDefaults();
         updateConfiguration(null, null);
         mAssets.ensureStringBlocks();
-        adjustDisplayParameter();
     }
 }
