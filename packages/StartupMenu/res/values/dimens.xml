@@ -45,6 +45,7 @@
 
     <!--StartupMenu layout size -->
     <dimen name="startupmenu_layout_size_one">1dp</dimen>
+    <dimen name="startupmenu_layout_size_two">2dp</dimen>
     <dimen name="startupmenu_layout_size_four">4dp</dimen>
     <dimen name="startupmenu_layout_size_five">5dp</dimen>
     <dimen name="startupmenu_layout_size_eight">8dp</dimen>
@@ -62,7 +63,7 @@
     <dimen name="startupmenu_layout_size_on_hundred_and_four">104dp</dimen>
     <dimen name="startupmenu_layout_size_one_hundred_and_eighty">180dp</dimen>
     <dimen name="startupmenu_layout_one_hundred_and_ninety_two">192dp</dimen>
-    <dimen name="startupmenu_layout_size_Three_hundred_fifty_two">352dp</dimen>
+    <dimen name="startupmenu_layout_size_three_hundred_eighty_five">385dp</dimen>
 
     <!--StartupMenu textview size -->
     <dimen name="startupmenu_text_size_twelve">12sp</dimen>

@@ -262,6 +262,6 @@ public class StatusBarWindowView extends FrameLayout {
         printManager.setTextSize(
                 getResources().getDimension(R.dimen.qs_tile_text_size_small));
         printMessage.setText(R.string.print_message);
-        printManager.setText(R.string.notification_manager);
+        printManager.setText(R.string.print_manager);
     }
 }
