@@ -125,6 +125,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_SYSTEM_RECOVERY = "com.example.junzhen.systemrecovery";
 
+    public static final String APPNAME_CN_CNTV = "cn.cntv";
+
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
@@ -730,6 +732,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_EXCEL) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_WORD) == 0)
+                                     || (pkgName.compareTo(APPNAME_CN_CNTV) == 0)
                                      || (pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
                                      || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
                                      || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)
