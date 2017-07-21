@@ -344,7 +344,7 @@ public class Gravity
     }
 
     public static void apply(int gravity, int w, int h, Rect container,
-            int xAdj, int yAdj, Rect outRect, int padding, int topOffset) {
+            int xAdj, int yAdj, Rect outRect, int padding, int topOffset, boolean needCut) {
         switch (gravity&((AXIS_PULL_BEFORE|AXIS_PULL_AFTER)<<AXIS_X_SHIFT)) {
             case 0:
                 outRect.left = container.left
@@ -387,19 +387,19 @@ public class Gravity
 
         if (outRect.left < container.left) {
             outRect.left = container.left + padding;
-            outRect.right = outRect.left + w;
+            outRect.right = needCut ? outRect.right : outRect.left + w;
         }
         if (outRect.right > container.right) {
             outRect.right = container.right - padding;
-            outRect.left = outRect.right - w;
+            outRect.left = needCut ? outRect.left : outRect.right - w;
         }
         if (outRect.top < container.top) {
             outRect.top = container.top + topOffset;
-            outRect.bottom = outRect.top + h;
+            outRect.bottom = needCut ? outRect.bottom : outRect.top + h;
         }
         if (outRect.bottom > container.bottom) {
             outRect.bottom = container.bottom - padding;
-            outRect.top = outRect.bottom - h;
+            outRect.top = needCut ? outRect.top : outRect.bottom - h;
         }
     }
 
