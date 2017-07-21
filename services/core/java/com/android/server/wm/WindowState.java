@@ -639,23 +639,13 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                         w = w - stack.getMultiWindow().getFramePadding() * 2;
                         y = y + stack.getMultiWindow().getFramePadding() * 4;
                         h = h - stack.getMultiWindow().getFramePadding() * 6;
-                    } else if (ApplicationInfo.APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT
-                                   .equals(mAttrs.packageName)) {
-                        float maxPw = mContext.getResources().getDisplayMetrics()
-                                          .getWidthPixelsFullScreen()
-                                          + stack.getMultiWindow().getFramePadding() * 2;
-                        float maxPh = mContext.getResources().getDisplayMetrics()
-                                          .getHeightPixelsFullScreen()
-                                          + stack.getMultiWindow().getFramePadding() * 3;
-                        x = x + 560 * (pw / maxPw);
-                        y = y + 370 * (ph / maxPh);
                     }
                     Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                             (int) (x + mAttrs.horizontalMargin * pw),
                             (int) (y + mAttrs.verticalMargin * ph), mFrame,
                             stack.getMultiWindow().getFramePadding(),
                             stack.getMultiWindow().getTopFramePadding()
-                                + stack.getMultiWindow().getHeaderHeight(), false); // boolean needCut
+                                + stack.getMultiWindow().getHeaderHeight());
                 }
             } else if (ApplicationInfo.APPNAME_OFFICE_OUTLOOK.equals(mAttrs.packageName)
                            && w != pw) { // bottom menu
@@ -664,7 +654,7 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                         (int) (y + mAttrs.verticalMargin * ph), mFrame,
                         stack.getMultiWindow().getFramePadding(),
                         stack.getMultiWindow().getTopFramePadding()
-                            + stack.getMultiWindow().getHeaderHeight(), false);
+                            + stack.getMultiWindow().getHeaderHeight());
             } else {
                 Gravity.apply(mAttrs.gravity, w, h, mContainingFrame,
                         (int) (x + mAttrs.horizontalMargin * pw),
