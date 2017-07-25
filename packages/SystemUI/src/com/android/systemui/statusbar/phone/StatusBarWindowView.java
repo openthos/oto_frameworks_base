@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.media.session.MediaSessionLegacyHelper;
 import android.os.IBinder;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -257,9 +258,9 @@ public class StatusBarWindowView extends FrameLayout {
     public void refreshLayout() {
         TextView printMessage = (TextView) findViewById(R.id.print_message);
         Button printManager = (Button) findViewById(R.id.printManager);
-        printMessage.setTextSize(
+        printMessage.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.qs_tile_text_size_big));
-        printManager.setTextSize(
+        printManager.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.qs_tile_text_size_small));
         printMessage.setText(R.string.print_message);
         printManager.setText(R.string.print_manager);

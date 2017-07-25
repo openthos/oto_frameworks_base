@@ -18,7 +18,7 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label">电源</string>
     <string name="power_off">关机</string>
-    <string name="system_restart">重新启动</string>
+    <string name="system_restart">重启</string>
     <string name="system_sleep">睡眠</string>
     <string name="system_lock">锁定</string>
 </resources>

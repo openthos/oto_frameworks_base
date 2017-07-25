@@ -19,6 +19,7 @@ package com.android.systemui.statusbar;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
@@ -82,11 +83,12 @@ public class EmptyShadeView extends StackScrollerDecorView {
         TextView notificationCenter = (TextView) findViewById(R.id.notification_center);
         Button notificationManager = (Button) findViewById(R.id.notificationManager);
         Button clearAll = (Button) findViewById(R.id.clearAll);
-        notificationCenter.setTextSize(
+        notificationCenter.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.qs_tile_text_size_big));
-        notificationManager.setTextSize(
+        notificationManager.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.qs_tile_text_size_small));
-        clearAll.setTextSize(getResources().getDimension(R.dimen.qs_tile_text_size_small));
+        clearAll.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimension(R.dimen.qs_tile_text_size_small));
         notificationCenter.setText(R.string.notification_center);
         notificationManager.setText(R.string.notification_manager);
         clearAll.setText(R.string.clear_all);

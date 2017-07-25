@@ -31,9 +31,11 @@ public class WifiContentView extends LinearLayout {
     static final String TAG = "WificontentView";
 
     private PhoneStatusBar mBar;
+    private Context mContext;
 
     public WifiContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
     }
 
     public void setPhoneStatusBar(PhoneStatusBar phoneStatusBar) {
@@ -50,7 +52,7 @@ public class WifiContentView extends LinearLayout {
             intent.setComponent(comp);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             sendBroadcastWifiIcon(mBar);
-            mBar.mContext.startActivity(intent);
+            mContext.startActivity(intent);
         }
         return true;
     }
@@ -58,6 +60,6 @@ public class WifiContentView extends LinearLayout {
     public void sendBroadcastWifiIcon(PhoneStatusBar bar) {
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_CHANGE_ICON);
-        bar.mContext.sendBroadcast(intent);
+        mContext.sendBroadcast(intent);
     }
 }

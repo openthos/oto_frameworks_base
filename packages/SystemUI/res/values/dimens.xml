@@ -625,7 +625,7 @@
     <dimen name="systemui_size_seventy">70dp</dimen>
     <dimen name="systemui_size_hundred">100dp</dimen>
     <dimen name="systemui_size_twohundred">268dp</dimen>
-    <dimen name="qspanel_margin_top">20dp</dimen>
+    <dimen name="qspanel_margin_top">15dp</dimen>
     <dimen name="systemui_size_fourhundred">400dp</dimen>
     <dimen name="systemui_size_subeighty">-80dp</dimen>
     <dimen name="systemui_width_small">38dp</dimen>

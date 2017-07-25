@@ -34,7 +34,7 @@
     <string name="print_message">Print Message</string>
 
     <!-- Name of print manager -->
-    <string name="print_manager">Print Manager</string>
+    <string name="print_manager">Manager</string>
 
     <string name="button_com">computer</string>
     <string name="button_pro">projection</string>
