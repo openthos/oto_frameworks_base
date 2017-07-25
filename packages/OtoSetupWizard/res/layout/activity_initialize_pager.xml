@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/relativelayout_root"
+    android:background="@drawable/firstboot_bg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="800dp"
+        android:layout_height="500dp"
+        android:layout_gravity="center"
+        android:gravity ="center_vertical"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="394dp"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/initialize_title"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:textColor="#444444"
+                android:textSize="20sp"
+                android:gravity ="center"
+                android:layout_marginTop="22dp"
+                android:text="@string/initialize_progress_title"/>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_gravity ="center"/>
+            <TextView
+                android:id="@+id/initialize_progress"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:textColor="#444444"
+                android:textSize="16sp"
+                android:gravity ="center"
+                android:layout_marginTop="40dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_next"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="right"
+            android:visibility="invisible"
+            android:background="#FFFFFF" >
+            <TextView
+               android:layout_width="match_parent"
+               android:layout_height="0.5dp"
+               android:background="#888888"/>
+            <TextView
+                android:id="@+id/tv_next"
+                style="@style/common_button_style"
+                android:text="@string/setup_next"
+                android:textColor="#259b24"
+                android:layout_marginRight="16dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

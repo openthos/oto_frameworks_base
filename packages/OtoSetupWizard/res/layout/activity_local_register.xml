@@ -56,9 +56,6 @@
                     style="@style/common_textview_style"
                     android:text="@string/openthos_id_name"
                     />
-                <TextView
-                    android:layout_width="76dp"
-                    android:layout_height="match_parent" />
                 <EditText
                     android:id="@+id/edittext_openthos_id"
                     style="@style/common_editview_style"

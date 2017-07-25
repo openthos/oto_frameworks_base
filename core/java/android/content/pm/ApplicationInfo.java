@@ -125,7 +125,9 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_SYSTEM_RECOVERY = "com.example.junzhen.systemrecovery";
 
-    public static final String APPNAME_CN_CNTV = "cn.cntv";
+    public static final String APPNAME_CN_CNTV = "cn.cntvhd";
+
+    public static final String APPNAME_PHOTO_MANAGER = "de.k3b.android.androFotoFinder";
 
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
@@ -705,6 +707,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
                                          == 0)
                                      //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
+                                     || (pkgName.compareTo(APPNAME_PHOTO_MANAGER) == 0)
                                      || (pkgName.compareTo(APPNAME_SYSTEM_RECOVERY) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
                                      || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)

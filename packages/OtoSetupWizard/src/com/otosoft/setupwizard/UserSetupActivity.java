@@ -1,6 +1,7 @@
 package com.otosoft.setupwizard;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserHandle;
@@ -27,6 +28,7 @@ import android.provider.Settings;
 
 import java.io.IOException;
 import java.io.DataOutputStream;
+import java.io.File;
 
 import com.otosoft.tools.ChangeBuildPropTools;
 import com.android.internal.widget.LockPatternUtils;
@@ -140,9 +142,7 @@ public class UserSetupActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(oldPassword) && !TextUtils.isEmpty(newPassword) && oldPassword.equals(newPassword)) {
                     mLockPatternUtils.saveLockPassword(newPassword,
                                          DevicePolicyManager.PASSWORD_QUALITY_NUMERIC, false);
-                    Intent intent = new Intent();
-                    intent.setAction("com.android.wizard.STARTUSE");
-                    startActivity(intent);
+                    startActivity();
                 }
                 else{
                     Toast.makeText(UserSetupActivity.this,
@@ -171,9 +171,7 @@ public class UserSetupActivity extends BaseActivity {
                                           new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent();
-                intent.setAction("com.android.wizard.STARTUSE");
-                startActivity(intent);
+                startActivity();
                 dialog.dismiss();
             }
         });
@@ -185,6 +183,17 @@ public class UserSetupActivity extends BaseActivity {
             }
         });
         builder.create().show();
+    }
+
+    private void startActivity() {
+        File file = new File("/data/vendor/app");
+        SharedPreferences sp = getSharedPreferences(PRE_INSTALL_CACHE, Context.MODE_PRIVATE);
+        boolean initializeFinish = sp.getBoolean(INSTALLED_FINISH, false);
+        if (file.exists() && file.listFiles().length > 1 && !initializeFinish) {
+            startActivity(new Intent("com.android.wizard.INITIALIZE"));
+        } else {
+            startActivity(new Intent("com.android.wizard.STARTUSE"));
+        }
     }
 
     public void onResume() {

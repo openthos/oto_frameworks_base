@@ -32,9 +32,6 @@
                 <TextView
                     style="@style/common_textview_style"
                     android:text="@string/str_computer"/>
-                <TextView
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent"/>
                 <EditText
                     android:id="@+id/edittext_computer_name"
                     style="@style/common_editview_style"
@@ -49,9 +46,6 @@
                 <TextView
                     style="@style/common_textview_style"
                     android:text="@string/str_username"/>
-                <TextView
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent" />
                 <EditText
                     android:id="@+id/edittext_username"
                     style="@style/common_editview_style"
@@ -66,9 +60,6 @@
                 <TextView
                     style="@style/common_textview_style"
                     android:text="@string/str_screen_password"/>
-                <TextView
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent" />
                 <EditText
                     android:id="@+id/edittext_screen_password"
                     style="@style/common_editview_style"
@@ -82,9 +73,6 @@
                 <TextView
                     style="@style/common_textview_style"
                     android:text="@string/str_screen_password_confirm"/>
-                <TextView
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent" />
                 <EditText
                     android:id="@+id/edittext_screen_password_confirm"
                     style="@style/common_editview_style"

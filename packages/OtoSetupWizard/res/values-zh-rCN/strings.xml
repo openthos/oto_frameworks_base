@@ -3,7 +3,7 @@
     <string name="str_next">下一步</string>
     <string name="str_prev">返回</string>
     <string name="str_finish">完成</string>
-    <string name="str_username">给自己取一个昵称</string>
+    <string name="str_username">用户名</string>
     <string name="str_language">语言</string>
     <string name="title_openthos_id">验证 Openthos ID</string>
     <string name="openthos_id_name">Openthos ID</string>
@@ -23,6 +23,9 @@
     <string name="language_english">English</string>
     <string name="setup_next">下一步</string>
     <string name="setup_device_setting">本机设置</string>
+    <string name="initialize_progress_title">请稍候，正在为您准备应用环境...</string>
+    <string name="initialize_progress">正在初始化</string>
+    <string name="initialize_finish">初始化完成</string>
     <string name="verify_openthos_title">验证　Openthos ID</string>
     <string name="verify_openthos_summary">如果您已经有openthosID,请在此输入相应的的信息并与此台计算机绑定.</string>
     <string name="setup_language_title">选择语言</string>
