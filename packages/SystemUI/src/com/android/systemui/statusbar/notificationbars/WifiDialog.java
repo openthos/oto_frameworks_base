@@ -62,8 +62,6 @@ public final class WifiDialog extends BaseSettingDialog {
     private final int CONNECT_WIFI_AUTO = 18 << 1;
     private final int CONNECT_WIFI_PSW = 18 << 2;
 
-    private PhoneStatusBar mPhoneStatusBar;
-
     private WifiInfo currentNet;
     private WifiManager netManager;
     private WifiCheckEnableReceiver mWifiCheckEnableReceiver;
@@ -137,10 +135,6 @@ public final class WifiDialog extends BaseSettingDialog {
     public WifiDialog(Context context) {
         super(context);
         initWifiInfo();
-    }
-
-    public void setPhoneStatusBar(PhoneStatusBar phoneStatusBar) {
-        mPhoneStatusBar = phoneStatusBar;
     }
 
     @Override
@@ -381,7 +375,6 @@ public final class WifiDialog extends BaseSettingDialog {
             final ScanResult scanResult = getItem(position);
             if (convertView == null) {
                 convertView = LayoutInflater.from(mContext).inflate(R.layout.wifi_content, null);
-                ((WifiContentView) convertView).setPhoneStatusBar(mPhoneStatusBar);
             }
             convertView.setBackgroundColor(mContext.getResources()
                                                         .getColor(android.R.color.transparent));

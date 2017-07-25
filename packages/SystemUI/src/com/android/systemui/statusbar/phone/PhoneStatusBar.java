@@ -1095,7 +1095,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         mBrightnessDialog = new BrightnessDialog (mContext);
-        ((WifiDialog) mWifiPopupWindow).setPhoneStatusBar(this);
         Window window = mWifiPopupWindow.getWindow();
         window.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = window.getAttributes();

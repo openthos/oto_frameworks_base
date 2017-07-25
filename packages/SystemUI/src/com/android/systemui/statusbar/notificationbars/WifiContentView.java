@@ -19,6 +19,7 @@ package com.android.systemui.statusbar.notifactionBars;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -30,16 +31,8 @@ public class WifiContentView extends LinearLayout {
 
     static final String TAG = "WificontentView";
 
-    private PhoneStatusBar mBar;
-    private Context mContext;
-
     public WifiContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-    }
-
-    public void setPhoneStatusBar(PhoneStatusBar phoneStatusBar) {
-        mBar = phoneStatusBar;
     }
 
     @Override
@@ -47,19 +40,19 @@ public class WifiContentView extends LinearLayout {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             ((WifiDialog)PhoneStatusBar.getWifiDialog()).dismiss();
             Intent intent = new Intent();
-            ComponentName comp = new ComponentName ("com.android.settings",
+            ComponentName comp = new ComponentName (ApplicationInfo.APPNAME_ANDROID_SETTINGS,
                                                     "com.android.settings.wifi.WifiSettings");
             intent.setComponent(comp);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            sendBroadcastWifiIcon(mBar);
-            mContext.startActivity(intent);
+            sendBroadcastWifiIcon();
+            getContext().startActivity(intent);
         }
         return true;
     }
 
-    public void sendBroadcastWifiIcon(PhoneStatusBar bar) {
+    public void sendBroadcastWifiIcon() {
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_CHANGE_ICON);
-        mContext.sendBroadcast(intent);
+        getContext().sendBroadcast(intent);
     }
 }
