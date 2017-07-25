@@ -17,7 +17,8 @@
         <TextView
             android:id="@+id/calendar_time"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/systemui_size_thirtytwo"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/systemui_size_two"
             android:layout_centerVertical="true"
             android:textSize="@dimen/systemui_textsize_twentyfour"
             android:textColor="#ffffff"/>
@@ -25,9 +26,8 @@
         <TextView
             android:id="@+id/calendar_date"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/systemui_size_twentyfour"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/systemui_size_twenty"
             android:textSize="@dimen/systemui_textsize_twelve"
             android:textColor="#ffffff"/>
     </LinearLayout>
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/systemui_size_twentyfour"
             android:textColor="#ffffff"
-            android:layout_marginBottom="@dimen/systemui_size_eight"
+            android:layout_marginBottom="@dimen/systemui_size_ten"
             android:textSize="@dimen/systemui_textsize_twelve" />
     </LinearLayout>
 

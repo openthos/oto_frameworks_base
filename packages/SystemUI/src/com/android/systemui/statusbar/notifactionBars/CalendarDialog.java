@@ -36,10 +36,9 @@ import java.util.Locale;
 import android.app.ActivityManager;
 import android.text.format.DateFormat;
 import java.util.Calendar;
-
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarClickListener;
 import com.android.systemui.statusbar.notificationbars.CalendarView.OnCalendarDateChangedListener;
-
+import java.util.Calendar;
 
 public class CalendarDialog extends BaseSettingDialog implements OnClickListener , Runnable{
 
@@ -244,16 +243,14 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     @Override
     public void show(View v) {
         super.show(v);
-        SimpleDateFormat formatter = new SimpleDateFormat
-                                    ("yyyy" + mYear + "MM" + mMonth + "dd" +
-                                    mDay +"  "+ "HH:mm:ss EEEE" , Locale.getDefault());
-        String str = formatter.format(new Date());
-        int years = Integer.parseInt(str.substring(0, 4));
-        int month = Integer.parseInt(str.substring(5, 7));
-        mDate = str.substring(0, 10);
+        /**
+         * Only show year and month.(yyyy-MM)
+         */
+        Calendar calendar=Calendar.getInstance();
+        int years = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
         mCalendarView.clearAll();
         mPopupwindowCalendarMonth.setText(years + mYear  + month + mMonthText);
         mCalendarView.showCalendar(years, month);
-        mCalendarView.setCalendarDayBgColor(mDate, R.drawable.status_bar_calendar_background);
     }
 }
