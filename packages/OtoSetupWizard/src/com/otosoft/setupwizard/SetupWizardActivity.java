@@ -18,6 +18,11 @@ import android.widget.TextView;
 import android.provider.Settings;
 import com.android.internal.app.LocalePicker;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -102,6 +107,40 @@ public class SetupWizardActivity extends BaseActivity {
                 SetupWizardActivity.this.startActivity(SetupWizardActivity.this.buildWifiSetupIntent());
             }
         });
+        new PreInstallThread("/sdcard/Desktop", "UserGuide.html").start();
+        new PreInstallThread("/sdcard/Movies", "big_buck_bunny_480p_surround-fix.mp4").start();
+    }
+
+    private class PreInstallThread extends Thread {
+        private String mFilePath;
+        private String mFileName;
+        private static final int BUFFER_SIZE_64KB = 64 * 1024;
+
+        public PreInstallThread (String filePath, String fileName) {
+            File f = new File(filePath);
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+            mFilePath = filePath;
+            mFileName = fileName;
+        }
+
+        @Override
+        public void run() {
+            try {
+                InputStream in = getAssets().open(mFileName);
+                OutputStream out = new FileOutputStream(mFilePath + "/" +mFileName);
+                int bytecount;
+                byte[] bytes = new byte[BUFFER_SIZE_64KB];
+                while ((bytecount = in.read(bytes)) != -1) {
+                    out.write(bytes, 0, bytecount);
+                }
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void onResume() {
