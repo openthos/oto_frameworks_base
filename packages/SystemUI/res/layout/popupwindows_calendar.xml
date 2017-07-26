@@ -102,9 +102,9 @@
         <TextView
             android:id="@+id/popupwindow_calendar_bt_enter"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/systemui_size_twentyfour"
+            android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:layout_marginBottom="@dimen/systemui_size_ten"
+            android:layout_marginBottom="@dimen/systemui_size_eighteen"
             android:textSize="@dimen/systemui_textsize_twelve" />
     </LinearLayout>
 

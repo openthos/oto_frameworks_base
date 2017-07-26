@@ -122,7 +122,8 @@ public class CalendarView extends ViewFlipper implements
         LinearLayout title = new LinearLayout(getContext());
         title.setBackgroundColor(COLOR_TX_WEEK_TITLE);
         title.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(-1,  0, 1);
+        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
+                                  LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1);
         Resources res = getResources();
         mTB = res.getDimension(R.dimen.linear_length_unit_over_the_weekend_padding);
         title.setLayoutParams(layout);
@@ -134,13 +135,15 @@ public class CalendarView extends ViewFlipper implements
             view.setText(weekday[i]);
             view.setTextColor(COLOR_BK_DAGE_GRAY);
             view.setTextSize(TEXT_SIZE);
-            view.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1));
+            view.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                                                               LayoutParams.WRAP_CONTENT, 1));
             title.addView(view);
         }
 
         LinearLayout content = new LinearLayout(getContext());
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setLayoutParams(new LinearLayout.LayoutParams(-1, 0, 7f));
+        content.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                                                              LayoutParams.WRAP_CONTENT, 7f));
         oneCalendar.addView(content);
 
         for (int i = 0; i < ROWS_TOTAL; i++) {
