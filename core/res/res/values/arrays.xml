@@ -450,4 +450,10 @@
         <item>@color/Red_700</item>
     </array>
 
+    <string-array name="poor_quality_apps">
+        <item>"com.example.android.notepad"</item>
+        <item>"com.android.gallery3d"</item>
+        <item>"com.android.music"</item>
+        <item>"com.android.providers.downloads.ui"</item>
+    </string-array>
 </resources>

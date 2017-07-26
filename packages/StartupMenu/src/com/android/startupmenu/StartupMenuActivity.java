@@ -19,6 +19,7 @@ package com.android.startupmenu;
 import java.io.File;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -91,6 +92,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
     private ArrayList<AppInfo> mAllAppInfos;
     private ArrayList<AppInfo> mDisplayAppInfos;
     public ArrayList<AppInfo> mCommonAppInfos;
+    private List<String> mFilterAppPkgNames;
 
     private AppAdapter mGridAdapter;
     public CommonAppAdapter mListAdapter;
@@ -170,6 +172,10 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
         mType = mSharedPreference.getInt("sortType", NAME_SORT);
         mFocus = false;
+        mFilterAppPkgNames = new ArrayList<>();
+        String[] array = getResources().getStringArray(
+                 com.android.internal.R.array.poor_quality_apps);
+        mFilterAppPkgNames.addAll(Arrays.asList(array));
 
         showStatusBar();
         new Thread() {
@@ -389,6 +395,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
         AppInfo appInfo;
         for (ResolveInfo reInfo : resolveInfos) {
+            if (!isDisplayApp(reInfo.activityInfo.packageName)) {
+                continue;
+            }
             appInfo = new AppInfo();
             appInfo.setAppLabel((String) reInfo.loadLabel(pm));
             appInfo.setPkgName(reInfo.activityInfo.packageName);
@@ -574,6 +583,16 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         SharedPreferences.Editor edit = mSharedPreference.edit();
         edit.putInt("sortType", type);
         edit.commit();
+    }
+
+    private boolean isDisplayApp(String pkgName) {
+        for (int i = 0; i < mFilterAppPkgNames.size(); i++) {
+            if (pkgName.equals(mFilterAppPkgNames.get(i))) {
+                mFilterAppPkgNames.remove(i);
+                return false;
+            }
+        }
+        return true;
     }
 
     private void powerOff() {

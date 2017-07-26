@@ -1092,6 +1092,7 @@
   <java-symbol type="array" name="config_sms_enabled_single_shift_tables" />
   <java-symbol type="array" name="config_twoDigitNumberPattern" />
   <java-symbol type="array" name="networkAttributes" />
+  <java-symbol type="array" name="poor_quality_apps" />
   <java-symbol type="array" name="preloaded_color_state_lists" />
   <java-symbol type="array" name="preloaded_drawables" />
   <java-symbol type="array" name="sim_colors" />
