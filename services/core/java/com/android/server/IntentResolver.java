@@ -702,6 +702,11 @@ public abstract class IntentResolver<F extends IntentFilter, R extends Object> {
                 continue;
             }
 
+            if (action != null && action.compareTo("android.intent.action.VIEW") == 0
+                    && filter.toString().indexOf("com.tencent.mobileqq") != -1) {
+                continue;
+            }
+
             // Is delivery being limited to filters owned by a particular package?
             if (packageName != null && !isPackageForFilter(packageName, filter)) {
                 if (debug) {
