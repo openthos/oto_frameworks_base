@@ -2408,6 +2408,17 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         }
 
         @Override
+        public void addView(View child, int index, ViewGroup.LayoutParams params) {
+            if (mContentParent == null || getContext().getApplicationInfo()
+                    .packageName.compareTo("tv.danmaku.bili") != 0) {
+                super.addView(child, index, params);
+            } else {
+                /* Single root view for decor, and use mContentParent for child instead of */
+                mContentParent.addView(child, index, params);
+            }
+        }
+
+        @Override
         public void addView(View child, int index) {
             if (isWhiteList(child)) {
                 super.addView(child, index);
