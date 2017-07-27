@@ -2363,10 +2363,14 @@ public interface WindowManager extends ViewManager {
             Rect rect = frame;
             Rect originalPcFrame = mContext.getResources()
                                 .getDisplayMetrics().getDefaultFrameRect(false);
-            rect.right = rect.left + (mOldPcSize.width() == 0 ?
-                                 originalPcFrame.width() : mOldPcSize.width());
-            rect.bottom = rect.top + (mOldPcSize.width() == 0 ?
-                                 originalPcFrame.height() : mOldPcSize.height());
+            if (mOldPcSize.equals(mFullScreen)) {
+                rect = mFullScreen;
+            } else {
+                rect.right = rect.left + (mOldPcSize.width() == 0 ?
+                                     originalPcFrame.width() : mOldPcSize.width());
+                rect.bottom = rect.top + (mOldPcSize.width() == 0 ?
+                                     originalPcFrame.height() : mOldPcSize.height());
+            }
             mOldPcSize.set(rect);
         }
 
