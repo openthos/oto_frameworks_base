@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.provider.Settings;
 import com.android.internal.app.LocalePicker;
 
+import android.content.pm.PackageManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,16 +46,27 @@ public class SetupWizardActivity extends BaseActivity {
             }
         }
     };
-    private  TextView mChinese;
-    private  TextView mEnglish;
+    private TextView mChinese;
+    private TextView mEnglish;
     private int chooseItem = 0;
     private static final String PROPERTY_NATIVEBRIDGE = "persist.sys.nativebridge";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean isTestMode = true;
+        PackageManager packageManager = getPackageManager();
+        try {
+            Intent intent = packageManager.getLaunchIntentForPackage("com.openthos.factorytest");
+            startActivity(intent);
+        } catch (NullPointerException e) {
+            isTestMode = false;
+        }
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         setContentView(R.layout.activity_setupwizard);
+        if (!isTestMode) {
+            findViewById(R.id.background).setVisibility(View.GONE);
+        }
         //send broadcast to control status bar
         Intent intent1 = new Intent();
         intent1.setAction(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
