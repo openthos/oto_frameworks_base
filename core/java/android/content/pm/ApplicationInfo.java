@@ -123,7 +123,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_SANGUOSHA = "com.bf.sgs.hdexp";
 
-    public static final String APPNAME_SYSTEM_RECOVERY = "com.example.junzhen.systemrecovery";
+    public static final String APPNAME_SYSTEM_RECOVERY = "com.openthos.windowsrecovery";
 
     public static final String APPNAME_CN_CNTV = "cn.cntvhd";
 
