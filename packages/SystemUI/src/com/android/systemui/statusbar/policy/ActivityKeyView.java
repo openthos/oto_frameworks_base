@@ -6,6 +6,7 @@ import android.app.ActivityManagerNative;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.Window;
 import com.android.internal.statusbar.StatusbarActivity;
 import android.app.Dialog;
@@ -41,12 +42,8 @@ import android.graphics.Color;
 
 public class ActivityKeyView extends ImageView {
 
-    private static final int DIALOG_OFFSET_PART = 3; // divide 3
-    private static final int DIALOG_PADDING_TIPS = 30;
     private static final int TIMER_NUMBERS = 1000;
-    private static final int DIALOG_OFFSET_DIMENSIONS = 20;
     public static final String TEXT_COLOR_GRAY = "#8B8970";
-    private int mChangeDimension = 0;
 
     //OnClickListener mOpen;     /* Use to open activity by mPkgName fo related StatusbarActivity. */
     //OnClickListener mClose;     /* Use to close window like mCloseBtn of window header. */
@@ -246,14 +243,11 @@ public class ActivityKeyView extends ImageView {
                         (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(mActivity.mIsDocked) {
             if(mActivity.mApkRun) {
-                mChangeDimension = DIALOG_OFFSET_DIMENSIONS;
                 return buildRbmDockedRun(li);
             } else {
-                mChangeDimension = 0;
                 return buildRbmDocked(li);
             }
         } else {
-            mChangeDimension = DIALOG_OFFSET_DIMENSIONS;
             return buildRbmRun(li);
         }
     }
@@ -334,35 +328,31 @@ public class ActivityKeyView extends ImageView {
         return mShowRBM && mDialog.isShowing();
     }
 
-    private void showDialog(View view, int padding) {
-        if(mDialog == null) {
+    private void showDialog(View view) {
+        if (mDialog == null) {
             mDialog = new Dialog(mContext);
             mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
-            mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
         mDialog.setContentView(view);
 
-        Window dw = mDialog.getWindow();
-        WindowManager.LayoutParams lp = dw.getAttributes();
-        int dpx = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
-                                                                  .getDefaultDisplay().getWidth();
-        int dpy = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE))
-                                                                 .getDefaultDisplay().getHeight();
-        int iconSize = getResources().getDimensionPixelSize(R.dimen.status_bar_icon_size_big);
+        Window dialogWindow = mDialog.getWindow();
+        dialogWindow.setGravity(Gravity.CENTER);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+
+        int itemWidth = getResources().getDimensionPixelSize(R.dimen.systemui_size_sixtyfour);
+        int statusBarSize = getResources().getDimensionPixelSize(R.dimen.status_bar_height_real);
+        //Record the view's left upper coordinates
         int[] location = new int[2];
 
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
+        view.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         getLocationOnScreen(location);
-        lp.x = location[0] - dpx / 2 + iconSize - iconSize / DIALOG_OFFSET_PART;
-        lp.y = location[1] - dpy / 2 - view.getMeasuredHeight() + DIALOG_OFFSET_DIMENSIONS
-                                                                - padding;
+        lp.x = location[0] + itemWidth / 2 - mPhoneBar.getScreenWidth() / 2;
+        lp.y = mPhoneBar.getScreenHeight() / 2 - statusBarSize - view.getMeasuredHeight() / 2;
         lp.width = LayoutParams.WRAP_CONTENT;
         lp.height = LayoutParams.WRAP_CONTENT;
 
-        dw.setAttributes(lp);
+        dialogWindow.setAttributes(lp);
         mDialog.show();
     }
 
@@ -468,7 +458,7 @@ public class ActivityKeyView extends ImageView {
             mPhoneBar.dismissDialog();
             dismissDialog();
             mShowRBM = true;
-            showDialog(getRbmView(), mChangeDimension);
+            showDialog(getRbmView());
             return true;
         }
         // Locked status to click
@@ -516,7 +506,7 @@ public class ActivityKeyView extends ImageView {
                         v.setText(PackageManager.getTitleByPkg(getContext(), mActivity.mPkgName));
                     }
                     dismissDialog();
-                    showDialog(view, DIALOG_PADDING_TIPS);
+                    showDialog(view);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
                     useless.setBackgroundResource(R.drawable.system_bar_background);

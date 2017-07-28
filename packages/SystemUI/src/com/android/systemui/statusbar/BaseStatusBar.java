@@ -40,6 +40,7 @@ import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -256,6 +257,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected NotificationOverflowContainer mKeyguardIconOverflowContainer;
     protected DismissView mDismissView;
     protected EmptyShadeView mEmptyShadeView;
+    private Point mPoint;
 
     @Override  // NotificationData.Environment
     public boolean isDeviceProvisioned() {
@@ -648,6 +650,10 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         updateCurrentProfilesCache();
         mTaskViewDialog = TaskViewDialog.getInstance(mContext);
+        Display defaultDisplay = ((WindowManager)
+                mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        mPoint = new Point();
+        defaultDisplay.getRealSize(mPoint);
     }
 
     protected void notifyUserAboutHiddenNotifications() {
@@ -2355,5 +2361,13 @@ public abstract class BaseStatusBar extends SystemUI implements
             return false;
         }
         return mStatusBarKeyguardViewManager.isSecure();
+    }
+
+    public int getScreenWidth() {
+        return mPoint.x;
+    }
+
+    public int getScreenHeight() {
+        return mPoint.y;
     }
 }
