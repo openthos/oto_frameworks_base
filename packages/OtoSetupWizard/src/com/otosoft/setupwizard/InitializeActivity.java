@@ -19,6 +19,12 @@ import android.view.View.OnClickListener;
 import java.io.File;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class InitializeActivity extends BaseActivity {
 
@@ -43,6 +49,14 @@ public class InitializeActivity extends BaseActivity {
         mSp = getSharedPreferences(PRE_INSTALL_CACHE, Context.MODE_PRIVATE);
         initializeApp();
         mInstallTask = new InstallAsyncTask();
+        if (!new File("/sdcard/Pictures/wallpaper").exists()) {
+            new File("/sdcard/Pictures/wallpaper").mkdirs();
+            new Thread(){
+                public void run(){
+                    setWallpaper();
+                }
+            }.start();
+        }
     }
 
     public void onResume() {
@@ -172,6 +186,36 @@ public class InitializeActivity extends BaseActivity {
         protected void onPostExecute(Void avoid) {
             mSp.edit().putBoolean(INSTALLED_FINISH, true).commit();
             startActivity();
+        }
+    }
+
+    private void setWallpaper() {
+        String outputDirectory = "/sdcard/Pictures";
+        File file = new File(outputDirectory);
+        try {
+            InputStream inputStream = getAssets().open("wallpaper.zip");
+            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+            ZipEntry entry = zipInputStream.getNextEntry();
+            byte[] buffer = new byte[1024 * 1024];
+            int count = 0;
+            while (entry != null) {
+                if (entry.isDirectory()) {
+                    file = new File(outputDirectory + File.separator + entry.getName());
+                    file.mkdir();
+                } else {
+                    file = new File(outputDirectory + File.separator + entry.getName());
+                    file.createNewFile();
+                    FileOutputStream outputStream = new FileOutputStream(file);
+                    while ((count = zipInputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, count);
+                    }
+                    outputStream.close();
+                }
+                entry = zipInputStream.getNextEntry();
+            }
+            zipInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
