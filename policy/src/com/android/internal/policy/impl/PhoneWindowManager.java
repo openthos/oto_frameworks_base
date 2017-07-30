@@ -196,6 +196,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static public final String SYSTEM_DIALOG_REASON_RECENT_APPS = "recentapps";
     static public final String SYSTEM_DIALOG_REASON_HOME_KEY = "homekey";
     static public final String SYSTEM_DIALOG_REASON_ASSIST = "assist";
+    static public final String PROCESS_SETUPWIZARD = "com.otosoft.setupwizard";
+    static public final String PROCESS_POWERSOURCE = "com.android.powersource";
 
     /**
      * These are the system UI flags that, when changing, can cause the layout
@@ -645,7 +647,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean mHomeKeyHasEffect;
     private boolean mHomeKeyDown;
-    private boolean mOtoSetupWizardProcess = true;
 
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
@@ -2891,7 +2892,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 startupMenu();
             }
         } else if (keyCode == KeyEvent.KEYCODE_HOME) {
-            if (down && !isOtoSetupWizardProcess()) {
+            if (down && !isBanWinKey()) {
                 if (repeatCount == 0) {
                     mHomeKeyHasEffect = true;
                     mHomeKeyDown = true;
@@ -6883,18 +6884,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mSleeping = status;
     }
 
-    private boolean isOtoSetupWizardProcess() {
-        if (mOtoSetupWizardProcess) {
-            ActivityManager manager = (ActivityManager)mContext
-                                           .getSystemService(Context.ACTIVITY_SERVICE);
-            for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
-                if(process.processName.equals("com.otosoft.setupwizard")) {
-                    return mOtoSetupWizardProcess;
-                }
+    private boolean isBanWinKey() {
+        ActivityManager manager = (ActivityManager)mContext
+                                  .getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
+            if(process.processName.equals(PROCESS_SETUPWIZARD)
+                                  || process.processName.equals(PROCESS_POWERSOURCE)) {
+                return true;
             }
-            mOtoSetupWizardProcess = false;
         }
-        return mOtoSetupWizardProcess;
+        return false;
     }
 
     private boolean isCharging() {
