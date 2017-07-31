@@ -899,6 +899,11 @@ public final class ActivityStackSupervisor implements DisplayListener {
         ActivityInfo aInfo = resolveActivity(intent, resolvedType, startFlags,
                 profilerInfo, userId);
 
+        if (aInfo.toString().indexOf("ResolverActivity") != -1) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
+        }
+
         ActivityContainer container = (ActivityContainer)iContainer;
         synchronized (mService) {
             final int realCallingPid = Binder.getCallingPid();
