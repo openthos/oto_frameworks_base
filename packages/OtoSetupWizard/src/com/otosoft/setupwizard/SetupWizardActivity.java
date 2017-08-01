@@ -161,6 +161,10 @@ public class SetupWizardActivity extends BaseActivity {
         new Handler().postDelayed(this.mRequestFocus, 500);
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
     protected void onNewIntent(Intent intent) {
         if (intent != null && (intent.getFlags() & 67108864) != 0 && intent.getBooleanExtra("extra_clear_top", false)) {
             ((SetupWizardApplication) getApplication()).onSetupFinishedReally(this);
