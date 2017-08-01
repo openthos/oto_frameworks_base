@@ -934,6 +934,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // Other icons
         mLocationController = new LocationControllerImpl(mContext); // will post a notification
+        mBatteryButton = (KeyButtonView) mStatusBarView.findViewById(R.id.status_bar_battery);
         mBatteryController = new BatteryController(mContext);
         mBatteryController.addStateChangedCallback(new BatteryStateChangeCallback() {
             @Override
@@ -945,7 +946,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             @Override
             public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-                // noop
+                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                int chargingBrightness = pm.getMaximumScreenBrightnessSetting();
+                int unChargingBrightness = pm.getDefaultScreenBrightnessSetting();
+                int brightness = Settings.System.getInt(context.getContentResolver(),
+                        charging ? Settings.System.SCREEN_BRIGHTNESS_CHARGING
+                                : Settings.System.SCREEN_BRIGHTNESS_UNCHARGE,
+                        charging ? chargingBrightness : unChargingBrightness);
+                Settings.System.putInt(context.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS, brightness);
+
+                if (charging || pluggedIn || level == 0) {
+                    mBatteryButton.setImageDrawable(mContext.getDrawable(
+                            R.drawable.statusbar_battery));
+                } else if (level >= BATTERY_HIGH) {
+                    mBatteryButton.setImageDrawable(mContext.getDrawable(
+                            R.drawable.statusbar_battery_high));
+                } else if (level >= BATTERY_LOW && level <= BATTERY_HIGH) {
+                    mBatteryButton.setImageDrawable(mContext.getDrawable(
+                            R.drawable.ic_notice_battery_half));
+                } else {
+                    mBatteryButton.setImageDrawable(mContext.getDrawable(
+                            R.drawable.statusbar_battery_low));
+                }
             }
         });
         mNetworkController = new NetworkControllerImpl(mContext);
@@ -1088,7 +1111,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStartupMenu = (ImageView)mStatusBarView.findViewById(R.id.status_bar_startup_menu);
         mActionButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_action_center);
         mInputButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_input_method);
-        mBatteryButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_battery);
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         mNotification = (ImageView)mStatusBarView.findViewById(R.id.status_bar_notification);
@@ -1253,7 +1275,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumeReceiver = new MyVolumeReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MEDIA_VOLUME_CHANGED);
-        filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(Intent.STATUS_BAR_WIFI_ICON);
         filter.addAction(Intent.STATUS_BAR_CHANGE_ICON);
@@ -1273,36 +1294,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 } else {
                     mVolumeButton.setImageDrawable(mContext.getDrawable(
                                                                 R.drawable.statusbar_sound));
-                }
-            } else if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
-                int level = (int)(100f * intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0)
-                             / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
-                int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-                boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                                     status == BatteryManager.BATTERY_STATUS_FULL;
-                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-                int chargingBrightness = pm.getMaximumScreenBrightnessSetting();
-                int unChargingBrightness = pm.getDefaultScreenBrightnessSetting();
-                int brightness = Settings.System.getInt(context.getContentResolver(),
-                                 isCharging ? Settings.System.SCREEN_BRIGHTNESS_CHARGING
-                                            : Settings.System.SCREEN_BRIGHTNESS_UNCHARGE,
-                                 isCharging ? chargingBrightness : unChargingBrightness);
-                Settings.System.putInt(context.getContentResolver(),
-                                 Settings.System.SCREEN_BRIGHTNESS, brightness);
-                if (isCharging) {
-                    mBatteryButton.setImageDrawable(mContext.getDrawable(
-                                                    R.drawable.statusbar_battery));
-                } else {
-                    if (level >= BATTERY_HIGH) {
-                        mBatteryButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.statusbar_battery_high));
-                    } else if (level >= BATTERY_LOW && level <= BATTERY_HIGH) {
-                        mBatteryButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.ic_notice_battery_half));
-                    } else {
-                        mBatteryButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.statusbar_battery_low));
-                    }
                 }
             } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
                 if (mIsWifiIcon) {
