@@ -17761,7 +17761,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
                                        / (float) measuredWidth);
             }
-        } else if ((this instanceof SurfaceView) && isDecorValid()
+        } /*else if ((this instanceof SurfaceView) && isDecorValid()
                    && (getClass().getName().compareTo(
                            "org.mozilla.gecko.gfx.LayerView$LayerSurfaceView") != 0)
                    && !(this instanceof GLSurfaceView)
@@ -17782,7 +17782,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = w;
             }
             measuredHeight = (int) ((float) measuredWidth / mRatio);
-        } else if (isDecorValid() && blacklistIdForMeasure()
+        } */else if (isDecorValid() && blacklistIdForMeasure()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
