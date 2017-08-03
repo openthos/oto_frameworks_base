@@ -35,6 +35,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:paddingTop="13dp"
+                android:cursorVisible="true"
+                android:focusableInTouchMode="true"
                 android:focusable="true"
                 android:nextFocusRight="@+id/power_sleep"
                 android:orientation="vertical" >

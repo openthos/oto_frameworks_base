@@ -243,6 +243,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                      = new IntentFilter(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
     private IntentFilter mFinishShowStatusBar
                      = new IntentFilter(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
+
+    private IntentFilter mShutDownFilter = new IntentFilter(Intent.ACTION_SHUTDOWN);
+    private IntentFilter mRebootFilter = new IntentFilter(Intent.ACTION_REBOOT);
     private IntentFilter mAppMaxFilter = new IntentFilter(Intent.ACTION_OPEN_APPLICATION);
     private BroadcastReceiver mAppChangeStatusBarStartReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -272,7 +275,23 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                  mIsHide = true;
              }
          }
-     };
+    };
+
+    private BroadcastReceiver mShutDownReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_SHUTDOWN.equals(intent.getAction())) {
+                mIsShutDown = true;
+            }
+        }
+    };
+
+    private BroadcastReceiver mRebootReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_REBOOT.equals(intent.getAction())) {
+                mIsShutDown = true;
+            }
+        }
+    };
 
     private BroadcastReceiver mAppChangeStatusBarStartMarklessReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -647,6 +666,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private boolean mHomeKeyHasEffect;
     private boolean mHomeKeyDown;
+    private boolean mIsBanWinKey = true;
+    private boolean mIsShutDown = false;
 
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
@@ -1603,6 +1624,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mContext.registerReceiver(this.mFinishShowStatusBarReceiver,
                                   this.mFinishShowStatusBar);
 
+        mContext.registerReceiver(this.mShutDownReceiver, this.mShutDownFilter);
+        mContext.registerReceiver(this.mRebootReceiver, this.mRebootFilter);
         mContext.registerReceiver(mBroadcastReceiver, mAppMaxFilter);
         mWindowManager = windowManager;
         mWindowManagerFuncs = windowManagerFuncs;
@@ -4949,6 +4972,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         final boolean isInjected = (policyFlags & WindowManagerPolicy.FLAG_INJECTED) != 0;
 
+        /*
+         * When shut down / reboot openthos, ban all keys.
+         * At the PowerSource interface, ban parts of keys.
+         */
+        if ((isTopActivity(PROCESS_POWERSOURCE) && (keyCode != KeyEvent.KEYCODE_DPAD_LEFT) &&
+                                (keyCode != KeyEvent.KEYCODE_DPAD_RIGHT) &&
+                                (keyCode != KeyEvent.KEYCODE_ENTER)) || mIsShutDown) {
+            return 0;
+        }
         // If screen is off then we treat the case where the keyguard is open but hidden
         // the same as if it were open and in front.
         // This will prevent any keys other than the power button from waking the screen
@@ -6884,16 +6916,35 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mSleeping = status;
     }
 
+    /**
+     * When Initialization configuration openthos, ban win key.
+     */
     private boolean isBanWinKey() {
+        if (mIsBanWinKey && isAppRunning(PROCESS_SETUPWIZARD)) {
+            return mIsBanWinKey;
+        }
+        mIsBanWinKey = false;
+        return mIsBanWinKey;
+    }
+
+    // Judge this {@param processApp} is running(return true) / no running (return false);
+    public boolean isAppRunning(String processApp) {
         ActivityManager manager = (ActivityManager)mContext
                                   .getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningAppProcessInfo process : manager.getRunningAppProcesses()) {
-            if(process.processName.equals(PROCESS_SETUPWIZARD)
-                                  || process.processName.equals(PROCESS_POWERSOURCE)) {
+            if(process.processName.equals(processApp)) {
                 return true;
             }
         }
         return false;
+    }
+
+    // Judge top activity is {param activity}(return true) / return false;
+    public boolean isTopActivity(String packageName) {
+        ActivityManager manager = (ActivityManager)mContext
+                                  .getSystemService(Context.ACTIVITY_SERVICE);
+        ComponentName cn = manager.getRunningTasks(1).get(0).topActivity;
+        return cn.getPackageName().equals(packageName);
     }
 
     private boolean isCharging() {
