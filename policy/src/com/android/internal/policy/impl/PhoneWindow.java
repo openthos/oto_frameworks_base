@@ -2409,8 +2409,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index, ViewGroup.LayoutParams params) {
-            if (mContentParent == null || getContext().getApplicationInfo()
-                    .packageName.compareTo("tv.danmaku.bili") != 0) {
+            if (mContentParent == null || isWhiteList(child)) {
                 super.addView(child, index, params);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2775,6 +2774,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                 mUseMouseEvent = false;
             }
             return super.dispatchHoverEvent(event);
+        }
+
+        public void addContentParent(View child, int index, ViewGroup.LayoutParams params) {
+            super.addView(child, index, params);
         }
 
         public boolean superDispatchKeyEvent(KeyEvent event) {
@@ -4728,7 +4731,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         mDecor.startChanging();
 
         View in = mLayoutInflater.inflate(layoutResource, null);
-        decor.addView(in, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        decor.addContentParent(in, -1, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
         mContentRoot = (ViewGroup) in;
         if(isMWWindow()) {
             mDecorMW = new DecorMW();
