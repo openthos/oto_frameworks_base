@@ -406,8 +406,7 @@ public class VideoView extends SurfaceView
     MediaPlayer.OnVideoSizeChangedListener mSizeChangedListener =
         new MediaPlayer.OnVideoSizeChangedListener() {
             public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                mVideoWidth = mp.getVideoWidth();
-                mVideoHeight = mp.getVideoHeight();
+                setVideoSize(mp);
                 if (mVideoWidth != 0 && mVideoHeight != 0) {
                     getHolder().setFixedSize(mVideoWidth, mVideoHeight);
                     requestLayout();
@@ -440,8 +439,7 @@ public class VideoView extends SurfaceView
             if (mMediaController != null) {
                 mMediaController.setEnabled(true);
             }
-            mVideoWidth = mp.getVideoWidth();
-            mVideoHeight = mp.getVideoHeight();
+            setVideoSize(mp);
 
             int seekToPosition = mSeekWhenPrepared;  // mSeekWhenPrepared may be changed after seekTo() call
             if (seekToPosition != 0) {
@@ -476,6 +474,22 @@ public class VideoView extends SurfaceView
             }
         }
     };
+
+    private void setVideoSize(MediaPlayer mp) {
+        WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+        int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+        int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                  - decor.getWindowHeaderPadding();
+        int videoWidth = mp.getVideoWidth();
+        int videoHeight = mp.getVideoHeight();
+        if (w <= h && w < videoWidth) {
+            mVideoWidth = w;
+            mVideoHeight = w * videoHeight / videoWidth;
+        } else if (w > h && h < videoHeight){
+            mVideoHeight = h;
+            mVideoWidth = h * videoWidth / videoHeight;
+        }
+    }
 
     private MediaPlayer.OnCompletionListener mCompletionListener =
         new MediaPlayer.OnCompletionListener() {
