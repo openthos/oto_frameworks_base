@@ -3393,6 +3393,7 @@ package android.app {
     method public android.content.SharedPreferences getPreferences(int);
     method public android.net.Uri getReferrer();
     method public int getRequestedOrientation();
+    method public int getStackId();
     method public int getTaskId();
     method public final java.lang.CharSequence getTitle();
     method public final int getTitleColor();
@@ -3611,6 +3612,7 @@ package android.app {
     field public static final java.lang.String META_HOME_ALTERNATE = "android.app.home.alternate";
     field public static final int MOVE_TASK_NO_USER_ACTION = 2; // 0x2
     field public static final int MOVE_TASK_WITH_HOME = 1; // 0x1
+    field public static final int NOT_RUNNING_STACK_ID = -2; // 0xfffffffe
     field public static final int RECENT_IGNORE_UNAVAILABLE = 2; // 0x2
     field public static final int RECENT_WITH_EXCLUDED = 1; // 0x1
   }
@@ -7765,6 +7767,8 @@ package android.content {
     method public boolean hasFileDescriptors();
     method public static android.content.Intent makeMainActivity(android.content.ComponentName);
     method public static android.content.Intent makeMainSelectorActivity(java.lang.String, java.lang.String);
+    method public static android.content.Intent makePcActivityTask(android.content.ComponentName);
+    method public static android.content.Intent makePhoneActivityTask(android.content.ComponentName);
     method public static android.content.Intent makeRestartActivityTask(android.content.ComponentName);
     method public static java.lang.String normalizeMimeType(java.lang.String);
     method public static android.content.Intent parseIntent(android.content.res.Resources, org.xmlpull.v1.XmlPullParser, android.util.AttributeSet) throws java.io.IOException, org.xmlpull.v1.XmlPullParserException;
@@ -7833,6 +7837,7 @@ package android.content {
     field public static final java.lang.String ACTION_ALL_APPS = "android.intent.action.ALL_APPS";
     field public static final java.lang.String ACTION_ANSWER = "android.intent.action.ANSWER";
     field public static final java.lang.String ACTION_APPLICATION_RESTRICTIONS_CHANGED = "android.intent.action.APPLICATION_RESTRICTIONS_CHANGED";
+    field public static final java.lang.String ACTION_APPSTORE_SEAFILE = "android.intent.action.APPSTORE_SEAFILE";
     field public static final java.lang.String ACTION_APP_ERROR = "android.intent.action.APP_ERROR";
     field public static final java.lang.String ACTION_ASSIST = "android.intent.action.ASSIST";
     field public static final java.lang.String ACTION_ATTACH_DATA = "android.intent.action.ATTACH_DATA";
@@ -7852,6 +7857,12 @@ package android.content {
     field public static final java.lang.String ACTION_DATE_CHANGED = "android.intent.action.DATE_CHANGED";
     field public static final java.lang.String ACTION_DEFAULT = "android.intent.action.VIEW";
     field public static final java.lang.String ACTION_DELETE = "android.intent.action.DELETE";
+    field public static final java.lang.String ACTION_DESKTOP_COMMIT_TEXT = "android.intent.action.DESKTOP_COMMIT_TEXT";
+    field public static final java.lang.String ACTION_DESKTOP_DELETE_FILE = "android.intent.action.DESKTOP_DELETE_FILE";
+    field public static final java.lang.String ACTION_DESKTOP_FOCUSED_STATE = "android.intent.action.DESKTOP_FOCUSED_STATE";
+    field public static final java.lang.String ACTION_DESKTOP_INTERCEPT = "android.intent.action.DESKTOP_INTERCEPT";
+    field public static final java.lang.String ACTION_DESKTOP_SHOW_FILE = "android.intent.action.DESKTOP_SHOW_FILE";
+    field public static final java.lang.String ACTION_DESKTOP_UNFOCUSED_STATE = "android.intent.action.DESKTOP_UNFOCUSED_STATE";
     field public static final java.lang.String ACTION_DEVICE_STORAGE_LOW = "android.intent.action.DEVICE_STORAGE_LOW";
     field public static final java.lang.String ACTION_DEVICE_STORAGE_OK = "android.intent.action.DEVICE_STORAGE_OK";
     field public static final java.lang.String ACTION_DIAL = "android.intent.action.DIAL";
@@ -7892,6 +7903,8 @@ package android.content {
     field public static final java.lang.String ACTION_MEDIA_UNMOUNTED = "android.intent.action.MEDIA_UNMOUNTED";
     field public static final java.lang.String ACTION_MY_PACKAGE_REPLACED = "android.intent.action.MY_PACKAGE_REPLACED";
     field public static final java.lang.String ACTION_NEW_OUTGOING_CALL = "android.intent.action.NEW_OUTGOING_CALL";
+    field public static final java.lang.String ACTION_NOTIFICATION_PROJECTION = "com.android.action.SYSTEMUI_NOTIFICITION_SEND";
+    field public static final java.lang.String ACTION_OPEN_APPLICATION = "android.intent.action.OPEN_APPLICATION";
     field public static final java.lang.String ACTION_OPEN_DOCUMENT = "android.intent.action.OPEN_DOCUMENT";
     field public static final java.lang.String ACTION_OPEN_DOCUMENT_TREE = "android.intent.action.OPEN_DOCUMENT_TREE";
     field public static final java.lang.String ACTION_PACKAGE_ADDED = "android.intent.action.PACKAGE_ADDED";
@@ -7921,10 +7934,14 @@ package android.content {
     field public static final java.lang.String ACTION_SEARCH_LONG_PRESS = "android.intent.action.SEARCH_LONG_PRESS";
     field public static final java.lang.String ACTION_SEND = "android.intent.action.SEND";
     field public static final java.lang.String ACTION_SENDTO = "android.intent.action.SENDTO";
+    field public static final java.lang.String ACTION_SEND_CLICK_INFO = "com.android.action.PACKAGE_SEND";
     field public static final java.lang.String ACTION_SEND_MULTIPLE = "android.intent.action.SEND_MULTIPLE";
     field public static final java.lang.String ACTION_SET_WALLPAPER = "android.intent.action.SET_WALLPAPER";
     field public static final java.lang.String ACTION_SHUTDOWN = "android.intent.action.ACTION_SHUTDOWN";
+    field public static final java.lang.String ACTION_STARTUPMENU_SEND_INFO_LOCK = "com.android.action.STARTMENU_INFO_SEND";
     field public static final java.lang.String ACTION_SYNC = "android.intent.action.SYNC";
+    field public static final java.lang.String ACTION_SYSTEMUI_SEND_INFO_LOCK = "com.android.action.SYSTEMUI_INFO_LOCK_SEND";
+    field public static final java.lang.String ACTION_SYSTEMUI_SEND_INFO_UNLOCK = "com.android.action.SYSTEMUI_INFO_UNLOCK_SEND";
     field public static final java.lang.String ACTION_SYSTEM_TUTORIAL = "android.intent.action.SYSTEM_TUTORIAL";
     field public static final java.lang.String ACTION_TIMEZONE_CHANGED = "android.intent.action.TIMEZONE_CHANGED";
     field public static final java.lang.String ACTION_TIME_CHANGED = "android.intent.action.TIME_SET";
@@ -7992,7 +8009,19 @@ package android.content {
     field public static final java.lang.String EXTRA_CHANGED_UID_LIST = "android.intent.extra.changed_uid_list";
     field public static final java.lang.String EXTRA_CHOSEN_COMPONENT = "android.intent.extra.CHOSEN_COMPONENT";
     field public static final java.lang.String EXTRA_CHOSEN_COMPONENT_INTENT_SENDER = "android.intent.extra.CHOSEN_COMPONENT_INTENT_SENDER";
+    field public static final java.lang.String EXTRA_CROP_FILE_HEADER = "OtoCropFile:///";
     field public static final java.lang.String EXTRA_DATA_REMOVED = "android.intent.extra.DATA_REMOVED";
+    field public static final java.lang.String EXTRA_DELETE_FILE_HEADER = "OtoDeleteFile:///";
+    field public static final java.lang.String EXTRA_DESKTOP_BACK = "Backspace";
+    field public static final java.lang.String EXTRA_DESKTOP_BUNDLE = "Bundle";
+    field public static final java.lang.String EXTRA_DESKTOP_ENTER = "Enter";
+    field public static final java.lang.String EXTRA_DESKTOP_ISCTRLPRESS = "isCtrl";
+    field public static final java.lang.String EXTRA_DESKTOP_ISSHIFTPRESS = "isShift";
+    field public static final java.lang.String EXTRA_DESKTOP_KEYCODE = "Keycode";
+    field public static final java.lang.String EXTRA_DESKTOP_KEYEVENT = "Keyevent";
+    field public static final java.lang.String EXTRA_DESKTOP_ONKEYDOWN = "Onkeydown";
+    field public static final java.lang.String EXTRA_DESKTOP_PATH_TAG = "path";
+    field public static final java.lang.String EXTRA_DESKTOP_RESULTTEXT = "Resulttext";
     field public static final java.lang.String EXTRA_DOCK_STATE = "android.intent.extra.DOCK_STATE";
     field public static final int EXTRA_DOCK_STATE_CAR = 2; // 0x2
     field public static final int EXTRA_DOCK_STATE_DESK = 1; // 0x1
@@ -8001,16 +8030,24 @@ package android.content {
     field public static final int EXTRA_DOCK_STATE_UNDOCKED = 0; // 0x0
     field public static final java.lang.String EXTRA_DONT_KILL_APP = "android.intent.extra.DONT_KILL_APP";
     field public static final java.lang.String EXTRA_EMAIL = "android.intent.extra.EMAIL";
+    field public static final java.lang.String EXTRA_FILE_HEADER = "OtoFile:///";
     field public static final java.lang.String EXTRA_HTML_TEXT = "android.intent.extra.HTML_TEXT";
     field public static final java.lang.String EXTRA_INITIAL_INTENTS = "android.intent.extra.INITIAL_INTENTS";
     field public static final java.lang.String EXTRA_INSTALLER_PACKAGE_NAME = "android.intent.extra.INSTALLER_PACKAGE_NAME";
     field public static final java.lang.String EXTRA_INTENT = "android.intent.extra.INTENT";
     field public static final java.lang.String EXTRA_KEY_EVENT = "android.intent.extra.KEY_EVENT";
+    field public static final java.lang.String EXTRA_KEY_UNINSTALL_APK = "android.intent.extra.uninstall.apk";
     field public static final java.lang.String EXTRA_LOCAL_ONLY = "android.intent.extra.LOCAL_ONLY";
     field public static final java.lang.String EXTRA_MIME_TYPES = "android.intent.extra.MIME_TYPES";
     field public static final java.lang.String EXTRA_NOT_UNKNOWN_SOURCE = "android.intent.extra.NOT_UNKNOWN_SOURCE";
     field public static final java.lang.String EXTRA_ORIGINATING_URI = "android.intent.extra.ORIGINATING_URI";
     field public static final java.lang.String EXTRA_PHONE_NUMBER = "android.intent.extra.PHONE_NUMBER";
+    field public static final java.lang.String EXTRA_RECT_ANIMATION = "android.intent.extra.rect_animation";
+    field public static final java.lang.String EXTRA_RECT_BOTTOM = "android.intent.extra.rect_bottom";
+    field public static final java.lang.String EXTRA_RECT_LEFT = "android.intent.extra.rect_left";
+    field public static final java.lang.String EXTRA_RECT_NAME = "android.intent.extra.rect_name";
+    field public static final java.lang.String EXTRA_RECT_RIGHT = "android.intent.extra.rect_right";
+    field public static final java.lang.String EXTRA_RECT_TOP = "android.intent.extra.rect_top";
     field public static final java.lang.String EXTRA_REFERRER = "android.intent.extra.REFERRER";
     field public static final java.lang.String EXTRA_REFERRER_NAME = "android.intent.extra.REFERRER_NAME";
     field public static final java.lang.String EXTRA_REMOTE_INTENT_TOKEN = "android.intent.extra.remote_intent_token";
@@ -8057,6 +8094,9 @@ package android.content {
     field public static final int FLAG_ACTIVITY_REORDER_TO_FRONT = 131072; // 0x20000
     field public static final int FLAG_ACTIVITY_RESET_TASK_IF_NEEDED = 2097152; // 0x200000
     field public static final int FLAG_ACTIVITY_RETAIN_IN_RECENTS = 8192; // 0x2000
+    field public static final int FLAG_ACTIVITY_RUN_PC_MODE = 4096; // 0x1000
+    field public static final int FLAG_ACTIVITY_RUN_PHONE_MODE = 2048; // 0x800
+    field public static final int FLAG_ACTIVITY_SINGLE_FULLSCREEN = 1024; // 0x400
     field public static final int FLAG_ACTIVITY_SINGLE_TOP = 536870912; // 0x20000000
     field public static final int FLAG_ACTIVITY_TASK_ON_HOME = 16384; // 0x4000
     field public static final int FLAG_DEBUG_LOG_RESOLUTION = 8; // 0x8
@@ -8071,7 +8111,28 @@ package android.content {
     field public static final int FLAG_RECEIVER_NO_ABORT = 134217728; // 0x8000000
     field public static final int FLAG_RECEIVER_REGISTERED_ONLY = 1073741824; // 0x40000000
     field public static final int FLAG_RECEIVER_REPLACE_PENDING = 536870912; // 0x20000000
+    field public static final int FLAG_RUN_FULLSCREEN = -2147483648; // 0x80000000
+    field public static final java.lang.String LOCK_MACHINE_TOTALLY = "android.intent.lock.machine.totally";
     field public static final java.lang.String METADATA_DOCK_HOME = "android.dock_home";
+    field public static final java.lang.String STARTMENU_UNLOCKED = "com.android.startmenu.unlock";
+    field public static final java.lang.String STATUS_BAR_CHANGE_ICON = "android.intent.statusbar.change.icon";
+    field public static final java.lang.String STATUS_BAR_HIDE = "android.intent.statusbar.hide";
+    field public static final java.lang.String STATUS_BAR_HIDE_BOOT_EXIT = "android.intent.statusbar.hide.boot.exit";
+    field public static final java.lang.String STATUS_BAR_HIDE_MARKLESS = "android.intent.statusbar.hide.markless";
+    field public static final java.lang.String STATUS_BAR_INFO_HIDE = "android.intent.statusbar.info.hide";
+    field public static final java.lang.String STATUS_BAR_INFO_HIDE_CUSTOM = "android.intent.statusbar.info.hide.custom";
+    field public static final java.lang.String STATUS_BAR_INFO_SHOW = "android.intent.statusbar.info.show";
+    field public static final java.lang.String STATUS_BAR_INFO_SHOW_CUSTOM = "android.intent.statusbar.info.show.custom";
+    field public static final java.lang.String STATUS_BAR_NOTIFICATION_COLLAPSE = "android.intent.statusbar.notification.collapse";
+    field public static final java.lang.String STATUS_BAR_NOTIFICATION_EXPAND = "android.intent.statusbar.notification.expand";
+    field public static final java.lang.String STATUS_BAR_POWER_SLEEP = "android.intent.statusbar.power.sleep";
+    field public static final java.lang.String STATUS_BAR_SEAFILE = "android.intent.statusbar.seafile";
+    field public static final java.lang.String STATUS_BAR_SHOW = "android.intent.statusbar.show";
+    field public static final java.lang.String STATUS_BAR_SHOW_FINISH_ACTIVITY = "android.intent.statusbar.show.finish.activity";
+    field public static final java.lang.String STATUS_BAR_SHOW_SUGGEST = "android.intent.statusbar.show.suggest";
+    field public static final java.lang.String STATUS_BAR_UNINSTALL_APK = "android.intent.statusbar.remove.apk";
+    field public static final java.lang.String STATUS_BAR_WIFI_ICON = "android.intent.statusbar.wifi.icon";
+    field public static final java.lang.String UNLOCK_MACHINE_TOTALLY = "android.intent.unlock.machine.totally";
     field public static final int URI_ALLOW_UNSAFE = 4; // 0x4
     field public static final int URI_ANDROID_APP_SCHEME = 2; // 0x2
     field public static final int URI_INTENT_SCHEME = 1; // 0x1
@@ -8543,10 +8604,12 @@ package android.content.pm {
     field public static final int CONFIG_TOUCHSCREEN = 8; // 0x8
     field public static final int CONFIG_UI_MODE = 512; // 0x200
     field public static final android.os.Parcelable.Creator<android.content.pm.ActivityInfo> CREATOR;
+    field public static final java.lang.String DOCUMENTS_ACTIVITY = "com.android.documentsui.DocumentsActivity";
     field public static final int DOCUMENT_LAUNCH_ALWAYS = 2; // 0x2
     field public static final int DOCUMENT_LAUNCH_INTO_EXISTING = 1; // 0x1
     field public static final int DOCUMENT_LAUNCH_NEVER = 3; // 0x3
     field public static final int DOCUMENT_LAUNCH_NONE = 0; // 0x0
+    field public static final java.lang.String FILEMANAGER_PICKER_ACTIVITY = "com.openthos.filemanager.PickerActivity";
     field public static final int FLAG_ALLOW_TASK_REPARENTING = 64; // 0x40
     field public static final int FLAG_ALWAYS_RETAIN_TASK_STATE = 8; // 0x8
     field public static final int FLAG_AUTO_REMOVE_FROM_RECENTS = 8192; // 0x2000
@@ -8562,6 +8625,15 @@ package android.content.pm {
     field public static final int FLAG_RESUME_WHILE_PAUSING = 16384; // 0x4000
     field public static final int FLAG_SINGLE_USER = 1073741824; // 0x40000000
     field public static final int FLAG_STATE_NOT_NEEDED = 16; // 0x10
+    field public static final java.lang.String INPUTUINAME_TENCENT_WECHAT = "com.tencent.mm.ui.account.mobile.MobileInputUI";
+    field public static final java.lang.String ISSUE_WIN_OTO_FILEMANAGER = "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_NEWFILE = "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.newfiles.NewFileActivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_NEWFILE_PRO = "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.newfiles.NewFileActivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_PAD = "cn.wps.moffice_eng/cn.wps.moffice.main.local.home.PadHomeActivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_PAD_PRO = "com.kingsoft.moffice_pro/cn.wps.moffice.main.local.home.PadHomeActivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_SPREADSHEET = "cn.wps.moffice.spreadsheet.multiactivity";
+    field public static final java.lang.String ISSUE_WIN_WPS_WRITER = "cn.wps.moffice.writer.multiactivity";
+    field public static final java.lang.String LAUNCHERNAME_TENCENT_QQ = "com.tencent.mobileqq.activity.RegisterGuideActivity";
     field public static final int LAUNCH_MULTIPLE = 0; // 0x0
     field public static final int LAUNCH_SINGLE_INSTANCE = 3; // 0x3
     field public static final int LAUNCH_SINGLE_TASK = 2; // 0x2
@@ -8607,8 +8679,85 @@ package android.content.pm {
     ctor public ApplicationInfo(android.content.pm.ApplicationInfo);
     method public int describeContents();
     method public void dump(android.util.Printer, java.lang.String);
+    method public static boolean isDesktopStyleWindow(java.lang.String);
+    method public static boolean isMaximizedStyleWindow(java.lang.String);
+    method public boolean isPhoneStyleWindow();
+    method public static boolean isPhoneStyleWindow(java.lang.String);
+    method public static boolean isRealFullScreenStyleWindow(java.lang.String);
+    method public static boolean isWeChatIssuePopupWindow(int, int);
     method public java.lang.CharSequence loadDescription(android.content.pm.PackageManager);
+    method public boolean needShadow();
+    method public static boolean needShadow(java.lang.String);
+    field public static final java.lang.String APPNAME_ADOBE_READER = "com.adobe.reader";
+    field public static final java.lang.String APPNAME_ANDROID_CALCULATOR = "com.android.calculator2";
+    field public static final java.lang.String APPNAME_ANDROID_CALENDAR = "com.android.calendar";
+    field public static final java.lang.String APPNAME_ANDROID_DESKCLOCK = "com.android.deskclock";
+    field public static final java.lang.String APPNAME_ANDROID_EMAIL = "com.android.email";
+    field public static final java.lang.String APPNAME_ANDROID_GALLERY3D = "com.android.gallery3d";
+    field public static final java.lang.String APPNAME_ANDROID_INPUTMETHOD_PINYIN = "com.android.inputmethod.pinyin/.PinyinIME";
+    field public static final java.lang.String APPNAME_ANDROID_SETTINGS = "com.android.settings";
+    field public static final java.lang.String APPNAME_AUTONAVI_MINIMAP = "com.autonavi.minimap";
+    field public static final java.lang.String APPNAME_CAMERA2 = "com.android.camera2";
+    field public static final java.lang.String APPNAME_CHAOZHUO_BROWSER = "com.chaozhuo.browser";
+    field public static final java.lang.String APPNAME_CHAOZHUO_BROWSER_X86 = "com.chaozhuo.browser.x86";
+    field public static final java.lang.String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
+    field public static final java.lang.String APPNAME_CHROMIUM = "org.chromium.chrome";
+    field public static final java.lang.String APPNAME_CN_CNTV = "cn.cntvhd";
+    field public static final java.lang.String APPNAME_COM_TERMUX = "com.termux";
+    field public static final java.lang.String APPNAME_CTMC_CLOUDTIMES = "com.cloudtimes.ctmc";
+    field public static final java.lang.String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
+    field public static final java.lang.String APPNAME_DIGIPLEX_GAME = "com.digiplex.game";
+    field public static final java.lang.String APPNAME_DUOWAN_PAD = "com.duowan.pad";
+    field public static final java.lang.String APPNAME_EMINDSOFT_EMINDSTORE = "cn.com.emindsoft.emindstore";
+    field public static final java.lang.String APPNAME_EMINDSOFT_FILEMANAGER = "com.emindsoft.filemanager";
+    field public static final java.lang.String APPNAME_EMINDSOFT_OPENTHOS = "cn.com.emindsoft.openthos";
+    field public static final java.lang.String APPNAME_ESTRONGS_ANDROID_POP = "com.estrongs.android.pop";
+    field public static final java.lang.String APPNAME_EXAMPLE_ANDROID_NOTEPAD = "com.example.android.notepad";
+    field public static final java.lang.String APPNAME_FENNEC = "org.mozilla.fennec_root";
+    field public static final java.lang.String APPNAME_FIHTDC_NOTE = "com.fihtdc.note";
+    field public static final java.lang.String APPNAME_GAODE_MAP = "com.autonavi.minimap";
+    field public static final java.lang.String APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT = "com.github.openthos.printer.localprint";
+    field public static final java.lang.String APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN = "com.google.android.inputmethod.pinyin";
+    field public static final java.lang.String APPNAME_HEXIN_PLAT_ANDROID = "com.hexin.plat.android";
+    field public static final java.lang.String APPNAME_JACKPAL_ANDROIDTERM = "jackpal.androidterm";
+    field public static final java.lang.String APPNAME_JACKPAL_ANDROIDTERM_TERMACTIVITY = "jackpal.androidterm.Term";
+    field public static final java.lang.String APPNAME_JINGDONG_APP_MALL = "com.jingdong.app.mall";
+    field public static final java.lang.String APPNAME_KINGSOFT_EMAIL = "com.kingsoft.email";
+    field public static final java.lang.String APPNAME_MXPLAYER = "com.mxtech.videoplayer.ad";
+    field public static final java.lang.String APPNAME_OFFICE_EXCEL = "com.microsoft.office.excel";
+    field public static final java.lang.String APPNAME_OFFICE_OUTLOOK = "com.microsoft.office.outlook";
+    field public static final java.lang.String APPNAME_OFFICE_POWERPOINT = "com.microsoft.office.powerpoint";
+    field public static final java.lang.String APPNAME_OFFICE_WORD = "com.microsoft.office.word";
+    field public static final java.lang.String APPNAME_ORG_MOZILLA_FIREFOX = "org.mozilla.firefox";
+    field public static final java.lang.String APPNAME_ORG_VIDEOLAN_VLC = "org.videolan.vlc";
+    field public static final java.lang.String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
+    field public static final java.lang.String APPNAME_OTO_FILEMANAGER = "com.openthos.filemanager";
+    field public static final java.lang.String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
+    field public static final java.lang.String APPNAME_OTO_TEST_IN_FACTORY = "com.openthos.factorytest";
+    field public static final java.lang.String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
+    field public static final java.lang.String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY = "com.android.otovirtualgui.MainActivity";
+    field public static final java.lang.String APPNAME_PHOTO_MANAGER = "de.k3b.android.androFotoFinder";
+    field public static final java.lang.String APPNAME_QUICK_PIC = "com.alensw.PicFolder";
+    field public static final java.lang.String APPNAME_ROVIO_ANGRYBIRDSSEASONS = "com.rovio.angrybirdsseasons";
+    field public static final java.lang.String APPNAME_SANGUOSHA = "com.bf.sgs.hdexp";
+    field public static final java.lang.String APPNAME_SEAFILE_SEADROID = "com.seafile.seadroid2";
+    field public static final java.lang.String APPNAME_SYSTEM_RECOVERY = "com.openthos.windowsrecovery";
+    field public static final java.lang.String APPNAME_TAOBAO_APAD = "com.taobao.apad";
+    field public static final java.lang.String APPNAME_TENCENT_QQ = "com.tencent.mobileqq";
+    field public static final java.lang.String APPNAME_TENCENT_WECHAT = "com.tencent.mm";
+    field public static final java.lang.String APPNAME_TOGIC_LAUNCHER_MAINACTIVITY = "com.togic.launcher.MainActivity";
+    field public static final java.lang.String APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY = "com.togic.launcher.SplashActivity";
+    field public static final java.lang.String APPNAME_TOGIC_VIDEO = "com.togic.livevideo";
+    field public static final java.lang.String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
+    field public static final java.lang.String APPNAME_WANDOUJIA_PHOENIX = "com.wandoujia.phoenix2";
+    field public static final java.lang.String APPNAME_WPS = "cn.wps.moffice_eng";
+    field public static final java.lang.String APPNAME_WPS_PRO = "com.kingsoft.moffice_pro";
+    field public static final java.lang.String APPNAME_XUETANGX_MOBILE = "com.xuetangx.mobile";
+    field public static final java.lang.String APPNAME_ZHIHAOLE = "cn.zhl.book";
+    field public static final java.lang.String APPNAME_ZHIHAOLE_VIDEO = "com.zhl.zhl_individual_tutor";
+    field public static final int AUTO_STARTUP_MODE = 0; // 0x0
     field public static final android.os.Parcelable.Creator<android.content.pm.ApplicationInfo> CREATOR;
+    field public static final int DESKTOP_STARTUP_MODE = 2; // 0x2
     field public static final int FLAG_ALLOW_BACKUP = 32768; // 0x8000
     field public static final int FLAG_ALLOW_CLEAR_USER_DATA = 64; // 0x40
     field public static final int FLAG_ALLOW_TASK_REPARENTING = 32; // 0x20
@@ -8637,6 +8786,9 @@ package android.content.pm {
     field public static final int FLAG_TEST_ONLY = 256; // 0x100
     field public static final int FLAG_UPDATED_SYSTEM_APP = 128; // 0x80
     field public static final int FLAG_VM_SAFE_MODE = 16384; // 0x4000
+    field public static final java.lang.String PACKAGENAME_TAG = "package";
+    field public static final int PHONE_STARTUP_MODE = 1; // 0x1
+    field public static final int WECHAT_POPUPWINDOW_DIFF_POS_Y = 150; // 0x96
     field public java.lang.String backupAgentName;
     field public java.lang.String className;
     field public int compatibleWidthLimitDp;
@@ -9013,6 +9165,8 @@ package android.content.pm {
     method public abstract android.content.pm.FeatureInfo[] getSystemAvailableFeatures();
     method public abstract java.lang.String[] getSystemSharedLibraryNames();
     method public abstract java.lang.CharSequence getText(java.lang.String, int, android.content.pm.ApplicationInfo);
+    method public static java.lang.CharSequence getTitleByPkg(android.content.Context, java.lang.String);
+    method public static java.lang.CharSequence getTitleDefault(android.content.Context);
     method public abstract android.graphics.drawable.Drawable getUserBadgedDrawableForDensity(android.graphics.drawable.Drawable, android.os.UserHandle, android.graphics.Rect, int);
     method public abstract android.graphics.drawable.Drawable getUserBadgedIcon(android.graphics.drawable.Drawable, android.os.UserHandle);
     method public abstract java.lang.CharSequence getUserBadgedLabel(java.lang.CharSequence, android.os.UserHandle);
@@ -9554,6 +9708,7 @@ package android.content.res {
     method public android.content.res.AssetFileDescriptor openRawResourceFd(int) throws android.content.res.Resources.NotFoundException;
     method public void parseBundleExtra(java.lang.String, android.util.AttributeSet, android.os.Bundle) throws org.xmlpull.v1.XmlPullParserException;
     method public void parseBundleExtras(android.content.res.XmlResourceParser, android.os.Bundle) throws java.io.IOException, org.xmlpull.v1.XmlPullParserException;
+    method public static void setVirtualScreenSize(int, int);
     method public void updateConfiguration(android.content.res.Configuration, android.util.DisplayMetrics);
   }
 
@@ -11915,6 +12070,12 @@ package android.graphics.drawable {
     method public void stop();
   }
 
+  public class BackgroundDrawable extends android.graphics.drawable.ColorDrawable {
+    ctor public BackgroundDrawable();
+    ctor public BackgroundDrawable(int);
+    method public void setDrawablePadding(int);
+  }
+
   public class BitmapDrawable extends android.graphics.drawable.Drawable {
     ctor public deprecated BitmapDrawable();
     ctor public deprecated BitmapDrawable(android.content.res.Resources);
@@ -12032,6 +12193,7 @@ package android.graphics.drawable {
     method public void setHotspot(float, float);
     method public void setHotspotBounds(int, int, int, int);
     method public final boolean setLevel(int);
+    method public void setPadding(int, int, int, int);
     method public boolean setState(int[]);
     method public void setTint(int);
     method public void setTintList(android.content.res.ColorStateList);
@@ -12271,7 +12433,6 @@ package android.graphics.drawable {
     method public void setColorFilter(android.graphics.ColorFilter);
     method public void setIntrinsicHeight(int);
     method public void setIntrinsicWidth(int);
-    method public void setPadding(int, int, int, int);
     method public void setPadding(android.graphics.Rect);
     method public void setShaderFactory(android.graphics.drawable.ShapeDrawable.ShaderFactory);
     method public void setShape(android.graphics.drawable.shapes.Shape);
@@ -13821,6 +13982,8 @@ package android.hardware.input {
     method public android.view.InputDevice getInputDevice(int);
     method public int[] getInputDeviceIds();
     method public void registerInputDeviceListener(android.hardware.input.InputManager.InputDeviceListener, android.os.Handler);
+    method public void sendKeyEvent(int);
+    method public void setPointerIcon(int);
     method public void unregisterInputDeviceListener(android.hardware.input.InputManager.InputDeviceListener);
     field public static final java.lang.String ACTION_QUERY_KEYBOARD_LAYOUTS = "android.hardware.input.action.QUERY_KEYBOARD_LAYOUTS";
     field public static final java.lang.String META_DATA_KEYBOARD_LAYOUTS = "android.hardware.input.metadata.KEYBOARD_LAYOUTS";
@@ -18401,6 +18564,7 @@ package android.net {
     method public int describeContents();
     method public android.net.NetworkInfo.DetailedState getDetailedState();
     method public java.lang.String getExtraInfo();
+    method public int getRealType();
     method public java.lang.String getReason();
     method public android.net.NetworkInfo.State getState();
     method public int getSubtype();
@@ -26838,17 +27002,22 @@ package android.provider {
 
   public static final class Settings.Global extends android.provider.Settings.NameValueTable {
     ctor public Settings.Global();
+    method public static boolean getBoolean(android.content.ContentResolver, java.lang.String, boolean);
     method public static float getFloat(android.content.ContentResolver, java.lang.String, float);
     method public static float getFloat(android.content.ContentResolver, java.lang.String) throws android.provider.Settings.SettingNotFoundException;
     method public static int getInt(android.content.ContentResolver, java.lang.String, int);
     method public static int getInt(android.content.ContentResolver, java.lang.String) throws android.provider.Settings.SettingNotFoundException;
     method public static long getLong(android.content.ContentResolver, java.lang.String, long);
     method public static long getLong(android.content.ContentResolver, java.lang.String) throws android.provider.Settings.SettingNotFoundException;
+    method public static android.graphics.Rect getRect(android.content.ContentResolver, java.lang.String, android.graphics.Rect);
+    method public static android.graphics.Rect getRect(android.content.ContentResolver, java.lang.String) throws android.provider.Settings.SettingNotFoundException;
     method public static java.lang.String getString(android.content.ContentResolver, java.lang.String);
     method public static android.net.Uri getUriFor(java.lang.String);
+    method public static boolean putBoolean(android.content.ContentResolver, java.lang.String, boolean);
     method public static boolean putFloat(android.content.ContentResolver, java.lang.String, float);
     method public static boolean putInt(android.content.ContentResolver, java.lang.String, int);
     method public static boolean putLong(android.content.ContentResolver, java.lang.String, long);
+    method public static boolean putRect(android.content.ContentResolver, java.lang.String, android.graphics.Rect);
     method public static boolean putString(android.content.ContentResolver, java.lang.String, java.lang.String);
     field public static final java.lang.String ADB_ENABLED = "adb_enabled";
     field public static final java.lang.String AIRPLANE_MODE_ON = "airplane_mode_on";
@@ -26863,6 +27032,7 @@ package android.provider {
     field public static final java.lang.String DEBUG_APP = "debug_app";
     field public static final java.lang.String DEVELOPMENT_SETTINGS_ENABLED = "development_settings_enabled";
     field public static final java.lang.String DEVICE_PROVISIONED = "device_provisioned";
+    field public static final java.lang.String ETHERNET_ON = "ethernet_on";
     field public static final java.lang.String HTTP_PROXY = "http_proxy";
     field public static final deprecated java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
     field public static final java.lang.String MODE_RINGER = "mode_ringer";
@@ -26874,6 +27044,9 @@ package android.provider {
     field public static final java.lang.String SHOW_PROCESSES = "show_processes";
     field public static final java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_global_version";
+    field public static final java.lang.String SYS_UPGRADE_DEFAULT = "system_upgrade_default";
+    field public static final java.lang.String SYS_UPGRADE_DEFAULT_URL = "system_upgrade_default_url";
+    field public static final java.lang.String SYS_UPGRADE_URL = "system_upgrade_url";
     field public static final java.lang.String TRANSITION_ANIMATION_SCALE = "transition_animation_scale";
     field public static final java.lang.String USB_MASS_STORAGE_ENABLED = "usb_mass_storage_enabled";
     field public static final java.lang.String USE_GOOGLE_MAIL = "use_google_mail";
@@ -26932,6 +27105,7 @@ package android.provider {
     field public static final deprecated java.lang.String DEVICE_PROVISIONED = "device_provisioned";
     field public static final java.lang.String ENABLED_ACCESSIBILITY_SERVICES = "enabled_accessibility_services";
     field public static final java.lang.String ENABLED_INPUT_METHODS = "enabled_input_methods";
+    field public static final deprecated java.lang.String ETHERNET_ON = "ethernet_on";
     field public static final deprecated java.lang.String HTTP_PROXY = "http_proxy";
     field public static final java.lang.String INPUT_METHOD_SELECTOR_VISIBILITY = "input_method_selector_visibility";
     field public static final java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
@@ -27031,6 +27205,7 @@ package android.provider {
     field public static final deprecated java.lang.String DIM_SCREEN = "dim_screen";
     field public static final java.lang.String DTMF_TONE_WHEN_DIALING = "dtmf_tone";
     field public static final java.lang.String END_BUTTON_BEHAVIOR = "end_button_behavior";
+    field public static final deprecated java.lang.String ETHERNET_ON = "ethernet_on";
     field public static final java.lang.String FONT_SCALE = "font_scale";
     field public static final java.lang.String HAPTIC_FEEDBACK_ENABLED = "haptic_feedback_enabled";
     field public static final deprecated java.lang.String HTTP_PROXY = "http_proxy";
@@ -27055,10 +27230,14 @@ package android.provider {
     field public static final deprecated java.lang.String RADIO_WIFI = "wifi";
     field public static final java.lang.String RINGTONE = "ringtone";
     field public static final java.lang.String SCREEN_BRIGHTNESS = "screen_brightness";
+    field public static final java.lang.String SCREEN_BRIGHTNESS_CHARGING = "screen_brightness_charging";
     field public static final java.lang.String SCREEN_BRIGHTNESS_MODE = "screen_brightness_mode";
     field public static final int SCREEN_BRIGHTNESS_MODE_AUTOMATIC = 1; // 0x1
     field public static final int SCREEN_BRIGHTNESS_MODE_MANUAL = 0; // 0x0
+    field public static final java.lang.String SCREEN_BRIGHTNESS_UNCHARGE = "screen_brightness_uncharge";
     field public static final java.lang.String SCREEN_OFF_TIMEOUT = "screen_off_timeout";
+    field public static final java.lang.String SCREEN_OFF_TIMEOUT_CHARGING = "screen_off_timeout_charging";
+    field public static final java.lang.String SCREEN_OFF_TIMEOUT_UNCHARGE = "screen_off_timeout_uncharge";
     field public static final deprecated java.lang.String SETTINGS_CLASSNAME = "settings_classname";
     field public static final java.lang.String SETUP_WIZARD_HAS_RUN = "setup_wizard_has_run";
     field public static final java.lang.String SHOW_GTALK_SERVICE_STATUS = "SHOW_GTALK_SERVICE_STATUS";
@@ -27066,6 +27245,8 @@ package android.provider {
     field public static final deprecated java.lang.String SHOW_WEB_SUGGESTIONS = "show_web_suggestions";
     field public static final java.lang.String SOUND_EFFECTS_ENABLED = "sound_effects_enabled";
     field public static final deprecated java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
+    field public static final java.lang.String SYS_PROPERTY_HOST = "sys.property.host";
+    field public static final java.lang.String SYS_PROPERTY_USER = "sys.property.user";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
     field public static final java.lang.String TEXT_AUTO_CAPS = "auto_caps";
     field public static final java.lang.String TEXT_AUTO_PUNCTUATE = "auto_punctuate";
@@ -33666,6 +33847,16 @@ package android.util {
   public class DisplayMetrics {
     ctor public DisplayMetrics();
     method public boolean equals(android.util.DisplayMetrics);
+    method public android.graphics.Rect getDefaultFrameRect(boolean);
+    method public int getHeightPixelsFullScreen();
+    method public int getInitWindowHeightNormal();
+    method public int getInitWindowHeightPhone();
+    method public int getInitWindowWidthNormal();
+    method public int getInitWindowWidthPhone();
+    method public static int getStartupMenuWidth(android.content.Context);
+    method public int getWidthPixelsFullScreen();
+    method public boolean is_16_9();
+    method public static void setFullScreenSize(int, int);
     method public void setTo(android.util.DisplayMetrics);
     method public void setToDefaults();
     field public static final int DENSITY_280 = 280; // 0x118
@@ -33679,6 +33870,9 @@ package android.util {
     field public static final int DENSITY_XHIGH = 320; // 0x140
     field public static final int DENSITY_XXHIGH = 480; // 0x1e0
     field public static final int DENSITY_XXXHIGH = 640; // 0x280
+    field public static final int WINDOW_STARTUP_MENU_PART_HEIGHT = 3; // 0x3
+    field public static final int WINDOW_STARTUP_MENU_WIDTH = 565; // 0x235
+    field public static final int WINDOW_STARTUP_MENU_WIDTH_LAND = 455; // 0x1c7
     field public float density;
     field public int densityDpi;
     field public int heightPixels;
@@ -34315,6 +34509,7 @@ package android.view {
     method public int getFlags();
     method public deprecated int getHeight();
     method public void getMetrics(android.util.DisplayMetrics);
+    method public void getMetrics(android.util.DisplayMetrics, boolean);
     method public java.lang.String getName();
     method public deprecated int getOrientation();
     method public deprecated int getPixelFormat();
@@ -34329,6 +34524,7 @@ package android.view {
     method public float[] getSupportedRefreshRates();
     method public deprecated int getWidth();
     method public boolean isValid();
+    method public static void setSizePixels(int, int);
     field public static final int DEFAULT_DISPLAY = 0; // 0x0
     field public static final int FLAG_PRESENTATION = 8; // 0x8
     field public static final int FLAG_PRIVATE = 4; // 0x4
@@ -34422,6 +34618,8 @@ package android.view {
     method public static void apply(int, int, int, android.graphics.Rect, android.graphics.Rect);
     method public static void apply(int, int, int, android.graphics.Rect, android.graphics.Rect, int);
     method public static void apply(int, int, int, android.graphics.Rect, int, int, android.graphics.Rect);
+    method public static void apply(int, int, int, android.graphics.Rect, int, int, android.graphics.Rect, android.graphics.Rect, int, int);
+    method public static void apply(int, int, int, android.graphics.Rect, int, int, android.graphics.Rect, int, int);
     method public static void apply(int, int, int, android.graphics.Rect, int, int, android.graphics.Rect, int);
     method public static void applyDisplay(int, android.graphics.Rect, android.graphics.Rect);
     method public static void applyDisplay(int, android.graphics.Rect, android.graphics.Rect, int);
@@ -34666,6 +34864,7 @@ package android.view {
     method public static boolean metaStateHasModifiers(int, int);
     method public static boolean metaStateHasNoModifiers(int);
     method public static int normalizeMetaState(int);
+    method public static void sendKeyEventBack();
     method public final void setSource(int);
     method public final void startTracking();
     method public void writeToParcel(android.os.Parcel, int);
@@ -34758,6 +34957,15 @@ package android.view {
     field public static final int KEYCODE_CONTACTS = 207; // 0xcf
     field public static final int KEYCODE_CTRL_LEFT = 113; // 0x71
     field public static final int KEYCODE_CTRL_RIGHT = 114; // 0x72
+    field public static final int KEYCODE_CUSTOMIZE_ACTION_CENTER = 100004; // 0x186a4
+    field public static final int KEYCODE_CUSTOMIZE_BATTERY = 100006; // 0x186a6
+    field public static final int KEYCODE_CUSTOMIZE_BROWSER = 100001; // 0x186a1
+    field public static final int KEYCODE_CUSTOMIZE_FILE_MANAGER = 100000; // 0x186a0
+    field public static final int KEYCODE_CUSTOMIZE_HOME = 100003; // 0x186a3
+    field public static final int KEYCODE_CUSTOMIZE_INPUT_METHOD = 100005; // 0x186a5
+    field public static final int KEYCODE_CUSTOMIZE_SOUND = 100008; // 0x186a8
+    field public static final int KEYCODE_CUSTOMIZE_START = 100000; // 0x186a0
+    field public static final int KEYCODE_CUSTOMIZE_WIFI = 100007; // 0x186a7
     field public static final int KEYCODE_D = 32; // 0x20
     field public static final int KEYCODE_DEL = 67; // 0x43
     field public static final int KEYCODE_DPAD_CENTER = 23; // 0x17
@@ -34889,6 +35097,9 @@ package android.view {
     field public static final int KEYCODE_SOFT_RIGHT = 2; // 0x2
     field public static final int KEYCODE_SPACE = 62; // 0x3e
     field public static final int KEYCODE_STAR = 17; // 0x11
+    field public static final int KEYCODE_STARTUPMENU = 2000000; // 0x1e8480
+    field public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_END = 2000000; // 0x1e8480
+    field public static final int KEYCODE_STATUSBAR_ACTIVITY_ID_START = 1000000; // 0xf4240
     field public static final int KEYCODE_STB_INPUT = 180; // 0xb4
     field public static final int KEYCODE_STB_POWER = 179; // 0xb3
     field public static final int KEYCODE_SWITCH_CHARSET = 95; // 0x5f
@@ -35691,6 +35902,8 @@ package android.view {
     method public int getScrollBarFadeDuration();
     method public int getScrollBarSize();
     method public int getScrollBarStyle();
+    method public int getScrollBarThickH(android.widget.WindowDecorView);
+    method public int getScrollBarThickV(android.widget.WindowDecorView);
     method public final int getScrollX();
     method public final int getScrollY();
     method public int getSolidColor();
@@ -35918,6 +36131,7 @@ package android.view {
     method public void setLayoutParams(android.view.ViewGroup.LayoutParams);
     method public final void setLeft(int);
     method public void setLongClickable(boolean);
+    method protected void setMayMSOfficeFirstSkipView(boolean);
     method protected final void setMeasuredDimension(int, int);
     method public void setMinimumHeight(int);
     method public void setMinimumWidth(int);
@@ -36114,10 +36328,12 @@ package android.view {
     field public static final android.util.Property<android.view.View, java.lang.Float> TRANSLATION_Z;
     field protected static final java.lang.String VIEW_LOG_TAG = "View";
     field public static final int VISIBLE = 0; // 0x0
+    field protected static final java.lang.String WECHAT_PLAY_TEXTUREVIEW = "com.tencent.mm.plugin.sight.decode.ui.SightPlayTextureView";
     field protected static final int[] WINDOW_FOCUSED_STATE_SET;
     field public static final android.util.Property<android.view.View, java.lang.Float> X;
     field public static final android.util.Property<android.view.View, java.lang.Float> Y;
     field public static final android.util.Property<android.view.View, java.lang.Float> Z;
+    field protected float mRatio;
   }
 
   public static class View.AccessibilityDelegate {
@@ -36666,8 +36882,10 @@ package android.view {
 
   public abstract class Window {
     ctor public Window(android.content.Context);
+    method public abstract void SyncChildWindow();
     method public abstract void addContentView(android.view.View, android.view.ViewGroup.LayoutParams);
     method public void addFlags(int);
+    method public abstract void adjustDialog(android.view.Window);
     method public void clearFlags(int);
     method public abstract void closeAllPanels();
     method public abstract void closePanel(int);
@@ -36675,29 +36893,45 @@ package android.view {
     method public boolean getAllowEnterTransitionOverlap();
     method public boolean getAllowReturnTransitionOverlap();
     method public final android.view.WindowManager.LayoutParams getAttributes();
+    method public int getBorderPadding();
     method public final android.view.Window.Callback getCallback();
+    method public android.view.Window getChildWindow();
     method public final android.view.Window getContainer();
     method public android.transition.Scene getContentScene();
     method public final android.content.Context getContext();
     method public abstract android.view.View getCurrentFocus();
     method public abstract android.view.View getDecorView();
     method public static int getDefaultFeatures(android.content.Context);
+    method public android.app.Dialog getDialog();
     method public android.transition.Transition getEnterTransition();
     method public android.transition.Transition getExitTransition();
     method protected final int getFeatures();
     method protected final int getForcedWindowFlags();
+    method public int getFramePadding();
+    method public android.graphics.Rect getFullScreen();
+    method public int getHeaderHeight();
+    method public int getHeaderHeightReal();
     method public abstract android.view.LayoutInflater getLayoutInflater();
     method protected final int getLocalFeatures();
     method public android.media.session.MediaController getMediaController();
+    method public android.view.WindowManager.MultiWindow getMultiWindow();
     method public abstract int getNavigationBarColor();
+    method public android.graphics.Rect getOldSize();
     method public android.transition.Transition getReenterTransition();
+    method public int getResizeWays(android.graphics.Rect, int, int);
     method public android.transition.Transition getReturnTransition();
+    method public int getShadowPadding();
     method public android.transition.Transition getSharedElementEnterTransition();
     method public android.transition.Transition getSharedElementExitTransition();
     method public android.transition.Transition getSharedElementReenterTransition();
     method public android.transition.Transition getSharedElementReturnTransition();
     method public boolean getSharedElementsUseOverlay();
+    method public int getStackId();
     method public abstract int getStatusBarColor();
+    method public int getTaskId();
+    method public int getTopBorderPadding();
+    method public int getTopFramePadding();
+    method public int getTopShadowPadding();
     method public long getTransitionBackgroundFadeDuration();
     method public android.transition.TransitionManager getTransitionManager();
     method public abstract int getVolumeControlStream();
@@ -36705,15 +36939,23 @@ package android.view {
     method public final android.content.res.TypedArray getWindowStyle();
     method public final boolean hasChildren();
     method public boolean hasFeature(int);
+    method public boolean hasHeader();
+    method public boolean hasOuterBorder();
     method protected final boolean hasSoftInputMode();
     method public void injectInputEvent(android.view.InputEvent);
     method public abstract void invalidatePanelMenu(int);
     method public final boolean isActive();
     method public abstract boolean isFloating();
+    method public boolean isMWDialog();
+    method public boolean isMWWindow();
+    method public boolean isResizing();
+    method public boolean isShadow();
     method public abstract boolean isShortcutKey(int, android.view.KeyEvent);
     method public final void makeActive();
     method protected abstract void onActive();
     method public abstract void onConfigurationChanged(android.content.res.Configuration);
+    method public void onMinimize(android.graphics.Rect);
+    method public android.graphics.Rect onTouchWindow(int, int, int, android.graphics.Rect, android.view.WindowManager.MultiWindow.ResizeWindow, boolean);
     method public abstract void openPanel(int, android.view.KeyEvent);
     method public abstract android.view.View peekDecorView();
     method public abstract boolean performContextMenuIdentifierAction(int, int);
@@ -36725,17 +36967,23 @@ package android.view {
     method public void setAllowEnterTransitionOverlap(boolean);
     method public void setAllowReturnTransitionOverlap(boolean);
     method public void setAttributes(android.view.WindowManager.LayoutParams);
+    method public void setAttributesWithoutSync(android.view.WindowManager.LayoutParams);
     method public abstract void setBackgroundDrawable(android.graphics.drawable.Drawable);
     method public void setBackgroundDrawableResource(int);
+    method public void setBorderPadding(boolean);
+    method public void setButtons(android.view.View, android.view.View, android.view.View, android.view.View, android.view.View);
     method public void setCallback(android.view.Window.Callback);
+    method public void setCallback(android.view.WindowManager.MultiWindow.Callback);
     method public abstract void setChildDrawable(int, android.graphics.drawable.Drawable);
     method public abstract void setChildInt(int, int);
+    method public void setChildWindow(android.view.Window);
     method public void setClipToOutline(boolean);
     method public void setContainer(android.view.Window);
     method public abstract void setContentView(int);
     method public abstract void setContentView(android.view.View);
     method public abstract void setContentView(android.view.View, android.view.ViewGroup.LayoutParams);
     method protected void setDefaultWindowFormat(int);
+    method public void setDialog(android.app.Dialog);
     method public void setDimAmount(float);
     method public void setDisableWallpaperTouchEvents(boolean);
     method public void setElevation(float);
@@ -36747,25 +36995,36 @@ package android.view {
     method public abstract void setFeatureDrawableUri(int, android.net.Uri);
     method public abstract void setFeatureInt(int, int);
     method public void setFlags(int, int);
+    method public void setFocusedStack();
     method public void setFormat(int);
     method public void setGravity(int);
+    method public void setHeader(boolean);
+    method public void setHeaderHeight(boolean);
     method public void setIcon(int);
     method public void setLayout(int, int);
     method public void setLocalFocus(boolean, boolean);
     method public void setLogo(int);
     method public void setMediaController(android.media.session.MediaController);
+    method public abstract void setMultiWindowEnvAttr();
     method public abstract void setNavigationBarColor(int);
+    method public void setOuterBorder(boolean);
     method public void setReenterTransition(android.transition.Transition);
     method public void setReturnTransition(android.transition.Transition);
+    method public void setShadow(boolean);
+    method public void setShadowPadding(boolean);
     method public void setSharedElementEnterTransition(android.transition.Transition);
     method public void setSharedElementExitTransition(android.transition.Transition);
     method public void setSharedElementReenterTransition(android.transition.Transition);
     method public void setSharedElementReturnTransition(android.transition.Transition);
     method public void setSharedElementsUseOverlay(boolean);
     method public void setSoftInputMode(int);
+    method public void setStackId(int);
     method public abstract void setStatusBarColor(int);
+    method public void setTaskId(int);
     method public abstract void setTitle(java.lang.CharSequence);
     method public abstract deprecated void setTitleColor(int);
+    method public void setTopBorderPadding(boolean);
+    method public void setTopShadowPadding(boolean);
     method public void setTransitionBackgroundFadeDuration(long);
     method public void setTransitionManager(android.transition.TransitionManager);
     method public void setType(int);
@@ -36775,6 +37034,7 @@ package android.view {
     method public void setWindowAnimations(int);
     method public void setWindowManager(android.view.WindowManager, android.os.IBinder, java.lang.String);
     method public void setWindowManager(android.view.WindowManager, android.os.IBinder, java.lang.String, boolean);
+    method public abstract void showCover(boolean);
     method public abstract boolean superDispatchGenericMotionEvent(android.view.MotionEvent);
     method public abstract boolean superDispatchKeyEvent(android.view.KeyEvent);
     method public abstract boolean superDispatchKeyShortcutEvent(android.view.KeyEvent);
@@ -36783,7 +37043,12 @@ package android.view {
     method public abstract void takeInputQueue(android.view.InputQueue.Callback);
     method public abstract void takeKeyEvents(boolean);
     method public abstract void takeSurface(android.view.SurfaceHolder.Callback2);
+    method public android.graphics.Rect toggleFullScreen(android.graphics.Rect);
     method public abstract void togglePanel(int, android.view.KeyEvent);
+    method public android.graphics.Rect togglePhoneScreen(android.graphics.Rect);
+    method public void unsetFocusedStack();
+    method public void updateScreenFrame();
+    method public int wayToIcon(int);
     field protected static final deprecated int DEFAULT_FEATURES = 65; // 0x41
     field public static final int FEATURE_ACTION_BAR = 8; // 0x8
     field public static final int FEATURE_ACTION_BAR_OVERLAY = 9; // 0x9
@@ -36889,6 +37154,8 @@ package android.view {
   public abstract interface WindowManager implements android.view.ViewManager {
     method public abstract android.view.Display getDefaultDisplay();
     method public abstract void removeViewImmediate(android.view.View);
+    field public static final int MW_WINDOW_MIN_HEIGHT = 180; // 0xb4
+    field public static final int MW_WINDOW_MIN_WIDTH = 250; // 0xfa
   }
 
   public static class WindowManager.BadTokenException extends java.lang.RuntimeException {
@@ -37036,6 +37303,82 @@ package android.view {
     field public int windowAnimations;
     field public int x;
     field public int y;
+  }
+
+  public static class WindowManager.MultiWindow {
+    ctor public WindowManager.MultiWindow(android.content.Context);
+    method public boolean fitWindowInScreen(android.graphics.Rect);
+    method public int getFramePadding();
+    method public int getHeaderHeight();
+    method public int getResizeWays(android.graphics.Rect, int, int);
+    method public int getTopFramePadding();
+    method public boolean isResizing();
+    method public boolean onDoubleClick(int, int, int, android.graphics.Rect);
+    method public void onMinimize(android.graphics.Rect);
+    method public android.graphics.Rect onTouchWindow(int, int, int, android.graphics.Rect, android.view.WindowManager.MultiWindow.ResizeWindow, boolean);
+    method public void readFromParcel(android.os.Parcel);
+    method public void sendFrameEnd();
+    method public void sendNewFrame(int);
+    method public void sendNewFrame(int, boolean);
+    method public void setFocusedStack();
+    method public android.graphics.Rect toggleFullScreen(android.graphics.Rect);
+    method public android.graphics.Rect togglePhoneScreen(android.graphics.Rect);
+    method public void unsetFocusedStack();
+    method public void updateScreenFrame(android.util.DisplayMetrics);
+    method public int wayToIcon(int);
+    method public void writeToParcel(android.os.Parcel, int);
+    field public static final double CORRECT_FACTOR_OUTSIDE = 0.6;
+    field public android.graphics.Rect mBack;
+    field public int mBorderPadding;
+    field public android.view.WindowManager.MultiWindow.Callback mCallback;
+    field public android.view.WindowManager.MultiWindow.AlignRight mClose;
+    field public android.graphics.Rect mFullScreen;
+    field public boolean mHeader;
+    field public int mHeaderHeight;
+    field public android.graphics.Rect mLeftDockFrame;
+    field public android.view.WindowManager.MultiWindow.AlignRight mMax;
+    field public android.view.WindowManager.MultiWindow.AlignRight mMin;
+    field public android.graphics.Rect mOldSize;
+    field public boolean mOuterBorder;
+    field public android.graphics.Rect mRightDockFrame;
+    field public android.view.WindowManager.MultiWindow.AlignRight mRotate;
+    field public boolean mShadow;
+    field public int mShadowPadding;
+    field public int mStackId;
+    field public int mTopBorderPadding;
+    field public int mTopShadowPadding;
+  }
+
+  public class WindowManager.MultiWindow.AlignRight {
+    ctor public WindowManager.MultiWindow.AlignRight();
+    method public void set(android.view.WindowManager.MultiWindow.AlignRight);
+    method public android.graphics.Rect toRect(int, android.graphics.Rect);
+    field public int mHeight;
+    field public int mOffRight;
+    field public int mOffTop;
+    field public int mWidth;
+  }
+
+  public static abstract interface WindowManager.MultiWindow.Callback {
+    method public abstract int getFocusedStackId();
+    method public abstract int getScreenHeight(int);
+    method public abstract void relayoutWindow(int, android.graphics.Rect);
+    method public abstract void saveInfoInStatusbarActivity(int, android.graphics.Rect);
+    method public abstract void setFocusedStack(int);
+    method public abstract void syncResizingIcon(int);
+    method public abstract void unsetFocusedStack(int);
+  }
+
+  public static class WindowManager.MultiWindow.MoveWindow extends android.view.WindowManager.MultiWindow.ResizeWindow {
+    ctor public WindowManager.MultiWindow.MoveWindow();
+  }
+
+  public static class WindowManager.MultiWindow.ResizeWindow {
+    ctor public WindowManager.MultiWindow.ResizeWindow();
+    method public android.graphics.Rect resize(android.graphics.Rect, int, int, int);
+    field public int mLastDx;
+    field public int mLastDy;
+    field protected android.graphics.Rect mTmpFrame;
   }
 
 }
@@ -37759,6 +38102,7 @@ package android.view.inputmethod {
     method public java.lang.CharSequence getSelectedText(int);
     method public java.lang.CharSequence getTextAfterCursor(int, int);
     method public java.lang.CharSequence getTextBeforeCursor(int, int);
+    method public boolean isLauncherFocus(boolean);
     method public boolean performContextMenuAction(int);
     method public boolean performEditorAction(int);
     method public boolean performPrivateCommand(java.lang.String, android.os.Bundle);
@@ -37920,6 +38264,7 @@ package android.view.inputmethod {
     method public abstract java.lang.CharSequence getSelectedText(int);
     method public abstract java.lang.CharSequence getTextAfterCursor(int, int);
     method public abstract java.lang.CharSequence getTextBeforeCursor(int, int);
+    method public abstract boolean isLauncherFocus(boolean);
     method public abstract boolean performContextMenuAction(int);
     method public abstract boolean performEditorAction(int);
     method public abstract boolean performPrivateCommand(java.lang.String, android.os.Bundle);
@@ -37950,6 +38295,7 @@ package android.view.inputmethod {
     method public java.lang.CharSequence getSelectedText(int);
     method public java.lang.CharSequence getTextAfterCursor(int, int);
     method public java.lang.CharSequence getTextBeforeCursor(int, int);
+    method public boolean isLauncherFocus(boolean);
     method public boolean performContextMenuAction(int);
     method public boolean performEditorAction(int);
     method public boolean performPrivateCommand(java.lang.String, android.os.Bundle);
@@ -40939,6 +41285,13 @@ package android.widget {
     method public abstract void onStopTrackingTouch(android.widget.SeekBar);
   }
 
+  public class ShadowView extends android.view.View {
+    ctor public ShadowView(android.content.Context);
+    ctor public ShadowView(android.content.Context, android.util.AttributeSet);
+    ctor public ShadowView(android.content.Context, android.util.AttributeSet, int);
+    ctor public ShadowView(android.content.Context, android.util.AttributeSet, int, int);
+  }
+
   public class ShareActionProvider extends android.view.ActionProvider {
     ctor public ShareActionProvider(android.content.Context);
     method public android.view.View onCreateActionView();
@@ -41673,6 +42026,43 @@ package android.widget {
 
   public static abstract interface ViewSwitcher.ViewFactory {
     method public abstract android.view.View makeView();
+  }
+
+  public abstract class WindowDecorView extends android.widget.FrameLayout {
+    ctor public WindowDecorView(android.content.Context);
+    method public abstract void enableMultiWindowToWindowManager(android.graphics.Rect);
+    method public void enableScroll(android.view.View, boolean, boolean);
+    method public abstract android.graphics.Rect getDecorBounds();
+    method public int getDialogLeftOffset();
+    method public int getDialogTopOffset();
+    method public android.view.View getParentDecor();
+    method public android.view.Window getParentWindow();
+    method public int getScrollBarExtentH();
+    method public int getScrollBarExtentV();
+    method public int getScrollBarOffsetH();
+    method public int getScrollBarOffsetV();
+    method public int getScrollBarRangeH();
+    method public int getScrollBarRangeV();
+    method public android.view.View getScrollView();
+    method public abstract int getWindowBorderPadding();
+    method public abstract int getWindowHeaderPadding();
+    method public abstract int getWindowTopBorderPadding();
+    method public boolean isDialogFromMWParent();
+    method public boolean isDialogFromMWParent(boolean);
+    method public boolean isEnableScrollH();
+    method public boolean isEnableScrollV();
+    method public boolean isMWWindow();
+    method public void setFromDialog(android.view.View, android.view.Window);
+    method public void setMayMSOfficeFirstSkipViewDecor(boolean);
+    method public void setScrollBarExtentH(int);
+    method public void setScrollBarExtentV(int);
+    method public void setScrollBarOffsetH(int);
+    method public void setScrollBarOffsetV(int);
+    method public void setScrollBarRangeH(int);
+    method public void setScrollBarRangeV(int);
+    method public boolean setScrollView(android.view.View);
+    method public void setWindow(android.view.Window);
+    method public abstract void syncMultiWindowToWindowManager();
   }
 
   public abstract interface WrapperListAdapter implements android.widget.ListAdapter {
