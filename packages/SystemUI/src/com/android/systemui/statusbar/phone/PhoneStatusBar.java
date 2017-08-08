@@ -741,6 +741,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         intentLock.addFlags(Intent.FLAG_RUN_FULLSCREEN | Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         mContext.startActivity(intentLock);
+        setVolumeIcon(mVolumeButton);
     }
 
     // ================================================================================
@@ -1286,15 +1287,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(MEDIA_VOLUME_CHANGED)) {
-                AudioManager audioManager = (AudioManager) mContext.getSystemService(
-                                             Context.AUDIO_SERVICE);
-                if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
-                    mVolumeButton.setImageDrawable(mContext.getDrawable(
-                                                                R.drawable.ic_notice_sound_off));
-                } else {
-                    mVolumeButton.setImageDrawable(mContext.getDrawable(
-                                                                R.drawable.statusbar_sound));
-                }
+                setVolumeIcon(mVolumeButton);
             } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
                 if (mIsWifiIcon) {
                     switch (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, DEFAULT_CODE)) {
@@ -1341,6 +1334,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                                            Context.AUDIO_SERVICE);
         if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
             keyButtonView.setImageDrawable(mContext.getDrawable(R.drawable.ic_notice_sound_off));
+        } else {
+            keyButtonView.setImageDrawable(mContext.getDrawable(R.drawable.statusbar_sound));
         }
     }
 
