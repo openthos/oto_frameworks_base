@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.statusbar.notifactionBars;
+package com.android.systemui.statusbar.notificationbars;
 
 import android.content.Context;
 import android.content.ComponentName;
@@ -25,7 +25,6 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
-import com.android.systemui.statusbar.notificationbars.WifiDialog;
 
 public class WifiContentView extends LinearLayout {
 
@@ -44,15 +43,8 @@ public class WifiContentView extends LinearLayout {
                                                     "com.android.settings.wifi.WifiSettings");
             intent.setComponent(comp);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            sendBroadcastWifiIcon();
             getContext().startActivity(intent);
         }
         return true;
-    }
-
-    public void sendBroadcastWifiIcon() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.STATUS_BAR_CHANGE_ICON);
-        getContext().sendBroadcast(intent);
     }
 }

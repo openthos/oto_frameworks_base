@@ -5,7 +5,7 @@
     android:background="#342464"
     android:orientation="vertical"
     android:paddingTop="@dimen/systemui_size_eight"
-    android:paddingBottom="@dimen/systemui_size_eight"
+    android:paddingBottom="@dimen/systemui_size_fourteen"
     android:paddingLeft="@dimen/systemui_size_sixteen"
     android:paddingRight="@dimen/systemui_size_sixteen">
 

@@ -1,7 +1,6 @@
 package com.android.systemui.statusbar.notificationbars;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,8 +53,6 @@ public class BatteryDialog extends BaseSettingDialog
 
     @Override
     protected void initViews() {
-        final AudioManager audioManager = (AudioManager) mContext.getSystemService(
-                                                                      Context.AUDIO_SERVICE);
         View mediaView = LayoutInflater.from(mContext).inflate(R.layout.status_bar_battery, null);
         setContentView(mediaView);
         mBatteryPercentage = (TextView) mediaView.findViewById(R.id.battery_time_percentage);

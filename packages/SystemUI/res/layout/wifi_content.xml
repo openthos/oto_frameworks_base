@@ -1,70 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.systemui.statusbar.notifactionBars.WifiContentView
+<com.android.systemui.statusbar.notificationbars.WifiContentView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/wifi_content_main"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/systemui_size_twentyfour">
+        android:layout_height="@dimen/systemui_size_thirty"
+        android:orientation="horizontal">
+
         <ImageView
             android:id="@+id/wifi_content_is_cnted"
-            android:src="@android:drawable/checkbox_off_background"
-            android:layout_width="@dimen/systemui_size_thirty"
+            android:layout_width="@dimen/systemui_size_twentyfour"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_height="match_parent" />
+            android:src="@android:drawable/checkbox_off_background"/>
+
         <TextView
             android:id="@+id/wifi_content_name"
-            android:layout_width="130dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/systemui_size_five"
+            android:layout_weight="1"
             android:focusable="false"
             android:singleLine="true"
             android:textColor="@android:color/white"
-            android:text="@string/wifi_test"
-            android:textSize="@dimen/systemui_textsize_twelve" />
+            android:textSize="@dimen/systemui_textsize_twelve"/>
+
         <ImageView
             android:id="@+id/wifi_has_psw"
             android:layout_width="@dimen/systemui_size_sixteen"
-            android:layout_gravity="center"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
         <ImageView
             android:id="@+id/wifi_content_level"
             android:layout_width="@dimen/systemui_size_sixteen"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/systemui_size_eight"
-            android:focusable="false" />
-    </LinearLayout>
-    <FrameLayout
-        android:id="@+id/wifi_content_sub"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/wifi_psw_dialog_panel"/>
-        <Button
-            android:id="@+id/wifi_content_cnt_btn"
-            android:layout_gravity="right"
-            style="@android:style/Holo.SegmentedButton"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/systemui_textsize_five_pt"
-            android:textColor="@android:color/white"
-            android:text="@string/wifi_try_cnt"
+            android:layout_marginLeft="@dimen/systemui_size_five"
+            android:layout_marginRight="@dimen/systemui_size_five"
+            android:focusable="false"
             />
-        <TextView
-            android:clickable="false"
-            android:gravity="center"
-            android:id="@+id/wifi_connecting"
-            android:visibility="gone"
-            android:text="@string/wifi_cnting"
-            android:textSize="@dimen/systemui_textsize_five"
-            android:textColor="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
-</com.android.systemui.statusbar.notifactionBars.WifiContentView>
+    </LinearLayout>
+</com.android.systemui.statusbar.notificationbars.WifiContentView>

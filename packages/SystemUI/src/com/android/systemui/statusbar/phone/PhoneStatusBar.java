@@ -104,6 +104,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewPropertyAnimator;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
+import android.net.wifi.WifiInfo;
 import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
@@ -1272,51 +1273,63 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          }
     };
 
-    private void myRegisterReceiver(){
+    private void myRegisterReceiver() {
         mVolumeReceiver = new MyVolumeReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MEDIA_VOLUME_CHANGED);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(Intent.STATUS_BAR_WIFI_ICON);
-        filter.addAction(Intent.STATUS_BAR_CHANGE_ICON);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         mContext.registerReceiver(mVolumeReceiver, filter);
     }
 
     private class MyVolumeReceiver extends BroadcastReceiver {
+        private ConnectivityManager mConnectivityManager;
+
+        public MyVolumeReceiver() {
+            mConnectivityManager =
+                    (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(MEDIA_VOLUME_CHANGED)) {
-                setVolumeIcon(mVolumeButton);
-            } else if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
-                if (mIsWifiIcon) {
-                    switch (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, DEFAULT_CODE)) {
-                        case WifiManager.WIFI_STATE_DISABLED:
-                            mWifiButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.status_bar_no_wifi));
-                            break;
-                        default:
-                            mWifiButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.statusbar_wifi));
-                            break;
+            switch (intent.getAction()) {
+                case MEDIA_VOLUME_CHANGED:
+                    setVolumeIcon(mVolumeButton);
+                    break;
+                case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
+                    if (mWifiPopupWindow != null && mWifiPopupWindow.isShowing()) {
+                        ((WifiDialog) mWifiPopupWindow).updateList();
                     }
-                }
-            }
-            if (intent.getAction().equals(Intent.STATUS_BAR_WIFI_ICON)) {  //ethnet
-                mWifiButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.status_bar_pc_icon));
-                mIsWifiIcon = false;
-            }
-            if (intent.getAction().equals(Intent.STATUS_BAR_CHANGE_ICON) && (!mIsWifiIcon)) {
-                mWifiButton.setImageDrawable(mContext.getDrawable(
-                                                        R.drawable.statusbar_wifi));
-                mIsWifiIcon = true;
-            }
-            if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-                mIsWifiIcon = !isEthernet(((ConnectivityManager)mContext.getSystemService(
-                                                        Context.CONNECTIVITY_SERVICE)));
-                mWifiButton.setImageDrawable(mIsWifiIcon ? mContext.getDrawable(R.drawable.
-                    statusbar_wifi) : mContext.getDrawable(R.drawable.status_bar_pc_icon));
+                    break;
+                case WifiManager.WIFI_STATE_CHANGED_ACTION:
+                    if (mWifiPopupWindow != null && mWifiPopupWindow.isShowing()) {
+                        int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1);
+                        ((WifiDialog) mWifiPopupWindow).updateWifiEnabled(state);
+                    }
+                case ConnectivityManager.CONNECTIVITY_ACTION:
+                    if (isEthernet((mConnectivityManager))) {
+                        mWifiButton.setImageDrawable(
+                                mContext.getDrawable(R.drawable.status_bar_pc_icon));
+                    } else {
+                        WifiManager wifiManager =
+                                (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+                        if (wifiManager.isWifiEnabled()) {
+                            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                            if ("<unknown ssid>".equals(wifiInfo.getSSID()) ||
+                                    "0x".equals(wifiInfo.getSSID())) {
+                                mWifiButton.setImageDrawable(
+                                        mContext.getDrawable(R.drawable.status_bar_not_connect));
+                            } else {
+                                mWifiButton.setImageDrawable(
+                                        mContext.getDrawable(R.drawable.statusbar_wifi));
+                            }
+                        } else {
+                            mWifiButton.setImageDrawable(
+                                    mContext.getDrawable(R.drawable.status_bar_no_wifi));
+                        }
+                    }
+                    break;
             }
         }
     }

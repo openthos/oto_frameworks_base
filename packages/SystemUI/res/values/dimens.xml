@@ -598,6 +598,7 @@
     <dimen name="systemui_size_eleven">11dp</dimen>
     <dimen name="systemui_size_twelve">12dp</dimen>
     <dimen name="systemui_size_twelvepoint">12.6dp</dimen>
+    <dimen name="systemui_size_fourteen">14dp</dimen>
     <dimen name="systemui_size_forteenpoint">14.5dp</dimen>
     <dimen name="systemui_size_fifteen">15dp</dimen>
     <dimen name="systemui_size_sixteen">16dp</dimen>
