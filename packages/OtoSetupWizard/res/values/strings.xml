@@ -48,4 +48,11 @@
     <string name="warning_dialog_message">Are you sure do not set up lock screen password?</string>
     <string name="warning_dialog_ok">OK</string>
     <string name="warning_dialog_cancel">Cancel</string>
+    <string name="tips_chinese">是否跳过工厂测试程序</string>
+    <string name="tips_chinese_t">是否跳過工廠測試程式</string>
+    <string name="tips_english">Whether to skip a program of Factory test</string>
+    <string name="tips_korean">공장 테스트 프로그램을 건너뛸 것인지 여부</string>
+    <string name="tips_japanese">工場出荷時のテストプログラムをスキップするかどうか</string>
+    <string name="tips_yes">YES</string>
+    <string name="tips_no">NO</string>
 </resources>

@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,18 +55,32 @@ public class SetupWizardActivity extends BaseActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean isTestMode = true;
         PackageManager packageManager = getPackageManager();
-        try {
-            Intent intent = packageManager.getLaunchIntentForPackage("com.openthos.factorytest");
-            startActivity(intent);
-        } catch (NullPointerException e) {
-            isTestMode = false;
-        }
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         setContentView(R.layout.activity_setupwizard);
-        if (!isTestMode) {
+        final Intent intent = packageManager.getLaunchIntentForPackage("com.openthos.factorytest");
+        if (intent != null) {
+            findViewById(R.id.skip_test).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    findViewById(R.id.background).setVisibility(View.GONE);
+                    Animation animation;
+                    animation = new ScaleAnimation(1f, 0, 1f, 0,
+                            Animation.RELATIVE_TO_SELF, 0.5f,
+                            Animation.RELATIVE_TO_SELF, 0.5f);
+                    animation.setDuration(1000);
+                    findViewById(R.id.background).startAnimation(animation);
+                }
+            });
+            findViewById(R.id.start_test).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    findViewById(R.id.tips).setVisibility(View.GONE);
+                    startActivity(intent);
+                }
+            });
+        } else {
             findViewById(R.id.background).setVisibility(View.GONE);
         }
         //send broadcast to control status bar
