@@ -480,15 +480,18 @@ public class VideoView extends SurfaceView
         int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
         int h = decor.getHeight() - decor.getWindowBorderPadding()
                                   - decor.getWindowHeaderPadding();
-        int videoWidth = mp.getVideoWidth();
-        int videoHeight = mp.getVideoHeight();
-        if (w <= h && w < videoWidth) {
-            mVideoWidth = w;
-            mVideoHeight = w * videoHeight / videoWidth;
-        } else if (w > h && h < videoHeight){
-            mVideoHeight = h;
-            mVideoWidth = h * videoWidth / videoHeight;
+        mVideoWidth = mp.getVideoWidth();
+        mVideoHeight = mp.getVideoHeight();
+        float videoRatio = (float) mVideoWidth / (float) mVideoHeight;
+        float decorRatio = (float) w / (float) h;
+        float ratio = videoRatio >= decorRatio ? videoRatio : decorRatio;
+        if (h < mVideoHeight){
+            mVideoWidth = (int) ((float) h * ratio);
         }
+        if (w < mVideoWidth) {
+            mVideoWidth = w;
+        }
+        mVideoHeight = (int) ((float) mVideoWidth / ratio);
     }
 
     private MediaPlayer.OnCompletionListener mCompletionListener =
