@@ -11,42 +11,49 @@
     android:paddingTop="@dimen/systemui_size_eight"
     android:showDividers="middle">
 
-    <ListView
-        android:id="@+id/wifi_list"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/systemui_size_fourhundred"
-        android:descendantFocusability="afterDescendants"
-        android:footerDividersEnabled="true"/>
-
     <LinearLayout
-        android:id="@+id/wifi_enable_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/systemui_size_fifty"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/systemui_size_twentyfour">
-
-        <TextView
-            android:id="@+id/wifi_enable"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wifi_enable"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/systemui_textsize_twelve"/>
-
-        <Switch
-            android:id="@+id/wifi_enable_btn"
-            android:layout_width="@dimen/systemui_size_seventy"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/ethernet_configure"
+        android:id="@+id/wifi_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/systemui_size_twentyfour"
-        android:text="@string/status_bar_ethernet"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/systemui_textsize_twelve"/>
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/wifi_list"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/systemui_size_one"
+            android:descendantFocusability="afterDescendants"
+            android:footerDividersEnabled="true"/>
+
+        <LinearLayout
+            android:id="@+id/wifi_enable_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/systemui_size_fifty"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/systemui_size_twentyfour">
+
+            <TextView
+                android:id="@+id/wifi_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wifi_enable"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/systemui_textsize_twelve"/>
+
+            <Switch
+                android:id="@+id/wifi_enable_btn"
+                android:layout_width="@dimen/systemui_size_seventy"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ethernet_configure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/systemui_size_twentyfour"
+            android:text="@string/status_bar_ethernet"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/systemui_textsize_twelve"/>
+    </LinearLayout>
 </LinearLayout>

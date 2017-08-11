@@ -30,6 +30,7 @@ import android.text.format.DateFormat;
 import android.text.style.CharacterStyle;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.widget.TextView;
 import android.text.format.DateFormat;
 
@@ -249,6 +250,8 @@ public class Clock extends TextView implements DemoMode {
     private void showTimeFormat() {
         Locale locale = getContext().getResources().getConfiguration().locale;
         String language = locale.getLanguage();
+        setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.systemui_textsize_ten));
         if (!DateFormat.is24HourFormat(getContext(), ActivityManager.getCurrentUser())) {
             if (mCalendar.get(Calendar.AM_PM) == 0) {
                 if (language.endsWith("zh")) {

@@ -80,6 +80,7 @@ public final class WifiDialog extends BaseSettingDialog {
         }
     });
     private LinearLayout mWifiEnableLayout;
+    private LinearLayout mLayout;
 
     public WifiDialog(Context context) {
         super(context);
@@ -90,11 +91,14 @@ public final class WifiDialog extends BaseSettingDialog {
         mContentView = LayoutInflater.from(mContext).inflate(R.layout.wifi_list, null);
         mWifiListView = (ListView) mContentView.findViewById(R.id.wifi_list);
         mWifiEnableLayout = (LinearLayout) mContentView.findViewById(R.id.wifi_enable_layout);
+        mLayout = (LinearLayout) mContentView.findViewById(R.id.wifi_layout);
         mWifiEnable = (TextView) mContentView.findViewById(R.id.wifi_enable);
         mWifiEnableBtn = (Switch) mContentView.findViewById(R.id.wifi_enable_btn);
         mEthernetConfigure = (TextView) mContentView.findViewById(R.id.ethernet_configure);
 
         mWifiEnableLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.EXACTLY);
+        mLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                mWifiEnableLayout.getMeasuredWidth(), ViewGroup.LayoutParams.WRAP_CONTENT));
         mMaxListViewHeight =
                 mContext.getResources().getDimensionPixelOffset(R.dimen.systemui_size_fourhundred);
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
@@ -115,7 +119,6 @@ public final class WifiDialog extends BaseSettingDialog {
                         mWifiManager.setWifiEnabled(false);
                     }
                 }
-                mWifiEnableBtn.setClickable(false);
             }
         });
         mEthernetConfigure.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +174,6 @@ public final class WifiDialog extends BaseSettingDialog {
     @Override
     protected void onStart() {
         super.onStart();
-        mWifiEnableBtn.setClickable(true);
         wifiStateChangeViewUpdate(mWifiManager.isWifiEnabled());
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.startScan();
@@ -285,7 +287,6 @@ public final class WifiDialog extends BaseSettingDialog {
             default:
                 break;
         }
-        mWifiEnableBtn.setClickable(true);
     }
 
     public void updateList() {

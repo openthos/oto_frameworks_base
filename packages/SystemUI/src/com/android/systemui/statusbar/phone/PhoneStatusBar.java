@@ -416,7 +416,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mShowCarrierInPanel = false;
     //notification dialog
-    private BaseSettingDialog targetDialog;
+    private BaseSettingDialog mCurrentDialog;
     // position
     int[] mPositionTmp = new int[2];
     boolean mExpandedVisible;
@@ -821,11 +821,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mClock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mClock == null) {
-                    return;
-                }
-                dismisTargetDialog(mCalendarDialog);
-                mCalendarDialog.show(mClock);
+                showOrDismissPannelWork(mClock, mCalendarDialog);
             }
         });
         mClock.setOnHoverListener(hoverListener);
@@ -1073,11 +1069,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         battery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (battery == null) {
-                    return;
-                }
-                dismisTargetDialog(mBatteryPopupWindow);
-                mBatteryPopupWindow.show(battery);
+                showOrDismissPannelWork(battery, mBatteryPopupWindow);
             }
         });
         mKeyguardStatusBar.setBatteryController(mBatteryController);
@@ -1661,49 +1653,51 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return lp;
     }
 
-    private void dismisTargetDialog(BaseSettingDialog newDialog){
-        if(targetDialog != null) {
-            targetDialog.dismiss();
-        }
-        targetDialog = newDialog;
-    }
-
     @Override
-    protected void  showVolumePanelWork(){
+    protected void showVolumePanelWork() {
         super.showVolumePanelWork();
-        if (mVolumeButton == null){
-            return;
-        }
-        dismisTargetDialog(mVolumePopupWindow);
-        mVolumePopupWindow.show(mVolumeButton);
+        showOrDismissPannelWork(mVolumeButton, mVolumePopupWindow);
     }
 
     @Override
-    protected void  showWifiPanelWork(){
+    protected void showWifiPanelWork() {
         super.showWifiPanelWork();
-        if (mWifiButton == null) {
-            return;
-        }
-        dismisTargetDialog(mWifiPopupWindow);
-        mWifiPopupWindow.show(mWifiButton);
+        showOrDismissPannelWork(mWifiButton, mWifiPopupWindow);
     }
 
-    protected void  showBatteryPanelWork() {
+    protected void showBatteryPanelWork() {
         super.showBatteryPanelWork();
-        if (mBatteryButton == null) {
-            return;
-        }
-        dismisTargetDialog(mBatteryPopupWindow);
-        mBatteryPopupWindow.show(mBatteryButton);
+        showOrDismissPannelWork(mBatteryButton, mBatteryPopupWindow);
     }
 
-    protected void  showInputMethodPanelWork() {
+    protected void showInputMethodPanelWork() {
         super.showInputMethodPanelWork();
-        if (mInputButton == null) {
+        showOrDismissPannelWork(mInputButton, mInputMethodPopupWindow);
+    }
+
+    protected void showOrDismissPannelWork(View view, BaseSettingDialog dialog) {
+        if (view == null) {
             return;
         }
-        dismisTargetDialog(mInputMethodPopupWindow);
-        mInputMethodPopupWindow.show(mInputButton);
+
+        if (mCurrentDialog == null) {
+            dialog.show(view);
+            mCurrentDialog = dialog;
+        } else {
+            if (mCurrentDialog == dialog) {
+                if (mCurrentDialog.isShowing()) {
+                    dialog.dismiss();
+                } else {
+                    dialog.show(view);
+                }
+            } else {
+                if (mCurrentDialog.isShowing()) {
+                    mCurrentDialog.dismiss();
+                }
+                dialog.show(view);
+                mCurrentDialog = dialog;
+            }
+        }
     }
 
     protected void  showHomePanelWork() {
@@ -1712,11 +1706,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private void dismissSystemDilog() {
-        dismisTargetDialog(mBatteryPopupWindow);
-        dismisTargetDialog(mInputMethodPopupWindow);
-        dismisTargetDialog(mWifiPopupWindow);
-        dismisTargetDialog(mCalendarDialog);
-        dismisTargetDialog(mBrightnessDialog);
+        if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
+            mCurrentDialog.dismiss();
+        }
     }
 
     @Override
@@ -3950,8 +3942,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     updateMediaMetaData(true);
                 }
             } else if (Intent.ACTION_SHOW_BRIGHTNESS_DIALOG.equals(action)){
-                dismisTargetDialog(mBrightnessDialog);
-                mBrightnessDialog.show(mInputButton);
+                showOrDismissPannelWork(mInputButton, mBrightnessDialog);
             } else if (Intent.STATUS_BAR_SEAFILE.equals(action)) {
                 mdbStatusBar.delete("status_bar_tb", null, null);
                 mEditorPkg.clear().commit();
