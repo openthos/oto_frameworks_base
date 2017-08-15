@@ -138,6 +138,8 @@ public final class PowerManagerService extends SystemService
     // Default timeout in milliseconds.  This is only used until the settings
     // provider populates the actual default value (R.integer.def_screen_off_timeout).
     private static final int DEFAULT_SCREEN_OFF_TIMEOUT = 1800 * 1000;
+    private static final int DEFAULT_SCREEN_OFF_TIMEOUT_CHARGING = 1800 * 1000;
+    private static final int DEFAULT_SCREEN_OFF_TIMEOUT_NOCHARGE = 300 * 1000;
     private static final int DEFAULT_SLEEP_TIMEOUT = -1;
 
     // Screen brightness boost timeout.
@@ -1357,6 +1359,8 @@ public final class PowerManagerService extends SystemService
             if (mStayOnWhilePluggedInSetting != 0
                     && !isMaximumScreenOffTimeoutFromDeviceAdminEnforcedLocked()) {
                 mStayOn = mBatteryManagerInternal.isPowered(mStayOnWhilePluggedInSetting);
+            } else if (mScreenOffTimeoutSetting == Integer.MAX_VALUE) {
+                mStayOn = true;
             } else {
                 mStayOn = false;
             }
@@ -2566,7 +2570,8 @@ public final class PowerManagerService extends SystemService
                 int screenOffTime = Settings.System.getIntForUser(mContext.getContentResolver(),
                         isCharging ? Settings.System.SCREEN_OFF_TIMEOUT_CHARGING
                                    : Settings.System.SCREEN_OFF_TIMEOUT_UNCHARGE,
-                        DEFAULT_SCREEN_OFF_TIMEOUT,UserHandle.USER_CURRENT);
+                        isCharging ? DEFAULT_SCREEN_OFF_TIMEOUT_CHARGING
+                                   : DEFAULT_SCREEN_OFF_TIMEOUT_NOCHARGE, UserHandle.USER_CURRENT);
                 Settings.System.putInt(mContext.getContentResolver(),
                                     Settings.System.SCREEN_OFF_TIMEOUT, screenOffTime);
                 handleBatteryStateChangedLocked();
