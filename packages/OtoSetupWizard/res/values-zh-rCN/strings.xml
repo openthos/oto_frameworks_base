@@ -37,6 +37,9 @@
     <string name="toast_openthos_register_cancel">取消openthos　Id注册</string>
     <string name="toast_openthos_register_password_wrong">您的密码未输入或者两次输入密码不一致</string>
     <string name="toast_openthos_register_password_not_equals">两次输入密码不一致</string>
+    <string name="toast_openthos_register_password_empty">密码不能为空</string>
+    <string name="toast_openthos_register_computer_name">主机名不能为空</string>
+    <string name="toast_openthos_register_user_name">用户名不能为空</string>
     <string name="toast_register_successful">注册成功！</string>
     <string name="toast_verify_successful">验证成功</string>
     <string name="str_email">输入有效邮箱地址</string>

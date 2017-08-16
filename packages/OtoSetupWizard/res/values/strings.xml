@@ -35,7 +35,9 @@
     <string name="toast_openthos_password_empty">password is empty</string>
     <string name="toast_network_not_connect">Not connected to the Internet, please check the network settings</string>
     <string name="toast_openthos_register_cancel">you have canceled</string>
-    <string name="toast_openthos_register_password_wrong">you have null input or the twice password was not the same</string>
+    <string name="toast_openthos_register_password_empty">the password is empty</string>
+    <string name="toast_openthos_register_computer_name">ComputerName is empty</string>
+    <string name="toast_openthos_register_user_name">UserName is empty</string>
     <string name="toast_openthos_register_password_not_equals"> Two input passwords are not consistent</string>
     <string name="toast_register_successful"> register successful!</string>
     <string name="toast_verify_successful">Verify successful!</string>
