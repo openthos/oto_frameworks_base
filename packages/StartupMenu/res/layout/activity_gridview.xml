@@ -6,6 +6,7 @@
     android:paddingTop="@dimen/startupmenu_layout_size_twelve">
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="@dimen/startupmenu_layout_size_eighty_eight"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -23,8 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/startupmenu_layout_size_eight"
             android:layout_marginBottom="@dimen/startupmenu_layout_size_twenty_four"
+            android:layout_marginTop="@dimen/startupmenu_layout_size_eight"
             android:ellipsize="end"
             android:gravity="center"
             android:paddingLeft="@dimen/startupmenu_layout_size_two"

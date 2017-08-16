@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.content.Context;
 import android.app.Dialog;
+import android.os.UserHandle;
 import android.widget.Toast;
 import android.content.Intent;
 import android.view.Window;
@@ -21,8 +22,6 @@ import android.widget.TextView;
 import com.android.startupmenu.bean.AppInfo;
 import com.android.startupmenu.util.Constants;
 import com.android.startupmenu.util.SqliteOperate;
-
-import com.android.startupmenu.adapter.AppAdapter;
 
 public class CommonAppDialog extends Dialog implements OnClickListener {
     private TextView mOpen;
@@ -98,7 +97,7 @@ public class CommonAppDialog extends Dialog implements OnClickListener {
                 Intent intent = mAppInfo.getIntent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mActivity.startActivity(intent);
-                AppAdapter.openAppBroadcast(mActivity);
+                openAppBroadcast();
                 SqliteOperate.updateDataStorage(mActivity, mAppInfo);
                 dialogDismiss();
                 break;
@@ -123,6 +122,12 @@ public class CommonAppDialog extends Dialog implements OnClickListener {
                 dialogDismiss();
                 break;
         }
+    }
+
+    public void openAppBroadcast() {
+        Intent openAppIntent = new Intent();
+        openAppIntent.setAction(Constants.ACTION_OPEN_APPLICATION);
+        mActivity.sendBroadcastAsUser(openAppIntent, UserHandle.ALL);
     }
 
     //Method of run phone mode

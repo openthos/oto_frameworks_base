@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.content.Context;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.UserHandle;
 import android.view.Window;
 import android.view.Display;
 import android.view.Gravity;
@@ -28,14 +29,11 @@ import com.android.startupmenu.util.SqliteOperate;
 import android.net.Uri;
 import android.provider.Settings;
 
-import com.android.startupmenu.adapter.AppAdapter;
-
 import android.os.Handler;
 import android.os.Message;
 import android.content.ContentResolver;
 
 public class AppDialog extends Dialog implements OnTouchListener {
-    public static final int STARTMENU_WIDTH = 55;
     public static final int STATE_CODE_SEND_DATA = 0;
     public static final String URI_CONTENT_STATUS_BAR =
             "content://com.android.systemui.util/status_bar_tb";
@@ -137,7 +135,7 @@ public class AppDialog extends Dialog implements OnTouchListener {
                 Intent intent = mAppInfo.getIntent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mActivity.startActivity(intent);
-                AppAdapter.openAppBroadcast(mActivity);
+                openAppBroadcast();
                 dialogDismiss();
                 SqliteOperate.updateDataStorage(mActivity, mAppInfo);
                 break;
@@ -192,6 +190,12 @@ public class AppDialog extends Dialog implements OnTouchListener {
             return false;
         }
     };
+
+    public void openAppBroadcast() {
+        Intent openAppIntent = new Intent();
+        openAppIntent.setAction(Constants.ACTION_OPEN_APPLICATION);
+        mActivity.sendBroadcastAsUser(openAppIntent, UserHandle.ALL);
+    }
 
     //Method of run phone mode
     private void runPhoneMode() {
