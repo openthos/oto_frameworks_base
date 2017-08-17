@@ -12078,7 +12078,7 @@ public class WindowManagerService extends IWindowManager.Stub
         }
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_HIDE);
-        mContext.sendBroadcast(intent);
+        //mContext.sendBroadcast(intent);
         try {
             mActivityManager.killStartupMenu();
         } catch (RemoteException e) {
