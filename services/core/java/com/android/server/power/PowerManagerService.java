@@ -640,6 +640,9 @@ public final class PowerManagerService extends SystemService
         mScreenOffTimeoutSetting = Settings.System.getIntForUser(resolver,
                 Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SCREEN_OFF_TIMEOUT,
                 UserHandle.USER_CURRENT);
+        // Keep screen off time out consistent.
+        mMinimumScreenOffTimeoutConfig = mScreenOffTimeoutSetting;
+
         mSleepTimeoutSetting = Settings.Secure.getIntForUser(resolver,
                 Settings.Secure.SLEEP_TIMEOUT, DEFAULT_SLEEP_TIMEOUT,
                 UserHandle.USER_CURRENT);
