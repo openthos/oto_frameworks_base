@@ -273,7 +273,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
          public void onReceive(Context context, Intent intent) {
              if (Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY.equals(intent.getAction())) {
                  mIsHide = true;
-                 showStatusBar();
              }
          }
     };
