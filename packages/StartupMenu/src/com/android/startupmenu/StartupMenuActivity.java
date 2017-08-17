@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.android.startupmenu.bean.AppInfo;
 import com.android.startupmenu.adapter.AppAdapter;
-import com.android.startupmenu.adapter.CommonAppAdapter;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.bean.Type;
 import com.android.startupmenu.util.Constants;
 import com.android.startupmenu.util.SqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
@@ -48,13 +48,11 @@ import android.text.TextWatcher;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager.LayoutParams;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,7 +60,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView.OnEditorActionListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.SharedPreferences;
 
@@ -95,7 +92,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
     private List<String> mFilterAppPkgNames;
 
     private AppAdapter mGridAdapter;
-    public CommonAppAdapter mListAdapter;
+    public AppAdapter mListAdapter;
 
     private boolean mFocus;
 
@@ -161,8 +158,8 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         mDisplayAppInfos = new ArrayList<>();
         mCommonAppInfos = new ArrayList<>();
 
-        mGridAdapter = new AppAdapter(this, mDisplayAppInfos);
-        mListAdapter = new CommonAppAdapter(this, mCommonAppInfos);
+        mGridAdapter = new AppAdapter(this, Type.GRID, mDisplayAppInfos);
+        mListAdapter = new AppAdapter(this, Type.LIST, mCommonAppInfos);
         mGridView.setAdapter(mGridAdapter);
         mListView.setAdapter(mListAdapter);
 
