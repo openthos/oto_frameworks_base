@@ -20007,7 +20007,10 @@ public final class ActivityManagerService extends ActivityManagerNative
         long ident = Binder.clearCallingIdentity();
         try {
             mWindowManager.relayoutWindow(stackId, r);
-            changeOrientation(mStackSupervisor.getStack(stackId).topRunningActivityLocked(null));
+            ActivityStack stack = mStackSupervisor.getStack(stackId);
+            if (stack != null) {
+                changeOrientation(stack.topRunningActivityLocked(null));
+            }
         } finally {
             Binder.restoreCallingIdentity(ident);
         }
