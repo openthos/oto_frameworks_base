@@ -17507,6 +17507,22 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * handle possible request-during-layout errors correctly.</p>
      */
     public void requestLayout() {
+
+        if (this.toString().indexOf("videoview_container") != -1
+                    && getContext().getPackageName().compareTo("tv.danmaku.bili") == 0
+                    && getLayoutParams() != null && getViewRootImpl() != null) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            if (decor != null) {
+                int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+                int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                          - decor.getWindowHeaderPadding();
+                if (w > h) {
+                    getLayoutParams().width = w;
+                    getLayoutParams().height = h;
+                }
+            }
+        }
+
         if (mMeasureCache != null) mMeasureCache.clear();
 
         if (mAttachInfo != null && mAttachInfo.mViewRequestingLayout == null) {
@@ -17782,6 +17798,28 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = w;
             }
             measuredHeight = (int) ((float) measuredWidth / mRatio);
+        } else if (isDecorValid()
+                   && (getClass().getName().compareTo(
+                           "tv.danmaku.videoplayer.core.videoview.TextureVideoView") == 0)
+                   && (getContext().getPackageName().compareTo("tv.danmaku.bili") == 0)
+                   && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
+                   && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
+            int h = decor.getHeight() - decor.getWindowBorderPadding()
+                                      - decor.getWindowHeaderPadding();
+            if (w > h) {
+                float ratio1 = (float) measuredWidth / (float) measuredHeight;
+                float ratio2 = (float) w / (float) h;
+                boolean matchWidth = ratio1 > ratio2;
+                if (!matchWidth) {
+                    measuredHeight = h;
+                    measuredWidth = (int) ((float) h * ratio1);
+                } else {
+                    measuredWidth = w;
+                    measuredHeight = (int) ((float) w / ratio1);
+                }
+            }
         } else if (isDecorValid() && blacklistIdForMeasure()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
