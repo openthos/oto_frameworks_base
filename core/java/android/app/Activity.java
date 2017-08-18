@@ -54,6 +54,7 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.session.MediaController;
@@ -4971,6 +4972,13 @@ public class Activity extends ContextThemeWrapper
     public void setRequestedOrientation(@ActivityInfo.ScreenOrientation int requestedOrientation) {
         if (mParent == null) {
             try {
+                if (mDecor != null && mDecor.getViewRootImpl() != null) {
+                    Rect nowRect = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                    if (orientationNeedResolve(requestedOrientation, nowRect)) {
+                        mDecor.getViewRootImpl().setWinFrame(mWindow.togglePhoneScreen(nowRect));
+                        mDecor.invalidate();
+                    }
+                }
                 ActivityManagerNative.getDefault().setRequestedOrientation(
                         mToken, requestedOrientation);
             } catch (RemoteException e) {
@@ -5082,6 +5090,23 @@ public class Activity extends ContextThemeWrapper
     public ComponentName getComponentName()
     {
         return mComponent;
+    }
+
+    private boolean orientationNeedResolve(int requestedOrientation, Rect nowRect) {
+        switch(requestedOrientation) {
+            case ActivityInfo.SCREEN_ORIENTATION_PORTRAIT:
+            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT:
+            case ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT:
+            case ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT:
+                return nowRect.height() < nowRect.width();
+            case ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE:
+            case ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE:
+            case ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE:
+            case ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE:
+                return nowRect.width() <= nowRect.height();
+            default:
+                return false;
+        }
     }
 
     /**

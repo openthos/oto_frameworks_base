@@ -167,6 +167,7 @@ public final class ViewRootImpl implements ViewParent,
 
     int mViewVisibility;
     boolean mAppVisible = true;
+    boolean mFirstConfig = true;
     int mOrigWindowType = -1;
 
     // Set to true if the owner of this window is in the stopped state,
@@ -3056,6 +3057,18 @@ public final class ViewRootImpl implements ViewParent,
             // have the most recent config, whatever that is.  Use
             // the one in them which may be newer.
             config = mView.getResources().getConfiguration();
+            if (mView instanceof WindowDecorView) {
+                int dw = mView.getWidth();
+                int dh = mView.getHeight();
+                if (dw > WindowManager.MW_WINDOW_MIN_WIDTH
+                        && dh > WindowManager.MW_WINDOW_MIN_HEIGHT && mFirstConfig) {
+                    config.orientation = (dw <= dh) ? Configuration.ORIENTATION_PORTRAIT :
+                        Configuration.ORIENTATION_LANDSCAPE;
+                    config.screenHeightDp = dh;
+                    config.screenWidthDp = dw;
+                    mFirstConfig = false;
+                }
+            }
             if (force || mLastConfiguration.diff(config) != 0) {
                 final int lastLayoutDirection = mLastConfiguration.getLayoutDirection();
                 final int currentLayoutDirection = config.getLayoutDirection();

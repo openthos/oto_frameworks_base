@@ -4386,15 +4386,46 @@ public final class ActivityManagerService extends ActivityManagerNative
             }
             final long origId = Binder.clearCallingIdentity();
             mWindowManager.setAppOrientation(r.appToken, requestedOrientation);
-            Configuration config = mWindowManager.updateOrientationFromAppTokens(
-                    mConfiguration, r.mayFreezeScreenLocked(r.app) ? r.appToken : null);
-            if (config != null) {
-                r.frozenBeforeDestroy = true;
-                if (!updateConfigurationLocked(config, r, false, false)) {
-                    mStackSupervisor.resumeTopActivitiesLocked();
+            Binder.restoreCallingIdentity(origId);
+        }
+    }
+
+    public void changeOrientation(ActivityRecord r) {
+        synchronized (this) {
+            if (r == null || r.task == null || r.task.stack == null) {
+                return;
+            }
+            Rect re = getStackBounds(r.task.stack.mStackId);
+            int dw = re.width();
+            int dh = re.height();
+            if (dw <= WindowManager.MW_WINDOW_MIN_WIDTH
+                || dh <= WindowManager.MW_WINDOW_MIN_HEIGHT) {
+                return ;
+            }
+            if (dw == r.configuration.screenWidthDp
+                && dh == r.configuration.screenHeightDp) {
+                return;
+            }
+            Configuration config = new Configuration(r.configuration);
+            config.screenWidthDp = dw;
+            config.screenHeightDp = dh;
+            int sl = Configuration.resetScreenLayout(config.screenLayout);
+            if (dw > dh) {
+                config.orientation = Configuration.ORIENTATION_LANDSCAPE;
+            } else {
+                config.orientation = Configuration.ORIENTATION_PORTRAIT;
+            }
+            mConfigurationSeq++;
+            if (mConfigurationSeq <= 0) {
+                mConfigurationSeq = 1;
+            }
+            config.seq = mConfigurationSeq;
+            if (r.app != null) {
+                try {
+                    r.app.thread.scheduleConfigurationChanged(config);
+                } catch (Exception e){
                 }
             }
-            Binder.restoreCallingIdentity(origId);
         }
     }
 
@@ -19976,6 +20007,7 @@ public final class ActivityManagerService extends ActivityManagerNative
         long ident = Binder.clearCallingIdentity();
         try {
             mWindowManager.relayoutWindow(stackId, r);
+            changeOrientation(mStackSupervisor.getStack(stackId).topRunningActivityLocked(null));
         } finally {
             Binder.restoreCallingIdentity(ident);
         }

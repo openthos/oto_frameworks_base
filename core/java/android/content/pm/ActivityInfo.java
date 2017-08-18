@@ -618,8 +618,13 @@ public class ActivityInfo extends ComponentInfo
     public int getRealConfigChanged() {
         return applicationInfo.targetSdkVersion < android.os.Build.VERSION_CODES.HONEYCOMB_MR2
                 ? (configChanges | ActivityInfo.CONFIG_SCREEN_SIZE
-                        | ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE)
-                : configChanges;
+                        | ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE
+                        | ActivityInfo.CONFIG_ORIENTATION
+                        | ActivityInfo.CONFIG_SCREEN_LAYOUT)
+                : (configChanges | ActivityInfo.CONFIG_SCREEN_SIZE
+                        | ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE
+                        | ActivityInfo.CONFIG_ORIENTATION
+                        | ActivityInfo.CONFIG_SCREEN_LAYOUT);
     }
 
     /**
