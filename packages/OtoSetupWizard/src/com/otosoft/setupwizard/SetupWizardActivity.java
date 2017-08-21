@@ -64,6 +64,13 @@ public class SetupWizardActivity extends BaseActivity {
             findViewById(R.id.skip_test).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    try {
+                        Runtime.getRuntime().exec(
+                                new String[]{"su","-c", "pm disable com.openthos.factorytest"});
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    v.setEnabled(false);
                     findViewById(R.id.background).setVisibility(View.GONE);
                     Animation animation;
                     animation = new ScaleAnimation(1f, 0, 1f, 0,
