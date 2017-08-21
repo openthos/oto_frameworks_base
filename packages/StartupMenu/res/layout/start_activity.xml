@@ -33,24 +33,61 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <TextView
+        <LinearLayout
             android:id="@+id/openthos_file_manager"
-            style="@style/Mstyle"
-            android:drawableLeft="@drawable/startup_menuicon_computer"
-            android:text="@string/file_manager"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/startupmenu_layout_size_sixteen">
 
-        <TextView
+            <ImageView
+                android:layout_width="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_height="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_gravity="center"
+                android:src="@drawable/startup_menuicon_computer"/>
+
+            <TextView
+                style="@style/Mstyle"
+                android:text="@string/file_manager"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/system_setting"
-            style="@style/Mstyle"
-            android:drawableLeft="@drawable/startup_menuicon_setting"
-            android:text="@string/system_setting"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/startupmenu_layout_size_sixteen">
 
-        <TextView
+            <ImageView
+                android:layout_width="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_height="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_gravity="center"
+                android:src="@drawable/startup_menuicon_setting"/>
+
+            <TextView
+                style="@style/Mstyle"
+                android:text="@string/system_setting"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/power_off"
-            style="@style/Mstyle"
-            android:drawableLeft="@drawable/startup_menuicon_power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="powerOff"
-            android:text="@string/power_source"/>
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/startupmenu_layout_size_sixteen">
+
+            <ImageView
+                android:layout_width="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_height="@dimen/startupmenu_layout_size_sixteen"
+                android:layout_gravity="center"
+                android:src="@drawable/startup_menuicon_power"/>
+
+            <TextView
+                style="@style/Mstyle"
+                android:text="@string/power_source"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <ImageView

@@ -114,9 +114,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
     private int mStrCount;
     private ImageView mSearch;
     private ImageView mArrowWhite;
-    private TextView mFileManager;
-    private TextView mPowerOff;
-    private TextView mSystemSetting;
+    private LinearLayout mFileManager;
+    private LinearLayout mPowerOff;
+    private LinearLayout mSystemSetting;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -147,9 +147,9 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         mTvSortShow = (TextView) findViewById(R.id.tv_sort_show);
         mEditText = (EditText) findViewById(R.id.et_text);
         mArrowWhite = (ImageView) findViewById(R.id.iv_arrow_white);
-        mFileManager = (TextView) findViewById(R.id.openthos_file_manager);
-        mPowerOff = (TextView) findViewById(R.id.power_off);
-        mSystemSetting = (TextView) findViewById(R.id.system_setting);
+        mFileManager = (LinearLayout) findViewById(R.id.openthos_file_manager);
+        mPowerOff = (LinearLayout) findViewById(R.id.power_off);
+        mSystemSetting = (LinearLayout) findViewById(R.id.system_setting);
     }
 
     private void initData() {
