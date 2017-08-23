@@ -273,6 +273,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int MSG_LAUNCH_TRANSITION_TIMEOUT = 1003;
     private static final int DEFAULT_CODE = -1;
     private static final int BACKGROUND_ALPHA_VALUE = 100;
+    private static final int LONG_PRESS_VALUE = 700;
 
     // 1020-1040 reserved for BaseStatusBar
 
@@ -440,6 +441,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int[] mAbsPos = new int[2];
     ArrayList<Runnable> mPostCollapseRunnables = new ArrayList<>();
 
+    // for longclick;
+    private LongPressRunnable mLongPressRunnable = new LongPressRunnable();
+    private boolean mIsLongPress;
+    private int mLocationX = 0;
     // for disabling the status bar
     int mDisabled = 0;
 
@@ -789,6 +794,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                                           .findViewById(R.id.status_bar_scroll_view);
         mStatusBarHorizontalScrollView.setOnTouchListener(new View.OnTouchListener(){
             public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mLocationX = (int)event.getRawX();
+                    setLongPressTime();
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (!mIsLongPress) {
+                        removeRunnable();
+                    }
+                }
                 if ((event.getButtonState()) == MotionEvent.BUTTON_SECONDARY
                         && (event.getAction()) ==  MotionEvent.ACTION_DOWN) {
                     showDialog(getDialogView(), (int)event.getRawX());
@@ -4629,6 +4643,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 sendBroadcastStatusBarCustom(STATUS_BAR_HIDE, false);
             }
         }
+    }
+
+    class LongPressRunnable implements Runnable {
+        @Override
+        public void run() {
+            showDialog(getDialogView(), mLocationX);
+            mIsLongPress = true;
+        }
+    }
+
+    private void setLongPressTime() {
+        mIsLongPress = false;
+        mHandler.postDelayed(mLongPressRunnable, LONG_PRESS_VALUE);
+    }
+
+    private void removeRunnable() {
+        mHandler.removeCallbacks(mLongPressRunnable);
     }
 
     public void sendBroadcastStatusBarCustom(String strStateStatusBar, boolean isUpdate) {
