@@ -1,6 +1,7 @@
 package com.android.startupmenu.bean;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
@@ -64,8 +65,8 @@ public class AppInfo{
         this.activityName = activityName;
     }
 
-    public Intent getIntent(){
-        Intent intent = new Intent();
+    public Intent getIntent(Context context) {
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(pkgName);
         intent.setComponent(new ComponentName(pkgName, activityName));
         return intent;
     }

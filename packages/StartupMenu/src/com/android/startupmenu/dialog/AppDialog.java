@@ -132,7 +132,7 @@ public class AppDialog extends Dialog implements OnTouchListener {
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
             case R.id.tv_right_open:
-                Intent intent = mAppInfo.getIntent();
+                Intent intent = mAppInfo.getIntent(mActivity);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mActivity.startActivity(intent);
                 openAppBroadcast();
@@ -199,7 +199,7 @@ public class AppDialog extends Dialog implements OnTouchListener {
 
     //Method of run phone mode
     private void runPhoneMode() {
-        Intent intent = mAppInfo.getIntent();
+        Intent intent = mAppInfo.getIntent(mActivity);
         intent.addFlags(Constants.FLAG_ACTIVITY_RUN_PHONE_MODE
                 | Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -208,7 +208,7 @@ public class AppDialog extends Dialog implements OnTouchListener {
 
     //Method of run pc mode
     private void runPcMode() {
-        Intent intent = mAppInfo.getIntent();
+        Intent intent = mAppInfo.getIntent(mActivity);
         intent.addFlags(Constants.FLAG_ACTIVITY_RUN_PC_MODE
                 | Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);

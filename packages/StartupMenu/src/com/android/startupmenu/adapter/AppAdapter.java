@@ -81,7 +81,7 @@ public class AppAdapter extends BaseAdapter
     }
 
     private void openApplication(AppInfo appInfo) {
-        Intent intent = appInfo.getIntent();
+        Intent intent = appInfo.getIntent(mActivity);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mActivity.startActivity(intent);
         openAppBroadcast(mActivity);
