@@ -2690,6 +2690,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             final Callback cb = getCallback();
             ev = prepareEvent(ev);
+
+            if (getContext().getPackageName().compareTo("com.xuetangx.mobile") == 0
+                    && getContext().toString().indexOf("NCourseIntroduceActivity") != -1) {
+                return super.dispatchTouchEvent(ev);
+            }
             return cb != null && !isDestroyed() && mFeatureId < 0 ? cb.dispatchTouchEvent(ev)
                     : super.dispatchTouchEvent(ev);
         }
