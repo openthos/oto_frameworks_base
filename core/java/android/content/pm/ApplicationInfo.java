@@ -703,7 +703,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
                                      || (pkgName.compareTo(APPNAME_ANDROID_CALCULATOR) == 0)
                                      || (pkgName.compareTo(APPNAME_AUTONAVI_MINIMAP) == 0)
                                      || (pkgName.compareTo(APPNAME_COM_TERMUX) == 0)
-                                     || (pkgName.compareTo(APPNAME_XUETANGX_MOBILE) == 0)
                                      || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
                                          == 0)
                                      //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
