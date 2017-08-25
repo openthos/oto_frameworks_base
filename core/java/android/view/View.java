@@ -17733,7 +17733,10 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         final float WECHAT_TEXTUREVIEW_HEIGHT_FACTOR = 0.52f;
         final int WECHAT_TEXTUREVIEW_WIDTH_PADDING = 120;
 
-        if (getClass().getName().compareTo(
+        if (this.toString().indexOf("io.vov.vitamio.widget.VideoView") != -1
+                && getContext().getPackageName().compareTo("com.xuetangx.mobile") == 0) {
+            ((SurfaceView) this).getHolder().setFixedSize(measuredWidth, measuredHeight);
+        } else if (getClass().getName().compareTo(
                "com.tencent.mm.plugin.sight.encode.ui.SightCameraTextureView") == 0) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
