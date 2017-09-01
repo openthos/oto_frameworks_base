@@ -887,7 +887,7 @@ public class InputMethodService extends AbstractInputMethodService {
      */
     public InputConnection getCurrentInputConnection() {
         InputConnection ic = mStartedInputConnection;
-        if (ic != null) {
+        if (ic != null && !mIsLauncher) {
             return ic;
         }
         return mInputConnection;
