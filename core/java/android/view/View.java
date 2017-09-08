@@ -17516,12 +17516,22 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
                 int h = decor.getHeight() - decor.getWindowBorderPadding()
                                           - decor.getWindowHeaderPadding();
-                if (w > h) {
+                if (decor.getWidth() > decor.getHeight()) {
                     getLayoutParams().width = w;
                     getLayoutParams().height = h;
+                } else {
+                    ViewGroup parent = (ViewGroup)getParent();
+                    int id = parent.getResources().
+                             getIdentifier("reveal_placeholder", "id", "tv.danmaku.bili");
+                    View rph = (View)parent.findViewById(id);
+                    rph.getLayoutParams().width = getLayoutParams().width;
+                    rph.getLayoutParams().height = getLayoutParams().height;
+                    rph.requestLayout();
+                    rph.invalidate();
                 }
             }
         }
+
 
         if (mMeasureCache != null) mMeasureCache.clear();
 
@@ -17804,20 +17814,31 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         } else if (isDecorValid()
                    && (getClass().getName().compareTo(
                            "tv.danmaku.videoplayer.core.videoview.TextureVideoView") == 0)
-                   && (getContext().getPackageName().compareTo("tv.danmaku.bili") == 0)
-                   && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
-                   && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
+                   && (getContext().getPackageName().compareTo("tv.danmaku.bili") == 0)) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
-            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
-            int h = decor.getHeight() - decor.getWindowBorderPadding()
+            Rect decorRect = getViewRootImpl().getWinFrame();
+            int w = decorRect.width() - 2 * decor.getWindowBorderPadding();
+            int h = decorRect.height() - decor.getWindowBorderPadding()
                                       - decor.getWindowHeaderPadding();
-            if (w > h) {
-                float ratio1 = (float) measuredWidth / (float) measuredHeight;
+
+            float ratio1 = (float) measuredWidth / (float) measuredHeight;
+            if (decorRect.width() > decorRect.height()) {
                 float ratio2 = (float) w / (float) h;
                 boolean matchWidth = ratio1 > ratio2;
                 if (!matchWidth) {
                     measuredHeight = h;
                     measuredWidth = (int) ((float) h * ratio1);
+                } else {
+                    measuredWidth = w;
+                    measuredHeight = (int) ((float) w / ratio1);
+                }
+            } else {
+                View vc = (View) ((View) getParent()).getParent();
+                float ratio2 = (float) w / (float) vc.getLayoutParams().height;
+                boolean matchWidth = ratio1 > ratio2;
+                if (!matchWidth) {
+                    measuredHeight = vc.getLayoutParams().height;
+                    measuredWidth = (int) ((float) vc.getLayoutParams().height * ratio1);
                 } else {
                     measuredWidth = w;
                     measuredHeight = (int) ((float) w / ratio1);
