@@ -124,6 +124,7 @@ public final class WifiDialog extends BaseSettingDialog {
         mEthernetConfigure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dismiss();
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(PACKAGENAME_SETTING,
                         CLASSNAME_ETHERNET_SETTINGS));
