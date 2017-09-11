@@ -165,6 +165,8 @@ FileDescriptorInfo* FileDescriptorInfo::CreateFromFd(int fd) {
   const std::string fd_path = android::base::StringPrintf("/proc/self/fd/%d", fd);
   if (!android::base::Readlink(fd_path, &file_path)) {
     return NULL;
+  } else if (!strncmp(file_path.c_str(), "/android/", 9)) {
+    file_path = file_path.substr(8);
   }
 
   if (!whitelist->IsAllowed(file_path)) {
