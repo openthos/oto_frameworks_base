@@ -60,7 +60,7 @@ import com.android.server.wm.WindowManagerService.H;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-class TaskPositioner implements DimLayer.DimLayerUser {
+class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFrameUser {
     private static final boolean DEBUG_ORIENTATION_VIOLATIONS = false;
     private static final String TAG_LOCAL = "TaskPositioner";
     private static final String TAG = TAG_WITH_CLASS_NAME ? TAG_LOCAL : TAG_WM;
@@ -87,6 +87,7 @@ class TaskPositioner implements DimLayer.DimLayerUser {
     private static final int CTRL_BOTTOM = 0x8;
 
     public static final float RESIZING_HINT_ALPHA = 0.5f;
+    public static final float DRAGRESIZING_HINT_ALPHA = 1.0f;
 
     public static final int RESIZING_HINT_DURATION_MS = 0;
 
@@ -101,6 +102,7 @@ class TaskPositioner implements DimLayer.DimLayerUser {
     private Display mDisplay;
     private final DisplayMetrics mDisplayMetrics = new DisplayMetrics();
     private DimLayer mDimLayer;
+    private ResizingFrame mDimLayerForResize;
     @CtrlType
     private int mCurrentDimSide;
     private Rect mTmpRect = new Rect();
@@ -158,6 +160,8 @@ class TaskPositioner implements DimLayer.DimLayerUser {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_DOWN @ {" + newX + ", " + newY + "}");
                         }
+                        if (mResizing) {
+                        }
                     } break;
 
                     case MotionEvent.ACTION_MOVE: {
@@ -171,10 +175,17 @@ class TaskPositioner implements DimLayer.DimLayerUser {
                         if (!mTmpRect.equals(mWindowDragBounds)) {
                             Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER,
                                     "wm.TaskPositioner.resizeTask");
-                            try {
-                                mService.mActivityManager.resizeTask(
-                                        mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
-                            } catch (RemoteException e) {
+                            if (!mResizing) {
+                                try {
+                                    mService.mActivityManager.resizeTask(
+                                            mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
+                                } catch (RemoteException e) {
+                                }
+                            } else {
+                                mDimLayerForResize.setBounds(mWindowDragBounds);
+                                mDimLayerForResize.show(mService.getDragLayerLocked(),
+                                         DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                                mDimLayerForResize.reDraw();
                             }
                             Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
                         }
@@ -183,6 +194,10 @@ class TaskPositioner implements DimLayer.DimLayerUser {
                     case MotionEvent.ACTION_UP: {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_UP @ {" + newX + ", " + newY + "}");
+                        }
+                        if (mResizing && mWindowDragBounds.width() != 0 && mWindowDragBounds.height() != 0) {
+                            mDimLayerForResize.stopDragDraw();
+                            mDimLayerForResize.hide();
                         }
                         mDragEnded = true;
                     } break;
@@ -210,12 +225,20 @@ class TaskPositioner implements DimLayer.DimLayerUser {
                         }
 
                         if (mCurrentDimSide != CTRL_NONE) {
-                            final int createMode = mCurrentDimSide == CTRL_LEFT
-                                    ? DOCKED_STACK_CREATE_MODE_TOP_OR_LEFT
-                                    : DOCKED_STACK_CREATE_MODE_BOTTOM_OR_RIGHT;
-                            mService.mActivityManager.moveTaskToDockedStack(
-                                    mTask.mTaskId, createMode, true /*toTop*/, true /* animate */,
-                                    null /* initialBounds */);
+                            //final int createMode = mCurrentDimSide == CTRL_LEFT
+                            //        ? DOCKED_STACK_CREATE_MODE_TOP_OR_LEFT
+                            //        : DOCKED_STACK_CREATE_MODE_BOTTOM_OR_RIGHT;
+                            mTask.mStack.getDimBounds(mTmpRect);
+                            if (mCurrentDimSide == CTRL_LEFT) {
+                                mTmpRect.right = mTmpRect.centerX();
+                            } else {
+                                mTmpRect.left = mTmpRect.centerX();
+                            }
+                            mService.mActivityManager.resizeTask(
+                                    mTask.mTaskId, mTmpRect, RESIZE_MODE_USER_FORCED);
+                            //mService.mActivityManager.moveTaskToDockedStack(
+                            //        mTask.mTaskId, createMode, true /*toTop*/, true /* animate */,
+                            //        null /* initialBounds */, false /* moveHomeStackFront */);
                         }
                     } catch(RemoteException e) {}
 
@@ -307,6 +330,7 @@ class TaskPositioner implements DimLayer.DimLayerUser {
         mService.pauseRotationLocked();
 
         mDimLayer = new DimLayer(mService, this, mDisplay.getDisplayId(), TAG_LOCAL);
+        mDimLayerForResize = new ResizingFrame(mService, this, mDisplay.getDisplayId(), TAG_LOCAL);
         mSideMargin = dipToPixel(SIDE_MARGIN_DIP, mDisplayMetrics);
         mMinVisibleWidth = dipToPixel(MINIMUM_VISIBLE_WIDTH_IN_DP, mDisplayMetrics);
         mMinVisibleHeight = dipToPixel(MINIMUM_VISIBLE_HEIGHT_IN_DP, mDisplayMetrics);
@@ -341,6 +365,10 @@ class TaskPositioner implements DimLayer.DimLayerUser {
         if (mDimLayer != null) {
             mDimLayer.destroySurface();
             mDimLayer = null;
+        }
+        if (mDimLayerForResize != null) {
+            mDimLayerForResize.destroySurface();
+            mDimLayerForResize = null;
         }
         mCurrentDimSide = CTRL_NONE;
         mDragEnded = true;
@@ -391,6 +419,10 @@ class TaskPositioner implements DimLayer.DimLayerUser {
                 mCtrlType |= CTRL_BOTTOM;
             }
             mResizing = mCtrlType != CTRL_NONE;
+            mDimLayerForResize.setBounds(mTmpRect);
+            mDimLayerForResize.show(mService.getDragLayerLocked(),
+                     DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+            mDimLayerForResize.reDraw();
         }
 
         // In case of !isDockedInEffect we are using the union of all task bounds. These might be
