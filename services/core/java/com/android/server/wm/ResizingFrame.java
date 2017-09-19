@@ -208,25 +208,23 @@ public class ResizingFrame {
         mDimSurface.setSize(mBounds.width(), mBounds.height());
     }
 
-    public void reDraw() {
+    public void reDraw(Rect bounds) {
         SurfaceControl.openTransaction();
-        Slog.e("LADEHUNTER", "How to get reDraw: " + mBounds);
         Paint mPaint = new Paint();
         mCanvas = mSurface.lockCanvas(fullscreenBounds);
         mCanvas.drawColor(0, Mode.CLEAR);
-        mDrawLastBounds.set(mBounds);
         mPaint.setColor(0xFF00D3FF);
         mPaint.setAlpha(100);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(3);
-        mCanvas.drawRect(mBounds, mPaint);
+        mCanvas.drawRect(bounds, mPaint);
         mPaint.setColor(0xFF0065DB);
         mPaint.setAlpha(255);
-        mCanvas.drawLine(mBounds.left, mBounds.top, mBounds.right, mBounds.top, mPaint);
-        mCanvas.drawLine(mBounds.left, mBounds.bottom, mBounds.right, mBounds.bottom, mPaint);
-        mCanvas.drawLine(mBounds.left, mBounds.top, mBounds.left, mBounds.bottom, mPaint);
-        mCanvas.drawLine(mBounds.right, mBounds.top, mBounds.right, mBounds.bottom, mPaint);
+        mCanvas.drawLine(bounds.left, bounds.top, bounds.right, bounds.top, mPaint);
+        mCanvas.drawLine(bounds.left, bounds.bottom, bounds.right, bounds.bottom, mPaint);
+        mCanvas.drawLine(bounds.left, bounds.top, bounds.left, bounds.bottom, mPaint);
+        mCanvas.drawLine(bounds.right, bounds.top, bounds.right, bounds.bottom, mPaint);
         mSurface.unlockCanvasAndPost(mCanvas);
         SurfaceControl.closeTransaction();
     }

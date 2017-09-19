@@ -109,6 +109,8 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
     private int mSideMargin;
     private int mMinVisibleWidth;
     private int mMinVisibleHeight;
+    private int mMinStackResizeWidth;
+    private int mMinStackResizeHeight;
 
     private Task mTask;
     private boolean mResizing;
@@ -182,10 +184,9 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                                 } catch (RemoteException e) {
                                 }
                             } else {
-                                mDimLayerForResize.setBounds(mWindowDragBounds);
-                                mDimLayerForResize.show(mService.getDragLayerLocked(),
-                                         DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
-                                mDimLayerForResize.reDraw();
+                                //mDimLayerForResize.show(mService.getDragLayerLocked(),
+                                //         DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                                mDimLayerForResize.reDraw(mWindowDragBounds);
                             }
                             Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
                         }
@@ -196,7 +197,6 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                             Slog.w(TAG, "ACTION_UP @ {" + newX + ", " + newY + "}");
                         }
                         if (mResizing && mWindowDragBounds.width() != 0 && mWindowDragBounds.height() != 0) {
-                            mDimLayerForResize.stopDragDraw();
                             mDimLayerForResize.hide();
                         }
                         mDragEnded = true;
@@ -335,6 +335,13 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
         mMinVisibleWidth = dipToPixel(MINIMUM_VISIBLE_WIDTH_IN_DP, mDisplayMetrics);
         mMinVisibleHeight = dipToPixel(MINIMUM_VISIBLE_HEIGHT_IN_DP, mDisplayMetrics);
         mDisplay.getRealSize(mMaxVisibleSize);
+        try {
+            mMinStackResizeWidth = mService.mActivityManager.getDefaultMinSizeOfResizeableTask();
+            mMinStackResizeHeight = mService.mActivityManager.getDefaultMinSizeOfResizeableTask();
+        } catch (RemoteException e) {
+            Slog.e(TAG, "Can't get resizeable size", e);
+        }
+
 
         mDragEnded = false;
     }
@@ -419,10 +426,9 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                 mCtrlType |= CTRL_BOTTOM;
             }
             mResizing = mCtrlType != CTRL_NONE;
-            mDimLayerForResize.setBounds(mTmpRect);
             mDimLayerForResize.show(mService.getDragLayerLocked(),
                      DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
-            mDimLayerForResize.reDraw();
+            mDimLayerForResize.reDraw(mTmpRect);
         }
 
         // In case of !isDockedInEffect we are using the union of all task bounds. These might be
@@ -440,6 +446,27 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
     private void endDragLocked() {
         mResizing = false;
         mTask.setDragResizing(false, DRAG_RESIZE_MODE_FREEFORM);
+        fitDragBounds();
+    }
+
+    private void fitDragBounds() {
+        mTmpRect.set(mWindowDragBounds);
+        boolean overWidth = mTmpRect.left > mTmpRect.right;
+        boolean overHeight = mTmpRect.top > mTmpRect.bottom;
+        int left = Math.min(mTmpRect.left, mTmpRect.right);
+        int top = Math.min(mTmpRect.top, mTmpRect.bottom);
+        int right = Math.max(mTmpRect.left, mTmpRect.right);
+        int bottom = Math.max(mTmpRect.top, mTmpRect.bottom);
+        mTask.mStack.getDimBounds(mTmpRect);
+        if (right - left < mMinVisibleWidth && overWidth) {
+            if ((mCtrlType & CTRL_RIGHT) != 0)
+                left = Math.max(right - Math.max(mMinVisibleWidth, mMinStackResizeWidth), 0);
+        }
+        if (bottom - top < mMinVisibleHeight && overHeight) {
+            if ((mCtrlType & CTRL_BOTTOM) != 0)
+                top = Math.max(bottom - Math.max(mMinVisibleHeight, mMinStackResizeHeight), 0);
+        }
+        mWindowDragBounds.set(left, top, right, bottom);
     }
 
     /** Returns true if the move operation should be ended. */

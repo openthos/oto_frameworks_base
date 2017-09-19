@@ -10187,6 +10187,14 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public int getDefaultMinSizeOfResizeableTask() {
+        if (mStackSupervisor != null) {
+            return mStackSupervisor.mDefaultMinSizeOfResizeableTask;
+        }
+        return -1;
+    }
+
+    @Override
     public void resizeTask(int taskId, Rect bounds, int resizeMode) {
         enforceCallingPermission(MANAGE_ACTIVITY_STACKS, "resizeTask()");
         long ident = Binder.clearCallingIdentity();
@@ -10597,6 +10605,8 @@ public class ActivityManagerService extends IActivityManager.Stub
                     throw new IllegalStateException(
                             "exitFreeformMode: You can only go fullscreen from freeform.");
                 }
+                mWindowManager.setAppOrientation(r.appToken,
+                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "exitFreeformMode: " + r);
                 r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,
