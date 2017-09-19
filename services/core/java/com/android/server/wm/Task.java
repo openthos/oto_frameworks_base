@@ -60,6 +60,8 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
     final int mTaskId;
     final int mUserId;
     private boolean mDeferRemoval = false;
+    boolean mIsDocked = false;
+    final Rect mDockedTmpRect = new Rect();
     final WindowManagerService mService;
 
     // Content limits relative to the DisplayContent this sits in.
