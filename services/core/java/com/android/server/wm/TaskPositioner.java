@@ -233,6 +233,7 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                             mTask.mStack.getDimBounds(mTmpRect);
                             mTask.getDimBounds(mTask.mDockedTmpRect);
                             mTask.mIsDocked = true;
+                            mTask.mDockedDimSide = mCurrentDimSide;
                             if (mCurrentDimSide == CTRL_LEFT) {
                                 mTmpRect.right = mTmpRect.centerX();
                             } else if (mCurrentDimSide == CTRL_RIGHT) {
@@ -462,13 +463,15 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
         int right = Math.max(mTmpRect.left, mTmpRect.right);
         int bottom = Math.max(mTmpRect.top, mTmpRect.bottom);
         mTask.mStack.getDimBounds(mTmpRect);
-        if (right - left < mMinVisibleWidth && overWidth) {
-            if ((mCtrlType & CTRL_RIGHT) != 0)
+        if (right - left < Math.max(mMinStackResizeWidth, mMinVisibleWidth) && overWidth) {
+            if ((mCtrlType & CTRL_RIGHT) != 0) {
                 left = Math.max(right - Math.max(mMinVisibleWidth, mMinStackResizeWidth), 0);
+            }
         }
-        if (bottom - top < mMinVisibleHeight && overHeight) {
-            if ((mCtrlType & CTRL_BOTTOM) != 0)
+        if (bottom - top < Math.max(mMinStackResizeHeight, mMinVisibleHeight) && overHeight) {
+            if ((mCtrlType & CTRL_BOTTOM) != 0) {
                 top = Math.max(bottom - Math.max(mMinVisibleHeight, mMinStackResizeHeight), 0);
+            }
         }
         mWindowDragBounds.set(left, top, right, bottom);
     }
@@ -669,8 +672,16 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
             int width = mTask.mDockedTmpRect.width();
             int height = mTask.mDockedTmpRect.height();
             mWindowOriginalBounds.bottom = mWindowOriginalBounds.top + height;
-            mWindowOriginalBounds.left = x - width/2;
-            mWindowOriginalBounds.right = x + width/2;
+            if (mTask.mDockedDimSide == CTRL_TOP || mWindowOriginalBounds.width() > width) {
+                mWindowOriginalBounds.left = x - width/2;
+                mWindowOriginalBounds.right = x + width/2;
+            } else {
+                if (mTask.mDockedDimSide == CTRL_RIGHT) {
+                    mWindowOriginalBounds.left = mWindowOriginalBounds.right - width;
+                } else {
+                    mWindowOriginalBounds.right = mWindowOriginalBounds.left + width;
+                }
+            }
             mTask.mIsDocked = false;
         }
         final int offsetX = Math.round(x - mStartDragX);
