@@ -2386,7 +2386,11 @@ public interface WindowManager extends ViewManager {
             }
 
             if (!surfaceInsets.equals(o.surfaceInsets)) {
-                surfaceInsets.set(o.surfaceInsets);
+                surfaceInsets.set(
+                        Math.max(o.surfaceInsets.left, surfaceInsets.left),
+                        Math.max(o.surfaceInsets.top, surfaceInsets.top),
+                        Math.max(o.surfaceInsets.right, surfaceInsets.right),
+                        Math.max(o.surfaceInsets.bottom, surfaceInsets.bottom));
                 changes |= SURFACE_INSETS_CHANGED;
             }
 
