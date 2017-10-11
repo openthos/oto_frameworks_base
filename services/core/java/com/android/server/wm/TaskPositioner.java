@@ -533,15 +533,17 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
         // Calculate the resulting width and height of the drag operation.
         int width = right - left;
         int height = bottom - top;
+        int visibleWidth = Math.max(mMinVisibleWidth, mMinStackResizeWidth);
+        int visibleHeight = Math.max(mMinVisibleHeight, mMinStackResizeHeight);
         if ((mCtrlType & CTRL_LEFT) != 0) {
-            width = Math.max(mMinVisibleWidth, width - deltaX);
+            width = Math.max(visibleWidth, width - deltaX);
         } else if ((mCtrlType & CTRL_RIGHT) != 0) {
-            width = Math.max(mMinVisibleWidth, width + deltaX);
+            width = Math.max(visibleWidth, width + deltaX);
         }
         if ((mCtrlType & CTRL_TOP) != 0) {
-            height = Math.max(mMinVisibleHeight, height - deltaY);
+            height = Math.max(visibleHeight, height - deltaY);
         } else if ((mCtrlType & CTRL_BOTTOM) != 0) {
-            height = Math.max(mMinVisibleHeight, height + deltaY);
+            height = Math.max(visibleHeight, height + deltaY);
         }
 
         // If we have to preserve the orientation - check that we are doing so.
