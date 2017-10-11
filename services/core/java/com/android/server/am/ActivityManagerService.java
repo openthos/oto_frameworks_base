@@ -10605,8 +10605,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                     throw new IllegalStateException(
                             "exitFreeformMode: You can only go fullscreen from freeform.");
                 }
-                mWindowManager.setAppOrientation(r.appToken,
-                        ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                r.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "exitFreeformMode: " + r);
                 r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,

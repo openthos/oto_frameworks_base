@@ -447,6 +447,7 @@ interface IActivityManager {
             in Bundle receiverExtras, in IBinder activityToken,
             boolean focused, boolean newSessionId);
     void resizeTask(int taskId, in Rect bounds, int resizeMode);
+    int getDefaultMinSizeOfResizeableTask();
     int getLockTaskModeState();
     void setDumpHeapDebugLimit(in String processName, int uid, long maxMemSize,
             in String reportPackage);
