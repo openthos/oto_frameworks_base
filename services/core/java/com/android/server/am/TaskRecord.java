@@ -79,8 +79,7 @@ import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.HOME_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.PINNED_STACK_ID;
-import static android.app.ActivityManager.RESIZE_MODE_FORCED;
-import static android.app.ActivityManager.RESIZE_MODE_USER;
+import static android.app.ActivityManager.RESIZE_MODE_USER_FORCED;
 import static android.app.ActivityManager.StackId.RECENTS_STACK_ID;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
 import static android.content.Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS;
@@ -2259,13 +2258,11 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         if (taskBounds.width() > taskBounds.height()) {
             mLastPcRect.set(taskBounds);
             prepareLastPhoneRect(taskBounds);
-            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_USER);
-            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_FORCED);
+            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_USER_FORCED);
         } else {
             mLastPhoneRect.set(taskBounds);
             prepareLastPcRect(taskBounds);
-            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_USER);
-            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_FORCED);
+            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_USER_FORCED);
         }
     }
 
