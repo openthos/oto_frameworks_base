@@ -3259,6 +3259,11 @@ public class StatusBar extends SystemUI implements DemoMode,
         return mFingerprintUnlockController;
     }
 
+    @Override
+    public void setStatusBarVisibility(int visibility) {
+        mStatusBarWindow.setVisibility(visibility);
+    }
+
     @Override // CommandQueue
     public void setWindowState(int window, int state) {
         boolean showing = state == WINDOW_STATE_SHOWING;

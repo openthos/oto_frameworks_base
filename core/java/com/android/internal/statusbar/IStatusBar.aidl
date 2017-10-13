@@ -65,6 +65,7 @@ oneway interface IStatusBar
 
     void dismissKeyboardShortcutsMenu();
     void toggleKeyboardShortcutsMenu(int deviceId);
+    void setStatusBarVisibility(int visibility);
 
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with

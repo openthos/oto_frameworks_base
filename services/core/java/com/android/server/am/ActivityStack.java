@@ -2412,6 +2412,9 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
         if (mResumedActivity != null) {
             if (DEBUG_STATES) Slog.d(TAG_STATES,
                     "resumeTopActivityLocked: Pausing " + mResumedActivity);
+            if (mStackSupervisor.getFocusedStack().mStackId == FREEFORM_WORKSPACE_STACK_ID) {
+                pausing = false;
+            }
             pausing |= startPausingLocked(userLeaving, false, next, false);
         }
         if (pausing && !resumeWhilePausing) {
@@ -4609,6 +4612,9 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
         }
 
         mStackSupervisor.resumeFocusedStackTopActivityLocked();
+        if (mStackSupervisor.getFocusedStack().mStackId == FREEFORM_WORKSPACE_STACK_ID) {
+            mWindowManager.executeAppTransition();
+        }
         EventLog.writeEvent(EventLogTags.AM_TASK_TO_FRONT, tr.userId, tr.taskId);
 
         mService.mTaskChangeNotificationController.notifyTaskMovedToFront(tr.taskId);

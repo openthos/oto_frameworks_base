@@ -44,6 +44,8 @@ public interface StatusBarManagerInternal {
 
     void setWindowState(int window, int state);
 
+    void setStatusBarVisibility(int visibility);
+
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with
      * visual impact until {@link #appTransitionReady} is called.

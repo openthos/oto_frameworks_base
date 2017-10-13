@@ -278,6 +278,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
 
         @Override
+        public void setStatusBarVisibility(int visibility) {
+            if (mBar != null) {
+                try {
+                    mBar.setStatusBarVisibility(visibility);
+                } catch (RemoteException ex) {}
+            }
+        }
+
+        @Override
         public void setWindowState(int window, int state) {
             if (mBar != null) {
                 try {

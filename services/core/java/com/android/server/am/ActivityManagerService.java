@@ -10606,6 +10606,11 @@ public class ActivityManagerService extends IActivityManager.Stub
                             "exitFreeformMode: You can only go fullscreen from freeform.");
                 }
                 r.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                StatusBarManagerInternal statusBarManager =
+                        LocalServices.getService(StatusBarManagerInternal.class);
+                if (statusBarManager != null) {
+                    statusBarManager.setStatusBarVisibility(View.GONE);
+                }
 
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "exitFreeformMode: " + r);
                 r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,

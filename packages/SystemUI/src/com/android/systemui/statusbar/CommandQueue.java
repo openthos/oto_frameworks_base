@@ -82,6 +82,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_TOGGLE_PANEL                  = 35 << MSG_SHIFT;
     private static final int MSG_SHOW_SHUTDOWN_UI              = 36 << MSG_SHIFT;
     private static final int MSG_SET_TOP_APP_HIDES_STATUS_BAR  = 37 << MSG_SHIFT;
+    private static final int MSG_SET_STATUS_BAR_VISIBILITY     = 38 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -124,6 +125,7 @@ public class CommandQueue extends IStatusBar.Stub {
         default void toggleKeyboardShortcutsMenu(int deviceId) { }
         default void cancelPreloadRecentApps() { }
         default void setWindowState(int window, int state) { }
+        default void setStatusBarVisibility(int visibility) { };
         default void showScreenPinningRequest(int taskId) { }
         default void appTransitionPending(boolean forced) { }
         default void appTransitionCancelled() { }
@@ -333,6 +335,13 @@ public class CommandQueue extends IStatusBar.Stub {
         synchronized (mLock) {
             mHandler.removeMessages(MSG_SHOW_PICTURE_IN_PICTURE_MENU);
             mHandler.obtainMessage(MSG_SHOW_PICTURE_IN_PICTURE_MENU).sendToTarget();
+        }
+    }
+
+    public void setStatusBarVisibility(int visibility) {
+        synchronized (mLock) {
+            mHandler.removeMessages(MSG_SET_STATUS_BAR_VISIBILITY);
+            mHandler.obtainMessage(MSG_SET_STATUS_BAR_VISIBILITY, visibility, 0).sendToTarget();
         }
     }
 
@@ -560,6 +569,11 @@ public class CommandQueue extends IStatusBar.Stub {
                 case MSG_TOGGLE_KEYBOARD_SHORTCUTS:
                     for (int i = 0; i < mCallbacks.size(); i++) {
                         mCallbacks.get(i).toggleKeyboardShortcutsMenu(msg.arg1);
+                    }
+                    break;
+                case MSG_SET_STATUS_BAR_VISIBILITY:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).setStatusBarVisibility(msg.arg1);
                     }
                     break;
                 case MSG_SET_WINDOW_STATE:
