@@ -198,7 +198,7 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_UP @ {" + newX + ", " + newY + "}");
                         }
-                        if (mResizing && mWindowDragBounds.width() != 0 && mWindowDragBounds.height() != 0) {
+                        if (mResizing && mWindowDragBounds.isEmpty()) {
                             mDimLayerForResize.hide();
                         }
                         mDragEnded = true;

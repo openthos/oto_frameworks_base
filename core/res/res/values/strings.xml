@@ -4452,6 +4452,12 @@
     <string name="floating_toolbar_close_overflow_description">Close overflow</string>
 
     <!-- Free style window strings -->
+    <!-- Accessibility text for the back window button -->
+    <string name="back_button_text">Back</string>
+    <!-- Accessibility text for the rotate window button -->
+    <string name="rotate_button_text">Rotate</string>
+    <!-- Accessibility text for the minimize window button -->
+    <string name="minimize_button_text">Minimize</string>
     <!-- Accessibility text for the maximize window button -->
     <string name="maximize_button_text">Maximize</string>
     <!-- Accessibility text for the close window button -->

@@ -419,6 +419,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_HOVER_MOVE && processCaptionEvent(ev)) {
+            return true;
+        }
         final Window.Callback cb = mWindow.getCallback();
         return cb != null && !mWindow.isDestroyed() && mFeatureId < 0
                 ? cb.dispatchGenericMotionEvent(ev) : super.dispatchGenericMotionEvent(ev);
@@ -1918,6 +1921,28 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         initializeElevation();
     }
 
+    boolean processCaptionEvent(MotionEvent event) {
+        if (getStackId() != 1) {
+            return false;
+        }
+        int y = (int) event.getRawY();
+        if (y < 20 && !isShowingCaption()) {
+            setCaptionVisiblity(true);
+            return true;
+        } else if (isShowingCaption() && (y > getCaptionHeight())) {
+            setCaptionVisiblity(false);
+        }
+        return false;
+    }
+
+    void setCaptionVisiblity(boolean visible) {
+        mDecorCaptionView.onConfigurationChanged(visible);
+        enableCaption(visible);
+
+        updateAvailableWidth();
+        initializeElevation();
+    }
+
     void onResourcesLoaded(LayoutInflater inflater, int layoutResource) {
         mStackId = getStackId();
 
@@ -1938,6 +1963,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             }
             mDecorCaptionView.addView(root,
                     new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
+            if (!StackId.hasWindowDecor(mStackId)) {
+                setCaptionVisiblity(false);
+            }
         } else {
 
             // Put it below the color views.
@@ -1970,6 +1998,8 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     // Free floating overlapping windows require a caption.
     private DecorCaptionView createDecorCaptionView(LayoutInflater inflater) {
+        mStackId = getStackId();
+
         DecorCaptionView decorCaptionView = null;
         for (int i = getChildCount() - 1; i >= 0 && decorCaptionView == null; i--) {
             View view = getChildAt(i);
@@ -1983,13 +2013,13 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         final boolean isApplication = attrs.type == TYPE_BASE_APPLICATION ||
                 attrs.type == TYPE_APPLICATION || attrs.type == TYPE_DRAWN_APPLICATION;
         // Only a non floating application window on one of the allowed workspaces can get a caption
-        if (!mWindow.isFloating() && isApplication && StackId.hasWindowDecor(mStackId)) {
+        if (!mWindow.isFloating() && isApplication && mStackId > 0) {
             // Dependent on the brightness of the used title we either use the
             // dark or the light button frame.
             if (decorCaptionView == null) {
                 decorCaptionView = inflateDecorCaptionView(inflater);
             }
-            decorCaptionView.setPhoneWindow(mWindow, true /*showDecor*/);
+            decorCaptionView.setPhoneWindow(mWindow, true /*showDecor*/, mStackId);
         } else {
             decorCaptionView = null;
         }
@@ -2041,6 +2071,12 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     }
 
     private void setLightDecorCaptionShade(DecorCaptionView view) {
+        view.findViewById(R.id.back_window).setBackgroundResource(
+                R.drawable.decor_back_button_light);
+        view.findViewById(R.id.rotate_window).setBackgroundResource(
+                R.drawable.decor_rotate_button_light);
+        view.findViewById(R.id.minimize_window).setBackgroundResource(
+                R.drawable.decor_minimize_button_light);
         view.findViewById(R.id.maximize_window).setBackgroundResource(
                 R.drawable.decor_maximize_button_light);
         view.findViewById(R.id.close_window).setBackgroundResource(
@@ -2048,6 +2084,12 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     }
 
     private void setDarkDecorCaptionShade(DecorCaptionView view) {
+        view.findViewById(R.id.back_window).setBackgroundResource(
+                R.drawable.decor_back_button_dark);
+        view.findViewById(R.id.rotate_window).setBackgroundResource(
+                R.drawable.decor_rotate_button_dark);
+        view.findViewById(R.id.minimize_window).setBackgroundResource(
+                R.drawable.decor_minimize_button_dark);
         view.findViewById(R.id.maximize_window).setBackgroundResource(
                 R.drawable.decor_maximize_button_dark);
         view.findViewById(R.id.close_window).setBackgroundResource(

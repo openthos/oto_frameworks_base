@@ -625,6 +625,15 @@ public abstract class Window {
         /** Returns the current stack Id for the window. */
         int getWindowStackId() throws RemoteException;
 
+        /** Press the back button of window header */
+        void pressKeyBack();
+
+        /** Change the window orientation between landscape and portrait */
+        void changeWindowOrientation() throws RemoteException;
+
+        /** Switch the activity between FULLSCREEN and FREEFORM*/
+        void switchWindowFreeformAndFullscreen() throws RemoteException;
+
         /** Returns whether the window belongs to the task root. */
         boolean isTaskRoot();
     }

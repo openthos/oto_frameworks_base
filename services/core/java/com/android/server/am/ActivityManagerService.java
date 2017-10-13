@@ -32,6 +32,7 @@ import static android.app.ActivityManager.StackId.FIRST_DYNAMIC_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.PINNED_STACK_ID;
+import static android.app.ActivityManager.RESIZE_MODE_FORCED;
 import static android.content.pm.PackageManager.FEATURE_ACTIVITIES_ON_SECONDARY_DISPLAYS;
 import static android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT;
 import static android.content.pm.PackageManager.FEATURE_LEANBACK_ONLY;
@@ -170,6 +171,7 @@ import static com.android.server.am.ActivityStackSupervisor.DEFER_RESUME;
 import static com.android.server.am.ActivityStackSupervisor.MATCH_TASK_IN_STACKS_ONLY;
 import static com.android.server.am.ActivityStackSupervisor.MATCH_TASK_IN_STACKS_OR_RECENT_TASKS;
 import static com.android.server.am.ActivityStackSupervisor.ON_TOP;
+import static com.android.server.am.ActivityStackSupervisor.FORCE_FOCUS;
 import static com.android.server.am.ActivityStackSupervisor.PRESERVE_WINDOWS;
 import static com.android.server.am.ActivityStackSupervisor.REMOVE_FROM_RECENTS;
 import static com.android.server.am.TaskRecord.INVALID_TASK_ID;
@@ -10590,6 +10592,25 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public void changeTaskOrientation(IBinder token) throws RemoteException {
+        synchronized (this) {
+            long ident = Binder.clearCallingIdentity();
+            try {
+                final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+                if (r == null) {
+                    throw new IllegalArgumentException(
+                            "changeWindowOrientation: No activity record matching token=" + token);
+                }
+                Rect taskBounds = getTaskBounds(r.getTask().taskId);
+                r.getTask().changeTaskOrientation(r.getTask().taskId, taskBounds);
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+
+    }
+
+    @Override
     public void exitFreeformMode(IBinder token) throws RemoteException {
         synchronized (this) {
             long ident = Binder.clearCallingIdentity();
@@ -10615,6 +10636,43 @@ public class ActivityManagerService extends IActivityManager.Stub
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "exitFreeformMode: " + r);
                 r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,
                         REPARENT_KEEP_STACK_AT_FRONT, ANIMATE, !DEFER_RESUME, "exitFreeformMode");
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+    }
+
+    @Override
+    public void switchTaskFreeformAndFullscreen(IBinder token) throws RemoteException {
+        synchronized (this) {
+            long ident = Binder.clearCallingIdentity();
+            try {
+                final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+                if (r == null) {
+                    throw new IllegalArgumentException(
+                            "switchTaskFreeformAndFullscreen: No activity record matching token=" + token);
+                }
+                final ActivityStack stack = r.getStackLocked(token);
+                if (stack == null) {
+                    throw new IllegalStateException(
+                            "switchTaskFreeformAndFullscreen: You can only go fullscreen from freeform.");
+                }
+                StatusBarManagerInternal statusBarManager =
+                                       LocalServices.getService(StatusBarManagerInternal.class);
+                if (DEBUG_STACK) Slog.d(TAG_STACK, "switchTaskFreeformAndFullscreen: " + r);
+                if (stack.mStackId == FREEFORM_WORKSPACE_STACK_ID) {
+                    if (statusBarManager != null) {
+                        statusBarManager.setStatusBarVisibility(View.GONE);
+                    }
+                    r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,
+                            REPARENT_KEEP_STACK_AT_FRONT, ANIMATE, !DEFER_RESUME, "exitFreeformMode");
+                } else if (stack.mStackId == FULLSCREEN_WORKSPACE_STACK_ID) {
+                    if (statusBarManager != null) {
+                        statusBarManager.setStatusBarVisibility(View.VISIBLE);
+                    }
+                    r.getTask().reparent(FREEFORM_WORKSPACE_STACK_ID, ON_TOP,
+                            REPARENT_KEEP_STACK_AT_FRONT, ANIMATE, !DEFER_RESUME, "exitFreeformMode");
+                }
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }

@@ -79,6 +79,8 @@ import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.HOME_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.PINNED_STACK_ID;
+import static android.app.ActivityManager.RESIZE_MODE_FORCED;
+import static android.app.ActivityManager.RESIZE_MODE_USER;
 import static android.app.ActivityManager.StackId.RECENTS_STACK_ID;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
 import static android.content.Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS;
@@ -313,6 +315,9 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     // The information is persisted and used to determine the appropriate stack to launch the
     // task into on restore.
     Rect mLastNonFullscreenBounds = null;
+
+    Rect mLastPcRect = new Rect();
+    Rect mLastPhoneRect = new Rect();
     // Minimal width and height of this task when it's resizeable. -1 means it should use the
     // default minimal width/height.
     int mMinWidth;
@@ -2248,6 +2253,41 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             return mStack.mBounds;
         }
         return mLastNonFullscreenBounds;
+    }
+
+    void changeTaskOrientation(int taskId, Rect taskBounds) {
+        if (taskBounds.width() > taskBounds.height()) {
+            mLastPcRect.set(taskBounds);
+            prepareLastPhoneRect(taskBounds);
+            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_USER);
+            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_FORCED);
+        } else {
+            mLastPhoneRect.set(taskBounds);
+            prepareLastPcRect(taskBounds);
+            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_USER);
+            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_FORCED);
+        }
+    }
+
+    void prepareLastPhoneRect(Rect frame) {
+        Rect rect = frame;
+        Rect defaultPhoneFrame = new Rect(0, 0, 420, 640);
+        rect.left = rect.left <= 0 ? 0 : rect.left;
+        rect.right = rect.left + (mLastPhoneRect.width() == 0 ?
+                               defaultPhoneFrame.width() : mLastPhoneRect.width());
+        rect.bottom = rect.top + (mLastPhoneRect.width() == 0 ?
+                               defaultPhoneFrame.height() : mLastPhoneRect.height());
+        mLastPhoneRect.set(rect);
+    }
+
+    void prepareLastPcRect(Rect frame) {
+        Rect rect = frame;
+        Rect defaultPcFrame = new Rect(0, 0, 960, 540);
+        rect.right = rect.left + (mLastPcRect.width() == 0 ?
+                               defaultPcFrame.width() : mLastPcRect.width());
+        rect.bottom = rect.top + (mLastPcRect.width() == 0 ?
+                               defaultPcFrame.height() : mLastPcRect.height());
+        mLastPcRect.set(rect);
     }
 
     void addStartingWindowsForVisibleActivities(boolean taskSwitch) {

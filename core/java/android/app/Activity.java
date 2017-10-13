@@ -3233,6 +3233,18 @@ public class Activity extends ContextThemeWrapper
         ActivityManager.getService().exitFreeformMode(mToken);
     }
 
+    /**
+     * Switch the activity from
+     * {@link android.app.ActivityManager.StackId#FREEFORM_WORKSPACE_STACK_ID} to
+     * {@link android.app.ActivityManager.StackId#FULLSCREEN_WORKSPACE_STACK_ID} stack.
+     *
+     * @hide
+     */
+    @Override
+    public void switchWindowFreeformAndFullscreen() throws RemoteException {
+        ActivityManager.getService().switchTaskFreeformAndFullscreen(mToken);
+    }
+
     /** Returns the current stack Id for the window.
      * @hide
      */
@@ -3251,6 +3263,24 @@ public class Activity extends ContextThemeWrapper
         if (mActivityInfo.supportsPictureInPicture()) {
             enterPictureInPictureMode();
         }
+    }
+
+    /**
+     *Press the back button of window header
+     *@hide
+     */
+    @Override
+    public void pressKeyBack() {
+        onBackPressed();
+    }
+
+    /**
+     *Change the window orientation between landscape and portrait.
+     *@hide
+     */
+    @Override
+    public void changeWindowOrientation() throws RemoteException {
+        ActivityManager.getService().changeTaskOrientation(mToken);
     }
 
     /**
