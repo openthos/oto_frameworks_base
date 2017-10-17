@@ -77,7 +77,7 @@ public class BatteryDialog extends BaseDialog implements BatteryController.Batte
             }
         });
 
-        mBatteryController.addStateChangedCallback(this);
+        mBatteryController.addCallback(this);
     }
 
     @Override

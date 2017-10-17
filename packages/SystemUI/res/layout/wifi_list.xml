@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="#342464"
+              android:orientation="vertical"
+              android:padding="@dimen/startupmenu_small_padding"
+              android:showDividers="middle">
+
+    <LinearLayout
+        android:id="@+id/wifi_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/wifi_list"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:descendantFocusability="afterDescendants"
+            android:footerDividersEnabled="true"/>
+
+        <LinearLayout
+            android:id="@+id/wifi_enable_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/startupmenu_layout_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/startupmenu_big_padding">
+
+            <TextView
+                android:id="@+id/wifi_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wifi_enable"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/startupmenu_text_size"/>
+
+            <Switch
+                android:id="@+id/wifi_enable_btn"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ethernet_configure"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/startupmenu_layout_height"
+            android:paddingLeft="@dimen/startupmenu_big_padding"
+            android:text="@string/status_bar_ethernet"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/startupmenu_text_size"/>
+    </LinearLayout>
+</LinearLayout>

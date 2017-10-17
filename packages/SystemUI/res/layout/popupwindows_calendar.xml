@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/systemui_size_calendar"
+    android:layout_height="wrap_content"
+    android:background="#342464"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/startupmenu_big_padding"
+        android:layout_marginRight="@dimen/startupmenu_big_padding"
+        android:layout_marginTop="@dimen/startupmenu_small_padding"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/calendar_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/systemui_pop_date_text_size"
+            android:textColor="#ffffff"/>
+
+        <TextView
+            android:id="@+id/calendar_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/startupmenu_text_size"
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/startupmenu_big_padding"/>
+
+    <LinearLayout
+        android:id="@+id/ll_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/startupmenu_big_padding"
+        android:layout_marginRight="@dimen/startupmenu_big_padding"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/startupmenu_layout_small_height"
+            android:background="#3f2d76" >
+
+            <RelativeLayout
+                android:id="@+id/calendar_last_month"
+                android:layout_width="@dimen/startupmenu_layout_small_height"
+                android:layout_height="@dimen/startupmenu_layout_small_height"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/startupmenu_small_padding"
+                android:layout_centerVertical="true">
+                <TextView
+                    android:layout_width="@dimen/startupmenu_search_icon_size"
+                    android:layout_height="@dimen/startupmenu_search_icon_size"
+                    android:layout_centerInParent="true"
+                    android:background="@mipmap/calendar_left" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/calendar_month"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:background="#3f2d76"
+                android:textSize="@dimen/startupmenu_text_size"
+                android:textColor="#ffffff"/>
+
+            <RelativeLayout
+                android:id="@+id/calendar_next_month"
+                android:layout_width="@dimen/startupmenu_layout_small_height"
+                android:layout_height="@dimen/startupmenu_layout_small_height"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:layout_centerVertical="true">
+                <TextView
+                    android:layout_width="@dimen/startupmenu_search_icon_size"
+                    android:layout_height="@dimen/startupmenu_search_icon_size"
+                    android:layout_centerInParent="true"
+                    android:background="@mipmap/calendar_right" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <com.android.systemui.dialog.CalendarView
+            android:id="@+id/calendar_view"
+            android:layout_width="@dimen/systemui_width_calendarview"
+            android:layout_height="@dimen/systemui_height_calendarview"
+            android:background="#3f2d76" >
+        </com.android.systemui.dialog.CalendarView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/startupmenu_big_padding"/>
+        <TextView
+            android:id="@+id/calendar_enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:layout_marginBottom="@dimen/startupmenu_big_padding"
+            android:textSize="@dimen/startupmenu_text_size" />
+    </LinearLayout>
+
+</LinearLayout>
