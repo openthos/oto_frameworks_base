@@ -523,4 +523,9 @@
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
+    <style name="ShowDialog" >
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
 </resources>

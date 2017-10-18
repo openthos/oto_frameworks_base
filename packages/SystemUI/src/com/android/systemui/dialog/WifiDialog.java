@@ -1,8 +1,10 @@
 package com.android.systemui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -55,6 +57,7 @@ public final class WifiDialog extends BaseDialog {
     private List<ScanResult> mScanResults;
     private NetInfoAdapter mNetInfoAdapter;
     private int mMaxListViewHeight;
+    private WifiReceiver mWifiReceiver;
 
     final Handler mHandler = new Handler(new Handler.Callback() {
         @Override
@@ -107,6 +110,11 @@ public final class WifiDialog extends BaseDialog {
         mScanResults = new ArrayList<>();
         mNetInfoAdapter = new NetInfoAdapter();
         mWifiListView.setAdapter(mNetInfoAdapter);
+        mWifiReceiver = new WifiReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        getContext().registerReceiver(mWifiReceiver,filter);
     }
 
     @Override
@@ -308,5 +316,23 @@ public final class WifiDialog extends BaseDialog {
 
     public void updateList() {
         mHandler.sendEmptyMessage(UPDATE_LIST);
+    }
+
+    private class WifiReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
+                    if (isShowing()) {
+                        updateList();
+                    }
+                    break;
+                case WifiManager.WIFI_STATE_CHANGED_ACTION:
+                    if (isShowing()) {
+                        int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1);
+                        updateWifiEnabled(state);
+                    }
+            }
+        }
     }
 }

@@ -49,6 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/startupmenu_layout_height"
             android:paddingLeft="@dimen/startupmenu_big_padding"
+            android:gravity="center_vertical"
             android:text="@string/status_bar_ethernet"
             android:textColor="@android:color/white"
             android:textSize="@dimen/startupmenu_text_size"/>

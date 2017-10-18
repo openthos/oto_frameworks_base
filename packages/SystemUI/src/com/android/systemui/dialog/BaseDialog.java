@@ -66,6 +66,7 @@ public class BaseDialog extends Dialog {
         }
         Window dialogWindow = getWindow();
         dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialogWindow.setWindowAnimations(R.style.ShowDialog);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.format = PixelFormat.TRANSPARENT;
         lp.dimAmount = 0;
