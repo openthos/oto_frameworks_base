@@ -489,4 +489,38 @@
         <item name="android:colorBackground">?android:attr/colorSecondary</item>
     </style>
 
+    <style name="Mstyle">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginLeft">@dimen/startupmenu_small_padding</item>
+        <item name="android:textSize">@dimen/startupmenu_text_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="SortStyle">
+        <item name="android:paddingTop">@dimen/startupmenu_small_padding</item>
+        <item name="android:paddingBottom">@dimen/startupmenu_small_padding</item>
+        <item name="android:paddingLeft">@dimen/startupmenu_big_padding</item>
+        <item name="android:paddingRight">@dimen/startupmenu_big_padding</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/gray_text</item>
+        <item name="android:textSize">@dimen/startupmenu_text_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/startupmenu_layout_height</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="StartMenuDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

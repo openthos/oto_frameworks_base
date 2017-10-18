@@ -2057,4 +2057,22 @@
     <string name="touch_filtered_warning">Because an app is obscuring a permission request, Settings
         can’t verify your response.</string>
 
+    <!--startupmenu-->
+    <string name="common_application">common app</string>
+    <string name="system_setting">Setting</string>
+    <string name="power_source">Power</string>
+    <string name="file_manager">File Manager</string>
+    <string name="software_search">Software search</string>
+    <string name="click_sort">click sort</string>
+    <string name="name_sort">A - Z</string>
+    <string name="time_sort">Time</string>
+    <string name="default_sort">Default</string>
+    <string name="open">Open</string>
+    <string name="phone_mode">Phone mode</string>
+    <string name="desktop_mode">Desktop mode</string>
+    <string name="lock_app">Lock app</string>
+    <string name="unlock_app">Unlock app</string>
+    <string name="uninstall">Unistall</string>
+    <string name="remove_out">Remove out</string>
+
 </resources>
