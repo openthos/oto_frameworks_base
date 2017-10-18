@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical" >
+
+     <TextView
+        android:id="@+id/default_sort"
+        style="@style/SortStyle"
+        android:text="@string/default_sort" />
+
+    <TextView
+        android:id="@+id/click_sort"
+        style="@style/SortStyle"
+        android:text="@string/click_sort" />
+
+    <TextView
+        android:id="@+id/time_sort"
+        style="@style/SortStyle"
+        android:text="@string/time_sort" />
+
+    <TextView
+        android:id="@+id/name_sort"
+        style="@style/SortStyle"
+        android:text="@string/name_sort" />
+
+</LinearLayout>
