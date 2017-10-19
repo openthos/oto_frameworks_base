@@ -1037,6 +1037,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     mStatusBarView.setBar(this);
                     mStatusBarView.setPanel(mNotificationPanel);
                     mStatusBarView.setScrimController(mScrimController);
+                    mStatusBarView.setVisibility(View.GONE);
                     mStatusBarView.setBouncerShowing(mBouncerShowing);
                     setAreThereNotifications();
                     checkBarModes();

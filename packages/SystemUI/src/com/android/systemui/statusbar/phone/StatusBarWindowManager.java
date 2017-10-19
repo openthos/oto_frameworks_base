@@ -89,9 +89,11 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         // Now that the status bar window encompasses the sliding panel and its
         // translucent backdrop, the entire thing is made TRANSLUCENT and is
         // hardware-accelerated.
+        final Resources res = mContext.getResources();
         mLp = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                barHeight,
+                //ViewGroup.LayoutParams.MATCH_PARENT,
+                res.getDimensionPixelSize(R.dimen.notification_panel_width),
+                0,//barHeight,
                 WindowManager.LayoutParams.TYPE_STATUS_BAR,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
@@ -100,12 +102,12 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
                         | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
                 PixelFormat.TRANSLUCENT);
         mLp.token = new Binder();
-        mLp.gravity = Gravity.TOP;
+        mLp.gravity = Gravity.RIGHT | Gravity.TOP;
         mLp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         mLp.setTitle("StatusBar");
         mLp.packageName = mContext.getPackageName();
         mStatusBarView = statusBarView;
-        mBarHeight = barHeight;
+        mBarHeight = 0;//barHeight;
         mWindowManager.addView(mStatusBarView, mLp);
         mLpChanged = new WindowManager.LayoutParams();
         mLpChanged.copyFrom(mLp);
