@@ -141,6 +141,8 @@ public class OpenthosStatusBarView extends PanelBar{
                    showDialog(mCalendarView, mCalendarDialog);
                    break;
                case R.id.iv_home_status_bar:
+                   Toast.makeText(mContext, "home", Toast.LENGTH_SHORT).show();
+                   mStatusBar.awakenDreams();
                    break;
             }
         }
@@ -150,6 +152,7 @@ public class OpenthosStatusBarView extends PanelBar{
         if (view == null) {
             return;
         }
+        mStatusBar.hideCustomNotificationPanel();
         if (mCurrentDialog == null) {
             dialog.show(view);
             mCurrentDialog = dialog;

@@ -3156,8 +3156,14 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public void showCustomNotificationPanel() {
         if (mNotificationPanel.isFullyCollapsed()) {
-	    mNotificationPanel.expand(true);
+            mNotificationPanel.expand(true);
         } else if (mNotificationPanel.isFullyExpanded()) {
+            mNotificationPanel.collapse(false, 1.0f);
+        }
+    }
+
+    public void hideCustomNotificationPanel() {
+        if (mNotificationPanel.isFullyExpanded()) {
             mNotificationPanel.collapse(false, 1.0f);
         }
     }

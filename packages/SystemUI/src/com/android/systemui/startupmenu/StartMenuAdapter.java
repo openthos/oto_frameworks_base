@@ -118,7 +118,7 @@ public class StartMenuAdapter extends BaseAdapter
                 break;
             case MotionEvent.ACTION_UP:
                 if (!(mIsLeftKey || mIsRightKey || mIsLongPress)) {
-//                    openApplication(appInfo);
+                    openApplication(appInfo);
                 }
                 break;
             default:
@@ -150,7 +150,7 @@ public class StartMenuAdapter extends BaseAdapter
     @Override
     public boolean onLongClick(View v) {
         mIsLongPress = true;
-//        showDialog(mDownX, mDownY, (AppEntry) v.getTag());
+        showDialog(mDownX, mDownY, (AppEntry) v.getTag());
         return false;
     }
 
