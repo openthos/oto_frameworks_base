@@ -2087,7 +2087,6 @@
     <string name="afternoon">PM</string>
     <string name="status_bar_info_hide">Auto hide</string>
     <string name="status_bar_info_show">Always show</string>
-    <string name="status_bar_ethernet">Configure Ethernet</string>
     <string name="monday">Mon</string>
     <string name="tuesday">Tue</string>
     <string name="wednesday">Wed</string>
@@ -2108,6 +2107,7 @@
     <string name="wifi_cnting">Connecting</string>
     <string name="wifi_enable">WLAN Switched On</string>
     <string name="wifi_unable">WLAN Switched Off</string>
+    <string name="status_bar_ethernet">Configure Ethernet</string>
 
     <!--battery-->
     <string name="battery_percent_full">"Full Battery"</string>

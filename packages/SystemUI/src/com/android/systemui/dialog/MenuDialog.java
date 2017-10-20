@@ -62,6 +62,7 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         setContentView(mContentView);
         initView();
         initData();
+        create();
     }
 
     public void initListener() {
