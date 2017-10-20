@@ -7695,6 +7695,10 @@ public final class ViewRootImpl implements ViewParent,
         }
     }
 
+    public Rect getWinFrame() {
+        return mWinFrame;
+    }
+
     /**
      * Tells this instance that its corresponding activity has just relaunched. In this case, we
      * need to force a relayout of the window to make sure we get the correct bounds from window

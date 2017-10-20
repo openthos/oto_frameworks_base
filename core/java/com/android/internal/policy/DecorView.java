@@ -52,6 +52,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.Shader;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
@@ -1917,6 +1918,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             } else if (mDecorCaptionView != null) {
                 // We might have to change the kind of surface before we do anything else.
                 mDecorCaptionView.onConfigurationChanged(StackId.hasWindowDecor(mStackId));
+                //mDecorCaptionView.onConfigurationChanged(!isFullscreen());
                 enableCaption(StackId.hasWindowDecor(workspaceId));
             }
         }
@@ -1925,7 +1927,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     }
 
     boolean processCaptionEvent(MotionEvent event) {
-        if (getStackId() != 1) {
+        if (!isFullscreen()) {
             return false;
         }
         int y = (int) event.getRawY();
@@ -2352,6 +2354,15 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     int getCaptionHeight() {
         return isShowingCaption() ? mDecorCaptionView.getCaptionHeight() : 0;
+    }
+
+    boolean isFullscreen() {
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getSize(point);
+        Rect winframe = getViewRootImpl().getWinFrame();
+        Rect fullscreen = new Rect(0, 0, point.x, point.y);
+        return winframe.equals(fullscreen) || getStackId() == 1;
     }
 
     /**
