@@ -16,6 +16,7 @@
 
 package com.android.server.am;
 
+import static android.app.ActivityManager.StackId.BACKGROUND_STACK_ID;
 import static android.app.ActivityManager.StackId.ASSISTANT_STACK_ID;
 import static android.app.ActivityManager.StackId.DOCKED_STACK_ID;
 import static android.app.ActivityManager.StackId.FREEFORM_WORKSPACE_STACK_ID;
@@ -455,6 +456,7 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
         mHandler = new ActivityStackHandler(mService.mHandler.getLooper());
         mWindowManager = mService.mWindowManager;
         mStackId = stackId;
+        mForceHidden = mStackId == BACKGROUND_STACK_ID;
         mCurrentUser = mService.mUserController.getCurrentUserIdLocked();
         mRecentTasks = recentTasks;
         mTaskPositioner = mStackId == FREEFORM_WORKSPACE_STACK_ID

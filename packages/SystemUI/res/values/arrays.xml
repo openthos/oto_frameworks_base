@@ -34,5 +34,20 @@
         <item>@string/uninstall</item>
     </string-array>
 
+    <string-array name="bar_menu_normal">
+        <item>@string/close</item>
+        <item>@string/dock</item>
+    </string-array>
+
+    <string-array name="bar_menu_docked_closed">
+        <item>@string/open</item>
+        <item>@string/undock</item>
+    </string-array>
+
+    <string-array name="bar_menu_docked_open">
+        <item>@string/close</item>
+        <item>@string/undock</item>
+    </string-array>
+
 
 </resources>

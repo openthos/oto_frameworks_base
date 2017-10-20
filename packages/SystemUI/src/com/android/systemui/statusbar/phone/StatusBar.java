@@ -36,6 +36,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
+import android.app.IActivityManager;
 import android.app.ActivityManager;
 import android.app.ActivityManager.StackId;
 import android.app.ActivityOptions;
@@ -136,6 +137,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.DateTimeView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -249,6 +252,9 @@ import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
+import com.android.systemui.startupmenu.U;
+import com.android.systemui.dialog.BarDialog;
+import com.android.systemui.statusbar.phone.OpenthosStatusBarView;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -422,6 +428,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     Point mCurrentDisplaySize = new Point();
 
+    protected LinearLayout mActivityLayout;
+    protected int mPrevTaskId = -1;
     protected StatusBarWindowView mStatusBarWindow;
     protected PhoneStatusBarView mStatusBarView;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
@@ -771,6 +779,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
     private HashMap<ExpandableNotificationRow, List<ExpandableNotificationRow>> mTmpChildOrderMap
             = new HashMap<>();
+    private HashMap<Integer, FrameLayout> mIconMap = new HashMap<>();
+    private HashMap<ComponentName, FrameLayout> mDockedMap = new HashMap<>();
     private RankingMap mLatestRankingMap;
     private boolean mNoAnimationOnNextBarModeChange;
     private FalsingManager mFalsingManager;
@@ -1263,6 +1273,8 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void createNavigationBar() {
         mNavigationBarView = NavigationBarFragment.create(mContext, (tag, fragment) -> {
             mNavigationBar = (NavigationBarFragment) fragment;
+            OpenthosStatusBarView v = mNavigationBar.getActivityLayout();
+            mActivityLayout = (LinearLayout)v.findViewById(R.id.ll_scroll_icon_contents);
             if (mLightBarController != null) {
                 mNavigationBar.setLightBarController(mLightBarController);
             }
@@ -3257,6 +3269,121 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public FingerprintUnlockController getFingerprintUnlockController() {
         return mFingerprintUnlockController;
+    }
+
+    public void iconClose(int taskId) {
+        FrameLayout v = mIconMap.remove(taskId);
+        if (v != null) {
+            if (!mDockedMap.containsValue(v)) {
+                mActivityLayout.removeView(v);
+            } else {
+                v.findViewById(R.id.activity_focused).
+                            setVisibility(View.GONE);
+                v.findViewById(R.id.activity_run).
+                            setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void setFocusedIcon(int taskId) {
+        if (taskId != mPrevTaskId) {
+            mIconMap.get(taskId).findViewById(R.id.activity_focused).
+                        setVisibility(View.VISIBLE);
+            if (mIconMap.get(mPrevTaskId) != null) {
+                mIconMap.get(mPrevTaskId).findViewById(R.id.activity_focused).
+                            setVisibility(View.GONE);
+            }
+            mPrevTaskId = taskId;
+        }
+    }
+
+    public Drawable getPackageIcon(String pkg) {
+        Drawable icon = null;
+        PackageManager pm = mContext.getPackageManager();
+        try {
+            ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+            if (ai != null) {
+                icon = pm.getApplicationIcon(ai);
+            } else {
+                icon = pm.getDefaultActivityIcon();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error during changeStatusBarIcon, set icon as default", e);
+            icon = pm.getDefaultActivityIcon();
+        }
+        return icon;
+    }
+
+    public void bindIconToTaskId(int taskId, ComponentName cmp) {
+        FrameLayout iconLayout;
+        if (!mDockedMap.containsKey(cmp) || (mIconMap.containsValue(mDockedMap.get(cmp))
+                        && mIconMap.get(taskId) == null)) {
+            iconLayout = (FrameLayout)View.inflate(mContext,
+                        R.layout.statusbar_activity_button, null);
+            mActivityLayout.addView(iconLayout);
+        } else {
+            iconLayout = mDockedMap.get(cmp);
+        }
+        iconLayout.findViewById(R.id.activity_focused).setVisibility(View.VISIBLE);
+        iconLayout.findViewById(R.id.activity_run).setVisibility(View.VISIBLE);
+        mIconMap.put(taskId, iconLayout);
+        if (mIconMap.get(mPrevTaskId) != null) {
+            mIconMap.get(mPrevTaskId).findViewById(R.id.activity_focused).
+                        setVisibility(View.GONE);
+        }
+        mPrevTaskId = taskId;
+        ImageView iconView = (ImageView)iconLayout.findViewById(R.id.icon_view);
+        iconView.setImageDrawable(getPackageIcon(cmp.getPackageName()));
+        iconView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    IActivityManager am = ActivityManager.getService();
+                    if (mIconMap.get(taskId) != null) {
+                        am.setFocusedTask(taskId);
+                    } else {
+                        U.launchApp(mContext, cmp);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during setFocuesTask", e);
+                }
+            }
+        });
+        iconView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                BarDialog.getInstance(mContext, cmp, taskId, mActivityLayout,
+                                      iconLayout, mIconMap, mDockedMap).showDialog();
+                return true;
+            }
+        });
+        iconView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    BarDialog dialog = BarDialog.getInstance(mContext, cmp, taskId,
+                                       mActivityLayout, iconLayout, mIconMap, mDockedMap);
+                    dialog.mShowX = (int)event.getRawX();
+                    dialog.mShowY = (int)event.getRawY();
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) {
+        if (!keep || cmp == null) {
+            iconClose(taskId);
+            return;
+        }
+
+        if (mIconMap.get(taskId) != null) {
+            setFocusedIcon(taskId);
+            //setFocused
+        } else {
+            bindIconToTaskId(taskId, cmp);
+        }
     }
 
     @Override

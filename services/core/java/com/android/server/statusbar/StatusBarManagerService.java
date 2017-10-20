@@ -278,6 +278,15 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
         }
 
         @Override
+        public void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) {
+            if (mBar != null) {
+                try {
+                    mBar.changeStatusBarIcon(taskId, cmp, keep);
+                } catch (RemoteException ex) {}
+            }
+        }
+
+        @Override
         public void setStatusBarVisibility(int visibility) {
             if (mBar != null) {
                 try {

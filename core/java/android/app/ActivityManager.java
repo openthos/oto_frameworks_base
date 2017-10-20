@@ -693,8 +693,11 @@ public class ActivityManager {
         /** ID of stack that contains activities launched by the assistant. */
         public static final int ASSISTANT_STACK_ID = RECENTS_STACK_ID + 1;
 
+        /** ID of stack that always on bottom (always invisible) when it exist. */
+        public static final int BACKGROUND_STACK_ID = ASSISTANT_STACK_ID + 1;
+
         /** Last static stack stack ID. */
-        public static final int LAST_STATIC_STACK_ID = ASSISTANT_STACK_ID;
+        public static final int LAST_STATIC_STACK_ID = BACKGROUND_STACK_ID;
 
         /** Start of ID range used by stacks that are created dynamically. */
         public static final int FIRST_DYNAMIC_STACK_ID = LAST_STATIC_STACK_ID + 1;
@@ -888,7 +891,7 @@ public class ActivityManager {
          */
         public static boolean normallyFullscreenWindows(int stackId) {
             return stackId != PINNED_STACK_ID && stackId != FREEFORM_WORKSPACE_STACK_ID
-                    && stackId != DOCKED_STACK_ID;
+                    && stackId != DOCKED_STACK_ID && stackId != BACKGROUND_STACK_ID;
         }
 
         /**

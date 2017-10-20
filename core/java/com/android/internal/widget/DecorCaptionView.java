@@ -411,6 +411,16 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     /**
+     * Minimize the window by move task back.
+     **/
+    private void minimizeWindow() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            callback.moveTaskBack();
+        }
+    }
+
+    /**
      * Maximize the window by moving it to the maximized workspace stack.
      **/
     private void maximizeWindow() {
@@ -481,7 +491,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         } else if (mClickTarget == mRotate) {
             rotateWindow();
         } else if (mClickTarget == mMinimize) {
-            //minimizeWindow();
+            minimizeWindow();
         } else if (mClickTarget == mMaximize) {
             maximizeWindow();
         } else if (mClickTarget == mClose) {

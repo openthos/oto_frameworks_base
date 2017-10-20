@@ -5564,6 +5564,7 @@ public class Activity extends ContextThemeWrapper
      * onActivityResult().
      */
     public void finish() {
+        //finish(FINISH_TASK_WITH_ROOT_ACTIVITY);
         finish(DONT_FINISH_TASK_WITH_ACTIVITY);
     }
 
@@ -5881,6 +5882,15 @@ public class Activity extends ContextThemeWrapper
             // Empty
         }
         return false;
+    }
+
+    @Override
+    public void moveTaskBack() {
+        try {
+            ActivityManagerNative.getDefault().moveTaskBackwards(getTaskId());
+        } catch (RemoteException e) {
+            // Empty
+        }
     }
 
     /**

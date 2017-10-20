@@ -1936,6 +1936,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     }
 
     void setCaptionVisiblity(boolean visible) {
+        if (mDecorCaptionView == null) {
+            return;
+        }
         mDecorCaptionView.onConfigurationChanged(visible);
         enableCaption(visible);
 

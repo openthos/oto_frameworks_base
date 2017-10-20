@@ -511,6 +511,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     boolean resize(Rect bounds, int resizeMode, boolean preserveWindow, boolean deferResume) {
+        Slog.e("LADEHUNTER", "resizing", new Exception());
         if (!isResizeable()) {
             Slog.w(TAG, "resizeTask: task " + this + " not resizeable.");
             return true;

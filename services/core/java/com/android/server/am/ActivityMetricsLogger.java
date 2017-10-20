@@ -2,6 +2,7 @@ package com.android.server.am;
 
 import static android.app.ActivityManager.START_SUCCESS;
 import static android.app.ActivityManager.START_TASK_TO_FRONT;
+import static android.app.ActivityManager.StackId.BACKGROUND_STACK_ID;
 import static android.app.ActivityManager.StackId.ASSISTANT_STACK_ID;
 import static android.app.ActivityManager.StackId.DOCKED_STACK_ID;
 import static android.app.ActivityManager.StackId.FREEFORM_WORKSPACE_STACK_ID;
@@ -56,6 +57,7 @@ class ActivityMetricsLogger {
     private static final int WINDOW_STATE_SIDE_BY_SIDE = 1;
     private static final int WINDOW_STATE_FREEFORM = 2;
     private static final int WINDOW_STATE_ASSISTANT = 3;
+    private static final int WINDOW_STATE_BACKGROUND = 4;
     private static final int WINDOW_STATE_INVALID = -1;
 
     private static final long INVALID_START_TIME = -1;
@@ -131,6 +133,8 @@ class ActivityMetricsLogger {
             mWindowState = WINDOW_STATE_FREEFORM;
         } else if (stack.mStackId == ASSISTANT_STACK_ID) {
             mWindowState = WINDOW_STATE_ASSISTANT;
+        } else if (stack.mStackId == BACKGROUND_STACK_ID) {
+            mWindowState = WINDOW_STATE_BACKGROUND;
         } else if (StackId.isStaticStack(stack.mStackId)) {
             throw new IllegalStateException("Unknown stack=" + stack);
         }

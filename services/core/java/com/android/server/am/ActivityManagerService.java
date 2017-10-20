@@ -32,6 +32,7 @@ import static android.app.ActivityManager.StackId.FIRST_DYNAMIC_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.PINNED_STACK_ID;
+import static android.app.ActivityManager.StackId.BACKGROUND_STACK_ID;
 import static android.app.ActivityManager.RESIZE_MODE_FORCED;
 import static android.content.pm.PackageManager.FEATURE_ACTIVITIES_ON_SECONDARY_DISPLAYS;
 import static android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT;
@@ -3116,6 +3117,11 @@ public class ActivityManagerService extends IActivityManager.Stub
             } else {
                 startTimeTrackingFocusedActivityLocked();
             }
+            StatusBarManagerInternal statusBarManager =
+                                   LocalServices.getService(StatusBarManagerInternal.class);
+            if (statusBarManager != null) {
+                statusBarManager.changeStatusBarIcon(r.getTask().taskId, r.realActivity, true);
+            }
         } else {
             r.appTimeTracker = null;
         }
@@ -3198,6 +3204,19 @@ public class ActivityManagerService extends IActivityManager.Stub
                 if (task == null) {
                     return;
                 }
+
+                if (task.getStack() != null && task.getStack().mStackId == BACKGROUND_STACK_ID) {
+                    if (task.mBounds == null) {
+                        task.reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,
+                                REPARENT_KEEP_STACK_AT_FRONT, ANIMATE,
+                                !DEFER_RESUME, "minimize");
+                    } else {
+                        task.reparent(FREEFORM_WORKSPACE_STACK_ID, ON_TOP,
+                                REPARENT_KEEP_STACK_AT_FRONT, ANIMATE,
+                                !DEFER_RESUME, "minimize");
+                    }
+                }
+
                 final ActivityRecord r = task.topRunningActivityLocked();
                 if (mStackSupervisor.moveFocusableActivityStackToFrontLocked(r, "setFocusedTask")) {
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
@@ -5041,6 +5060,13 @@ public class ActivityManagerService extends IActivityManager.Stub
             // Keep track of the root activity of the task before we finish it
             TaskRecord tr = r.getTask();
             ActivityRecord rootR = tr.getRootActivity();
+            if (rootR == r && tr.mActivities.size() <= 1) {
+                StatusBarManagerInternal statusBarManager =
+                                   LocalServices.getService(StatusBarManagerInternal.class);
+                if (statusBarManager != null) {
+                    statusBarManager.changeStatusBarIcon(tr.taskId, null, false);
+                }
+            }
             if (rootR == null) {
                 Slog.w(TAG, "Finishing task with all activities already finished");
             }
@@ -10437,6 +10463,11 @@ public class ActivityManagerService extends IActivityManager.Stub
         synchronized (this) {
             final long ident = Binder.clearCallingIdentity();
             try {
+                StatusBarManagerInternal statusBarManager =
+                                   LocalServices.getService(StatusBarManagerInternal.class);
+                if (statusBarManager != null) {
+                    statusBarManager.changeStatusBarIcon(taskId, null, false);
+                }
                 return mStackSupervisor.removeTaskByIdLocked(taskId, true, REMOVE_FROM_RECENTS);
             } finally {
                 Binder.restoreCallingIdentity(ident);
@@ -10537,8 +10568,8 @@ public class ActivityManagerService extends IActivityManager.Stub
 
     @Override
     public void moveTaskBackwards(int task) {
-        enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
-                "moveTaskBackwards()");
+        //enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
+        //        "moveTaskBackwards()");
 
         synchronized(this) {
             if (!checkAppSwitchAllowedLocked(Binder.getCallingPid(),
@@ -10552,7 +10583,12 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     private final void moveTaskBackwardsLocked(int task) {
-        Slog.e(TAG, "moveTaskBackwards not yet implemented!");
+        //Slog.e(TAG, "moveTaskBackwards not yet implemented!");
+        TaskRecord target = mStackSupervisor.anyTaskForIdLocked(task);
+        if (target != null && target.getStack().mStackId != BACKGROUND_STACK_ID) {
+            target.reparent(BACKGROUND_STACK_ID, !ON_TOP,
+                    REPARENT_LEAVE_STACK_IN_PLACE, !ANIMATE, !DEFER_RESUME, "minimize");
+        }
     }
 
     @Override

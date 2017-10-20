@@ -64,6 +64,7 @@ import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityManager.AccessibilityServicesStateChangeListener;
+import android.widget.LinearLayout;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -81,6 +82,7 @@ import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.statusbar.policy.AccessibilityManagerWrapper;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
+import com.android.systemui.statusbar.phone.OpenthosStatusBarView;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -620,6 +622,13 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
 
     public void finishBarAnimations() {
         mNavigationBarView.getBarTransitions().finishAnimations();
+    }
+
+    public OpenthosStatusBarView getActivityLayout() {
+        //OpenthosStatusBarView openthosStatusBar = (OpenthosStatusBarView)mNavigationBarView.
+        //                            findViewById(R.id.openthos_status_bar);
+        //return (LinearLayout)openthosStatusBar.findViewById(R.id.ll_scroll_icon_contents);
+        return (OpenthosStatusBarView)mNavigationBarView.findViewById(R.id.openthos_status_bar);
     }
 
     private final AccessibilityServicesStateChangeListener mAccessibilityListener =

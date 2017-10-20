@@ -634,6 +634,9 @@ public abstract class Window {
         /** Switch the activity between FULLSCREEN and FREEFORM*/
         void switchWindowFreeformAndFullscreen() throws RemoteException;
 
+        /** Move task back to minimize it*/
+        void moveTaskBack();
+
         /** Returns whether the window belongs to the task root. */
         boolean isTaskRoot();
     }
