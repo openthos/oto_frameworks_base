@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -141,8 +142,9 @@ public class OpenthosStatusBarView extends PanelBar{
                    showDialog(mCalendarView, mCalendarDialog);
                    break;
                case R.id.iv_home_status_bar:
-                   Toast.makeText(mContext, "home", Toast.LENGTH_SHORT).show();
-                   mStatusBar.awakenDreams();
+                   Intent home=new Intent(Intent.ACTION_MAIN);
+                   home.addCategory(Intent.CATEGORY_HOME);
+                   mContext.startActivity(home);
                    break;
             }
         }

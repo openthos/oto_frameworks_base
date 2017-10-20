@@ -92,14 +92,19 @@
 
             <com.android.systemui.dialog.CalendarDisplayView
                 android:id="@+id/iv_date_status_bar"
-                android:textAppearance="@style/TextAppearance.StatusBar.Clock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/systemui_date_text_size"
                 android:layout_gravity="center_vertical"
+                android:gravity="center"
                 android:paddingLeft="@dimen/startupmenu_small_padding"
                 android:paddingRight="@dimen/startupmenu_small_padding"
-                android:gravity="center" />
+                android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                android:textSize="@dimen/systemui_date_text_size"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/input_bg"/>
 
             <ImageView
                 android:id="@+id/iv_home_status_bar"

@@ -13,28 +13,29 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.2">
+        android:layout_weight="0.2"
+        android:background="#1Affffff">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
             android:textColor="#99ffffff"
-            android:text="@string/notification_info"/>
+            android:text="@string/notification_info"
+            android:textStyle="bold"
+            android:textSize="@dimen/qs_font_size_sixteen" />
         <Button
 	    android:id="@+id/notification_manager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/notification_clear_all"
             android:layout_marginRight="20dp"
-            android:background="#1Affffff"
             android:text="@string/clear_all"/>
         <Button
             android:id="@+id/notification_clear_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="#1Affffff"
             android:text="@string/notification_manager"/>
     </RelativeLayout>
 
@@ -129,10 +130,12 @@
                 android:id="@+id/qs_shot_screen"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@mipmap/ic_notification_isolation_on"/>
+                android:src="@mipmap/ic_notification_screen_shot"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#99ffffff"
+                android:textStyle="bold"
                 android:textSize="@dimen/qs_font_size_sixteen"
                 android:text="@string/notification_shot_screen"/>
         </LinearLayout>
@@ -151,6 +154,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/qs_font_size_sixteen"
+                android:textColor="#99ffffff"
+                android:textStyle="bold"
                 android:text="@string/notification_isolation_on"/>
         </LinearLayout>
         <LinearLayout
@@ -168,6 +173,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/qs_font_size_sixteen"
+                android:textColor="#99ffffff"
+                android:textStyle="bold"
                 android:text="@string/notification_settings"/>
         </LinearLayout>
         <LinearLayout
@@ -185,6 +192,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/qs_font_size_sixteen"
+                android:textColor="#99ffffff"
+                android:textStyle="bold"
                 android:text="@string/notification_projection"/>
         </LinearLayout>
     </LinearLayout>
