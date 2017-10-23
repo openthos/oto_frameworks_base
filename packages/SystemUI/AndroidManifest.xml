@@ -199,6 +199,10 @@
     <!-- to change themes - light or dark -->
     <uses-permission android:name="android.permission.CHANGE_OVERLAY_PACKAGES" />
 
+    <!--power-->
+    <uses-permission android:name="android.permission.REBOOT"/>
+    <uses-permission android:name="android.permission.SHUTDOWN"/>
+
     <application
         android:name=".SystemUIApplication"
         android:persistent="true"
@@ -539,6 +543,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+	 <activity android:name=".power.PowerSourceActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
 
         <!-- Doze with notifications, run in main sysui process for every user  -->
         <service

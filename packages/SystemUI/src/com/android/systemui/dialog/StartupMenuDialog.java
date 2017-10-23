@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.systemui.R;
+import com.android.systemui.power.PowerSourceActivity;
 import com.android.systemui.sql.SqliteOpenHelper;
 import com.android.systemui.sql.StartMenuDatabaseField;
 import com.android.systemui.startupmenu.AppEntry;
@@ -168,6 +169,10 @@ public class StartupMenuDialog extends BaseDialog
                 break;
             case R.id.power_off:
                 Toast.makeText(getContext(), "打开电源", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), PowerSourceActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                getContext().startActivity(intent);
                 dismiss();
                 break;
             case R.id.sort_click_layout:

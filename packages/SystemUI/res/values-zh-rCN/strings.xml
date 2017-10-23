@@ -846,4 +846,10 @@
     <string name="notification_isolation">隔离模式</string>
     <string name="notification_projection">投影</string>
     <string name="notification_isolation_on">隔离模式</string>
+
+    <!--power-->
+    <string name="power_off">关机</string>
+    <string name="system_restart">重启</string>
+    <string name="system_sleep">睡眠</string>
+    <string name="system_lock">锁定</string>
 </resources>
