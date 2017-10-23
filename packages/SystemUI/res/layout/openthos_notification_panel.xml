@@ -113,7 +113,7 @@
     <!-- end of print panel -->
 
     <!-- start qs panel-->
-    <LinearLayout
+    <com.android.systemui.statusbar.phone.QSView
         android:weightSum = "4"
         android:layout_weight="0.2"
         android:layout_width="@dimen/notification_panel_width"
@@ -151,7 +151,7 @@
                 android:id="@+id/qs_isolation"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@mipmap/ic_notification_isolation_on"/>
+                android:src="@mipmap/ic_notification_isolation_off"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                 android:id="@+id/qs_projection"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@mipmap/ic_notification_projection_on"/>
+                android:src="@mipmap/ic_notification_projection_off"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -198,6 +198,6 @@
                 android:textStyle="bold"
                 android:text="@string/notification_projection"/>
         </LinearLayout>
-    </LinearLayout>
+    </com.android.systemui.statusbar.phone.QSView>
     <!-- end quick settings layout -->
 </LinearLayout>
