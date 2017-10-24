@@ -2050,10 +2050,10 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         final int shade = mWindow.getDecorCaptionShade();
         switch (shade) {
             case DECOR_CAPTION_SHADE_LIGHT:
-                setLightDecorCaptionShade(view);
+                //setLightDecorCaptionShade(view);
                 break;
             case DECOR_CAPTION_SHADE_DARK:
-                setDarkDecorCaptionShade(view);
+                //setDarkDecorCaptionShade(view);
                 break;
             default: {
                 TypedValue value = new TypedValue();
@@ -2062,9 +2062,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
                 // theme and vice versa. Thanks to this the buttons should be visible on the
                 // background.
                 if (Color.luminance(value.data) < 0.5) {
-                    setLightDecorCaptionShade(view);
+                    //setLightDecorCaptionShade(view);
                 } else {
-                    setDarkDecorCaptionShade(view);
+                    //setDarkDecorCaptionShade(view);
                 }
                 break;
             }

@@ -27,25 +27,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:background="@drawable/decor_caption_title"
+            android:background="#d1d1f1"
             android:focusable="false"
             android:descendantFocusability="blocksDescendants" >
-        <Button
+        <ImageButton
                 android:id="@+id/back_window"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:padding="4dp"
                 android:layout_gravity="center_vertical"
+                android:background="@null"
                 android:contentDescription="@string/back_button_text"
-                android:background="@drawable/decor_back_button_dark" />
+                android:src="@drawable/mw_btn_add_content" />
         <ImageView
                 android:id="@+id/icon_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:padding="4dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/decor_back_button_dark" />
         <TextView
@@ -56,51 +56,55 @@
                 android:layout_marginBottom="5dp"
                 android:padding="4dp"
                 android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:background="@drawable/decor_caption_title" />
+                android:textColor="@color/black" />
         <View
                 android:id="@+id/blank_window"
 	            android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
-        <Button
+        <ImageButton
                 android:id="@+id/rotate_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:padding="4dp"
+                android:background="@null"
                 android:layout_gravity="center_vertical|end"
                 android:contentDescription="@string/rotate_button_text"
-                android:background="@drawable/decor_rotate_button_dark" />
-        <Button
+                android:src="@drawable/mw_btn_rotate" />
+        <ImageButton
                 android:id="@+id/minimize_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:padding="4dp"
+                android:background="@null"
                 android:layout_gravity="center_vertical|end"
                 android:contentDescription="@string/minimize_button_text"
-                android:background="@drawable/decor_minimize_button_dark" />
-        <Button
+                android:src="@drawable/mw_btn_minimize" />
+        <ImageButton
                 android:id="@+id/maximize_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:padding="4dp"
+                android:background="@null"
                 android:layout_gravity="center_vertical|end"
                 android:contentDescription="@string/maximize_button_text"
-                android:background="@drawable/decor_maximize_button_dark" />
-        <Button
+                android:src="@drawable/mw_btn_maximize" />
+        <ImageButton
                 android:id="@+id/close_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_margin="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:padding="4dp"
+                android:background="@null"
                 android:layout_gravity="center_vertical|end"
                 android:contentDescription="@string/close_button_text"
-                android:background="@drawable/decor_close_button_dark" />
+                android:src="@drawable/mw_btn_close" />
     </LinearLayout>
 </com.android.internal.widget.DecorCaptionView>
