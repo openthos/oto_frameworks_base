@@ -399,7 +399,8 @@ public abstract class PanelView extends FrameLayout {
         return !mGestureWaitForTouchSlop || mTracking;
     }
 
-    private void startOpening() {;
+    private void startOpening() {
+        ;
         runPeekAnimation(INITIAL_OPENING_PEEK_DURATION, getOpeningHeight(),
                 false /* collapseWhenFinished */);
         notifyBarPanelExpansionChanged();
@@ -429,7 +430,7 @@ public abstract class PanelView extends FrameLayout {
     }
 
     protected void startExpandMotion(float newX, float newY, boolean startTracking,
-            float expandedHeight) {
+                                     float expandedHeight) {
         mInitialOffsetOnTouch = expandedHeight;
         mInitialTouchY = newY;
         mInitialTouchX = newX;
@@ -461,15 +462,15 @@ public abstract class PanelView extends FrameLayout {
             DozeLog.traceFling(expand, mTouchAboveFalsingThreshold,
                     mStatusBar.isFalsingThresholdNeeded(),
                     mStatusBar.isWakeUpComingFromTouch());
-                    // Log collapse gesture if on lock screen.
-                    if (!expand && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
-                        float displayDensity = mStatusBar.getDisplayDensity();
-                        int heightDp = (int) Math.abs((y - mInitialTouchY) / displayDensity);
-                        int velocityDp = (int) Math.abs(vel / displayDensity);
-                        mLockscreenGestureLogger.write(
-                                MetricsEvent.ACTION_LS_UNLOCK,
-                                heightDp, velocityDp);
-                    }
+            // Log collapse gesture if on lock screen.
+            if (!expand && mStatusBar.getBarState() == StatusBarState.KEYGUARD) {
+                float displayDensity = mStatusBar.getDisplayDensity();
+                int heightDp = (int) Math.abs((y - mInitialTouchY) / displayDensity);
+                int velocityDp = (int) Math.abs(vel / displayDensity);
+                mLockscreenGestureLogger.write(
+                        MetricsEvent.ACTION_LS_UNLOCK,
+                        heightDp, velocityDp);
+            }
             fling(vel, expand, isFalseTouch(x, y));
             onTrackingStopped(expand);
             mUpdateFlingOnLayout = expand && mPanelClosedOnDown && !mHasLayoutedSinceDown;
@@ -672,7 +673,7 @@ public abstract class PanelView extends FrameLayout {
     }
 
     /**
-     * @param vel the current vertical velocity of the motion
+     * @param vel       the current vertical velocity of the motion
      * @param vectorVel the length of the vectorial velocity
      * @return whether a fling should expands the panel; contracts otherwise
      */
@@ -717,7 +718,7 @@ public abstract class PanelView extends FrameLayout {
     }
 
     protected void fling(float vel, boolean expand, float collapseSpeedUpFactor,
-            boolean expandBecauseOfFalsing) {
+                         boolean expandBecauseOfFalsing) {
         cancelPeek();
         float target = expand ? getMaxPanelHeight() : 0;
         if (!expand) {
@@ -727,7 +728,7 @@ public abstract class PanelView extends FrameLayout {
     }
 
     protected void flingToHeight(float vel, boolean expand, float target,
-            float collapseSpeedUpFactor, boolean expandBecauseOfFalsing) {
+                                 float collapseSpeedUpFactor, boolean expandBecauseOfFalsing) {
         // Hack to make the expand transition look nice when clear all button is visible - we make
         // the animation only to the last notification, and then jump to the maximum panel height so
         // clear all just fades in and the decelerating motion is towards the last notification.
@@ -813,7 +814,7 @@ public abstract class PanelView extends FrameLayout {
     }
 
     @Override
-    protected void onLayout (boolean changed, int left, int top, int right, int bottom) {
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         mStatusBar.onPanelLaidOut();
         requestPanelHeightUpdate();
@@ -888,7 +889,7 @@ public abstract class PanelView extends FrameLayout {
 
     /**
      * @return true if the panel tracking should be temporarily blocked; this is used when a
-     *         conflicting gesture (opening QS) is happening
+     * conflicting gesture (opening QS) is happening
      */
     protected abstract boolean isTrackingBlocked();
 
@@ -1202,23 +1203,24 @@ public abstract class PanelView extends FrameLayout {
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.println(String.format("[PanelView(%s): expandedHeight=%f maxPanelHeight=%d closing=%s"
-                + " tracking=%s justPeeked=%s peekAnim=%s%s timeAnim=%s%s touchDisabled=%s"
-                + "]",
+                        + " tracking=%s justPeeked=%s peekAnim=%s%s timeAnim=%s%s touchDisabled=%s"
+                        + "]",
                 this.getClass().getSimpleName(),
                 getExpandedHeight(),
                 getMaxPanelHeight(),
-                mClosing?"T":"f",
-                mTracking?"T":"f",
-                mJustPeeked?"T":"f",
-                mPeekAnimator, ((mPeekAnimator!=null && mPeekAnimator.isStarted())?" (started)":""),
-                mHeightAnimator, ((mHeightAnimator !=null && mHeightAnimator.isStarted())?" (started)":""),
-                mTouchDisabled?"T":"f"
+                mClosing ? "T" : "f",
+                mTracking ? "T" : "f",
+                mJustPeeked ? "T" : "f",
+                mPeekAnimator, ((mPeekAnimator != null && mPeekAnimator.isStarted()) ? " (started)" : ""),
+                mHeightAnimator, ((mHeightAnimator != null && mHeightAnimator.isStarted()) ? " (started)" : ""),
+                mTouchDisabled ? "T" : "f"
         ));
     }
 
     public abstract void resetViews();
 
     protected abstract float getPeekHeight();
+
     /**
      * @return whether "Clear all" button will be visible when the panel is fully expanded
      */

@@ -39,7 +39,7 @@ public class NavigationBarFrame extends FrameLayout {
     }
 
     public NavigationBarFrame(@NonNull Context context, @Nullable AttributeSet attrs,
-            @AttrRes int defStyleAttr) {
+                              @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

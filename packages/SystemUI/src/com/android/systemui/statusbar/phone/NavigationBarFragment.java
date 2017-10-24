@@ -99,7 +99,9 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
     private static final boolean DEBUG = false;
     private static final String EXTRA_DISABLE_STATE = "disabled_state";
 
-    /** Allow some time inbetween the long press for back and recents. */
+    /**
+     * Allow some time inbetween the long press for back and recents.
+     */
     private static final int LOCK_TO_APP_GESTURE_TOLERENCE = 200;
 
     protected NavigationBarView mNavigationBarView = null;
@@ -180,7 +182,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.navigation_bar, container, false);
     }
 
@@ -262,7 +264,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
 
     @Override
     public void setImeWindowStatus(IBinder token, int vis, int backDisposition,
-            boolean showImeSwitcher) {
+                                   boolean showImeSwitcher) {
         boolean imeShown = (vis & InputMethodService.IME_VISIBLE) != 0;
         int hints = mNavigationIconHints;
         if ((backDisposition == InputMethodService.BACK_DISPOSITION_WILL_DISMISS) || imeShown) {
@@ -316,7 +318,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
 
     @Override
     public void setSystemUiVisibility(int vis, int fullscreenStackVis, int dockedStackVis,
-            int mask, Rect fullscreenStackBounds, Rect dockedStackBounds) {
+                                      int mask, Rect fullscreenStackBounds, Rect dockedStackBounds) {
         final int oldVal = mSystemUiVisibility;
         final int newVal = (oldVal & ~mask) | (vis & mask);
         final int diff = newVal ^ oldVal;
@@ -486,10 +488,10 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
      * This handles long-press of both back and recents.  They are
      * handled together to capture them both being long-pressed
      * at the same time to exit screen pinning (lock task).
-     *
+     * <p>
      * When accessibility mode is on, only a long-press from recents
      * is required to exit.
-     *
+     * <p>
      * In all other circumstances we try to pass through long-press events
      * for Back, so that apps can still use it.  Which can be from two things.
      * 1) Not currently in screen pinning (lock task).
@@ -628,7 +630,7 @@ public class NavigationBarFragment extends Fragment implements Callbacks {
         //OpenthosStatusBarView openthosStatusBar = (OpenthosStatusBarView)mNavigationBarView.
         //                            findViewById(R.id.openthos_status_bar);
         //return (LinearLayout)openthosStatusBar.findViewById(R.id.ll_scroll_icon_contents);
-        return (OpenthosStatusBarView)mNavigationBarView.findViewById(R.id.openthos_status_bar);
+        return (OpenthosStatusBarView) mNavigationBarView.findViewById(R.id.openthos_status_bar);
     }
 
     private final AccessibilityServicesStateChangeListener mAccessibilityListener =

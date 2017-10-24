@@ -30,7 +30,7 @@ import com.android.systemui.R;
  * Created by cao on 17-9-26.
  */
 
-public class OpenthosStatusBarView extends PanelBar{
+public class OpenthosStatusBarView extends PanelBar {
     private static final String TAG = "OpenthosStatusBarView";
 
     private StatusBar mStatusBar;
@@ -117,35 +117,35 @@ public class OpenthosStatusBarView extends PanelBar{
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-               case R.id.iv_startupmenu_status_bar:
-                   showDialog(mStartupMenu, mStartupMenuDialog);
-                   break;
-               case R.id.iv_input_status_bar:
-                   showDialog(mInputView, mInputManagerDialog);
-                   break;
-               case R.id.iv_battery_status_bar:
-                   showDialog(mBatteryView, mBatteryDialog);
-                   break;
-               case R.id.iv_wifi_status_bar:
-                   showDialog(mWifiView, mWifiDialog);
-                   break;
-               case R.id.iv_volume_status_bar:
-                   showDialog(mVolumeView, mVolumeDialog);
-                   break;
-               case R.id.iv_notification_status_bar:
-                   if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
-                       mCurrentDialog.dismiss();
-                   }
-                   mStatusBar.showCustomNotificationPanel();
-                   break;
-               case R.id.iv_date_status_bar:
-                   showDialog(mCalendarView, mCalendarDialog);
-                   break;
-               case R.id.iv_home_status_bar:
-                   Intent home=new Intent(Intent.ACTION_MAIN);
-                   home.addCategory(Intent.CATEGORY_HOME);
-                   mContext.startActivity(home);
-                   break;
+                case R.id.iv_startupmenu_status_bar:
+                    showDialog(mStartupMenu, mStartupMenuDialog);
+                    break;
+                case R.id.iv_input_status_bar:
+                    showDialog(mInputView, mInputManagerDialog);
+                    break;
+                case R.id.iv_battery_status_bar:
+                    showDialog(mBatteryView, mBatteryDialog);
+                    break;
+                case R.id.iv_wifi_status_bar:
+                    showDialog(mWifiView, mWifiDialog);
+                    break;
+                case R.id.iv_volume_status_bar:
+                    showDialog(mVolumeView, mVolumeDialog);
+                    break;
+                case R.id.iv_notification_status_bar:
+                    if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
+                        mCurrentDialog.dismiss();
+                    }
+                    mStatusBar.showCustomNotificationPanel();
+                    break;
+                case R.id.iv_date_status_bar:
+                    showDialog(mCalendarView, mCalendarDialog);
+                    break;
+                case R.id.iv_home_status_bar:
+                    Intent home = new Intent(Intent.ACTION_MAIN);
+                    home.addCategory(Intent.CATEGORY_HOME);
+                    mContext.startActivity(home);
+                    break;
             }
         }
     };

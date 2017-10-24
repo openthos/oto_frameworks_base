@@ -256,7 +256,7 @@
     <string name="accessibility_battery_one_bar">Battery one bar.</string>
     <!-- Content description of the battery when it is two bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_battery_two_bars">Battery two bars.</string>
-     <!-- Content description of the battery when it is three bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <!-- Content description of the battery when it is three bars for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_battery_three_bars">Battery three bars.</string>
     <!-- Content description of the battery when it is full for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_battery_full">Battery full.</string>
@@ -284,13 +284,13 @@
     <string name="accessibility_data_signal_full">Data signal full.</string>
 
     <!-- Content description of the wifi label showing what we are connected to. [CHAR LIMIT=NONE] -->
-    <string name="accessibility_wifi_name">Connected to <xliff:g id="wifi" example="Home Network">%s</xliff:g>.</string>
+    <string name="accessibility_wifi_name">Connected to <xliff:g example="Home Network" id="wifi">%s</xliff:g>.</string>
 
     <!-- Content description of the bluetooth label showing what we are connected to. [CHAR LIMIT=NONE] -->
-    <string name="accessibility_bluetooth_name">Connected to <xliff:g id="bluetooth" example="Car Audio">%s</xliff:g>.</string>
+    <string name="accessibility_bluetooth_name">Connected to <xliff:g example="Car Audio" id="bluetooth">%s</xliff:g>.</string>
 
     <!-- Content description of the cast label showing what we are connected to. [CHAR LIMIT=NONE] -->
-    <string name="accessibility_cast_name">Connected to <xliff:g id="cast" example="TV">%s</xliff:g>.</string>
+    <string name="accessibility_cast_name">Connected to <xliff:g example="TV" id="cast">%s</xliff:g>.</string>
 
 
     <!-- Content description of the WiMAX signal when no signal for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
@@ -442,17 +442,17 @@
     <string name="accessibility_work_mode">Work mode</string>
 
     <!-- Content description to tell the user that this button will remove an application from recents -->
-    <string name="accessibility_recents_item_will_be_dismissed">Dismiss <xliff:g id="app" example="Calendar">%s</xliff:g>.</string>
+    <string name="accessibility_recents_item_will_be_dismissed">Dismiss <xliff:g example="Calendar" id="app">%s</xliff:g>.</string>
     <!-- Content description to tell the user an application has been removed from recents -->
-    <string name="accessibility_recents_item_dismissed"><xliff:g id="app" example="Calendar">%s</xliff:g> dismissed.</string>
+    <string name="accessibility_recents_item_dismissed"><xliff:g example="Calendar" id="app">%s</xliff:g> dismissed.</string>
     <!-- Content description to tell the user all applications has been removed from recents -->
     <string name="accessibility_recents_all_items_dismissed">All recent applications dismissed.</string>
     <!-- Content description to tell the user that this button will open application info for an application in recents -->
-    <string name="accessibility_recents_item_open_app_info">Open <xliff:g id="app" example="Calendar">%s</xliff:g> application info.</string>
+    <string name="accessibility_recents_item_open_app_info">Open <xliff:g example="Calendar" id="app">%s</xliff:g> application info.</string>
     <!-- Content description to tell the user an application has been launched from recents -->
-    <string name="accessibility_recents_item_launched">Starting <xliff:g id="app" example="Calendar">%s</xliff:g>.</string>
+    <string name="accessibility_recents_item_launched">Starting <xliff:g example="Calendar" id="app">%s</xliff:g>.</string>
     <!-- Content description of individual recents task. -->
-    <string name="accessibility_recents_task_header"><xliff:g id="app" example="Chrome">%1$s</xliff:g> <xliff:g id="activity_label" example="www.google.com">%2$s</xliff:g></string>
+    <string name="accessibility_recents_task_header"><xliff:g example="Chrome" id="app">%1$s</xliff:g> <xliff:g example="www.google.com" id="activity_label">%2$s</xliff:g></string>
     <!-- Content description to tell the user a notification has been removed from the notification shade -->
     <string name="accessibility_notification_dismissed">Notification dismissed.</string>
 
@@ -472,15 +472,15 @@
     <string name="accessibility_desc_close">Close</string>
 
     <!-- Content description of the wifi tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_quick_settings_wifi"><xliff:g id="signal" example="Three bars">%1$s</xliff:g>.</string>
+    <string name="accessibility_quick_settings_wifi"><xliff:g example="Three bars" id="signal">%1$s</xliff:g>.</string>
     <!-- Announcement made when the wifi is turned off (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_wifi_changed_off">Wifi turned off.</string>
     <!-- Announcement made when the wifi is turned on (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_wifi_changed_on">Wifi turned on.</string>
     <!-- Content description of the mobile data tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_quick_settings_mobile">Mobile <xliff:g id="signal" example="Three bars">%1$s</xliff:g>. <xliff:g id="type" example="4G">%2$s</xliff:g>. <xliff:g id="network" example="T-Mobile">%3$s</xliff:g>.</string>
+    <string name="accessibility_quick_settings_mobile">Mobile <xliff:g example="Three bars" id="signal">%1$s</xliff:g>. <xliff:g example="4G" id="type">%2$s</xliff:g>. <xliff:g example="T-Mobile" id="network">%3$s</xliff:g>.</string>
     <!-- Content description of the battery tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_quick_settings_battery">Battery <xliff:g id="state" example="50% charging">%s</xliff:g>.</string>
+    <string name="accessibility_quick_settings_battery">Battery <xliff:g example="50% charging" id="state">%s</xliff:g>.</string>
     <!-- Content description of the airplane mode tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_airplane_off">Airplane mode off.</string>
     <!-- Content description of the airplane mode tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
@@ -495,9 +495,9 @@
     <string name="accessibility_quick_settings_dnd_none_on">Do not disturb on, total silence.</string>
     <!-- Content description of the do not disturb tile in quick settings when on in alarms only (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_dnd_alarms_on">Do not disturb on, alarms only.</string>
-     <!-- Content description of the do not disturb tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <!-- Content description of the do not disturb tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_dnd">Do not disturb.</string>
-     <!-- Content description of the do not disturb tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <!-- Content description of the do not disturb tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_dnd_off">Do not disturb off.</string>
     <!-- Announcement made when do not disturb changes to off (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_dnd_changed_off">Do not disturb turned off.</string>
@@ -526,7 +526,7 @@
     <!-- Announcement made when the location tile changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_location_changed_on">Location reporting turned on.</string>
     <!-- Content description of the alarm tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
-    <string name="accessibility_quick_settings_alarm">Alarm set for <xliff:g id="time" example="Wed 3:30 PM">%s</xliff:g>.</string>
+    <string name="accessibility_quick_settings_alarm">Alarm set for <xliff:g example="Wed 3:30 PM" id="time">%s</xliff:g>.</string>
     <!-- Content description of quick settings detail panel close button (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_close">Close panel.</string>
     <!-- Content description of zen mode time condition plus button (not shown on the screen). [CHAR LIMIT=NONE] -->
@@ -610,12 +610,12 @@
     <string name="accessibility_clear_all">Clear all notifications.</string>
 
     <!-- The overflow indicator shown when a group has more notification inside the group than the visible ones. An example is "+ 3" [CHAR LIMIT=5] -->
-    <string name="notification_group_overflow_indicator">+ <xliff:g id="number" example="3">%s</xliff:g></string>
+    <string name="notification_group_overflow_indicator">+ <xliff:g example="3" id="number">%s</xliff:g></string>
 
     <!-- Content description describing how many more notifications are in a group [CHAR LIMIT=NONE] -->
     <plurals name="notification_group_overflow_description">
-        <item quantity="one"><xliff:g id="number" example="1">%s</xliff:g> more notification inside.</item>
-        <item quantity="other"><xliff:g id="number" example="3">%s</xliff:g> more notifications inside.</item>
+        <item quantity="one"><xliff:g example="1" id="number">%s</xliff:g> more notification inside.</item>
+        <item quantity="other"><xliff:g example="3" id="number">%s</xliff:g> more notifications inside.</item>
     </plurals>
 
     <!-- Content description of button in notification inspector for system settings relating to
@@ -624,7 +624,7 @@
 
     <!-- Content description of button in notification inspetor for application-provided settings
          for its own notifications [CHAR LIMIT=NONE] -->
-    <string name="status_bar_notification_app_settings_title"><xliff:g id="app_name" example="Calendar">%s</xliff:g> settings</string>
+    <string name="status_bar_notification_app_settings_title"><xliff:g example="Calendar" id="app_name">%s</xliff:g> settings</string>
 
     <!-- Description of the button in the phone-style notification panel that controls auto-rotation, when auto-rotation is on. [CHAR LIMIT=NONE] -->
     <string name="accessibility_rotation_lock_off">Screen will rotate automatically.</string>
@@ -723,7 +723,7 @@
     <string name="quick_settings_casting">Casting</string>
     <!-- QuickSettings: Cast detail panel, default device name [CHAR LIMIT=NONE] -->
     <string name="quick_settings_cast_device_default_name">Unnamed device</string>
-     <!-- QuickSettings: Cast detail panel, default device description [CHAR LIMIT=NONE] -->
+    <!-- QuickSettings: Cast detail panel, default device description [CHAR LIMIT=NONE] -->
     <string name="quick_settings_cast_device_default_description">Ready to cast</string>
     <!-- QuickSettings: Cast detail panel, text when there are no items [CHAR LIMIT=NONE] -->
     <string name="quick_settings_cast_detail_empty_text">No devices available</string>
@@ -762,11 +762,11 @@
     <!-- QuickSettings: Cellular detail panel, over limit title [CHAR LIMIT=NONE] -->
     <string name="quick_settings_cellular_detail_over_limit">Over limit</string>
     <!-- QuickSettings: Cellular detail panel, data used format string [CHAR LIMIT=NONE] -->
-    <string name="quick_settings_cellular_detail_data_used"><xliff:g id="data_used" example="2.0 GB">%s</xliff:g> used</string>
+    <string name="quick_settings_cellular_detail_data_used"><xliff:g example="2.0 GB" id="data_used">%s</xliff:g> used</string>
     <!-- QuickSettings: Cellular detail panel, data limit format string [CHAR LIMIT=NONE] -->
-    <string name="quick_settings_cellular_detail_data_limit"><xliff:g id="data_limit" example="2.0 GB">%s</xliff:g> limit</string>
+    <string name="quick_settings_cellular_detail_data_limit"><xliff:g example="2.0 GB" id="data_limit">%s</xliff:g> limit</string>
     <!-- QuickSettings: Cellular detail panel, data warning format string [CHAR LIMIT=NONE] -->
-    <string name="quick_settings_cellular_detail_data_warning"><xliff:g id="data_limit" example="2.0 GB">%s</xliff:g> warning</string>
+    <string name="quick_settings_cellular_detail_data_warning"><xliff:g example="2.0 GB" id="data_limit">%s</xliff:g> warning</string>
     <!-- QuickSettings: Work mode [CHAR LIMIT=NONE] -->
     <string name="quick_settings_work_mode_label">Work mode</string>
     <!-- QuickSettings: Label for the toggle to activate Night display (renamed "Night Light" with title caps). [CHAR LIMIT=20] -->
@@ -789,9 +789,9 @@
     <!-- Recents: Temporary string for the button in the recents search bar. [CHAR LIMIT=NONE] -->
     <string name="recents_search_bar_label">search</string>
     <!-- Recents: Launch error string. [CHAR LIMIT=NONE] -->
-    <string name="recents_launch_error_message">Could not start <xliff:g id="app" example="Calendar">%s</xliff:g>.</string>
+    <string name="recents_launch_error_message">Could not start <xliff:g example="Calendar" id="app">%s</xliff:g>.</string>
     <!-- Recents: Launch disabled string. [CHAR LIMIT=NONE] -->
-    <string name="recents_launch_disabled_message"><xliff:g id="app" example="Calendar">%s</xliff:g> is disabled in safe-mode.</string>
+    <string name="recents_launch_disabled_message"><xliff:g example="Calendar" id="app">%s</xliff:g> is disabled in safe-mode.</string>
     <!-- Recents: Stack action button string. [CHAR LIMIT=NONE] -->
     <string name="recents_stack_action_button_label">Clear all</string>
     <!-- Recents: Hint text that shows on the drop targets to start multiwindow. [CHAR LIMIT=NONE] -->
@@ -821,7 +821,7 @@
     <string name="expanded_header_battery_charging">Charging</string>
 
     <!-- Expanded Status Bar Header: Charging, showing time left until charged [CHAR LIMIT=40] -->
-    <string name="expanded_header_battery_charging_with_time"><xliff:g id="charging_time" example="2 hrs 25 min">%s</xliff:g> until full</string>
+    <string name="expanded_header_battery_charging_with_time"><xliff:g example="2 hrs 25 min" id="charging_time">%s</xliff:g> until full</string>
 
     <!-- Expanded Status Bar Header: Not charging [CHAR LIMIT=40] -->
     <string name="expanded_header_battery_not_charging">Not charging</string>
@@ -855,7 +855,7 @@
     <string name="zen_silence_introduction">This blocks ALL sounds and vibrations, including from alarms, music, videos, and games.</string>
 
     <!-- Text for overflow card on Keyguard when there is not enough space for all notifications on Keyguard. [CHAR LIMIT=1] -->
-    <string name="keyguard_more_overflow_text">+<xliff:g id="number_of_notifications" example="5">%d</xliff:g></string>
+    <string name="keyguard_more_overflow_text">+<xliff:g example="5" id="number_of_notifications">%d</xliff:g></string>
 
     <!-- An explanation for the visual speed bump in the notifications, which will appear when you click on it. [CHAR LIMIT=50] -->
     <string name="speed_bump_explanation">Less urgent notifications below</string>
@@ -870,7 +870,7 @@
     <string name="do_disclosure_generic">This device is managed by your organization</string>
 
     <!-- Text on keyguard screen and in Quick Settings footer indicating that the device is enterprise-managed by a Device Owner [CHAR LIMIT=40] -->
-    <string name="do_disclosure_with_name">This device is managed by <xliff:g id="organization_name" example="Foo, Inc.">%s</xliff:g></string>
+    <string name="do_disclosure_with_name">This device is managed by <xliff:g example="Foo, Inc." id="organization_name">%s</xliff:g></string>
 
     <!-- Shows when people have clicked on the phone icon [CHAR LIMIT=60] -->
     <string name="phone_hint">Swipe from icon for phone</string>
@@ -903,24 +903,25 @@
     <string name="interruption_level_alarms_twoline">Alarms\nonly</string>
 
     <!-- Indication on the keyguard that is shown when the device is charging. [CHAR LIMIT=40]-->
-    <string name="keyguard_indication_charging_time">Charging (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%s</xliff:g> until full)</string>
+    <string name="keyguard_indication_charging_time">Charging (<xliff:g example="4 hours and 2 minutes" id="charging_time_left">%s</xliff:g> until full)</string>
 
     <!-- Indication on the keyguard that is shown when the device is charging rapidly. Should match keyguard_plugged_in_charging_fast [CHAR LIMIT=40]-->
-    <string name="keyguard_indication_charging_time_fast">Charging rapidly (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%s</xliff:g> until full)</string>
+    <string name="keyguard_indication_charging_time_fast">Charging rapidly (<xliff:g example="4 hours and 2 minutes" id="charging_time_left">%s</xliff:g> until full)</string>
 
     <!-- Indication on the keyguard that is shown when the device is charging slowly. Should match keyguard_plugged_in_charging_slowly [CHAR LIMIT=40]-->
-    <string name="keyguard_indication_charging_time_slowly">Charging slowly (<xliff:g id="charging_time_left" example="4 hours and 2 minutes">%s</xliff:g> until full)</string>
+    <string name="keyguard_indication_charging_time_slowly">Charging slowly (<xliff:g example="4 hours and 2 minutes" id="charging_time_left">%s</xliff:g> until full)</string>
 
-    <!-- Related to user switcher --><skip/>
+    <!-- Related to user switcher -->
+    <skip/>
 
     <!-- Accessibility label for the button that opens the user switcher. -->
     <string name="accessibility_multi_user_switch_switcher">Switch user</string>
 
     <!-- Accessibility label for the button that opens the user switcher and announces the current user. -->
-    <string name="accessibility_multi_user_switch_switcher_with_current">Switch user, current user <xliff:g id="current_user_name" example="John Doe">%s</xliff:g></string>
+    <string name="accessibility_multi_user_switch_switcher_with_current">Switch user, current user <xliff:g example="John Doe" id="current_user_name">%s</xliff:g></string>
 
     <!-- Accessibility label for the user icon on the lock screen. -->
-    <string name="accessibility_multi_user_switch_inactive">Current user <xliff:g id="current_user_name" example="John Doe">%s</xliff:g></string>
+    <string name="accessibility_multi_user_switch_inactive">Current user <xliff:g example="John Doe" id="current_user_name">%s</xliff:g></string>
 
     <!-- Accessibility label for the button that opens the quick contact of the user. -->
     <string name="accessibility_multi_user_switch_quick_contact">Show profile</string>
@@ -1004,7 +1005,7 @@
     <string name="battery_saver_notification_action_text">Turn off battery saver</string>
 
     <!-- Media projection permission dialog warning text. [CHAR LIMIT=NONE] -->
-    <string name="media_projection_dialog_text"><xliff:g id="app_seeking_permission" example="Hangouts">%s</xliff:g> will start capturing everything that\'s displayed on your screen.</string>
+    <string name="media_projection_dialog_text"><xliff:g example="Hangouts" id="app_seeking_permission">%s</xliff:g> will start capturing everything that\'s displayed on your screen.</string>
 
     <!-- Media projection permission dialog permanent grant check box. [CHAR LIMIT=NONE] -->
     <string name="media_projection_remember_text">Don\'t show again</string>
@@ -1031,31 +1032,31 @@
     <string name="quick_settings_disclosure_management_monitoring">Your organization manages this device and may monitor network traffic</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner that can monitor the network traffic [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_management_monitoring"><xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g> manages this device and may monitor network traffic</string>
+    <string name="quick_settings_disclosure_named_management_monitoring"><xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g> manages this device and may monitor network traffic</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner and is connected to a VPN [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_management_named_vpn">Device is managed by your organization and connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g></string>
+    <string name="quick_settings_disclosure_management_named_vpn">Device is managed by your organization and connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g></string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner and is connected to a VPN [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_management_named_vpn">Device is managed by <xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g> and connected to <xliff:g id="vpn_app" example="Foo VPN App">%2$s</xliff:g></string>
+    <string name="quick_settings_disclosure_named_management_named_vpn">Device is managed by <xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g> and connected to <xliff:g example="Foo VPN App" id="vpn_app">%2$s</xliff:g></string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner [CHAR LIMIT=100] -->
     <string name="quick_settings_disclosure_management">Device is managed by your organization</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_management">Device is managed by <xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g></string>
+    <string name="quick_settings_disclosure_named_management">Device is managed by <xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g></string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner and is connected to two VPNs, one in the current user, one in the managed profile [CHAR LIMIT=100] -->
     <string name="quick_settings_disclosure_management_vpns">Device is managed by your organization and connected to VPNs</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a device owner and is connected to two VPNs, one in the current user, one in the managed profile [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_management_vpns">Device is managed by <xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g> and connected to VPNs</string>
+    <string name="quick_settings_disclosure_named_management_vpns">Device is managed by <xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g> and connected to VPNs</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a managed profile which can be monitored by the profile owner [CHAR LIMIT=100] -->
     <string name="quick_settings_disclosure_managed_profile_monitoring">Your organization may monitor network traffic in your work profile</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device has a managed profile which can be monitored by the profile owner [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_managed_profile_monitoring"><xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g> may monitor network traffic in your work profile</string>
+    <string name="quick_settings_disclosure_named_managed_profile_monitoring"><xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g> may monitor network traffic in your work profile</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that a certificate authorithy is installed on this device and the traffic might be monitored [CHAR LIMIT=100] -->
     <string name="quick_settings_disclosure_monitoring">Network may be monitored</string>
@@ -1064,13 +1065,13 @@
     <string name="quick_settings_disclosure_vpns">Device connected to VPNs</string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device is connected to a VPN in the work profile [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_managed_profile_named_vpn">Work profile connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g></string>
+    <string name="quick_settings_disclosure_managed_profile_named_vpn">Work profile connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g></string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device is connected to a VPN in the personal profile (as opposed to the work profile) [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_personal_profile_named_vpn">Personal profile connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g></string>
+    <string name="quick_settings_disclosure_personal_profile_named_vpn">Personal profile connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g></string>
 
     <!-- Disclosure at the bottom of Quick Settings that indicates that the device is connected to a VPN [CHAR LIMIT=100] -->
-    <string name="quick_settings_disclosure_named_vpn">Device connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g></string>
+    <string name="quick_settings_disclosure_named_vpn">Device connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g></string>
 
     <!-- Monitoring dialog title for device owned devices [CHAR LIMIT=35] -->
     <string name="monitoring_title_device_owned">Device management</string>
@@ -1101,7 +1102,7 @@
     <string name="monitoring_button_view_policies">View Policies</string>
 
     <!-- Monitoring dialog: Description of the device owner by name. [CHAR LIMIT=NONE]-->
-    <string name="monitoring_description_named_management">Your device is managed by <xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g>.\n\nYour admin can monitor and manage settings, corporate access, apps, data associated with your device, and your device\'s location information.\n\nFor more information, contact your admin.</string>
+    <string name="monitoring_description_named_management">Your device is managed by <xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g>.\n\nYour admin can monitor and manage settings, corporate access, apps, data associated with your device, and your device\'s location information.\n\nFor more information, contact your admin.</string>
 
     <!-- Monitoring dialog: Description of a device owner. [CHAR LIMIT=NONE]-->
     <string name="monitoring_description_management">Your device is managed by your organization.\n\nYour admin can monitor and manage settings, corporate access, apps, data associated with your device, and your device\'s location information.\n\nFor more information, contact your admin.</string>
@@ -1119,22 +1120,22 @@
     <string name="monitoring_description_management_network_logging">Your admin has turned on network logging, which monitors traffic on your device.</string>
 
     <!-- Monitoring dialog: Description of an active VPN. [CHAR LIMIT=NONE]-->
-    <string name="monitoring_description_named_vpn">You\'re connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
+    <string name="monitoring_description_named_vpn">You\'re connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
 
     <!-- Monitoring dialog: Description of two active VPNs. [CHAR LIMIT=NONE]-->
-    <string name="monitoring_description_two_named_vpns">You\'re connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g> and <xliff:g id="vpn_app" example="Bar VPN App">%2$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
+    <string name="monitoring_description_two_named_vpns">You\'re connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g> and <xliff:g example="Bar VPN App" id="vpn_app">%2$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
 
     <!-- Monitoring dialog: Description of an active VPN in the work profile. [CHAR LIMIT=NONE]-->
-    <string name="monitoring_description_managed_profile_named_vpn">Your work profile is connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
+    <string name="monitoring_description_managed_profile_named_vpn">Your work profile is connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
 
     <!-- Monitoring dialog: Description of an active VPN in the personal profile (as opposed to the work profile). [CHAR LIMIT=NONE]-->
-    <string name="monitoring_description_personal_profile_named_vpn">Your personal profile is connected to <xliff:g id="vpn_app" example="Foo VPN App">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
+    <string name="monitoring_description_personal_profile_named_vpn">Your personal profile is connected to <xliff:g example="Foo VPN App" id="vpn_app">%1$s</xliff:g>, which can monitor your network activity, including emails, apps, and websites.</string>
 
     <!-- Monitoring dialog: Header indicating that the device is managed by a Device Owner app [CHAR LIMIT=80] -->
-    <string name="monitoring_description_do_header_generic">Your device is managed by <xliff:g id="device_owner_app" example="Google Mobile Management">%1$s</xliff:g>.</string>
+    <string name="monitoring_description_do_header_generic">Your device is managed by <xliff:g example="Google Mobile Management" id="device_owner_app">%1$s</xliff:g>.</string>
 
     <!-- Monitoring dialog: Header indicating that the device is managed by a Device Owner app [CHAR LIMIT=60] -->
-    <string name="monitoring_description_do_header_with_name"><xliff:g id="organization_name" example="Foo, Inc.">%1$s</xliff:g> uses <xliff:g id="device_owner_app" example="Google Mobile Management">%2$s</xliff:g> to manage your device.</string>
+    <string name="monitoring_description_do_header_with_name"><xliff:g example="Foo, Inc." id="organization_name">%1$s</xliff:g> uses <xliff:g example="Google Mobile Management" id="device_owner_app">%2$s</xliff:g> to manage your device.</string>
 
     <!-- Monitoring dialog: Part of text body explaining what a Device Owner app can do [CHAR LIMIT=130] -->
     <string name="monitoring_description_do_body">Your admin can monitor and manage settings, corporate access, apps, data associated with your device, and your device\'s location information.</string>
@@ -1219,7 +1220,7 @@
     <string name="hidden_notifications_setup">Set up</string>
 
     <!-- Accessibility string for current zen mode and selected exit condition. A template that simply concatenates existing mode string and the current condition description. [CHAR LIMIT=20] -->
-    <string name="zen_mode_and_condition"><xliff:g id="zen_mode" example="Priority interruptions only">%1$s</xliff:g>. <xliff:g id="exit_condition" example="For one hour">%2$s</xliff:g></string>
+    <string name="zen_mode_and_condition"><xliff:g example="Priority interruptions only" id="zen_mode">%1$s</xliff:g>. <xliff:g example="For one hour" id="exit_condition">%2$s</xliff:g></string>
 
     <!-- Button label for ending zen mode in the volume dialog -->
     <string name="volume_zen_end_now">Turn off now</string>
@@ -1242,7 +1243,7 @@
     <string name="screen_pinning_negative">No thanks</string>
 
     <!-- Hide quick settings tile confirmation title -->
-    <string name="quick_settings_reset_confirmation_title">Hide <xliff:g id="tile_label" example="Hotspot">%1$s</xliff:g>?</string>
+    <string name="quick_settings_reset_confirmation_title">Hide <xliff:g example="Hotspot" id="tile_label">%1$s</xliff:g>?</string>
 
     <!-- Hide quick settings tile confirmation message -->
     <string name="quick_settings_reset_confirmation_message">It will reappear the next time you turn it on in settings.</string>
@@ -1333,19 +1334,19 @@
     </string>
 
     <!-- Warning text when an alarm might be silenced by Do Not Disturb [CHAR LIMIT=NONE] -->
-    <string name="zen_alarm_warning_indef">You won\'t hear your next alarm <xliff:g id="when" example="at 7:00 AM">%1$s</xliff:g> unless you turn this off before then</string>
+    <string name="zen_alarm_warning_indef">You won\'t hear your next alarm <xliff:g example="at 7:00 AM" id="when">%1$s</xliff:g> unless you turn this off before then</string>
 
     <!-- Warning text when an alarm might be silenced by Do Not Disturb due to a time-based condition [CHAR LIMIT=NONE] -->
-    <string name="zen_alarm_warning">You won\'t hear your next alarm <xliff:g id="when" example="at 7:00 AM">%1$s</xliff:g></string>
+    <string name="zen_alarm_warning">You won\'t hear your next alarm <xliff:g example="at 7:00 AM" id="when">%1$s</xliff:g></string>
 
     <!-- Alarm template for near alarms [CHAR LIMIT=25] -->
-    <string name="alarm_template">at <xliff:g id="when" example="7:00 AM">%1$s</xliff:g></string>
+    <string name="alarm_template">at <xliff:g example="7:00 AM" id="when">%1$s</xliff:g></string>
 
     <!-- Alarm template for far alarms [CHAR LIMIT=25] -->
-    <string name="alarm_template_far">on <xliff:g id="when" example="Fri 7:00 AM">%1$s</xliff:g></string>
+    <string name="alarm_template_far">on <xliff:g example="Fri 7:00 AM" id="when">%1$s</xliff:g></string>
 
     <!-- Accessibility label for Quick Settings detail screens [CHAR LIMIT=NONE] -->
-    <string name="accessibility_quick_settings_detail">Quick Settings, <xliff:g id="title" example="Wi-Fi">%s</xliff:g>.</string>
+    <string name="accessibility_quick_settings_detail">Quick Settings, <xliff:g example="Wi-Fi" id="title">%s</xliff:g>.</string>
 
     <!-- Accessibility label for hotspot icon [CHAR LIMIT=NONE] -->
     <string name="accessibility_status_bar_hotspot">Hotspot</string>
@@ -1485,10 +1486,10 @@
 
     <!-- Notification: Control panel: Accessibility description for expanded inline controls view, used
         to control settings about notifications related to the current notification.  -->
-    <string name="notification_channel_controls_opened_accessibility">Notification controls for <xliff:g id="app_name" example="YouTube">%1$s</xliff:g> opened</string>
+    <string name="notification_channel_controls_opened_accessibility">Notification controls for <xliff:g example="YouTube" id="app_name">%1$s</xliff:g> opened</string>
     <!-- Notification: Control panel: Accessibility description for announcing the closing of the
         inline controls view.  -->
-    <string name="notification_channel_controls_closed_accessibility">Notification controls for <xliff:g id="app_name" example="YouTube">%1$s</xliff:g> closed</string>
+    <string name="notification_channel_controls_closed_accessibility">Notification controls for <xliff:g example="YouTube" id="app_name">%1$s</xliff:g> closed</string>
     <!-- Notification: Control panel: Accessibility description for switch that is used to enable
         or disable notifications from this channel -->
     <string name="notification_channel_switch_accessibility">Allow notifications from this channel</string>
@@ -1500,12 +1501,12 @@
     <string name="notification_more_settings">More settings</string>
     <!-- Notification: Control panel: Label for a link that launches notification settings in the
         app that sent the notification. -->
-    <string name="notification_app_settings">Customize: <xliff:g id="sub_category" example="Work chats">%1$s</xliff:g></string>
+    <string name="notification_app_settings">Customize: <xliff:g example="Work chats" id="sub_category">%1$s</xliff:g></string>
     <!-- Notification: Control panel: Label for button that dismisses control panel. [CHAR LIMIT=NONE] -->
     <string name="notification_done">Done</string>
 
     <!-- Notification: Menu row: Content description for menu items. [CHAR LIMIT=NONE] -->
-    <string name="notification_menu_accessibility"><xliff:g id="app_name" example="YouTube">%1$s</xliff:g> <xliff:g id="menu_description" example="notification controls">%2$s</xliff:g></string>
+    <string name="notification_menu_accessibility"><xliff:g example="YouTube" id="app_name">%1$s</xliff:g> <xliff:g example="notification controls" id="menu_description">%2$s</xliff:g></string>
 
     <!-- Notification: Menu row: Content description for the gear menu item. [CHAR LIMIT=NONE] -->
     <string name="notification_menu_gear_description">notification controls</string>
@@ -1804,28 +1805,28 @@
     <string name="accessibility_action_divider_bottom_full">Bottom full screen</string>
 
     <!-- Accessibility description of a QS tile while editing positions [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_tile_label">Position <xliff:g id="position" example="2">%1$d</xliff:g>, <xliff:g id="tile_name" example="Wi-Fi">%2$s</xliff:g>. Double tap to edit.</string>
+    <string name="accessibility_qs_edit_tile_label">Position <xliff:g example="2" id="position">%1$d</xliff:g>, <xliff:g example="Wi-Fi" id="tile_name">%2$s</xliff:g>. Double tap to edit.</string>
 
     <!-- Accessibility description of a QS tile while editing positions [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_add_tile_label"><xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g>. Double tap to add.</string>
+    <string name="accessibility_qs_edit_add_tile_label"><xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g>. Double tap to add.</string>
 
     <!-- Accessibility description of a place to drop a tile while editing positions [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_position_label">Position <xliff:g id="position" example="2">%1$d</xliff:g>. Double tap to select.</string>
+    <string name="accessibility_qs_edit_position_label">Position <xliff:g example="2" id="position">%1$d</xliff:g>. Double tap to select.</string>
 
     <!-- Accessibility description of option to move QS tile [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_move_tile">Move <xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g></string>
+    <string name="accessibility_qs_edit_move_tile">Move <xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g></string>
 
     <!-- Accessibility description of option to remove QS tile [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_remove_tile">Remove <xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g></string>
+    <string name="accessibility_qs_edit_remove_tile">Remove <xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g></string>
 
     <!-- Accessibility action when QS tile is added [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_tile_added"><xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g> is added to position <xliff:g id="position" example="5">%2$d</xliff:g></string>
+    <string name="accessibility_qs_edit_tile_added"><xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g> is added to position <xliff:g example="5" id="position">%2$d</xliff:g></string>
 
     <!-- Accessibility action when QS tile is removed [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_tile_removed"><xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g> is removed</string>
+    <string name="accessibility_qs_edit_tile_removed"><xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g> is removed</string>
 
     <!-- Accessibility action when QS tile is moved [CHAR LIMIT=NONE] -->
-    <string name="accessibility_qs_edit_tile_moved"><xliff:g id="tile_name" example="Wi-Fi">%1$s</xliff:g> moved to position <xliff:g id="position" example="5">%2$d</xliff:g></string>
+    <string name="accessibility_qs_edit_tile_moved"><xliff:g example="Wi-Fi" id="tile_name">%1$s</xliff:g> moved to position <xliff:g example="5" id="position">%2$d</xliff:g></string>
 
     <!-- Accessibility label for window when QS editing is happening [CHAR LIMIT=NONE] -->
     <string name="accessibility_desc_quick_settings_edit">Quick settings editor.</string>
@@ -1961,7 +1962,7 @@
     <string name="lockscreen_none">None</string>
 
     <!-- SysUI Tuner: Format string for describing launching an app [CHAR LIMIT=60] -->
-    <string name="tuner_launch_app">Launch <xliff:g id="app" example="Settings">%1$s</xliff:g></string>
+    <string name="tuner_launch_app">Launch <xliff:g example="Settings" id="app">%1$s</xliff:g></string>
 
     <!-- SysUI Tuner: Label for section of other apps that can be launched [CHAR LIMIT=60] -->
     <string name="tuner_other_apps">Other apps</string>

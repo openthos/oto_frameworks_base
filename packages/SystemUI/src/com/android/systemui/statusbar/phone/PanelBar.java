@@ -113,7 +113,7 @@ public abstract class PanelBar extends FrameLayout {
     public abstract void panelScrimMinFractionChanged(float minFraction);
 
     /**
-     * @param frac the fraction from the expansion in [0, 1]
+     * @param frac     the fraction from the expansion in [0, 1]
      * @param expanded whether the panel is currently expanded; this is independent from the
      *                 fraction as the panel also might be expanded if the fraction is 0
      */
@@ -143,7 +143,7 @@ public abstract class PanelBar extends FrameLayout {
         }
 
         if (SPEW) LOG("panelExpansionChanged: end state=%d [%s%s ]", mState,
-                fullyOpened?" fullyOpened":"", fullyClosed?" fullyClosed":"");
+                fullyOpened ? " fullyOpened" : "", fullyClosed ? " fullyClosed" : "");
     }
 
     public void collapsePanel(boolean animate, boolean delayed, float speedUpFactor) {
