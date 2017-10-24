@@ -21,6 +21,9 @@ import com.android.systemui.statusbar.policy.BatteryControllerImpl;
 import java.util.List;
 
 public class BatteryDialog extends BaseDialog implements BatteryController.BatteryStateChangeCallback {
+    private static final String BATTERY_SETTINGS = "com.android.settings";
+    private static final String BATTERY_SETTINGS_SAVER = BATTERY_SETTINGS
+	                        + ".fuelgauge.BatterySaverSettings";
     private static final String BATTERY_HISTORY_FILE = "tmp_bat_history.bin";
     private static final int REMAIN_HOUR_DEFAULT = 3;
     private static final int REMAIN_MINUTE_DEFAULT = 30;
@@ -71,8 +74,7 @@ public class BatteryDialog extends BaseDialog implements BatteryController.Batte
             @Override
             public void onClick(View view) {
                 U.launchApp(getContext(),
-                        new ComponentName("com.android.settings",
-                                "com.android.settings.BatteryInfo"));
+                        new ComponentName(BATTERY_SETTINGS, BATTERY_SETTINGS_SAVER));
                 dismiss();
             }
         });

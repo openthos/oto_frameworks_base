@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public final class WifiDialog extends BaseDialog {
     private final String CLASSNAME_ETHERNET_SETTINGS =
-            "com.android.settings.ethernet.EthernetSettings";
+            "com.android.settings.wifi.WifiSettings";
     private final String PACKAGENAME_SETTING = "com.android.settings";
     private final String TAG = "umic";
 
