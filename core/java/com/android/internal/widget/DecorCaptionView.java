@@ -33,6 +33,8 @@ import android.view.Window;
 import android.content.pm.PackageManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
+import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 
 import com.android.internal.R;
 import com.android.internal.policy.PhoneWindow;
@@ -145,7 +147,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         mCaption = getChildAt(0);
     }
 
-    public void setPhoneWindow(PhoneWindow owner, boolean show, int stackId) {
+    public void setPhoneWindow(PhoneWindow owner, boolean show) {
         mOwner = owner;
         mShow = show;
         mOverlayWithAppContent = owner.isOverlayWithDecorCaptionEnabled();
@@ -169,8 +171,6 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         PackageManager pm = getContext().getPackageManager();
         appName.setText(pm.getApplicationLabel(getContext().getApplicationInfo()));
         appIcon.setImageDrawable(pm.getApplicationIcon(getContext().getApplicationInfo()));
-
-        mRotate.setVisibility(stackId > 1 ? VISIBLE : GONE);
     }
 
     @Override
@@ -291,6 +291,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
      */
     public void onConfigurationChanged(boolean show) {
         mShow = show;
+        mRotate.setVisibility(getStackId() > 1 ? VISIBLE : GONE);
         updateCaptionVisibility();
     }
 
@@ -432,6 +433,28 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 Log.e(TAG, "Cannot change task workspace.");
             }
         }
+    }
+
+    /**
+    * Returns the Id of the stack which contains this window.
+    * Note that if no stack can be determined - which usually means that it was not
+    * created for an activity - the fullscreen stack ID will be returned.
+    * @return Returns the stack id which contains this window.
+    **/
+    private int getStackId() {
+        int workspaceId = INVALID_STACK_ID;
+        final Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            try {
+                workspaceId = callback.getWindowStackId();
+            } catch (RemoteException ex) {
+                Log.e(TAG, "Failed to get the workspace ID of a PhoneWindow.");
+            }
+        }
+        if (workspaceId == INVALID_STACK_ID) {
+            return FULLSCREEN_WORKSPACE_STACK_ID;
+        }
+        return workspaceId;
     }
 
     public boolean isCaptionShowing() {

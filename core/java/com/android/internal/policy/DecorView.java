@@ -1918,7 +1918,6 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             } else if (mDecorCaptionView != null) {
                 // We might have to change the kind of surface before we do anything else.
                 mDecorCaptionView.onConfigurationChanged(StackId.hasWindowDecor(mStackId));
-                //mDecorCaptionView.onConfigurationChanged(!isFullscreen());
                 enableCaption(StackId.hasWindowDecor(workspaceId));
             }
         }
@@ -2027,7 +2026,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             if (decorCaptionView == null) {
                 decorCaptionView = inflateDecorCaptionView(inflater);
             }
-            decorCaptionView.setPhoneWindow(mWindow, true /*showDecor*/, mStackId);
+            decorCaptionView.setPhoneWindow(mWindow, true /*showDecor*/);
         } else {
             decorCaptionView = null;
         }
@@ -2360,7 +2359,10 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         wm.getDefaultDisplay().getSize(point);
-        Rect winframe = getViewRootImpl().getWinFrame();
+        Rect winframe = new Rect();
+        if (getViewRootImpl() != null) {
+            winframe = getViewRootImpl().getWinFrame();
+        }
         Rect fullscreen = new Rect(0, 0, point.x, point.y);
         return winframe.equals(fullscreen) || getStackId() == 1;
     }
