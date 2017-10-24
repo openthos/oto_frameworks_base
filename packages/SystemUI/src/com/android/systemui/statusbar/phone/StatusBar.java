@@ -176,6 +176,8 @@ import com.android.systemui.UiOffloadThread;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.classifier.FalsingLog;
 import com.android.systemui.classifier.FalsingManager;
+import com.android.systemui.dialog.BaseDialog;
+import com.android.systemui.dialog.MenuDialog;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -201,6 +203,7 @@ import com.android.systemui.recents.events.activity.UndockingTaskEvent;
 import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.WindowManagerProxy;
+import com.android.systemui.startupmenu.DialogType;
 import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.BackDropView;
 import com.android.systemui.statusbar.CommandQueue;
@@ -804,6 +807,9 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private NavigationBarFragment mNavigationBar;
     private View mNavigationBarView;
+    private int mDownX;
+    private int mDownY;
+    private BaseDialog mShowTaskbarDialog;
 
     @Override
     public void start() {
@@ -1281,17 +1287,40 @@ public class StatusBar extends SystemUI implements DemoMode,
         mButtonNotificationClearAll = (Button) mNotificationPanel.findViewById(R.id.notification_clear_all);
         mButtonNotificationManager.setOnClickListener(mNotificationClickListener);
         mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
+
+        mShowTaskbarDialog = MenuDialog.getInstance(mContext);
     }
 
     protected void createNavigationBar() {
         mNavigationBarView = NavigationBarFragment.create(mContext, (tag, fragment) -> {
             mNavigationBar = (NavigationBarFragment) fragment;
             OpenthosStatusBarView v = mNavigationBar.getActivityLayout();
-            mActivityLayout = (LinearLayout)v.findViewById(R.id.ll_scroll_icon_contents);
+            mActivityLayout = (LinearLayout) v.findViewById(R.id.ll_scroll_icon_contents);
             if (mLightBarController != null) {
                 mNavigationBar.setLightBarController(mLightBarController);
             }
             mNavigationBar.setCurrentSysuiVisibility(mSystemUiVisibility);
+
+            v.findViewById(R.id.show_statusbar).setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    android.util.Log.i("ljh", "touch");
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        mDownX = (int) event.getRawX();
+                        mDownY = (int) event.getRawY();
+                    }
+                    return false;
+                }
+            });
+
+            v.findViewById(R.id.show_statusbar).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    android.util.Log.i("ljh", "long");
+                    mShowTaskbarDialog.show(DialogType.SHOW_TASKBAR, mDownX, mDownY);
+                    return false;
+                }
+            });
         });
     }
 

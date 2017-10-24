@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.android.systemui.R;
+import com.android.systemui.startupmenu.DialogType;
 
 /**
  * Created by ljh on 17-9-26.
@@ -94,6 +95,10 @@ public class BaseDialog extends Dialog {
 
         dialogWindow.setAttributes(lp);
         show();
+    }
+
+    public void show(DialogType type, int x, int y) {
+
     }
 
     @Override

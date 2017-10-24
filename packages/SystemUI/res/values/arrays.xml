@@ -49,5 +49,9 @@
         <item>@string/undock</item>
     </string-array>
 
+    <string-array name="bar_show_hide">
+        <item>@string/status_bar_info_hide</item>
+        <item>@string/status_bar_info_show</item>
+    </string-array>
 
 </resources>

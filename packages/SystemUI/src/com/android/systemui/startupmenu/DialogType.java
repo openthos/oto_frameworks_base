@@ -5,5 +5,5 @@ package com.android.systemui.startupmenu;
  */
 
 public enum DialogType {
-    LIST,GRID
+    LIST, GRID, SHOW_TASKBAR
 }

@@ -94,25 +94,32 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         show(type, x, y);
     }
 
-    private void show(DialogType type, int x, int y) {
+    public void show(DialogType type, int x, int y) {
 
         prepareData(type);
 
         Window dialogWindow = getWindow();
         dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        dialogWindow.setGravity(Gravity.CENTER);
+
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.format = PixelFormat.TRANSPARENT;
         lp.dimAmount = 0;
-        if (x > mPoint.x - mWidth) {
-            lp.x = x - mWidth / 2 - mPoint.x / 2;
+        if (type == DialogType.SHOW_TASKBAR) {
+            dialogWindow.setGravity(Gravity.LEFT | Gravity.BOTTOM);
+            lp.x = x - mWidth / 2;
+            lp.y = 0;
         } else {
-            lp.x = x + mWidth / 2 - mPoint.x / 2;
-        }
-        if (y < mPoint.y - mStatusBarHeight - mHeight) {
-            lp.y = y + mHeight / 2 - mPoint.y / 2;
-        } else {
-            lp.y = y - mHeight / 2 - mPoint.y / 2;
+            dialogWindow.setGravity(Gravity.CENTER);
+            if (x > mPoint.x - mWidth) {
+                lp.x = x - mWidth / 2 - mPoint.x / 2;
+            } else {
+                lp.x = x + mWidth / 2 - mPoint.x / 2;
+            }
+            if (y < mPoint.y - mStatusBarHeight - mHeight) {
+                lp.y = y + mHeight / 2 - mPoint.y / 2;
+            } else {
+                lp.y = y - mHeight / 2 - mPoint.y / 2;
+            }
         }
         dialogWindow.setAttributes(lp);
         show();
@@ -135,6 +142,9 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
                 break;
             case LIST:
                 sArr = getContext().getResources().getStringArray(R.array.list_menu);
+                break;
+            case SHOW_TASKBAR:
+                sArr = getContext().getResources().getStringArray(R.array.bar_show_hide);
                 break;
         }
         mDatas.addAll(Arrays.asList(sArr));
@@ -174,6 +184,10 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
             SqliteOperate.deleteDataStorage(getContext(), mAppEntry.getPackageName());
         } else if (content.equals(getContext().getString(R.string.uninstall))) {
             uninstallApp();
+        } else if (content.equals(getContext().getString(R.string.status_bar_info_show))) {
+
+        } else if (content.equals(getContext().getString(R.string.status_bar_info_hide))) {
+
         }
     }
 
