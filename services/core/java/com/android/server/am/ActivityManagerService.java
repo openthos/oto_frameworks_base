@@ -4978,6 +4978,14 @@ public class ActivityManagerService extends IActivityManager.Stub
         return ret;
     }
 
+    public void removeTaskIcon(int taskId) {
+        StatusBarManagerInternal statusBarManager =
+                           LocalServices.getService(StatusBarManagerInternal.class);
+        if (statusBarManager != null) {
+            statusBarManager.changeStatusBarIcon(taskId, null, false);
+        }
+    }
+
     @Override
     public void reportActivityFullyDrawn(IBinder token, boolean restoredFromBundle) {
         synchronized (this) {
@@ -5060,13 +5068,6 @@ public class ActivityManagerService extends IActivityManager.Stub
             // Keep track of the root activity of the task before we finish it
             TaskRecord tr = r.getTask();
             ActivityRecord rootR = tr.getRootActivity();
-            if (rootR == r && tr.mActivities.size() <= 1) {
-                StatusBarManagerInternal statusBarManager =
-                                   LocalServices.getService(StatusBarManagerInternal.class);
-                if (statusBarManager != null) {
-                    statusBarManager.changeStatusBarIcon(tr.taskId, null, false);
-                }
-            }
             if (rootR == null) {
                 Slog.w(TAG, "Finishing task with all activities already finished");
             }
@@ -10463,11 +10464,6 @@ public class ActivityManagerService extends IActivityManager.Stub
         synchronized (this) {
             final long ident = Binder.clearCallingIdentity();
             try {
-                StatusBarManagerInternal statusBarManager =
-                                   LocalServices.getService(StatusBarManagerInternal.class);
-                if (statusBarManager != null) {
-                    statusBarManager.changeStatusBarIcon(taskId, null, false);
-                }
                 return mStackSupervisor.removeTaskByIdLocked(taskId, true, REMOVE_FROM_RECENTS);
             } finally {
                 Binder.restoreCallingIdentity(ident);

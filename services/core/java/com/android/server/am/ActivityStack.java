@@ -4169,6 +4169,7 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
             // statement will only execute once since overlays are also considered activities.
             if (lastActivity) {
                 removeTask(task, reason, REMOVE_TASK_MODE_DESTROYING);
+                mService.removeTaskIcon(task.taskId);
             }
         }
         cleanUpActivityServicesLocked(r);
