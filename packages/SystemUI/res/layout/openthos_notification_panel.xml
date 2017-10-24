@@ -30,13 +30,15 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/notification_clear_all"
             android:layout_marginRight="20dp"
-            android:text="@string/clear_all"/>
+            android:background="@null"
+            android:text="@string/notification_manager"/>
         <Button
             android:id="@+id/notification_clear_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/notification_manager"/>
+            android:background="@null"
+            android:text="@string/clear_all"/>
     </RelativeLayout>
 
     <!-- start of notification panel -->

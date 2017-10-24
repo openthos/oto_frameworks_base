@@ -142,6 +142,7 @@ import android.widget.FrameLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.colorextraction.ColorExtractor;
@@ -355,6 +356,11 @@ public class StatusBar extends SystemUI implements DemoMode,
      */
     private static final int HINT_RESET_DELAY_MS = 1200;
 
+    //Notification panel
+    private static final String NOTIFICATION_SETTINGS = "com.android.settings";
+    private static final String NOTIFICATION_SETTINGS_MANAGER =
+                                NOTIFICATION_SETTINGS + ".applications.ManageApplications";
+
     private static final AudioAttributes VIBRATION_ATTRIBUTES = new AudioAttributes.Builder()
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
@@ -446,6 +452,8 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     // expanded notifications
     protected NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
+    private Button mButtonNotificationManager;
+    private Button mButtonNotificationClearAll;
     View mExpandedContents;
     TextView mNotificationPanelDebugText;
 
@@ -1268,6 +1276,11 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
+
+        mButtonNotificationManager = (Button) mNotificationPanel.findViewById(R.id.notification_manager);
+        mButtonNotificationClearAll = (Button) mNotificationPanel.findViewById(R.id.notification_clear_all);
+        mButtonNotificationManager.setOnClickListener(mNotificationClickListener);
+        mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
     }
 
     protected void createNavigationBar() {
@@ -1442,6 +1455,26 @@ public class StatusBar extends SystemUI implements DemoMode,
         });
         mStackScroller.setDismissView(mDismissView);
     }
+
+    private View.OnClickListener mNotificationClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.notification_manager:
+                    Intent displayIntent = new Intent();
+                    ComponentName cDisplay = new ComponentName(NOTIFICATION_SETTINGS,
+                                                 NOTIFICATION_SETTINGS_MANAGER);
+                    displayIntent.setComponent(cDisplay);
+                    displayIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(displayIntent);
+                    break;
+		case R.id.notification_clear_all:
+                    mMetricsLogger.action(MetricsEvent.ACTION_DISMISS_ALL_NOTES);
+                    clearAllNotifications();
+                    break;
+            }
+        }
+    };
 
     protected void createUserSwitcher() {
         mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
