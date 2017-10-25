@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
+import android.os.SystemClock;
 import com.android.systemui.R;
 
 import java.lang.reflect.Method;
@@ -156,8 +156,8 @@ public class PowerSourceActivity extends Activity implements View.OnClickListene
                 finish();
                 break;
             case R.id.power_sleep:
-                closeButtonShowStatusBar();
-                finishStatusbarPowerLayout();
+                PowerManager powerManager = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+                powerManager.goToSleep(SystemClock.uptimeMillis());
                 finish();
                 break;
             case R.id.power_close:
