@@ -409,6 +409,16 @@ public class Session extends IWindowSession.Stub
         }
     }
 
+    public boolean isTaskDocked(IWindow window) {
+        if (DEBUG_TASK_POSITIONING) Slog.d(TAG_WM, "isTaskDocked");
+        long ident = Binder.clearCallingIdentity();
+        try {
+            return mService.isTaskDocked(window);
+        } finally {
+            Binder.restoreCallingIdentity(ident);
+        }
+    }
+
     @Override
     public void reportDropResult(IWindow window, boolean consumed) {
         IBinder token = window.asBinder();

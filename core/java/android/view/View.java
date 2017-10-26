@@ -23054,6 +23054,21 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     }
 
     /**
+     * When the window finish positioning, judge whether is docked.
+     * @return whether the window is docked.
+     * @hide
+     */
+    public final boolean isTaskDocked() {
+        if (ViewDebug.DEBUG_POSITIONING) Log.d(VIEW_LOG_TAG, "isTaskDocked");
+        try {
+            return mAttachInfo.mSession.isTaskDocked(mAttachInfo.mWindow);
+        } catch (RemoteException e) {
+            Log.e(VIEW_LOG_TAG, "Unable to ensure Task isDocked", e);
+        }
+        return false;
+    }
+
+    /**
      * Handles drag events sent by the system following a call to
      * {@link android.view.View#startDragAndDrop(ClipData,DragShadowBuilder,Object,int)
      * startDragAndDrop()}.

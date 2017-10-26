@@ -30,6 +30,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
+import android.view.ViewTreeObserver;
 import android.content.pm.PackageManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -171,6 +172,15 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         PackageManager pm = getContext().getPackageManager();
         appName.setText(pm.getApplicationLabel(getContext().getApplicationInfo()));
         appIcon.setImageDrawable(pm.getApplicationIcon(getContext().getApplicationInfo()));
+
+        mRotate.getViewTreeObserver().addOnGlobalLayoutListener(
+                         new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRotate.setVisibility(isTaskDocked() ? GONE : VISIBLE);
+                mRotate.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
     }
 
     @Override
