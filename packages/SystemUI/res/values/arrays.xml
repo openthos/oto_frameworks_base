@@ -26,7 +26,7 @@
         <item>@string/remove_out</item>
     </string-array>
 
-    <string-array name="grid_menu">
+    <string-array name="grid_menu_lock">
         <item>@string/open</item>
         <item>@string/phone_mode</item>
         <item>@string/desktop_mode</item>
@@ -34,19 +34,27 @@
         <item>@string/uninstall</item>
     </string-array>
 
+    <string-array name="grid_menu_unlock">
+        <item>@string/open</item>
+        <item>@string/phone_mode</item>
+        <item>@string/desktop_mode</item>
+        <item>@string/unlock_app</item>
+        <item>@string/uninstall</item>
+    </string-array>
+
     <string-array name="bar_menu_normal">
         <item>@string/close</item>
-        <item>@string/dock</item>
+        <item>@string/lock_app</item>
     </string-array>
 
     <string-array name="bar_menu_docked_closed">
         <item>@string/open</item>
-        <item>@string/undock</item>
+        <item>@string/unlock_app</item>
     </string-array>
 
     <string-array name="bar_menu_docked_open">
         <item>@string/close</item>
-        <item>@string/undock</item>
+        <item>@string/unlock_app</item>
     </string-array>
 
     <string-array name="bar_show_hide">

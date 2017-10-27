@@ -97,10 +97,6 @@ public class BaseDialog extends Dialog {
         show();
     }
 
-    public void show(DialogType type, int x, int y) {
-
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (!hasFocus) {

@@ -176,8 +176,8 @@ import com.android.systemui.UiOffloadThread;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.classifier.FalsingLog;
 import com.android.systemui.classifier.FalsingManager;
-import com.android.systemui.dialog.BaseDialog;
 import com.android.systemui.dialog.MenuDialog;
+import com.android.systemui.dialog.TaskbarIcon;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -257,8 +257,6 @@ import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
 import com.android.systemui.startupmenu.U;
-import com.android.systemui.dialog.BarDialog;
-import com.android.systemui.statusbar.phone.OpenthosStatusBarView;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -443,7 +441,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     Point mCurrentDisplaySize = new Point();
 
     protected LinearLayout mActivityLayout;
-    protected int mPrevTaskId = -1;
+    protected ComponentName mPrevCmp;
     protected StatusBarWindowView mStatusBarWindow;
     protected OpenthosStatusBarView mOpenthosStatusBarView;
     protected PhoneStatusBarView mStatusBarView;
@@ -798,8 +796,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
     private HashMap<ExpandableNotificationRow, List<ExpandableNotificationRow>> mTmpChildOrderMap
             = new HashMap<>();
-    private HashMap<Integer, FrameLayout> mIconMap = new HashMap<>();
-    private HashMap<ComponentName, FrameLayout> mDockedMap = new HashMap<>();
+    private Map<ComponentName, TaskbarIcon> mShowIcons = new HashMap<>();
     private RankingMap mLatestRankingMap;
     private boolean mNoAnimationOnNextBarModeChange;
     private FalsingManager mFalsingManager;
@@ -817,7 +814,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private View mNavigationBarView;
     private int mDownX;
     private int mDownY;
-    private BaseDialog mShowTaskbarDialog;
+    private MenuDialog mShowTaskbarDialog;
 
     @Override
     public void start() {
@@ -3381,28 +3378,51 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void iconClose(int taskId) {
-        FrameLayout v = mIconMap.remove(taskId);
-        if (v != null) {
-            if (!mDockedMap.containsValue(v)) {
-                mActivityLayout.removeView(v);
-            } else {
-                v.findViewById(R.id.activity_focused).
-                        setVisibility(View.GONE);
-                v.findViewById(R.id.activity_run).
-                        setVisibility(View.GONE);
+        for (ComponentName cmp : mShowIcons.keySet()) {
+            TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
+            if (taskbarIcon.getTaskId() == taskId) {
+                if (!taskbarIcon.isLocked()) {
+                    mActivityLayout.removeView(taskbarIcon.getIconLayout());
+                    mShowIcons.remove(cmp);
+                }
+                taskbarIcon.setRun(false);
+                break;
             }
         }
     }
 
-    public void setFocusedIcon(int taskId) {
-        if (taskId != mPrevTaskId) {
-            mIconMap.get(taskId).findViewById(R.id.activity_focused).
-                    setVisibility(View.VISIBLE);
-            if (mIconMap.get(mPrevTaskId) != null) {
-                mIconMap.get(mPrevTaskId).findViewById(R.id.activity_focused).
-                        setVisibility(View.GONE);
+    public boolean isLocked(ComponentName componentName) {
+        if (mShowIcons.get(componentName) != null) {
+            return mShowIcons.get(componentName).isLocked();
+        }
+        return false;
+    }
+
+    public void locked(ComponentName componentName) {
+        TaskbarIcon taskbarIcon = mShowIcons.get(componentName);
+        if (taskbarIcon == null) {
+            taskbarIcon = new TaskbarIcon(componentName, createIconLayout(componentName));
+            mShowIcons.put(componentName, taskbarIcon);
+        }
+        taskbarIcon.setLocked(true);
+    }
+
+    public void unlocked(ComponentName componentName) {
+        TaskbarIcon taskbarIcon = mShowIcons.get(componentName);
+        if (taskbarIcon != null) {
+            if (!taskbarIcon.isRun()) {
+                mActivityLayout.removeView(taskbarIcon.getIconLayout());
+                mShowIcons.remove(componentName);
+            } else {
+                taskbarIcon.setLocked(false);
             }
-            mPrevTaskId = taskId;
+        }
+    }
+
+    public void closeApp(ComponentName componentName) {
+        try {
+            ActivityManager.getService().removeTask(mShowIcons.get(componentName).getTaskId());
+        } catch (Exception e) {
         }
     }
 
@@ -3423,24 +3443,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         return icon;
     }
 
-    public void bindIconToTaskId(int taskId, ComponentName cmp) {
-        FrameLayout iconLayout;
-        if (!mDockedMap.containsKey(cmp) || (mIconMap.containsValue(mDockedMap.get(cmp))
-                && mIconMap.get(taskId) == null)) {
-            iconLayout = (FrameLayout) View.inflate(mContext,
-                    R.layout.statusbar_activity_button, null);
-            mActivityLayout.addView(iconLayout);
-        } else {
-            iconLayout = mDockedMap.get(cmp);
-        }
-        iconLayout.findViewById(R.id.activity_focused).setVisibility(View.VISIBLE);
-        iconLayout.findViewById(R.id.activity_run).setVisibility(View.VISIBLE);
-        mIconMap.put(taskId, iconLayout);
-        if (mIconMap.get(mPrevTaskId) != null) {
-            mIconMap.get(mPrevTaskId).findViewById(R.id.activity_focused).
-                    setVisibility(View.GONE);
-        }
-        mPrevTaskId = taskId;
+    private FrameLayout createIconLayout(final ComponentName cmp) {
+        final FrameLayout iconLayout = (FrameLayout) View.inflate(mContext,
+                R.layout.statusbar_activity_button, null);
         ImageView iconView = (ImageView) iconLayout.findViewById(R.id.icon_view);
         iconView.setImageDrawable(getPackageIcon(cmp.getPackageName()));
         iconView.setOnClickListener(new View.OnClickListener() {
@@ -3448,8 +3453,8 @@ public class StatusBar extends SystemUI implements DemoMode,
             public void onClick(View v) {
                 try {
                     IActivityManager am = ActivityManager.getService();
-                    if (mIconMap.get(taskId) != null) {
-                        am.setFocusedTask(taskId);
+                    if (mShowIcons.get(cmp).isRun()) {
+                        am.setFocusedTask(mShowIcons.get(cmp).getTaskId());
                     } else {
                         U.launchApp(mContext, cmp);
                     }
@@ -3461,38 +3466,53 @@ public class StatusBar extends SystemUI implements DemoMode,
         iconView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                BarDialog.getInstance(mContext, cmp, taskId, mActivityLayout,
-                        iconLayout, mIconMap, mDockedMap).showDialog();
+                TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
+                if (taskbarIcon != null) {
+                    if (taskbarIcon.isRun() && taskbarIcon.isLocked()) {
+                        mShowTaskbarDialog.show(DialogType.BAR_LOCK_OPEN, cmp, iconLayout);
+                    } else if (taskbarIcon.isLocked()) {
+                        mShowTaskbarDialog.show(DialogType.BAR_LOCK_CLOSE, cmp, iconLayout);
+                    } else {
+                        mShowTaskbarDialog.show(DialogType.BAR_NORMAL, cmp, iconLayout);
+                    }
+                }
                 return true;
             }
         });
         iconView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    BarDialog dialog = BarDialog.getInstance(mContext, cmp, taskId,
-                            mActivityLayout, iconLayout, mIconMap, mDockedMap);
-                    dialog.mShowX = (int) event.getRawX();
-                    dialog.mShowY = (int) event.getRawY();
-                }
                 return false;
             }
         });
+        mActivityLayout.addView(iconLayout);
+        return iconLayout;
+    }
+
+    public void bindIconToTaskId(int taskId, ComponentName cmp) {
+        if (mPrevCmp != null && mShowIcons.get(mPrevCmp) != null) {
+            mShowIcons.get(mPrevCmp).setFocus(false);
+        }
+        TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
+        if (taskbarIcon == null) {
+            taskbarIcon = new TaskbarIcon(cmp, createIconLayout(cmp));
+            mShowIcons.put(cmp, taskbarIcon);
+        }
+        taskbarIcon.setFocus(true);
+        taskbarIcon.setRun(true);
+        taskbarIcon.setTaskId(taskId);
+        mPrevCmp = cmp;
     }
 
     @Override
     public void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) {
+        android.util.Log.i("ljh", "taskId " + taskId + " keep " + keep + " cmp" + cmp);
         if (!keep || cmp == null) {
             iconClose(taskId);
             return;
         }
 
-        if (mIconMap.get(taskId) != null) {
-            setFocusedIcon(taskId);
-            //setFocused
-        } else {
-            bindIconToTaskId(taskId, cmp);
-        }
+        bindIconToTaskId(taskId, cmp);
     }
 
     @Override

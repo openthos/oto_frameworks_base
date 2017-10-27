@@ -788,10 +788,11 @@
     <string name="time_sort">安装时间</string>
     <string name="default_sort">默认</string>
     <string name="open">打开</string>
+    <string name="close">关闭</string>
     <string name="phone_mode">手机模式</string>
     <string name="desktop_mode">桌面模式</string>
     <string name="lock_app">固定到任务栏</string>
-    <string name="unlock_app">接触固定</string>
+    <string name="unlock_app">解除固定</string>
     <string name="uninstall">卸载</string>
     <string name="remove_out">移除</string>
 

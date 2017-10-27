@@ -16,7 +16,6 @@
 package com.android.systemui.startupmenu;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -183,8 +182,6 @@ public class StartMenuAdapter extends BaseAdapter
     }
 
     private void showDialog(int x, int y, AppEntry appInfo) {
-        Log.i("ljh", "弹菜单");
         mMenuDialog.show(mType == ShowType.GRID ? DialogType.GRID : DialogType.LIST, appInfo, x, y);
-
     }
 }
