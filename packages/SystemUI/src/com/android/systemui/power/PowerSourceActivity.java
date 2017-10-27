@@ -1,18 +1,22 @@
 package com.android.systemui.power;
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ComponentName;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.os.PowerManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.os.SystemClock;
-import com.android.systemui.R;
-
+import android.util.Log;
 import java.lang.reflect.Method;
+
+import com.android.systemui.LockReceiver;
+import com.android.systemui.R;
 
 public class PowerSourceActivity extends Activity implements View.OnClickListener {
 
@@ -148,11 +152,16 @@ public class PowerSourceActivity extends Activity implements View.OnClickListene
                 //Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
                 break;
             case R.id.power_lock:
-//                closeButtonShowStatusBar();
-//                Intent intentLock = new Intent("android.intent.action.LOCKNOW");
-//                intentLock.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-//                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intentLock);
+                DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager)
+			                getSystemService(Context.DEVICE_POLICY_SERVICE);
+                if (mDevicePolicyManager.isAdminActive(LockReceiver.getCn(this))) {
+                    mDevicePolicyManager.lockNow();
+                } else {
+                    Intent intentLock = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                    intentLock.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, LockReceiver.getCn(this));
+                    intentLock.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "lock screen");
+                    startActivity(intentLock);
+                }
                 finish();
                 break;
             case R.id.power_sleep:

@@ -550,7 +550,9 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     private Runnable mMakeNavigationBarVisibleRunnable = new Runnable() {
         @Override
         public void run() {
-            mStatusBar.getNavigationBarView().getRootView().setVisibility(View.VISIBLE);
+            if (mStatusBar.getNavigationBarView() != null) {
+                mStatusBar.getNavigationBarView().getRootView().setVisibility(View.VISIBLE);
+            }
         }
     };
 
