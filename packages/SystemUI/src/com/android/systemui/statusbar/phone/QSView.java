@@ -4,18 +4,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
-import android.hardware.input.InputManager;
 import android.net.ConnectivityManager;
 import android.net.EthernetManager;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
-import android.util.Log;
-import com.android.systemui.startupmenu.U;
+
+import com.android.systemui.startupmenu.LaunchAppUtil;
 
 import com.android.systemui.R;
 
@@ -88,7 +85,7 @@ public class QSView extends LinearLayout {
 		    }
                     break;
                 case R.id.qs_settings:
-                    U.launchApp(getContext(),
+                    LaunchAppUtil.launchApp(getContext(),
                         new ComponentName("com.android.settings", "com.android.settings.Settings"));
                     break;
                 case R.id.qs_projection:

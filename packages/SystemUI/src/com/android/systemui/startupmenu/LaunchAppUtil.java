@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
  * Created by ljh on 17-9-25.
  */
 
-public class U {
+public class LaunchAppUtil {
 
     private static final int FULLSCREEN_WORKSPACE_STACK_ID = 1;
     private static final int FREEFORM_WORKSPACE_STACK_ID = 2;

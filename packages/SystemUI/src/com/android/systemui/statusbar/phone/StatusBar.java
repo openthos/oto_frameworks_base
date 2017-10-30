@@ -203,6 +203,7 @@ import com.android.systemui.recents.events.activity.UndockingTaskEvent;
 import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.WindowManagerProxy;
+import com.android.systemui.startupmenu.LaunchAppUtil;
 import com.android.systemui.startupmenu.DialogType;
 import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.BackDropView;
@@ -256,7 +257,6 @@ import com.android.systemui.statusbar.stack.StackStateAnimator;
 import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
-import com.android.systemui.startupmenu.U;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -3457,7 +3457,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                     if (mShowIcons.get(cmp).isRun()) {
                         am.setFocusedTask(mShowIcons.get(cmp).getTaskId());
                     } else {
-                        U.launchApp(mContext, cmp);
+                        LaunchAppUtil.launchApp(mContext, cmp);
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Error during setFocuesTask", e);

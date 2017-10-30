@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -90,16 +91,17 @@ public class OpenthosStatusBarView extends PanelBar {
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mHomeView = (ImageView) findViewById(R.id.iv_home_status_bar);
         //mSrollStatusBar = (HorizontalScrollView) findViewById(R.id.sroll_status_bar);
-
-        //init dialog.
+        initDialog();
         mStartupMenuDialog = StartupMenuDialog.getInstance(getContext());
+        openthosStatusBarClickListener();
+    }
+
+    private void initDialog() {
         mInputManagerDialog = new InputMethodDialog(getContext());
         mBatteryDialog = new BatteryDialog(getContext());
         mWifiDialog = new WifiDialog(getContext());
         mVolumeDialog = new VolumeDialog(getContext());
         mCalendarDialog = new CalendarDialog(getContext());
-
-        openthosStatusBarClickListener();
     }
 
     private void openthosStatusBarClickListener() {
@@ -207,5 +209,13 @@ public class OpenthosStatusBarView extends PanelBar {
         layoutParams.width = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_height);
         setLayoutParams(layoutParams);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        android.util.Log.i("ljh", "OpenthosStatusBarView onConfigurationChanged");
+        mStartupMenuDialog = StartupMenuDialog.reCreateStartupMenudialog(getContext());
+        initDialog();
     }
 }

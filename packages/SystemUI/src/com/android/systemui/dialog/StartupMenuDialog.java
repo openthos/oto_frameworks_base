@@ -29,10 +29,10 @@ import com.android.systemui.power.PowerSourceActivity;
 import com.android.systemui.sql.SqliteOpenHelper;
 import com.android.systemui.sql.StartMenuDatabaseField;
 import com.android.systemui.startupmenu.AppEntry;
+import com.android.systemui.startupmenu.LaunchAppUtil;
 import com.android.systemui.startupmenu.ShowType;
 import com.android.systemui.startupmenu.SortSelectPopupWindow;
 import com.android.systemui.startupmenu.StartMenuAdapter;
-import com.android.systemui.startupmenu.U;
 
 import java.io.File;
 import java.text.Collator;
@@ -93,6 +93,11 @@ public class StartupMenuDialog extends BaseDialog
         return mStartupMenuDialog;
     }
 
+    public static StartupMenuDialog reCreateStartupMenudialog(Context context){
+        mStartupMenuDialog = new StartupMenuDialog(context);
+        return mStartupMenuDialog;
+    }
+
     private StartupMenuDialog(@NonNull Context context) {
         super(context);
         mContentView =
@@ -136,7 +141,7 @@ public class StartupMenuDialog extends BaseDialog
 
         mSearchView.addTextChangedListener(this);
         mSortSelectPopupWindow = new SortSelectPopupWindow(getContext());
-        mType = U.getSharedPreferences(getContext()).getInt("sortType", DEFAULT_SORT);
+        mType = LaunchAppUtil.getSharedPreferences(getContext()).getInt("sortType", DEFAULT_SORT);
 
         mHandler = new Handler();
     }
@@ -163,7 +168,7 @@ public class StartupMenuDialog extends BaseDialog
                 dismiss();
                 break;
             case R.id.system_setting:
-                U.launchApp(getContext(),
+                LaunchAppUtil.launchApp(getContext(),
                         new ComponentName("com.android.settings", "com.android.settings.Settings"));
                 dismiss();
                 break;
@@ -430,7 +435,7 @@ public class StartupMenuDialog extends BaseDialog
     }
 
     private void saveSortTypeToSP(int type) {
-        U.getSharedPreferences(getContext()).edit().putInt("sortType", type).commit();
+        LaunchAppUtil.getSharedPreferences(getContext()).edit().putInt("sortType", type).commit();
     }
 
     @Override

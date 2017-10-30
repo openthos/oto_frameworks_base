@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,8 +23,8 @@ import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.sql.SqliteOperate;
 import com.android.systemui.startupmenu.AppEntry;
+import com.android.systemui.startupmenu.LaunchAppUtil;
 import com.android.systemui.startupmenu.DialogType;
-import com.android.systemui.startupmenu.U;
 import com.android.systemui.statusbar.phone.StatusBar;
 
 import java.util.ArrayList;
@@ -185,13 +184,13 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         dismiss();
         String content = mDatas.get(position);
         if (content.equals(getContext().getString(R.string.open))) {
-            U.launchApp(getContext(), mComponentName);
+            LaunchAppUtil.launchApp(getContext(), mComponentName);
             SqliteOperate.updateDataStorage(getContext(), mAppEntry);
         } else if (content.equals(getContext().getString(R.string.phone_mode))) {
-            U.launchApp(getContext(), mComponentName, U.PHONE_MODE);
+            LaunchAppUtil.launchApp(getContext(), mComponentName, LaunchAppUtil.PHONE_MODE);
             SqliteOperate.updateDataStorage(getContext(), mAppEntry);
         } else if (content.equals(getContext().getString(R.string.desktop_mode))) {
-            U.launchApp(getContext(), mComponentName, U.DESKTOP_MODE);
+            LaunchAppUtil.launchApp(getContext(), mComponentName, LaunchAppUtil.DESKTOP_MODE);
             SqliteOperate.updateDataStorage(getContext(), mAppEntry);
         } else if (content.equals(getContext().getString(R.string.lock_app))) {
             mStatusBar.locked(mComponentName);

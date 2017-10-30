@@ -154,7 +154,7 @@ public class StartMenuAdapter extends BaseAdapter
     }
 
     private void openApplication(AppEntry appInfo) {
-        U.launchApp(mContext, appInfo.getComponentName());
+        LaunchAppUtil.launchApp(mContext, appInfo.getComponentName());
         SqliteOperate.updateDataStorage(mContext, appInfo);
     }
 
