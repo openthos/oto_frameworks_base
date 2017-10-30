@@ -271,6 +271,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
 import android.view.Gravity;
 
 public class StatusBar extends SystemUI implements DemoMode,
@@ -1099,7 +1100,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
             if (showNav) {
                 //createNavigationBar();
-	        addOpenthosStatusBarLayout();
+                addOpenthosStatusBarLayout();
             }
         } catch (RemoteException ex) {
             // no window manager? good luck with that
@@ -3495,8 +3496,16 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
         TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
         if (taskbarIcon == null) {
-            taskbarIcon = new TaskbarIcon(cmp, createIconLayout(cmp));
-            mShowIcons.put(cmp, taskbarIcon);
+            for (ComponentName componentName : mShowIcons.keySet()) {
+                if (mShowIcons.get(componentName).getTaskId() == taskId) {
+                    taskbarIcon = mShowIcons.get(componentName);
+                    break;
+                }
+            }
+            if (taskbarIcon == null) {
+                taskbarIcon = new TaskbarIcon(cmp, createIconLayout(cmp));
+                mShowIcons.put(cmp, taskbarIcon);
+            }
         }
         taskbarIcon.setFocus(true);
         taskbarIcon.setRun(true);
