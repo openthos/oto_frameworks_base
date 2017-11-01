@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.android.systemui.statusbar.phone.OpenthosNotificationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/notification_container_parent"
     android:layout_width="@dimen/notification_panel_width"
@@ -18,6 +18,7 @@
         android:background="#1Affffff">
 
         <TextView
+            android:id="@+id/notification_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -144,6 +145,7 @@
                 android:src="@mipmap/ic_notification_screen_shot"/>
 
             <TextView
+                android:id="@+id/shot_screen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/notification_shot_screen"
@@ -166,6 +168,7 @@
                 android:src="@mipmap/ic_notification_isolation_off"/>
 
             <TextView
+                android:id="@+id/isolation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/notification_isolation_on"
@@ -188,6 +191,7 @@
                 android:src="@mipmap/ic_notification_setting"/>
 
             <TextView
+                android:id="@+id/settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/notification_settings"
@@ -210,6 +214,7 @@
                 android:src="@mipmap/ic_notification_projection_off"/>
 
             <TextView
+                android:id="@+id/projection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/notification_projection"
@@ -219,4 +224,4 @@
         </LinearLayout>
     </com.android.systemui.statusbar.phone.QSView>
     <!-- end quick settings layout -->
-</LinearLayout>
+</com.android.systemui.statusbar.phone.OpenthosNotificationView>

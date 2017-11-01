@@ -2,15 +2,18 @@ package com.android.systemui.statusbar.phone;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.net.ConnectivityManager;
 import android.net.EthernetManager;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
+import android.widget.TextView;
 
 import com.android.systemui.startupmenu.LaunchAppUtil;
 
@@ -72,21 +75,21 @@ public class QSView extends LinearLayout {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.qs_shot_screen:
-                   //((InputManager)mContext.getSystemService(Context.INPUT_SERVICE))
-                   //    .sendKeyEvent(KeyEvent.KEYCODE_SYSRQ);
+                    //((InputManager)mContext.getSystemService(Context.INPUT_SERVICE))
+                    //    .sendKeyEvent(KeyEvent.KEYCODE_SYSRQ);
                     break;
                 case R.id.qs_isolation:
-		    if ((mNumClick ++) % 2 == 0) {
+                    if ((mNumClick++) % 2 == 0) {
                         stopAllConnection(false);
                         mIsolation.setImageDrawable(getResources().getDrawable(R.mipmap.ic_notification_isolation_off));
-		    } else {
-			stopAllConnection(true);
+                    } else {
+                        stopAllConnection(true);
                         mIsolation.setImageDrawable(getResources().getDrawable(R.mipmap.ic_notification_isolation_on));
-		    }
+                    }
                     break;
                 case R.id.qs_settings:
                     LaunchAppUtil.launchApp(getContext(),
-                        new ComponentName("com.android.settings", "com.android.settings.Settings"));
+                            new ComponentName("com.android.settings", "com.android.settings.Settings"));
                     break;
                 case R.id.qs_projection:
                     break;
@@ -112,10 +115,37 @@ public class QSView extends LinearLayout {
     public void stopAllConnection(boolean state) {
         final ConnectivityManager mgr = (ConnectivityManager) mContext
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        final EthernetManager ethManager = (EthernetManager)mContext
+        final EthernetManager ethManager = (EthernetManager) mContext
                 .getSystemService(Context.ETHERNET_SERVICE);
         mgr.setAirplaneMode(state);
         //ethManager.stop();
         //ethManager.start();
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateResource();
+    }
+
+    private void updateResource() {
+        TextView shotScreen = (TextView) findViewById(R.id.shot_screen);
+        TextView isolation = (TextView) findViewById(R.id.isolation);
+        TextView settings = (TextView) findViewById(R.id.settings);
+        TextView projection = (TextView) findViewById(R.id.projection);
+
+        shotScreen.setText(getResources().getString(R.string.notification_shot_screen));
+        isolation.setText(getResources().getString(R.string.notification_isolation));
+        settings.setText(getResources().getString(R.string.notification_settings));
+        projection.setText(getResources().getString(R.string.notification_projection));
+
+        shotScreen.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
+        isolation.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
+        settings.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
+        projection.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
     }
 }
