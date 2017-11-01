@@ -12,7 +12,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.android.systemui.R;
-import com.android.systemui.dialog.MenuDialog;
 import com.android.systemui.dialog.StartupMenuDialog;
 
 import java.lang.reflect.Method;
@@ -51,7 +50,6 @@ public class LaunchAppUtil {
 
     public static void launchApp(Context context, ComponentName componentName, int startMode) {
         StartupMenuDialog.dismissDialog();
-        MenuDialog.dismissMenuDialog();
         Intent intent = new Intent();
         intent.setComponent(componentName);
         launchApp(context, intent, startMode);

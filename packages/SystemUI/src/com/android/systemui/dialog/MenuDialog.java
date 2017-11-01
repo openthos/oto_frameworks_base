@@ -36,7 +36,6 @@ import java.util.List;
  */
 
 public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickListener {
-    private static MenuDialog listDialog;
     private List<String> mDatas;
     private DialogAdapter mAdapter;
     private ListView mListView;
@@ -46,19 +45,6 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
     private int mHeight;
     private int mStatusBarHeight;
     private StatusBar mStatusBar;
-
-    public static MenuDialog getInstance(Context context) {
-        if (listDialog == null) {
-            listDialog = new MenuDialog(context);
-        }
-        return listDialog;
-    }
-
-    public static void dismissMenuDialog() {
-        if (listDialog != null && listDialog.isShowing()) {
-            listDialog.dismiss();
-        }
-    }
 
     public MenuDialog(@NonNull Context context) {
         super(context);
@@ -82,6 +68,8 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         mAdapter = new DialogAdapter();
         mListView.setAdapter(mAdapter);
         mStatusBar = SysUiServiceProvider.getComponent(getContext(), StatusBar.class);
+        mStatusBarHeight = getContext().getResources().
+                getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
     }
 
     public void show(DialogType type, AppEntry appEntry, int x, int y) {
@@ -105,24 +93,18 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         lp.dimAmount = 0;
         switch (type) {
             case SHOW_TASKBAR:
-            case BAR_LOCK_OPEN:
-            case BAR_LOCK_CLOSE:
-            case BAR_NORMAL:
+                dialogWindow.setWindowAnimations(R.style.ShowDialog);
                 dialogWindow.setGravity(Gravity.LEFT | Gravity.BOTTOM);
                 lp.x = x - mWidth / 2;
                 lp.y = 0;
                 break;
             default:
-                dialogWindow.setGravity(Gravity.CENTER);
-                if (x > mPoint.x - mWidth) {
-                    lp.x = x - mWidth / 2 - mPoint.x / 2;
+                dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
+                lp.x = x;
+                if (y > mPoint.y - mHeight - mStatusBarHeight) {
+                    lp.y = y - mHeight;
                 } else {
-                    lp.x = x + mWidth / 2 - mPoint.x / 2;
-                }
-                if (y < mPoint.y - mStatusBarHeight - mHeight) {
-                    lp.y = y + mHeight / 2 - mPoint.y / 2;
-                } else {
-                    lp.y = y - mHeight / 2 - mPoint.y / 2;
+                    lp.y = y;
                 }
                 break;
         }

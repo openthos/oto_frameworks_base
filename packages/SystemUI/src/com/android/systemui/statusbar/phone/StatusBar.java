@@ -1295,7 +1295,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mButtonNotificationManager.setOnClickListener(mNotificationClickListener);
         mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
 
-        mShowTaskbarDialog = MenuDialog.getInstance(mContext);
+        mShowTaskbarDialog = new MenuDialog(mContext);
     }
 
     //add openthos status bar view.

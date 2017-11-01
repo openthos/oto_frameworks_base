@@ -51,7 +51,7 @@ public class StartMenuAdapter extends BaseAdapter
         mType = type;
         mDatas = datas;
         isGrid = mType == ShowType.GRID;
-        mMenuDialog = MenuDialog.getInstance(context);
+        mMenuDialog = new MenuDialog(context);
     }
 
     @Override
@@ -156,6 +156,9 @@ public class StartMenuAdapter extends BaseAdapter
     private void openApplication(AppEntry appInfo) {
         LaunchAppUtil.launchApp(mContext, appInfo.getComponentName());
         SqliteOperate.updateDataStorage(mContext, appInfo);
+        if (mMenuDialog.isShowing()){
+            mMenuDialog.dismiss();
+        }
     }
 
     private class ViewHolder {
