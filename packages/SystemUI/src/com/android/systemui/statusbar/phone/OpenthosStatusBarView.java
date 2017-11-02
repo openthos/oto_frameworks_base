@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.ImageView;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.DejankUtils;
@@ -23,7 +24,9 @@ import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.InputMethodDialog;
 import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.dialog.VolumeDialog;
+import com.android.systemui.dialog.MenuDialog;
 import com.android.systemui.dialog.WifiDialog;
+import com.android.systemui.startupmenu.DialogType;
 
 import com.android.systemui.R;
 
@@ -36,8 +39,6 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private StatusBar mStatusBar;
     private Context mContext;
-
-    //==================================================== Openthos Status bar
     private ImageView mStartupMenu;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private ImageView mInputView;
@@ -47,6 +48,9 @@ public class OpenthosStatusBarView extends PanelBar {
     private ImageView mNotificationView;
     private CalendarDisplayView mCalendarView;
     private ImageView mHomeView;
+    private HorizontalScrollView mScrollStatusBar;
+    private LinearLayout mllScrollContents;
+    private View mEmptyStatusBar;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mInputManagerDialog;
     private BaseDialog mBatteryDialog;
@@ -54,6 +58,9 @@ public class OpenthosStatusBarView extends PanelBar {
     private BaseDialog mVolumeDialog;
     private BaseDialog mCalendarDialog;
     private BaseDialog mCurrentDialog;
+
+    private int mDownX = 0;
+    private int mDownY = 0;
 
     public OpenthosStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -90,7 +97,9 @@ public class OpenthosStatusBarView extends PanelBar {
         mNotificationView = (ImageView) findViewById(R.id.iv_notification_status_bar);
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mHomeView = (ImageView) findViewById(R.id.iv_home_status_bar);
-        //mSrollStatusBar = (HorizontalScrollView) findViewById(R.id.sroll_status_bar);
+        mScrollStatusBar = (HorizontalScrollView) findViewById(R.id.sroll_status_bar);
+        mEmptyStatusBar = (View) findViewById(R.id.empty_statusbar);
+        mllScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
         initDialog();
         mStartupMenuDialog = StartupMenuDialog.getInstance(getContext());
         openthosStatusBarClickListener();
@@ -113,6 +122,9 @@ public class OpenthosStatusBarView extends PanelBar {
         mNotificationView.setOnClickListener(mOpenthosStatusbarListener);
         mCalendarView.setOnClickListener(mOpenthosStatusbarListener);
         mHomeView.setOnClickListener(mOpenthosStatusbarListener);
+        mEmptyStatusBar.setOnClickListener(mOpenthosStatusbarListener);
+        mScrollStatusBar.setOnClickListener(mOpenthosStatusbarListener);
+        mllScrollContents.setOnClickListener(mOpenthosStatusbarListener);
     }
 
     private View.OnClickListener mOpenthosStatusbarListener = new View.OnClickListener() {
@@ -148,9 +160,44 @@ public class OpenthosStatusBarView extends PanelBar {
                     home.addCategory(Intent.CATEGORY_HOME);
                     mContext.startActivity(home);
                     break;
+		case R.id.sroll_status_bar:
+                    //Handle events
+                    break;
+		case R.id.ll_scroll_icon_contents:
+		    //Handle events
+		    break;
+		case R.id.empty_statusbar:
+                    //click empty status bar ,then dismiss all dialog and hide notification panel.
+                    if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
+                        mCurrentDialog.dismiss();
+                    }
+		    setCustomStatusBar();
+                    mStatusBar.hideCustomNotificationPanel();
+		    break;
             }
         }
     };
+
+    //show / hide status bar.
+    private void setCustomStatusBar() {
+        mEmptyStatusBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mDownX = (int) event.getRawX();
+                    mDownY = (int) event.getRawY();
+                }
+                return false;
+            }
+        });
+        mEmptyStatusBar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mStatusBar.mShowTaskbarDialog.show(DialogType.SHOW_TASKBAR, mDownX, mDownY);
+                return false;
+            }
+        });
+    }
 
     private void showDialog(View view, BaseDialog dialog) {
         if (view == null) {
@@ -214,7 +261,6 @@ public class OpenthosStatusBarView extends PanelBar {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        android.util.Log.i("ljh", "OpenthosStatusBarView onConfigurationChanged");
         mStartupMenuDialog = StartupMenuDialog.reCreateStartupMenudialog(getContext());
         initDialog();
     }

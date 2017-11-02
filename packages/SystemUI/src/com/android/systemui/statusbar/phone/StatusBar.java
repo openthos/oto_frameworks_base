@@ -813,9 +813,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private NavigationBarFragment mNavigationBar;
     private View mNavigationBarView;
-    private int mDownX;
-    private int mDownY;
-    private MenuDialog mShowTaskbarDialog;
+    public MenuDialog mShowTaskbarDialog;
 
     @Override
     public void start() {
@@ -1049,8 +1047,8 @@ public class StatusBar extends SystemUI implements DemoMode,
         mNotificationPanel.setStatusBar(this);
         mNotificationPanel.setGroupManager(mGroupManager);
         mAboveShelfObserver = new AboveShelfObserver(mStackScroller);
-        mAboveShelfObserver.setListener(mStatusBarWindow.findViewById(
-                R.id.notification_container_parent));
+        //mAboveShelfObserver.setListener(mStatusBarWindow.findViewById(
+        //        R.id.notification_container_parent));
         mKeyguardStatusBar = (KeyguardStatusBarView) mStatusBarWindow.findViewById(R.id.keyguard_header);
 
         mNotificationIconAreaController = SystemUIFactory.getInstance()
@@ -1307,7 +1305,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private WindowManager.LayoutParams getOpenthosStatusBarLayoutParams() {
         mActivityLayout = (LinearLayout) mOpenthosStatusBarView.findViewById(R.id.ll_scroll_icon_contents);
-        showCustomDialog(mOpenthosStatusBarView);
         final Resources res = mContext.getResources();
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT, res.getDimensionPixelSize(R.dimen.navigation_bar_height),
@@ -1339,27 +1336,6 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mNavigationBar.setLightBarController(mLightBarController);
             }
             mNavigationBar.setCurrentSysuiVisibility(mSystemUiVisibility);
-        });
-    }
-
-    public void showCustomDialog(View view) {
-        view.findViewById(R.id.show_statusbar).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mDownX = (int) event.getRawX();
-                    mDownY = (int) event.getRawY();
-                }
-                return false;
-            }
-        });
-
-        view.findViewById(R.id.show_statusbar).setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mShowTaskbarDialog.show(DialogType.SHOW_TASKBAR, mDownX, mDownY);
-                return false;
-            }
         });
     }
 
@@ -3274,6 +3250,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (false) postStartTracing();
     }
 
+    // show notification panel view.
     public void showCustomNotificationPanel() {
         if (mNotificationPanel.isFullyCollapsed()) {
             mNotificationPanel.expand(true);
@@ -3282,6 +3259,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
     }
 
+    // hide notification panel view.
     public void hideCustomNotificationPanel() {
         if (mNotificationPanel.isFullyExpanded()) {
             mNotificationPanel.collapse(false, 1.0f);

@@ -38,7 +38,7 @@
         </HorizontalScrollView>
 
         <View
-            android:id="@+id/show_statusbar"
+            android:id="@+id/empty_statusbar"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/startupmenu_small_padding"
