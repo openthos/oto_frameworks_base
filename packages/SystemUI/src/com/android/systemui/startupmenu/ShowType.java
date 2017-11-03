@@ -1,7 +1,7 @@
 package com.android.systemui.startupmenu;
 
 /**
- * Created by ljh on 17-9-14.
+ * StartupMenu's list mode(list or grid)
  */
 
 public enum ShowType {

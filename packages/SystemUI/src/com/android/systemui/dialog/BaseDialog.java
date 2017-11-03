@@ -23,7 +23,6 @@ import com.android.systemui.startupmenu.DialogType;
 public class BaseDialog extends Dialog {
     protected View mContentView;
     protected static Point mPoint;
-    private int mViewId;
 
     public BaseDialog(@NonNull Context context) {
         this(context, R.style.StartMenuDialogStyle);
@@ -31,6 +30,7 @@ public class BaseDialog extends Dialog {
 
     public BaseDialog(@NonNull Context context, @StyleRes int themeResId) {
         super(context, themeResId);
+        //init screen's size
         if (mPoint == null) {
             Display defaultDisplay = ((WindowManager)
                     getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -59,6 +59,10 @@ public class BaseDialog extends Dialog {
 
     }
 
+    /**
+     * show dialog at the grivate of view's center
+     * @param view
+     */
     public void show(View view) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
@@ -84,23 +88,7 @@ public class BaseDialog extends Dialog {
             lp.x = location[0] + view.getMeasuredWidth() / 2 - mPoint.x / 2;
         }
         lp.y = 0;
-
-//        android.util.Log.i("ljh", "mContentView.getMeasuredWidth() " + mContentView.getMeasuredWidth());
-//        android.util.Log.i("ljh", "mContentView.getMeasuredHeight() " + mContentView.getMeasuredHeight());
-//        android.util.Log.i("ljh", "location[0] " + location[0]);
-//        android.util.Log.i("ljh", "location[1] " + location[1]);
-//        android.util.Log.i("ljh", "view.getMeasuredWidth() " + view.getMeasuredWidth());
-//        android.util.Log.i("ljh", "mPoint.x " + mPoint.x);
-//        android.util.Log.i("ljh", "--------------------------------------");
-
         dialogWindow.setAttributes(lp);
         show();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (!hasFocus) {
-//            dismiss();
-        }
     }
 }

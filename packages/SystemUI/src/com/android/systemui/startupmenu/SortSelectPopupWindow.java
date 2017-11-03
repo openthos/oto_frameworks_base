@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.android.systemui.R;
 
 /**
- * Created by ljh on 17-9-19.
+ * pop up sort way
  */
 
 public class SortSelectPopupWindow extends PopupWindow implements View.OnClickListener {
@@ -92,6 +92,9 @@ public class SortSelectPopupWindow extends PopupWindow implements View.OnClickLi
         dismiss();
     }
 
+    /**
+     * custom interface to operate when click item
+     */
     public interface SortSelectListener{
         void defaultSort(View v);
         void clickSort(View v);

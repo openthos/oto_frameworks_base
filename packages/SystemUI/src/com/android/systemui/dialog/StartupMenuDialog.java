@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -41,13 +42,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by ljh on 17-9-26.
- */
-
 public class StartupMenuDialog extends BaseDialog
         implements View.OnClickListener, View.OnHoverListener,
         SortSelectPopupWindow.SortSelectListener, TextWatcher {
+
+    // sotr type
     public static final int DEFAULT_SORT = 0;
     public static final int NAME_SORT = 1;
     public static final int NAME_SORT_REVERSE = -1;
@@ -58,9 +57,9 @@ public class StartupMenuDialog extends BaseDialog
 
     private static StartupMenuDialog mStartupMenuDialog;
 
-    private GridView mStartMenu;
+    private GridView mGridView;
     private EditText mSearchView;
-    private ListView mCommonList;
+    private ListView mListView;
     private LinearLayout mFileManager;
     private LinearLayout mSetting;
     private LinearLayout mPower;
@@ -69,12 +68,12 @@ public class StartupMenuDialog extends BaseDialog
     private TextView mSortText;
 
     private ImageView mSortSelect;
-    public List<AppEntry> mCommonDatas;
-    private List<AppEntry> mShowAppData;
+    public List<AppEntry> mListDatas;
+    private List<AppEntry> mGridDatas;
 
-    private List<AppEntry> mAppEntries;
-    public StartMenuAdapter mCommonAdapter;
-    private StartMenuAdapter mStartMenuAdapter;
+    private List<AppEntry> mAppDatas;
+    public StartMenuAdapter mListAdapter;
+    private StartMenuAdapter mGridAdapter;
     private SortSelectPopupWindow mSortSelectPopupWindow;
     private int mType;
     private Handler mHandler;
@@ -93,7 +92,7 @@ public class StartupMenuDialog extends BaseDialog
         return mStartupMenuDialog;
     }
 
-    public static StartupMenuDialog reCreateStartupMenudialog(Context context){
+    public static StartupMenuDialog reCreateStartupMenudialog(Context context) {
         mStartupMenuDialog = new StartupMenuDialog(context);
         return mStartupMenuDialog;
     }
@@ -118,7 +117,7 @@ public class StartupMenuDialog extends BaseDialog
     }
 
     public void initView() {
-        mCommonList = (ListView) findViewById(R.id.common_list);
+        mListView = (ListView) findViewById(R.id.common_list);
         mFileManager = (LinearLayout) findViewById(R.id.file_manager);
         mSetting = (LinearLayout) findViewById(R.id.system_setting);
         mPower = (LinearLayout) findViewById(R.id.power_off);
@@ -127,21 +126,27 @@ public class StartupMenuDialog extends BaseDialog
         mSortDirection = (ImageView) findViewById(R.id.sort_image_direction);
         mSortText = (TextView) findViewById(R.id.sort_text);
         mSortSelect = (ImageView) findViewById(R.id.sort_select);
-        mStartMenu = (GridView) findViewById(R.id.start_menu);
+        mGridView = (GridView) findViewById(R.id.start_menu);
     }
 
     public void initData() {
-        mAppEntries = new ArrayList<>();
-        mCommonDatas = new ArrayList<>();
-        mShowAppData = new ArrayList<>();
-        mCommonAdapter = new StartMenuAdapter(getContext(), ShowType.LIST, mCommonDatas);
-        mStartMenuAdapter = new StartMenuAdapter(getContext(), ShowType.GRID, mShowAppData);
-        mCommonList.setAdapter(mCommonAdapter);
-        mStartMenu.setAdapter(mStartMenuAdapter);
+        mAppDatas = new ArrayList<>();
+        mListDatas = new ArrayList<>();
+        mGridDatas = new ArrayList<>();
+        mListAdapter = new StartMenuAdapter(getContext(), ShowType.LIST, mListDatas);
+        mGridAdapter = new StartMenuAdapter(getContext(), ShowType.GRID, mGridDatas);
+        mListView.setAdapter(mListAdapter);
+        mGridView.setAdapter(mGridAdapter);
 
         mSearchView.addTextChangedListener(this);
         mSortSelectPopupWindow = new SortSelectPopupWindow(getContext());
         mType = LaunchAppUtil.getSharedPreferences(getContext()).getInt("sortType", DEFAULT_SORT);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+        getContext().registerReceiver(mAppStateChangeReceiver, filter);
 
         mHandler = new Handler();
     }
@@ -173,7 +178,6 @@ public class StartupMenuDialog extends BaseDialog
                 dismiss();
                 break;
             case R.id.power_off:
-                Toast.makeText(getContext(), "打开电源", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), PowerSourceActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -184,7 +188,7 @@ public class StartupMenuDialog extends BaseDialog
                 mType = mType * -1;
                 sortOrder();
                 refreshSortView();
-                mStartMenuAdapter.notifyDataSetChanged();
+                mGridAdapter.notifyDataSetChanged();
                 break;
             case R.id.sort_select:
                 mSortSelectPopupWindow.showAsDropDown(mSortLayout);
@@ -209,13 +213,19 @@ public class StartupMenuDialog extends BaseDialog
         refreshApps(null, firstDraw);
     }
 
+    /**
+     * refresh App list
+     *
+     * @param query     search content
+     * @param firstDraw
+     */
     private void refreshApps(final String query, final boolean firstDraw) {
         new Thread() {
             @Override
             public void run() {
                 super.run();
                 if (firstDraw) {
-                    mAppEntries.clear();
+                    mAppDatas.clear();
                     PackageManager pm = getContext().getPackageManager();
                     Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
                     mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -230,18 +240,18 @@ public class StartupMenuDialog extends BaseDialog
                         appInfo.setIcon(reInfo.loadIcon(pm));
                         appInfo.setActivityName(reInfo.activityInfo.name);
                         appInfo.setUseCounts(0);
-                        mAppEntries.add(appInfo);
+                        mAppDatas.add(appInfo);
                     }
                     queryCommonAppInfo();
                 }
 
-                mShowAppData.clear();
+                mGridDatas.clear();
                 if (TextUtils.isEmpty(query)) {
-                    mShowAppData.addAll(mAppEntries);
+                    mGridDatas.addAll(mAppDatas);
                 } else {
-                    for (AppEntry appEntry : mAppEntries) {
+                    for (AppEntry appEntry : mAppDatas) {
                         if (appEntry.getLabel().toLowerCase().contains(query.toLowerCase())) {
-                            mShowAppData.add(appEntry);
+                            mGridDatas.add(appEntry);
                         }
                     }
                 }
@@ -251,19 +261,22 @@ public class StartupMenuDialog extends BaseDialog
                     @Override
                     public void run() {
                         refreshSortView();
-                        mStartMenuAdapter.notifyDataSetChanged();
-                        mCommonAdapter.notifyDataSetChanged();
+                        mGridAdapter.notifyDataSetChanged();
+                        mListAdapter.notifyDataSetChanged();
                     }
                 });
             }
         }.start();
     }
 
+    /**
+     * search common apps from sqliteDatabase
+     */
     private void queryCommonAppInfo() {
         SqliteOpenHelper sqliteOpenHelper = SqliteOpenHelper.getInstance(getContext());
         SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
         List<AppEntry> tempAppInfo = new ArrayList<>();
-        mCommonDatas.clear();
+        mListDatas.clear();
         Cursor cs = db.rawQuery("select distinct * from " + StartMenuDatabaseField.TABLE_NAME
                 + " order by " + StartMenuDatabaseField.COLUMN_USECOUNT + " desc", new String[]{});
         int i = 0;
@@ -271,7 +284,7 @@ public class StartupMenuDialog extends BaseDialog
             String pkgName = cs.getString(cs.getColumnIndex(StartMenuDatabaseField.COLUMN_PACKAGENAME));
             int number = cs.getInt(cs.getColumnIndex(StartMenuDatabaseField.COLUMN_USECOUNT));
             if (number > 0) {
-                for (AppEntry info : mAppEntries) {
+                for (AppEntry info : mAppDatas) {
                     if (info.getPackageName().equals(pkgName)) {
                         info.setUseCounts(number);
                         tempAppInfo.add(info);
@@ -292,10 +305,13 @@ public class StartupMenuDialog extends BaseDialog
                 return rhs.getUseCounts() > lhs.getUseCounts() ? 1 : -1;
             }
         });
-        mCommonDatas.addAll(
+        mListDatas.addAll(
                 tempAppInfo.subList(0, Math.min(tempAppInfo.size(), 8)));
     }
 
+    /**
+     * sort ways
+     */
     private void sortOrder() {
         switch (mType) {
             case DEFAULT_SORT:
@@ -306,21 +322,21 @@ public class StartupMenuDialog extends BaseDialog
                 break;
             case NAME_SORT_REVERSE:
                 nameSort();
-                Collections.reverse(mShowAppData);
+                Collections.reverse(mGridDatas);
                 break;
             case TIME_SORT:
                 timeSort();
                 break;
             case TIME_SORT_REVERSE:
                 timeSort();
-                Collections.reverse(mShowAppData);
+                Collections.reverse(mGridDatas);
                 break;
             case CLICK_SORT:
                 clickSort();
                 break;
             case CLICK_SORT_REVERSE:
                 clickSort();
-                Collections.reverse(mShowAppData);
+                Collections.reverse(mGridDatas);
                 break;
             default:
                 break;
@@ -328,6 +344,9 @@ public class StartupMenuDialog extends BaseDialog
         saveSortTypeToSP(mType);
     }
 
+    /**
+     * refresh view when notification layot
+     */
     private void refreshSortView() {
         mSortDirection.setVisibility(View.VISIBLE);
         switch (mType) {
@@ -368,11 +387,14 @@ public class StartupMenuDialog extends BaseDialog
         nameSort();
     }
 
+    /**
+     * sort data by name
+     */
     private void nameSort() {
         List<AppEntry> listEnglish = new ArrayList<>();
         List<AppEntry> listChina = new ArrayList<>();
         List<AppEntry> listNumber = new ArrayList<>();
-        for (AppEntry appInfo : mShowAppData) {
+        for (AppEntry appInfo : mGridDatas) {
             String appLabel = appInfo.getLabel();
             char ch = appLabel.charAt(0);
             if (ch >= '0' && ch <= '9') {
@@ -406,14 +428,17 @@ public class StartupMenuDialog extends BaseDialog
                         compareTo(collator.getCollationKey(o2.getLabel()));
             }
         });
-        mShowAppData.clear();
-        mShowAppData.addAll(listNumber);
-        mShowAppData.addAll(listEnglish);
-        mShowAppData.addAll(listChina);
+        mGridDatas.clear();
+        mGridDatas.addAll(listNumber);
+        mGridDatas.addAll(listEnglish);
+        mGridDatas.addAll(listChina);
     }
 
+    /**
+     * sort data by time
+     */
     private void timeSort() {
-        Collections.sort(mShowAppData, new Comparator<AppEntry>() {
+        Collections.sort(mGridDatas, new Comparator<AppEntry>() {
             public int compare(AppEntry lhs, AppEntry rhs) {
                 if (rhs.getInstallTime() == lhs.getInstallTime()) {
                     return rhs.getPackageName().compareTo(lhs.getPackageName());
@@ -423,8 +448,11 @@ public class StartupMenuDialog extends BaseDialog
         });
     }
 
+    /**
+     * sort data by click count
+     */
     private void clickSort() {
-        Collections.sort(mShowAppData, new Comparator<AppEntry>() {
+        Collections.sort(mGridDatas, new Comparator<AppEntry>() {
             public int compare(AppEntry lhs, AppEntry rhs) {
                 if (rhs.getUseCounts() == lhs.getUseCounts()) {
                     return rhs.getPackageName().compareTo(lhs.getPackageName());
@@ -434,40 +462,61 @@ public class StartupMenuDialog extends BaseDialog
         });
     }
 
+    /**
+     * save sort type to Sharepreference
+     *
+     * @param type
+     */
     private void saveSortTypeToSP(int type) {
         LaunchAppUtil.getSharedPreferences(getContext()).edit().putInt("sortType", type).commit();
     }
 
+    /**
+     * sort operate by default
+     * @param v
+     */
     @Override
     public void defaultSort(View v) {
         mType = DEFAULT_SORT;
         sortOrder();
         refreshSortView();
-        mStartMenuAdapter.notifyDataSetChanged();
+        mGridAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * sort operate by click count
+     * @param v
+     */
     @Override
     public void clickSort(View v) {
         mType = CLICK_SORT;
         sortOrder();
         refreshSortView();
-        mStartMenuAdapter.notifyDataSetChanged();
+        mGridAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * sort operate by time
+     * @param v
+     */
     @Override
     public void timeSort(View v) {
         mType = TIME_SORT;
         sortOrder();
         refreshSortView();
-        mStartMenuAdapter.notifyDataSetChanged();
+        mGridAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * sort operate by name
+     * @param v
+     */
     @Override
     public void nameSort(View v) {
         mType = NAME_SORT;
         sortOrder();
         refreshSortView();
-        mStartMenuAdapter.notifyDataSetChanged();
+        mGridAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -483,13 +532,5 @@ public class StartupMenuDialog extends BaseDialog
     @Override
     public void afterTextChanged(Editable s) {
         refreshApps(s.toString(), false);
-    }
-
-    public class AppStateChangeReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refreshApps(true);
-        }
     }
 }

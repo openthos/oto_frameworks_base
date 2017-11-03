@@ -120,6 +120,10 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         }
     }
 
+    /**
+     * init dialog data by dialog type
+     * @param type
+     */
     private void prepareData(DialogType type) {
         mDatas.clear();
         String[] sArr = null;
@@ -149,6 +153,7 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         }
         mDatas.addAll(Arrays.asList(sArr));
         mAdapter.notifyDataSetChanged();
+        //set listView's width and height
         mWidth = 0;
         mHeight = 0;
         for (int i = 0; i < mAdapter.getCount(); i++) {
@@ -161,6 +166,13 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         mListView.setLayoutParams(new LinearLayout.LayoutParams(mWidth, mHeight));
     }
 
+    /**
+     * init click event
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         dismiss();
@@ -179,8 +191,8 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         } else if (content.equals(getContext().getString(R.string.unlock_app))) {
             mStatusBar.unlocked(mComponentName);
         } else if (content.equals(getContext().getString(R.string.remove_out))) {
-            StartupMenuDialog.getInstance(getContext()).mCommonDatas.remove(mAppEntry);
-            StartupMenuDialog.getInstance(getContext()).mCommonAdapter.notifyDataSetChanged();
+            StartupMenuDialog.getInstance(getContext()).mListDatas.remove(mAppEntry);
+            StartupMenuDialog.getInstance(getContext()).mListAdapter.notifyDataSetChanged();
             SqliteOperate.deleteDataStorage(getContext(), mAppEntry.getPackageName());
         } else if (content.equals(getContext().getString(R.string.uninstall))) {
             uninstallApp();
@@ -197,6 +209,9 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         dismiss();
     }
 
+    /**
+     * uninstall app
+     */
     private void uninstallApp() {
         Uri uri = Uri.parse("package:" + mAppEntry.getPackageName());
         Intent intent = new Intent(Intent.ACTION_DELETE, uri);

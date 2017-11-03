@@ -39,18 +39,16 @@ public class StartMenuAdapter extends BaseAdapter
     private Context mContext;
     private ShowType mType;
     private View mTempView;
-    private boolean mIsLongPress;
-    private boolean mIsLeftKey;
-    private boolean mIsRightKey;
-    private boolean isGrid;
-    private int mDownX;
-    private int mDownY;
+    private boolean mHaveOperated; //is executed
+    private boolean mIsGrid;
+    private int mDownX;  // down position x
+    private int mDownY;  // down position y
 
     public StartMenuAdapter(Context context, ShowType type, List<AppEntry> datas) {
         mContext = context;
         mType = type;
         mDatas = datas;
-        isGrid = mType == ShowType.GRID;
+        mIsGrid = mType == ShowType.GRID;
         mMenuDialog = new MenuDialog(context);
     }
 
@@ -75,7 +73,7 @@ public class StartMenuAdapter extends BaseAdapter
         ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).
-                    inflate(isGrid ? R.layout.row_alt : R.layout.row, parent, false);
+                    inflate(mIsGrid ? R.layout.row_alt : R.layout.row, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
@@ -97,18 +95,16 @@ public class StartMenuAdapter extends BaseAdapter
         AppEntry appInfo = (AppEntry) v.getTag();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mIsLongPress = false;
-                mIsLeftKey = false;
-                mIsRightKey = false;
+                mHaveOperated = false;
                 mDownX = (int) event.getRawX();
                 mDownY = (int) event.getRawY();
                 switch (event.getButtonState()) {
                     case MotionEvent.BUTTON_PRIMARY:
-                        mIsLeftKey = true;
+                        mHaveOperated = true;
                         openApplication(appInfo);
                         break;
                     case MotionEvent.BUTTON_SECONDARY:
-                        mIsRightKey = true;
+                        mHaveOperated = true;
                         showDialog(mDownX, mDownY, appInfo);
                         break;
                     default:
@@ -116,7 +112,8 @@ public class StartMenuAdapter extends BaseAdapter
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (!(mIsLeftKey || mIsRightKey || mIsLongPress)) {
+                if (!mHaveOperated) {
+                    mHaveOperated = true;
                     openApplication(appInfo);
                 }
                 break;
@@ -148,15 +145,21 @@ public class StartMenuAdapter extends BaseAdapter
 
     @Override
     public boolean onLongClick(View v) {
-        mIsLongPress = true;
-        showDialog(mDownX, mDownY, (AppEntry) v.getTag());
+        if (!mHaveOperated) {
+            mHaveOperated = true;
+            showDialog(mDownX, mDownY, (AppEntry) v.getTag());
+        }
         return false;
     }
 
+    /**
+     * open app
+     * @param appInfo
+     */
     private void openApplication(AppEntry appInfo) {
         LaunchAppUtil.launchApp(mContext, appInfo.getComponentName());
         SqliteOperate.updateDataStorage(mContext, appInfo);
-        if (mMenuDialog.isShowing()){
+        if (mMenuDialog.isShowing()) {
             mMenuDialog.dismiss();
         }
     }
@@ -176,15 +179,29 @@ public class StartMenuAdapter extends BaseAdapter
         }
     }
 
+    /**
+     * get unhover resource
+     * @return
+     */
     private int getExitResource() {
-        return isGrid ? R.color.grid_unhover_bg : R.color.common_hover_bg;
+        return mIsGrid ? R.color.grid_unhover_bg : R.color.common_hover_bg;
     }
 
+    /**
+     * get hover resource
+     * @return
+     */
     private int getEnterResource() {
-        return isGrid ? R.color.grid_hover_bg : R.mipmap.common_bg;
+        return mIsGrid ? R.color.grid_hover_bg : R.mipmap.common_bg;
     }
 
+    /**
+     * show dialog
+     * @param x
+     * @param y
+     * @param appInfo
+     */
     private void showDialog(int x, int y, AppEntry appInfo) {
-        mMenuDialog.show(mType == ShowType.GRID ? DialogType.GRID : DialogType.LIST, appInfo, x, y);
+        mMenuDialog.show(mIsGrid ? DialogType.GRID : DialogType.LIST, appInfo, x, y);
     }
 }
