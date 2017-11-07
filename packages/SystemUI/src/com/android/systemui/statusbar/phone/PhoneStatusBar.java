@@ -124,6 +124,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.ActivityNotFoundException;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusbarActivity;
@@ -362,6 +363,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
     private ImageView mNotification;
+    private ImageView mKeyboardMap;
     private View mClock;
     int mPixelFormat;
     Object mQueueLock = new Object();
@@ -819,6 +821,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         loadPkg();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
+        mKeyboardMap = (ImageView) mStatusBarView.findViewById(R.id.status_bar_keyboard);
         mClock = mStatusBarView.findViewById(R.id.clock);
         mCalendarDialog = new CalendarDialog(context);
         /*mClock.setOnTouchListener(new View.OnTouchListener() {
@@ -832,12 +835,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 return true;
             }
         });*/
-        mClock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showOrDismissPannelWork(mClock, mCalendarDialog);
-            }
-        });
+        IconClickListener iconClickListener = new IconClickListener();
+        mKeyboardMap.setOnClickListener(iconClickListener);
+        mClock.setOnClickListener(iconClickListener);
+        mKeyboardMap.setOnHoverListener(hoverListener);
         mClock.setOnHoverListener(hoverListener);
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
                 R.id.notification_panel);
@@ -1158,6 +1159,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         myRegisterReceiver();
         mInputMethodIcon.sendEmptyMessage(INPUTMETHOD_MESSAGE_WHAT);
         return mStatusBarView;
+    }
+
+    private class IconClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.status_bar_keyboard:
+                    try {
+                        PackageManager manager = mContext.getPackageManager();
+                        Intent lanuch = new Intent();
+                        lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP);
+                        lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        mContext.startActivity(lanuch);
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.clock:
+                    showOrDismissPannelWork(mClock, mCalendarDialog);
+                    break;
+            }
+        }
     }
 
     Handler mInputMethodIcon = new Handler() {

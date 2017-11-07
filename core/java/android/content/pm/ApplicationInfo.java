@@ -129,6 +129,8 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_PHOTO_MANAGER = "de.k3b.android.androFotoFinder";
 
+    public static final String APPNAME_OTO_KEYBOARDMAP = "com.openthos.keyboardmap";
+
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;

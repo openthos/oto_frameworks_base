@@ -143,6 +143,14 @@
                    android:visibility="gone"
                    systemui:keyRepeat="true" />
 
+                <ImageView
+                    android:id="@+id/status_bar_keyboard"
+                    android:layout_width="@dimen/systemui_size_thirtytwo"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/systemui_size_eight"
+                    android:paddingRight="@dimen/systemui_size_eight"
+                    android:src="@drawable/statusbar_keyboard" />
+
                 <com.android.systemui.statusbar.policy.KeyButtonView
                     android:id="@+id/status_bar_input_method"
                     android:layout_width="@dimen/systemui_size_thirtytwo"
