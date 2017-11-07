@@ -75,4 +75,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageButton
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:id="@+id/delete_notification"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom|end"
+        android:background="@android:drawable/ic_menu_delete" />
+
 </com.android.systemui.statusbar.ExpandableNotificationRow>

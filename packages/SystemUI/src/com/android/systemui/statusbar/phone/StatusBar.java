@@ -136,6 +136,7 @@ import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.DateTimeView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.FrameLayout;
@@ -814,6 +815,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private NavigationBarFragment mNavigationBar;
     private View mNavigationBarView;
     public MenuDialog mShowTaskbarDialog;
+    private RankingMap mRankingMap;
 
     @Override
     public void start() {
@@ -6441,6 +6443,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        if (sbn.getNotification().contentView != null) {
+                            mRankingMap = rankingMap;
+                        }
                         processForRemoteInput(sbn.getNotification());
                         String key = sbn.getKey();
                         mKeysKeptForRemoteInput.remove(key);
@@ -7496,10 +7501,20 @@ public class StatusBar extends SystemUI implements DemoMode,
         return entry;
     }
 
-    protected void addNotificationViews(Entry entry) {
+    protected void addNotificationViews(final Entry entry) {
         if (entry == null) {
             return;
         }
+        ImageButton notificationItemDelete =
+                (ImageButton) entry.row.findViewById(R.id.delete_notification);
+        notificationItemDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeNotification(entry.key, mRankingMap);
+                updateNotificationRanking(mRankingMap);
+            }
+        });
+
         // Add the expanded view and icon.
         mNotificationData.add(entry);
         updateNotifications();
