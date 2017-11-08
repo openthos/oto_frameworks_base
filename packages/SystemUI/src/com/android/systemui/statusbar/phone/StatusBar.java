@@ -69,6 +69,8 @@ import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -202,6 +204,9 @@ import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.events.activity.AppTransitionFinishedEvent;
 import com.android.systemui.recents.events.activity.UndockingTaskEvent;
 import com.android.systemui.recents.misc.SystemServicesProxy;
+import com.android.systemui.sql.SqliteOpenHelper;
+import com.android.systemui.sql.SqliteOperate;
+import com.android.systemui.sql.TaskbarIconField;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.WindowManagerProxy;
 import com.android.systemui.startupmenu.LaunchAppUtil;
@@ -1298,6 +1303,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
 
         mShowTaskbarDialog = new MenuDialog(mContext);
+        initTaskbarIcons();
     }
 
     //add openthos status bar view.
@@ -3384,12 +3390,14 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (taskbarIcon == null) {
             taskbarIcon = new TaskbarIcon(componentName, createIconLayout(componentName));
             mShowIcons.put(componentName, taskbarIcon);
+            SqliteOperate.saveTaskbarIcon(mContext, taskbarIcon);
         }
         taskbarIcon.setLocked(true);
     }
 
     public void unlocked(ComponentName componentName) {
         TaskbarIcon taskbarIcon = mShowIcons.get(componentName);
+        SqliteOperate.deleteTaskbarIcon(mContext, componentName.flattenToString());
         if (taskbarIcon != null) {
             if (!taskbarIcon.isRun()) {
                 mActivityLayout.removeView(taskbarIcon.getIconLayout());
@@ -3491,6 +3499,19 @@ public class StatusBar extends SystemUI implements DemoMode,
         taskbarIcon.setRun(true);
         taskbarIcon.setTaskId(taskId);
         mPrevCmp = cmp;
+    }
+
+    private void initTaskbarIcons() {
+        SqliteOpenHelper instance = SqliteOpenHelper.getInstance(mContext);
+        SQLiteDatabase db = instance.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + TaskbarIconField.TABLE_NAME, null);
+        while (cursor.moveToNext()) {
+            ComponentName cmp = ComponentName.unflattenFromString(
+                    cursor.getString(cursor.getColumnIndex(TaskbarIconField.COMPONENT_NAME)));
+            locked(cmp);
+        }
+        cursor.close();
+        db.close();
     }
 
     @Override

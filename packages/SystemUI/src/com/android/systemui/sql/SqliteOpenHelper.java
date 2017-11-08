@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class SqliteOpenHelper extends SQLiteOpenHelper {
-    private static final int SQL_VERSION_CODE = 3;
+    private static final int SQL_VERSION_CODE = 4;
     private static final String SQL_NAME = "SYSTEMUI_DATABASE";
 
     private static SqliteOpenHelper sqliteOpenHelper;
@@ -30,6 +30,12 @@ public class SqliteOpenHelper extends SQLiteOpenHelper {
                 + StartMenuDatabaseField.COLUMN_ACTIVITYNAME + " char(100),"
                 + StartMenuDatabaseField.COLUMN_INSTALL_TIME + " integer,"
                 + StartMenuDatabaseField.COLUMN_USECOUNT + " char(10)"
+                + ")");
+
+        db.execSQL("create table " + TaskbarIconField.TABLE_NAME + "("
+                + TaskbarIconField.COLUMN_ID + " integer primary key autoincrement,"
+                + TaskbarIconField.USER_ID + " integer,"
+                + TaskbarIconField.COMPONENT_NAME + " char(100)"
                 + ")");
     }
 

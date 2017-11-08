@@ -1,6 +1,9 @@
 package com.android.systemui.dialog;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.os.Process;
+import android.os.UserManager;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -12,6 +15,7 @@ import com.android.systemui.R;
 
 public class TaskbarIcon {
     private int taskId;
+    private long userId;
     private ComponentName componentName;
     private FrameLayout iconLayout;
     private boolean isRun;
@@ -33,6 +37,18 @@ public class TaskbarIcon {
 
     public void setTaskId(int taskId) {
         this.taskId = taskId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public long getUserId(Context context) {
+        if(userId == -1) {
+            UserManager userManager = (UserManager) context.getSystemService(Context.USER_SERVICE);
+            return userManager.getSerialNumberForUser(Process.myUserHandle());
+        } else
+            return userId;
     }
 
     public ComponentName getComponentName() {
