@@ -59,37 +59,7 @@ public class SetupWizardActivity extends BaseActivity {
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         setContentView(R.layout.activity_setupwizard);
-        final Intent intent = packageManager.getLaunchIntentForPackage("com.openthos.factorytest");
-        if (intent != null) {
-            findViewById(R.id.skip_test).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Runtime.getRuntime().exec(
-                                new String[]{"su","-c", "pm disable com.openthos.factorytest"});
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    v.setEnabled(false);
-                    findViewById(R.id.background).setVisibility(View.GONE);
-                    Animation animation;
-                    animation = new ScaleAnimation(1f, 0, 1f, 0,
-                            Animation.RELATIVE_TO_SELF, 0.5f,
-                            Animation.RELATIVE_TO_SELF, 0.5f);
-                    animation.setDuration(1000);
-                    findViewById(R.id.background).startAnimation(animation);
-                }
-            });
-            findViewById(R.id.start_test).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    findViewById(R.id.tips).setVisibility(View.GONE);
-                    startActivity(intent);
-                }
-            });
-        } else {
-            findViewById(R.id.background).setVisibility(View.GONE);
-        }
+        findViewById(R.id.background).setVisibility(View.GONE);
         //send broadcast to control status bar
         Intent intent1 = new Intent();
         intent1.setAction(Intent.STATUS_BAR_HIDE_BOOT_EXIT);

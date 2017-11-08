@@ -30,11 +30,6 @@ public class SetupWizardApplication extends Application {
 
     @Override
     public void onCreate() {
-        try {
-            Runtime.getRuntime().exec(new String[]{"su","-c", "pm enable com.openthos.factorytest"});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         LocalePicker.updateLocale(Locale.CHINA);
         super.onCreate();
     }
