@@ -160,23 +160,39 @@ public class OpenthosStatusBarView extends PanelBar {
                     home.addCategory(Intent.CATEGORY_HOME);
                     mContext.startActivity(home);
                     break;
-		case R.id.sroll_status_bar:
+                case R.id.sroll_status_bar:
                     //Handle events
                     break;
-		case R.id.ll_scroll_icon_contents:
-		    //Handle events
-		    break;
-		case R.id.empty_statusbar:
+                case R.id.ll_scroll_icon_contents:
+                    //Handle events
+                    break;
+                case R.id.empty_statusbar:
                     //click empty status bar ,then dismiss all dialog and hide notification panel.
                     if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
                         mCurrentDialog.dismiss();
                     }
-		    setCustomStatusBar();
+                    setCustomStatusBar();
                     mStatusBar.hideCustomNotificationPanel();
-		    break;
+                    break;
             }
         }
     };
+
+    public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
+        if (charging || pluggedIn || level == 0) {
+            mBatteryView.setImageDrawable(mContext.getDrawable(
+                    R.mipmap.statusbar_battery));
+        } else if (level >= 75) {
+            mBatteryView.setImageDrawable(mContext.getDrawable(
+                    R.mipmap.statusbar_battery_high));
+        } else if (level >= 25 && level <= 75) {
+            mBatteryView.setImageDrawable(mContext.getDrawable(
+                    R.mipmap.ic_notice_battery_half));
+        } else {
+            mBatteryView.setImageDrawable(mContext.getDrawable(
+                    R.mipmap.statusbar_battery_low));
+        }
+    }
 
     //show / hide status bar.
     private void setCustomStatusBar() {

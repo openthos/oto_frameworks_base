@@ -1159,6 +1159,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             @Override
             public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
                 // noop
+                mOpenthosStatusBarView.updateBattertIcon(level, pluggedIn, charging);
             }
         });
 
