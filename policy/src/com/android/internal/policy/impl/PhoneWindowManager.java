@@ -726,6 +726,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_WIFI = 22;
     private static final int MSG_STARTUP_SOUND = 23;
     private static final int MSG_STARTUP_APP_SETTINGS = 24;
+    private static final int MSG_STARTUP_KEYBOARD_MAP = 25;
 
     private boolean mIsMini;
     private Map<Integer, Rect> mTreeMap = new TreeMap<>();
@@ -782,6 +783,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_FILE_MANAGER:
                     startFileManager();
+                    break;
+                case MSG_STARTUP_KEYBOARD_MAP:
+                    startKeyboardMap();
                     break;
                 case MSG_STARTUP_BROWSER:
                     startExplorer();
@@ -1298,6 +1302,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_FILE_MANAGER);
     }
 
+    public void sendKeyboardMap() {
+        mHandler.removeMessages(MSG_STARTUP_KEYBOARD_MAP);
+        mHandler.sendEmptyMessage(MSG_STARTUP_KEYBOARD_MAP);
+    }
+
     public void sendAppManager() {
         mHandler.removeMessages(MSG_STARTUP_APP_SETTINGS);
         mHandler.sendEmptyMessage(MSG_STARTUP_APP_SETTINGS);
@@ -1343,6 +1352,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             PackageManager manager = mContext.getPackageManager();
             Intent lanuch = new Intent();
             lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
+            lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mContext.startActivity(lanuch);
+        } catch (ActivityNotFoundException e) {
+            Slog.w(TAG, "No activity to handle assist action.", e);
+        }
+    }
+
+    void startKeyboardMap() {
+        try {
+            PackageManager manager = mContext.getPackageManager();
+            Intent lanuch = new Intent();
+            lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP);
             lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(lanuch);
         } catch (ActivityNotFoundException e) {
@@ -2936,6 +2957,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         } else if (keyCode == KeyEvent.KEYCODE_E) {
             if (down && (repeatCount == 0) && mHomeKeyDown) {
                 sendFileManager();
+                mHomeKeyHasEffect = false;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_G) {
+            if (down && (repeatCount == 0) && mHomeKeyDown) {
+                sendKeyboardMap();
                 mHomeKeyHasEffect = false;
             }
         } else if (!event.isAltPressed() && keyCode == KeyEvent.KEYCODE_ESCAPE) {
