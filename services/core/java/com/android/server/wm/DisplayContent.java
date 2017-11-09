@@ -249,17 +249,6 @@ class DisplayContent {
         int framePadding = 0;
         int topFramePadding = 0;
 
-        //WindowList windows = getWindowList();
-        //for (int i = windows.size() - 1; i >= 0; --i) {
-        //    final WindowState win = windows.get(i);
-        //    if (win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG
-        //                || win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT) {
-        //        if (win.mFrame.contains(x, y)) {
-        //            return homeId;
-        //        }
-        //    }
-        //}
-
         for (int stackNdx = mStacks.size() - 1; stackNdx >= 0; --stackNdx) {
             final TaskStack stack = mStacks.get(stackNdx);
             stack.getBounds(mTmpRect);
@@ -283,6 +272,18 @@ class DisplayContent {
                 }
             }
         }
+        WindowList windows = getWindowList();
+        for (int i = windows.size() - 1; i >= 0; --i) {
+            final WindowState win = windows.get(i);
+            if (win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG
+                        || win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT) {
+                if (win.mFrame.contains(x, y)) {
+                    homeId = -1;
+                    break;
+                }
+            }
+        }
+
         return homeId;
     }
 
