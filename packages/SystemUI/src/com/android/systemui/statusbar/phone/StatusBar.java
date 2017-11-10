@@ -448,7 +448,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     Point mCurrentDisplaySize = new Point();
 
     protected LinearLayout mActivityLayout;
-    protected ComponentName mPrevCmp;
+    protected int mPrevTaskId;
     protected StatusBarWindowView mStatusBarWindow;
     protected OpenthosStatusBarView mOpenthosStatusBarView;
     protected PhoneStatusBarView mStatusBarView;
@@ -3480,8 +3480,13 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public void bindIconToTaskId(int taskId, ComponentName cmp) {
-        if (mPrevCmp != null && mShowIcons.get(mPrevCmp) != null) {
-            mShowIcons.get(mPrevCmp).setFocus(false);
+        if (mPrevTaskId != 0) {
+            for (ComponentName componentName : mShowIcons.keySet()) {
+                if (mPrevTaskId == mShowIcons.get(componentName).getTaskId()) {
+                    mShowIcons.get(componentName).setFocus(false);
+		    break;
+                }
+            }
         }
         TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
         if (taskbarIcon == null) {
@@ -3499,7 +3504,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         taskbarIcon.setFocus(true);
         taskbarIcon.setRun(true);
         taskbarIcon.setTaskId(taskId);
-        mPrevCmp = cmp;
+        mPrevTaskId = taskId;
     }
 
     private void initTaskbarIcons() {
