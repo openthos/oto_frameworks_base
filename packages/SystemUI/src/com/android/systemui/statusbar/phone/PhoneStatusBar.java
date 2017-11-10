@@ -1167,15 +1167,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.status_bar_keyboard:
-                    try {
-                        PackageManager manager = mContext.getPackageManager();
-                        Intent lanuch = new Intent();
-                        lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP);
-                        lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        mContext.startActivity(lanuch);
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    Intent launch = new Intent();
+                    launch.setClassName(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP,
+                            "com.openthos.keyboardmap.KeymapService");
+                    mContext.startService(launch);
                     break;
                 case R.id.clock:
                     showOrDismissPannelWork(mClock, mCalendarDialog);
