@@ -312,9 +312,9 @@ public class CalendarView extends ViewFlipper implements
     }
 
     public void showCalendar() {
-        Date now = new Date();
-        mCalendarYear = now.getYear() + 1900;
-        mCalendarMonth = now.getMonth();
+        mThisday = new Date();
+        mCalendarYear = mThisday.getYear() + 1900;
+        mCalendarMonth = mThisday.getMonth();
         mCalendarday = new Date(mCalendarYear - 1900, mCalendarMonth, 1);
         setCalendarDate();
     }

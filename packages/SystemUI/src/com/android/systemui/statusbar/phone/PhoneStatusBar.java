@@ -75,7 +75,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Parcelable;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.RemoteException;
@@ -121,10 +120,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.content.ActivityNotFoundException;
 
 import com.android.internal.statusbar.StatusBarIcon;
 import com.android.internal.statusbar.StatusbarActivity;
@@ -155,7 +151,6 @@ import com.android.systemui.statusbar.NotificationData;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.NotificationOverflowContainer;
 import com.android.systemui.statusbar.ScrimView;
-import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.SpeedBumpView;
 import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.StatusBarState;
@@ -190,7 +185,6 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout.OnChil
 import com.android.systemui.statusbar.stack.StackScrollAlgorithm;
 import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
 import com.android.systemui.volume.VolumeComponent;
-import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.CalendarDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
@@ -202,31 +196,29 @@ import android.content.ComponentName;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodInfo;
 
-import java.io.IOException;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
-import java.lang.reflect.Method;
+
 import android.content.SharedPreferences;
-import java.util.Iterator;
 import android.media.AudioManager;
 import android.view.Window;
 import android.graphics.Color;
 import android.text.TextPaint;
-import android.os.BatteryManager;
 import android.database.Cursor;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import com.android.systemui.util.StatusBarSqlDatabase;
 import android.app.Dialog;
 import android.net.wifi.WifiManager;
-import android.net.NetworkInfo;
 import android.net.ConnectivityManager;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
@@ -470,7 +462,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private SharedPreferences.Editor mEditorPkgRm;
     private Set<String> mSet = new HashSet<>();
     private int mRemoveCount = 0;
-    private MyVolumeReceiver mVolumeReceiver;
+    private CustomBroadcastReceiver mCustomBroadcastReceiver;
     private StatusBarSqlDatabase mMsohStatusBar;
     private SQLiteDatabase mdbStatusBar;
 
@@ -1146,7 +1138,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumeButton.setOnHoverListener(hoverListeners);
         mWifiButton.setOnHoverListener(hoverListeners);
         mNotification.setOnHoverListener(hoverListeners);
-        myRegisterReceiver();
+        registerCustomBroadcastReceiver();
         mInputMethodIcon.sendEmptyMessage(INPUTMETHOD_MESSAGE_WHAT);
         return mStatusBarView;
     }
@@ -1290,20 +1282,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
          }
     };
 
-    private void myRegisterReceiver() {
-        mVolumeReceiver = new MyVolumeReceiver();
+    private void registerCustomBroadcastReceiver() {
+        mCustomBroadcastReceiver = new CustomBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(MEDIA_VOLUME_CHANGED);
         filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         filter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        mContext.registerReceiver(mVolumeReceiver, filter);
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        filter.addAction(Intent.ACTION_TIME_CHANGED);
+        filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        mContext.registerReceiver(mCustomBroadcastReceiver, filter);
     }
 
-    private class MyVolumeReceiver extends BroadcastReceiver {
+    private class CustomBroadcastReceiver extends BroadcastReceiver {
         private ConnectivityManager mConnectivityManager;
 
-        public MyVolumeReceiver() {
+        public CustomBroadcastReceiver() {
             mConnectivityManager =
                     (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         }
@@ -1313,6 +1308,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             switch (intent.getAction()) {
                 case MEDIA_VOLUME_CHANGED:
                     setVolumeIcon(mVolumeButton);
+                    break;
+                case Intent.ACTION_TIME_TICK:
+                    if (mCalendarDialog != null) {
+                        Date date = Calendar.getInstance().getTime();
+                        if (date.getHours() == 0
+                                && date.getMinutes() == 0 && date.getSeconds() == 0) {
+                            ((CalendarDialog) mCurrentDialog).showCalendar();
+                        }
+                    }
+                    break;
+                case Intent.ACTION_TIME_CHANGED:
+                case Intent.ACTION_TIMEZONE_CHANGED:
+                    if (mCalendarDialog != null){
+                        ((CalendarDialog)mCurrentDialog).showCalendar();
+                    }
                     break;
                 case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
                     if (mWifiPopupWindow != null && mWifiPopupWindow.isShowing()) {
@@ -4414,6 +4424,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mHandlerThread = null;
         }
         mContext.unregisterReceiver(mBroadcastReceiver);
+        mContext.unregisterReceiver(mCustomBroadcastReceiver);
         if(mPrinterBroadcastReceiver != null){
             mContext.unregisterReceiver(mPrinterBroadcastReceiver);
         }

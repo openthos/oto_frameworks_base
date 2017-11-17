@@ -240,6 +240,10 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         }
     }
 
+    public void showCalendar(){
+        mCalendarView.showCalendar();
+    }
+
     @Override
     public void show(View v) {
         super.show(v);
