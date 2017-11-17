@@ -824,20 +824,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mKeyboardMap = (ImageView) mStatusBarView.findViewById(R.id.status_bar_keyboard);
         mClock = mStatusBarView.findViewById(R.id.clock);
         mCalendarDialog = new CalendarDialog(context);
-        /*mClock.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (mClock == null) {
-                    return true;
-                }
-                dismisTargetDialog(mCalendarDialog);
-                mCalendarDialog.show(mClock);
-                return true;
-            }
-        });*/
-        IconClickListener iconClickListener = new IconClickListener();
-        mKeyboardMap.setOnClickListener(iconClickListener);
-        mClock.setOnClickListener(iconClickListener);
+
+        IconOnTouchListener iconOnTouchListener = new IconOnTouchListener();
+        mKeyboardMap.setOnTouchListener(iconOnTouchListener);
+        mClock.setOnTouchListener(iconOnTouchListener);
         mKeyboardMap.setOnHoverListener(hoverListener);
         mClock.setOnHoverListener(hoverListener);
         mNotificationPanel = (NotificationPanelView) mStatusBarWindow.findViewById(
@@ -1161,21 +1151,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return mStatusBarView;
     }
 
-    private class IconClickListener implements View.OnClickListener {
-
+    private class IconOnTouchListener implements View.OnTouchListener {
         @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.status_bar_keyboard:
-                    Intent launch = new Intent();
-                    launch.setClassName(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP,
-                            "com.openthos.keyboardmap.KeymapService");
-                    mContext.startService(launch);
-                    break;
-                case R.id.clock:
-                    showOrDismissPannelWork(mClock, mCalendarDialog);
-                    break;
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN){
+                switch (v.getId()) {
+                    case R.id.status_bar_keyboard:
+                        Intent launch = new Intent();
+                        launch.setClassName(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP,
+                                "com.openthos.keyboardmap.KeymapService");
+                        mContext.startService(launch);
+                        return true;
+                    case R.id.clock:
+                        showOrDismissPannelWork(mClock, mCalendarDialog);
+                        return true;
+                }
             }
+            return false;
         }
     }
 
