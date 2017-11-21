@@ -36,6 +36,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
+import static android.content.pm.ActivityInfo.RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY;
+import static android.content.pm.ActivityInfo.RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY;
+import android.content.pm.ActivityInfo;
 
 import com.android.internal.R;
 import com.android.internal.policy.PhoneWindow;
@@ -84,6 +87,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         GestureDetector.OnGestureListener {
     private final static String TAG = "DecorCaptionView";
     private PhoneWindow mOwner = null;
+    private PackageManager mPm;
     private boolean mShow = false;
 
     // True if the window is being dragged.
@@ -169,15 +173,15 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         TextView appName = (TextView) findViewById(R.id.title_window);
         ImageView appIcon = (ImageView) findViewById(R.id.icon_window);
 
-        PackageManager pm = getContext().getPackageManager();
-        appName.setText(pm.getApplicationLabel(getContext().getApplicationInfo()));
-        appIcon.setImageDrawable(pm.getApplicationIcon(getContext().getApplicationInfo()));
+        mPm = getContext().getPackageManager();
+        appName.setText(mPm.getApplicationLabel(getContext().getApplicationInfo()));
+        appIcon.setImageDrawable(mPm.getApplicationIcon(getContext().getApplicationInfo()));
 
         mRotate.getViewTreeObserver().addOnGlobalLayoutListener(
                          new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mRotate.setVisibility(isTaskDocked() ? GONE : VISIBLE);
+                mRotate.setVisibility((isTaskDocked() || !canResizeOrientation()) ? GONE : VISIBLE);
                 mRotate.getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
         });
@@ -301,7 +305,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
      */
     public void onConfigurationChanged(boolean show) {
         mShow = show;
-        mRotate.setVisibility(getStackId() > 1 ? VISIBLE : GONE);
+        mRotate.setVisibility((getStackId() == 1 || !canResizeOrientation()) ? GONE : VISIBLE);
         updateCaptionVisibility();
     }
 
@@ -443,6 +447,28 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 Log.e(TAG, "Cannot change task workspace.");
             }
         }
+    }
+
+    /**
+     * Check that the requested orientation can resize.
+     *
+     * @return True if the current window can resize orientation.
+     */
+    private boolean canResizeOrientation() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        boolean canResize = true;
+        if (callback != null) {
+            try {
+                ActivityInfo info = mPm.getActivityInfo(
+                                callback.getActivityComponentName(), PackageManager.GET_META_DATA);
+                canResize = info.resizeMode != RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY
+                                && info.resizeMode != RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                canResize = false;
+            }
+        }
+        return canResize;
     }
 
     /**

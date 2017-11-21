@@ -28,6 +28,7 @@ import android.annotation.StyleRes;
 import android.annotation.SystemApi;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.ComponentName;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -639,6 +640,9 @@ public abstract class Window {
 
         /** Returns whether the window belongs to the task root. */
         boolean isTaskRoot();
+
+        /** Returns the Activity ComponentName. */
+        ComponentName getActivityComponentName();
     }
 
     /**

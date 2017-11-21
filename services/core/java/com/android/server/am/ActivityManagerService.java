@@ -10692,6 +10692,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                 StatusBarManagerInternal statusBarManager =
                                        LocalServices.getService(StatusBarManagerInternal.class);
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "switchTaskFreeformAndFullscreen: " + r);
+                r.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 if (stack.mStackId == FREEFORM_WORKSPACE_STACK_ID) {
                     if (statusBarManager != null) {
                         statusBarManager.setStatusBarVisibility(View.GONE);

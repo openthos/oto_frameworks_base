@@ -3284,6 +3284,17 @@ public class Activity extends ContextThemeWrapper
     }
 
     /**
+     * Returns complete component name of this activity.
+     *
+     * @return Returns the complete component name for this activity
+     * @hide
+     */
+    @Override
+    public ComponentName getActivityComponentName() {
+        return mComponent;
+    }
+
+    /**
      * Called to process key events.  You can override this to intercept all
      * key events before they are dispatched to the window.  Be sure to call
      * this implementation for key events that should be handled normally.
