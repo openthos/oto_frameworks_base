@@ -1314,14 +1314,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         Date date = Calendar.getInstance().getTime();
                         if (date.getHours() == 0
                                 && date.getMinutes() == 0 && date.getSeconds() == 0) {
-                            ((CalendarDialog) mCurrentDialog).showCalendar();
+                            ((CalendarDialog) mCalendarDialog).showCalendar();
                         }
                     }
                     break;
                 case Intent.ACTION_TIME_CHANGED:
                 case Intent.ACTION_TIMEZONE_CHANGED:
-                    if (mCalendarDialog != null){
-                        ((CalendarDialog)mCurrentDialog).showCalendar();
+                    if (mCalendarDialog != null) {
+                        ((CalendarDialog) mCalendarDialog).showCalendar();
                     }
                     break;
                 case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:

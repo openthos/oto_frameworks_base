@@ -65,11 +65,6 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     protected void initViews() {
         final AudioManager audioManager = (AudioManager) mContext.getSystemService(
                                                                       Context.AUDIO_SERVICE);
@@ -240,8 +235,10 @@ public class CalendarDialog extends BaseSettingDialog implements OnClickListener
         }
     }
 
-    public void showCalendar(){
-        mCalendarView.showCalendar();
+    public void showCalendar() {
+        if (mCalendarView != null) {
+            mCalendarView.showCalendar();
+        }
     }
 
     @Override
