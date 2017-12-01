@@ -211,6 +211,6 @@
     <bool name="def_guest_user_enabled">true</bool>
 
     <!-- Default for Settings.Global.SYS_UPGRADE_DEFAULT_URL -->
-    <string name="def_system_upgrade_url">http://dev.openthos.org/openthos/</string>
+    <string name="def_system_upgrade_url">https://mirrors.tuna.tsinghua.edu.cn/openthos/OTA/</string>
 
 </resources>
