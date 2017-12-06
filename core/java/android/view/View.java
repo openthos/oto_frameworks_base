@@ -17524,10 +17524,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                     int id = parent.getResources().
                              getIdentifier("reveal_placeholder", "id", "tv.danmaku.bili");
                     View rph = (View)parent.findViewById(id);
-                    rph.getLayoutParams().width = getLayoutParams().width;
-                    rph.getLayoutParams().height = getLayoutParams().height;
-                    rph.requestLayout();
-                    rph.invalidate();
+                    if (rph != null) {
+                        rph.getLayoutParams().width = getLayoutParams().width;
+                        rph.getLayoutParams().height = getLayoutParams().height;
+                        rph.requestLayout();
+                        rph.invalidate();
+                    }
                 }
             }
         }
@@ -17790,31 +17792,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
                                        / (float) measuredWidth);
             }
-        } else if ((this instanceof SurfaceView) && isDecorValid()
-                   && (getClass().getName().compareTo(
-                           "org.mozilla.gecko.gfx.LayerView$LayerSurfaceView") != 0)
-                   && (getContext().getPackageName().compareTo("org.videolan.vlc") == 0)
-                   && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
-                   && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
-            int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
-            int h = decor.getHeight() - decor.getWindowBorderPadding()
-                                      - decor.getWindowHeaderPadding();
-            if (mRatio <= 0.0f) {
-                mRatio = (float) measuredWidth / (float) measuredHeight;
-            }
-            if (h <  measuredHeight) {
-                measuredWidth = (int) ((float) h * mRatio);
-                measuredHeight = h;
-            }
-            if (measuredWidth > w) {
-                measuredWidth = w;
-            }
-            measuredHeight = (int) ((float) measuredWidth / mRatio);
-        } else if (isDecorValid()
-                   && (getClass().getName().compareTo(
-                           "tv.danmaku.videoplayer.core.videoview.TextureVideoView") == 0)
-                   && (getContext().getPackageName().compareTo("tv.danmaku.bili") == 0)) {
+        } else if (isDecorValid() && matchSpecialMeasured()) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
             Rect decorRect = getViewRootImpl().getWinFrame();
             int w = decorRect.width() - 2 * decor.getWindowBorderPadding();
@@ -17915,6 +17893,19 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         }
         return (this instanceof FrameLayout)
                && (mResources.getResourceEntryName(id).compareTo("player_surface_frame") == 0);
+    }
+
+    private boolean matchSpecialMeasured() {
+        if (this instanceof SurfaceView && (getClass().getName().compareTo(
+                        "org.mozilla.gecko.gfx.LayerView$LayerSurfaceView") != 0
+                    && (getContext().getPackageName().compareTo("org.videolan.vlc") == 0))) {
+            return true;
+        } else if ((getClass().getName().compareTo(
+                        "tv.danmaku.videoplayer.core.videoview.TextureVideoView") == 0)
+                    && (getContext().getPackageName().compareTo("tv.danmaku.bili") == 0)) {
+            return true;
+        }
+        return false;
     }
 
     protected void setMayMSOfficeFirstSkipView(boolean mayMSOfficeFirstSkipView) {
