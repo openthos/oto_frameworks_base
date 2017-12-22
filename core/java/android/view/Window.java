@@ -1947,7 +1947,8 @@ public abstract class Window {
     }
 
     public boolean hasHeader() {
-        return mMultiWindow.mHeader;
+        return mMultiWindow.mHeader
+                    && (getContext().getClass().getName().indexOf("Dialog") == -1);
     }
 
     public void setHeader(boolean header) {
