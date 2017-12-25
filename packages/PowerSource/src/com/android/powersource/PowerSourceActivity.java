@@ -108,6 +108,11 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
         sendBroadcast(intent);
     }
 
+    /*
+     * When show power source ui, hide status bar.
+     * After need send broadcast to PhoneWindowManager control mIsHide.
+     * Restore the initial state.
+     */
     private void closeButtonShowStatusBar() {
         Intent intent = new Intent();
         intent.setAction(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
@@ -166,7 +171,8 @@ public class PowerSourceActivity extends Activity implements OnClickListener {
                 break;
             case R.id.power_close:
                 closeButtonShowStatusBar();
-                System.exit(0);
+                finish();
+                break;
         }
     }
 }

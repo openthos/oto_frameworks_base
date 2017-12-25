@@ -40,6 +40,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_TENCENT_QQ = "com.tencent.mobileqq";
     public static final String APPNAME_TENCENT_WECHAT = "com.tencent.mm";
+    public static final String APPNAME_POWERSOURCE = "com.android.powersource.PowerSourceActivity";
 
     public static final String APPNAME_CAMERA2 = "com.android.camera2";
     public static final String APPNAME_WPS = "cn.wps.moffice_eng";

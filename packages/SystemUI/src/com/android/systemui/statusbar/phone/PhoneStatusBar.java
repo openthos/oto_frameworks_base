@@ -456,11 +456,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private int mNavigationIconHints = 0;
     private HandlerThread mHandlerThread;
-    private SharedPreferences mPresPkg;
-    private SharedPreferences.Editor mEditorPkg;
     private SharedPreferences mPresPkgRm;
     private SharedPreferences.Editor mEditorPkgRm;
-    private Set<String> mSet = new HashSet<>();
     private int mRemoveCount = 0;
     private CustomBroadcastReceiver mCustomBroadcastReceiver;
     private StatusBarSqlDatabase mMsohStatusBar;
@@ -693,8 +690,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                              "Status_bar_database.db", null, VERSION_SQLDATABASE);
         mdbStatusBar = mMsohStatusBar.getWritableDatabase();
 
-        mPresPkg = mContext.getSharedPreferences("pkg",Context.MODE_APPEND);
-        mEditorPkg = mPresPkg.edit();
         mPresPkgRm = mContext.getSharedPreferences("pkgs",Context.MODE_APPEND);
         mEditorPkgRm = mPresPkgRm.edit();
 
@@ -3111,12 +3106,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         checkBarModes();
     }
 
+    /*
+     * When reboot os or the first boot os, query data base to lock app icon.
+     */
     private void loadPkg() {
         Cursor cursor = mdbStatusBar.rawQuery("select * from status_bar_tb", null);
             if (cursor != null) {
                 while (cursor.moveToNext()) {
                     loadDockedApk(cursor.getString(1));
-                    mSet.add(cursor.getString(1));
                 }
             cursor.close();
         }
@@ -3126,14 +3123,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             String keys = entrys.getKey();
             sets.add(keys);
         }
-        //The first boot
-        if (mSet.size() == 0 && sets.size() == 0) {
+        if (cursor.getCount() == 0 && sets.size() == 0) {
             loadDockedApk(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
             loadDockedApk(ApplicationInfo.APPNAME_FENNEC);
-            mSet.add(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
-            mSet.add(ApplicationInfo.APPNAME_FENNEC);
-            mEditorPkg.putString(ApplicationInfo.APPNAME_OTO_FILEMANAGER, "");
-            mEditorPkg.putString(ApplicationInfo.APPNAME_FENNEC, "");
             mValues.put("pkgname", ApplicationInfo.APPNAME_OTO_FILEMANAGER);
             mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
             mValues.put("pkgname", ApplicationInfo.APPNAME_FENNEC);
@@ -3141,47 +3133,24 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    /*
+     * When app not run, lock app icon from startupMenu.
+     */
     private void loadDocked(String str) {
-        int count = 0 ;
-        for (String setStr : mSet) {
-            if (setStr.equals(str)) {
-                break;
-            }
-            count++;
-        }
-        if (count >= mSet.size()) {
-            mSet.add(str);
-            mEditorPkg.putString(str,"");
-            mEditorPkg.commit();
-            loadDockedApk(str);
-            mValues.put("pkgname", str);
-            mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
-        }
+        loadDockedApk(str);
+        mValues.put("pkgname", str);
+        mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
     }
 
     private void removeApk(String packageName) {
         mEditorPkgRm.putString(packageName, "");
         mEditorPkgRm.commit();
-        mSet.remove(packageName);
         mdbStatusBar.delete("status_bar_tb", "pkgname = ?", new String[]{ packageName });
-        mEditorPkg.clear();
-        for (String removeStr : mSet) {
-            mEditorPkg.putString(removeStr,"");
-        }
-        mEditorPkg.commit();
-        //clear All
-        int countNum = 0;
-        for (int i = 0; i < mStatusBarActivities.getChildCount(); i ++) {
-            ActivityKeyView kbv = getActivityKeyView(i);
-            if (!kbv.getStatusbarActivity().mApkRun) {
-                countNum++;
-            }
-        }
-        if (countNum >= mStatusBarActivities.getChildCount() && mSet.size() == 0) {
-            mStatusBarActivities.removeAllViews();
-        }
     }
 
+    /**
+     *  lock app icon by add view method.
+     */
     private void loadDockedApk(String pkg) {
         try {
             LayoutInflater li =
@@ -3980,8 +3949,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 showOrDismissPannelWork(mInputButton, mBrightnessDialog);
             } else if (Intent.STATUS_BAR_SEAFILE.equals(action)) {
                 mdbStatusBar.delete("status_bar_tb", null, null);
-                mEditorPkg.clear().commit();
-                mSet.clear();
                 for (int i = 0; i< mStatusBarActivities.getChildCount(); i++) {
                     ActivityKeyView kbv = getActivityKeyView(i);
                     if (kbv.getStatusbarActivity().mApkRun) {
@@ -4012,11 +3979,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     removeApk(pkgName);
                 }
                 if (action.equals(Intent.ACTION_SYSTEMUI_SEND_INFO_LOCK)) {
-                    mSet.add(intent.getStringExtra("lockIcon"));
                     mValues.put("pkgname", intent.getStringExtra("lockIcon"));
                     mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
-                    mEditorPkg.putString(intent.getStringExtra("lockIcon"), "");
-                    mEditorPkg.commit();
                 }
                 if (action.equals(Intent.STARTMENU_UNLOCKED)) {
                     String pkgName = intent.getStringExtra("unlockapk");
@@ -4036,7 +4000,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    // find already run app at statusBar
+    /*
+     * When app already run and not run at statusBar, so change 'mIsDocked = true'
+     * and insert to database.
+     * if not run , so 'loadDocked(apkInfo)'
+     */
     public void findRunApp (String apkInfo) {
         int countNumber = 0;
         for (int i = 0; i < mStatusBarActivities.getChildCount(); i++) {
@@ -4044,9 +4012,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (kbv.getStatusbarActivity().mPkgName.equals(apkInfo) &&
                 !kbv.getStatusbarActivity().mIsDocked && kbv.getStatusbarActivity().mApkRun) {
                 kbv.getStatusbarActivity().mIsDocked = true;
-                mSet.add(apkInfo);
-                mEditorPkg.putString(apkInfo, "");
-                mEditorPkg.commit();
                 mValues.put("pkgname", apkInfo);
                 mdbStatusBar.insert("status_bar_tb", "pkgname", mValues);
                 break;
