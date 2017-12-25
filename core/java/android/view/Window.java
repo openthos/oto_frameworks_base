@@ -1935,7 +1935,7 @@ public abstract class Window {
     }
 
     public boolean isMWWindow() {
-        return (mMultiWindow.mStackId > 0) && (mDialog == null);
+        return (mMultiWindow.mStackId > 0) && (mDialog == null) && !isFloating();
     }
 
     public boolean isShadow() {

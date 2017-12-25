@@ -8,7 +8,6 @@ import android.app.admin.DevicePolicyManager;
 import android.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -116,29 +115,25 @@ public class UserSetupActivity extends BaseActivity {
     }
 
     private void showWarningDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(this).create();
-        dialog.setMessage(getText(R.string.warning_dialog_message));
-        dialog.setTitle(getText(R.string.warning_dialog_title));
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                getText(R.string.warning_dialog_ok), new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getText(R.string.warning_dialog_message));
+        builder.setTitle(getText(R.string.warning_dialog_title));
+        builder.setPositiveButton(getText(R.string.warning_dialog_ok),
+                                          new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 startActivity();
                 dialog.dismiss();
             }
         });
-        dialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                getText(R.string.warning_dialog_cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getText(R.string.warning_dialog_cancel),
+                                         new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        dialog.show();
-        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
-        params.width = 650;
-        params.height = 170;
-        dialog.getWindow().setAttributes(params);
+        builder.create().show();
     }
 
     private void startActivity() {
