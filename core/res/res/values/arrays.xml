@@ -456,4 +456,81 @@
         <item>"com.android.music"</item>
         <item>"com.android.providers.downloads.ui"</item>
     </string-array>
+    <string-array name="desktop_style_window">
+        <item>"com.kingsoft.email"</item>
+        <item>"com.android.email"</item>
+        <item>"com.android.deskclock"</item>
+        <item>"com.android.calendar"</item>
+        <item>"com.example.android.notepad"</item>
+        <item>"com.android.calculator2"</item>
+        <item>"com.autonavi.minimap"</item>
+        <item>"com.termux"</item>
+        <item>"com.google.android.inputmethod.pinyin"</item>
+        <item>"de.k3b.android.androFotoFinder"</item>
+        <item>"com.openthos.windowsrecovery"</item>
+        <item>"com.android.settings"</item>
+        <item>"com.android.gallery3d"</item>
+        <item>"com.alensw.PicFolder"</item>
+        <item>"com.fihtdc.note"</item>
+        <item>"com.hexin.plat.android"</item>
+        <item>"com.wandoujia.phoenix2"</item>
+        <item>"com.jingdong.app.mall"</item>
+        <item>"com.github.openthos.printer.localprint"</item>
+        <item>"cn.com.emindsoft.emindstore"</item>
+        <item>"com.microsoft.office.outlook"</item>
+        <item>"com.openthos.appstore"</item>
+        <item>"com.openthos.filemanager"</item>
+        <item>"com.mxtech.videoplayer.ad"</item>
+        <item>"cn.zhl.book"</item>
+        <item>"com.zhl.zhl_individual_tutor"</item>
+        <item>"org.videolan.vlc"</item>
+        <item>"com.openthos.ota"</item>
+        <item>"com.eolwral.osmonitor"</item>
+        <item>"com.oasisfeng.greenify"</item>
+        <item>"com.autodesk.autocadws"</item>
+        <item>"com.avector.itw.itwmj16hd"</item>
+        <item>"com.amazon.windowshop"</item>
+    </string-array>
+    <string-array name="maximized_style_window">
+        <item>"com.android.camera2"</item>
+        <item>"cn.wps.moffice_eng"</item>
+        <item>"com.kingsoft.moffice_pro"</item>
+        <item>"com.microsoft.office.excel"</item>
+        <item>"com.microsoft.office.word"</item>
+        <item>"cn.cntvhd"</item>
+        <item>"com.microsoft.office.powerpoint"</item>
+        <item>"com.adobe.reader"</item>
+        <item>"com.estrongs.android.pop"</item>
+        <item>"org.mozilla.firefox"</item>
+        <item>"com.seafile.seadroid2"</item>
+        <item>"com.digiplex.game"</item>
+        <item>"com.emindsoft.filemanager"</item>
+        <item>"com.cyanogenmod.filemanager"</item>
+        <item>"com.chaozhuo.filemanager"</item>
+        <item>"com.duowan.pad"</item>
+        <item>"com.tuniu.HD.ui"</item>
+        <item>"com.taobao.apad"</item>
+        <item>"cn.com.emindsoft.openthos"</item>
+        <item>"org.chromium.chrome"</item>
+        <item>"org.mozilla.fennec_root"</item>
+        <item>"com.autonavi.minimap"</item>
+        <item>"com.chaozhuo.browser"</item>
+        <item>"com.chaozhuo.browser.x86"</item>
+    </string-array>
+    <string-array name="fullscreen_style_window">
+        <item>"com.togic.livevideo"</item>
+        <item>"com.android.otovirtualgui"</item>
+        <item>"com.openthos.factorytest"</item>
+        <item>"jackpal.androidterm"</item>
+        <item>"com.bf.sgs.hdexp"</item>
+        <item>"com.rovio.angrybirdsseasons"</item>
+        <item>"com.rovio.angrybirdsrio"</item>
+        <item>"com.rovio.angrybirdsspace.ads"</item>
+        <item>"com.rovio.angrybirdsstarwarsii.ads"</item>
+        <item>"com.rovio.angrybirdsstarwarshd.premium.iap"</item>
+        <item>"com.glbenchmark.glbenchmark27"</item>
+        <item>"com.the10tons.sparkle.free"</item>
+        <item>"com.tencent.tmgp.sgame"</item>
+        <item>"com.futuremark.dmandroid.application"</item>
+    </string-array>
 </resources>

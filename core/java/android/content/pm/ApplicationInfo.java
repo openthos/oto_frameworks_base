@@ -698,74 +698,21 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     }
 
     public static boolean isDesktopStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo(APPNAME_KINGSOFT_EMAIL) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_EMAIL) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_DESKCLOCK) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_CALENDAR) == 0)
-                                     || (pkgName.compareTo(APPNAME_EXAMPLE_ANDROID_NOTEPAD) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_CALCULATOR) == 0)
-                                     || (pkgName.compareTo(APPNAME_AUTONAVI_MINIMAP) == 0)
-                                     || (pkgName.compareTo(APPNAME_COM_TERMUX) == 0)
-                                     || (pkgName.compareTo(APPNAME_GOOLE_ANDROID_INPUTMETHOD_PINYIN)
-                                         == 0)
-                                     //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
-                                     || (pkgName.compareTo(APPNAME_PHOTO_MANAGER) == 0)
-                                     || (pkgName.compareTo(APPNAME_SYSTEM_RECOVERY) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_SETTINGS) == 0)
-                                     || (pkgName.compareTo(APPNAME_ANDROID_GALLERY3D) == 0)
-                                     || (pkgName.compareTo(APPNAME_QUICK_PIC) == 0)
-                                     || (pkgName.compareTo(APPNAME_FIHTDC_NOTE) == 0)
-                                     || (pkgName.compareTo(APPNAME_HEXIN_PLAT_ANDROID) == 0)
-                                     || (pkgName.compareTo(APPNAME_WANDOUJIA_PHOENIX) == 0)
-                                     || (pkgName.compareTo(APPNAME_JINGDONG_APP_MALL) == 0)
-                                     || (pkgName.compareTo
-                                        (APPNAME_GITHUB_OPENTHOS_PRINTER_LOCALPRINT) == 0)
-                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_EMINDSTORE) == 0)
-                                     || (pkgName.compareTo(APPNAME_OFFICE_OUTLOOK) == 0)
-                                     || (pkgName.compareTo(APPNAME_OTO_APPSTORE) == 0)
-                                     || (pkgName.compareTo(APPNAME_OTO_FILEMANAGER) == 0)
-                                     || (pkgName.compareTo(APPNAME_MXPLAYER) == 0)
-                                     || (pkgName.compareTo(APPNAME_ZHIHAOLE) == 0)
-                                     || (pkgName.compareTo(APPNAME_ZHIHAOLE_VIDEO) == 0)
-                                     || (pkgName.compareTo(APPNAME_ORG_VIDEOLAN_VLC) == 0));
-
+        String[] maximizeWindowApps = Resources.getSystem().
+                            getStringArray(com.android.internal.R.array.desktop_style_window);
+        return Arrays.asList(maximizeWindowApps).contains(pkgName);
     }
 
     public static boolean isMaximizedStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo(APPNAME_CAMERA2) == 0)
-                                     || (pkgName.compareTo(APPNAME_WPS) == 0)
-                                     || (pkgName.compareTo(APPNAME_WPS_PRO) == 0)
-                                     || (pkgName.compareTo(APPNAME_OFFICE_EXCEL) == 0)
-                                     || (pkgName.compareTo(APPNAME_OFFICE_WORD) == 0)
-                                     || (pkgName.compareTo(APPNAME_CN_CNTV) == 0)
-                                     || (pkgName.compareTo(APPNAME_OFFICE_POWERPOINT) == 0)
-                                     || (pkgName.compareTo(APPNAME_ADOBE_READER) == 0)
-                                     || (pkgName.compareTo(APPNAME_ESTRONGS_ANDROID_POP) == 0)
-                                     || (pkgName.compareTo(APPNAME_ORG_MOZILLA_FIREFOX) == 0)
-                                     || (pkgName.compareTo(APPNAME_SEAFILE_SEADROID) == 0)
-                                     || (pkgName.compareTo(APPNAME_DIGIPLEX_GAME) == 0)
-                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_FILEMANAGER) == 0)
-                                     || (pkgName.compareTo(APPNAME_CYANOGENMOD_FILEMANAGER) == 0)
-                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_FILEMANAGER) == 0)
-                                     || (pkgName.compareTo(APPNAME_DUOWAN_PAD) == 0)
-                                     || (pkgName.compareTo(APPNAME_TUNIU_HD_UI) == 0)
-                                     || (pkgName.compareTo(APPNAME_TAOBAO_APAD) == 0)
-                                     || (pkgName.compareTo(APPNAME_EMINDSOFT_OPENTHOS) == 0)
-                                     //|| (pkgName.compareTo(APPNAME_ANDROID_BROWSER) == 0)
-                                     || (pkgName.compareTo(APPNAME_CHROMIUM) == 0)
-                                     || (pkgName.compareTo(APPNAME_FENNEC) == 0)
-                                     || (pkgName.compareTo(APPNAME_GAODE_MAP) == 0)
-                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER) == 0)
-                                     || (pkgName.compareTo(APPNAME_CHAOZHUO_BROWSER_X86) == 0));
+        String[] desktopWindowApps = Resources.getSystem().
+                            getStringArray(com.android.internal.R.array.maximized_style_window);
+        return Arrays.asList(desktopWindowApps).contains(pkgName);
     }
 
     public static boolean isRealFullScreenStyleWindow(String pkgName) {
-        return (pkgName != null) && ((pkgName.compareTo(APPNAME_TOGIC_VIDEO) == 0)
-                                     || (pkgName.compareTo(APPNAME_OTO_VIRTUAL_GUI) == 0)
-                                     || (pkgName.compareTo(APPNAME_OTO_TEST_IN_FACTORY) == 0)
-                                     || (pkgName.compareTo(APPNAME_JACKPAL_ANDROIDTERM) == 0)
-                                     || (pkgName.compareTo(APPNAME_SANGUOSHA) == 0)
-                                     || (pkgName.compareTo(APPNAME_ROVIO_ANGRYBIRDSSEASONS) == 0));
+        String[] fullscreenWindowApps = Resources.getSystem().
+                            getStringArray(com.android.internal.R.array.fullscreen_style_window);
+        return Arrays.asList(fullscreenWindowApps).contains(pkgName);
     }
 
     public static boolean isWeChatIssuePopupWindow(int gravity, int y) { // assume it's WeChat pkg.

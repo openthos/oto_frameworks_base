@@ -1108,6 +1108,9 @@
   <java-symbol type="array" name="config_telephonyHardware" />
   <java-symbol type="array" name="config_keySystemUuidMapping" />
   <java-symbol type="array" name="config_gpsParameters" />
+  <java-symbol type="array" name="desktop_style_window" />
+  <java-symbol type="array" name="maximized_style_window" />
+  <java-symbol type="array" name="fullscreen_style_window" />
 
   <java-symbol type="drawable" name="default_wallpaper" />
   <java-symbol type="drawable" name="indicator_input_error" />
