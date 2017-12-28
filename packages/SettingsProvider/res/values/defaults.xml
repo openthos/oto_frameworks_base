@@ -192,6 +192,8 @@
     <!-- Default for Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS, 1==on -->
     <integer name="def_lock_screen_show_notifications">1</integer>
 
+    <!-- Default for Settings.Secure.LOCK_SCREEN_LOCK_AFTER_TIMEOUT  -->
+    <integer name="lock_screen_lock_after_timeout">0</integer>
     <!-- Default for Settings.Secure.LOCK_SCREEN_ALLOW_PRIVATE_NOTIFICATIONS -->
     <bool name="def_lock_screen_allow_private_notifications">true</bool>
 

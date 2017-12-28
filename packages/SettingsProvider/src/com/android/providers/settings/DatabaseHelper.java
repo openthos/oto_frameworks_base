@@ -2457,6 +2457,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             loadStringSetting(stmt, Settings.Secure.IMMERSIVE_MODE_CONFIRMATIONS,
                         R.string.def_immersive_mode_confirmations);
 
+            loadIntegerSetting(stmt, Settings.Secure.LOCK_SCREEN_LOCK_AFTER_TIMEOUT,
+                        R.integer.lock_screen_lock_after_timeout);
+
             loadBooleanSetting(stmt, Settings.Secure.INSTALL_NON_MARKET_APPS,
                     R.bool.def_install_non_market_apps);
 
