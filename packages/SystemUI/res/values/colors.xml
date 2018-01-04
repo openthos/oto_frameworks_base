@@ -77,7 +77,7 @@
     <color name="notification_legacy_background_color">#ff1a1a1a</color>
 
     <!-- The color of the material notification background -->
-    <color name="notification_material_background_color">#fffafafa</color>
+    <color name="notification_material_background_color">#21342458</color>
 
     <!-- The color of the material notification background when dimmed -->
     <color name="notification_material_background_dimmed_color">#d4ffffff</color>
@@ -106,6 +106,7 @@
     <color name="notification_guts_title_color">#FFFFFFFF</color>
     <color name="notification_guts_text_color">#b2FFFFFF</color>
     <color name="notification_guts_btn_color">#FFFFFFFF</color>
+    <color name="notification_item_line">#21FFFFFF</color>
 
     <color name="search_panel_circle_color">#ffffff</color>
     <color name="search_panel_ripple_color">#ffbbbbbb</color>

@@ -73,6 +73,9 @@
 
     <color name="primary_text_default_material_dark">#ffffffff</color>
     <color name="secondary_text_default_material_dark">#b3ffffff</color>
+    <!-- notification info-->
+    <color name="primary_text_notification_material_light">#ffffffff</color>
+    <color name="secondary_text_notification_material_light">#D9ffffff</color>
 
     <item name="disabled_alpha_material_light" format="float" type="dimen">0.26</item>
     <item name="disabled_alpha_material_dark" format="float" type="dimen">0.30</item>

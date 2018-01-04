@@ -67,6 +67,14 @@
         android:layout_marginRight="@dimen/systemui_size_ten"
         android:layout_marginBottom="@dimen/systemui_size_ten"
         android:layout_gravity="bottom|end"
-        android:background="@drawable/notification_clearall_icon" />
+        android:background="@android:drawable/ic_menu_delete" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/notification_item_line"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="@dimen/systemui_size_four"
+        />
 
 </com.android.systemui.statusbar.ExpandableNotificationRow>
