@@ -1,4 +1,4 @@
-package com.android.startupmenu.bean;
+package com.android.systemui.startupmenu.bean;
 
 import android.content.ComponentName;
 import android.content.Context;
