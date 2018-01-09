@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
-        android:layout_width="@dimen/notification_panel_width"
-        android:layout_height="match_parent"
-        android:weightSum="3"
-        android:layout_gravity="@integer/global_notification_panel_layout_gravity"
-        android:id="@+id/notification_container_parent"
-        android:orientation="vertical"
-        android:background="@drawable/qs_background_primary"
-        android:clipToPadding="false"
-        android:clipChildren="false">
+    android:layout_width="@dimen/notification_panel_width"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:layout_gravity="@integer/global_notification_panel_layout_gravity"
+    android:id="@+id/notification_container_parent"
+    android:orientation="vertical"
+    android:background="@drawable/qs_background_primary"
+    android:clipToPadding="false"
+    android:clipChildren="false">
 
         <!-- start of notification panel -->
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
             android:layout_height="0dp"
-            android:layout_weight="1.8"
+            android:layout_weight="0.6"
             android:orientation="vertical">
 
             <FrameLayout
@@ -43,101 +42,76 @@
         <LinearLayout
             android:layout_width="@dimen/notification_panel_width"
             android:layout_height="0dp"
-            android:layout_weight="1.1"
+            android:layout_weight="0.4"
+            android:weightSum="1"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/systemui_size_fortyeight"
-                android:background="#1Affffff">
+                android:background="#1Affffff"
+                >
 
-            <TextView
-                android:id="@+id/print_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/systemui_size_sixteen"
-                android:layout_centerVertical="true"
-                android:text="@string/print_message"
-                android:textColor="#99ffffff"
-                android:textStyle="bold"
-                android:textSize="@dimen/systemui_textsize_sixteen" />
+                <TextView
+                    android:id="@+id/print_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/systemui_size_sixteen"
+                    android:layout_centerVertical="true"
+                    android:text="@string/print_message"
+                    android:textColor="#99ffffff"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/systemui_textsize_sixteen" />
 
-            <Button
-                android:id="@+id/printManager"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/systemui_size_sixteen"
-                android:layout_centerVertical="true"
-                android:paddingRight="@dimen/systemui_size_eight"
-                android:background="@null"
-                android:text="@string/print_manager"
-                android:textSize="@dimen/systemui_textsize_twelve" />
-
-        </RelativeLayout>
+                <Button
+                    android:id="@+id/printManager"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/systemui_size_sixteen"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="@dimen/systemui_size_eight"
+                    android:background="@null"
+                    android:text="@string/print_manager"
+                    android:textSize="@dimen/systemui_textsize_twelve" />
+            </RelativeLayout>
 
         <!-- printer job layout -->
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/systemui_size_twohundred" >
-            <LinearLayout
-                android:id="@+id/printer_job_layout"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent" >
+                <LinearLayout
+                    android:id="@+id/printer_job_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
 
-            </LinearLayout>
+        <!-- start of quick setting panel -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.3"
+            android:layout_marginBottom="@dimen/systemui_size_twenty_eight"
+            android:gravity="bottom"
+            android:orientation="horizontal">
 
-        </ScrollView>
-
+            <include
+                layout="@layout/qs_panel" />
+            <View
+                android:id="@+id/reserve_notification_space"
+                android:layout_height="@dimen/systemui_size_zero"
+                android:layout_width="match_parent"
+                android:visibility="gone" />
+        </LinearLayout>
+        <!-- end of quick setting panel -->
     </LinearLayout>
     <!-- end of print panel -->
-
-    <!-- start of quick setting panel -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="@dimen/systemui_size_eight"
-        android:gravity="bottom"
-        android:orientation="vertical">
-
-        <include
-            layout="@layout/qs_panel" />
-
-        <!-- A view to reserve space for the collapsed stack -->
-        <!-- Layout height: notification_min_height + bottom_stack_peek_amount -->
-        <View
-            android:id="@+id/reserve_notification_space"
-            android:layout_height="@dimen/systemui_size_zero"
-            android:layout_width="match_parent"
-            android:visibility="gone" />
-
-        <!--<View
-            android:layout_height="@dimen/systemui_size_zero"
-            android:layout_width="match_parent"
-            android:visibility="gone" /> -->
-    </LinearLayout>
-    <!-- end of quick setting panel -->
-
-    <com.android.systemui.statusbar.phone.ObservableScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="@dimen/notification_panel_width"
-        android:layout_height="@dimen/systemui_size_zero"
-        android:layout_gravity="bottom|center"
-        android:scrollbars="none"
-        android:overScrollMode="never"
-        android:fillViewport="true"
-        android:visibility="gone">
-    </com.android.systemui.statusbar.phone.ObservableScrollView>
-
-    <ViewStub
-        android:id="@+id/keyguard_user_switcher"
-        android:layout="@layout/keyguard_user_switcher"
-        android:layout_height="@dimen/systemui_size_zero"
-        android:layout_width="match_parent"
-        android:visibility="gone" />
-
-    <include
-        layout="@layout/keyguard_status_bar"
-        android:visibility="gone" />
 </LinearLayout>

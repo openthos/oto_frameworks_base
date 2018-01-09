@@ -688,6 +688,7 @@
     <!--StartupMenu sort layout size -->
     <dimen name="sort_layout_width">103dp</dimen>
     <dimen name="sort_layout_height">83dp</dimen>
+    <dimen name="systemui_size_twenty_eight">28dp</dimen>
 
     <!--StartupMenu layout size -->
     <dimen name="startupmenu_layout_size_one">1dp</dimen>

@@ -50,6 +50,28 @@
         android:gravity="center"
         android:visibility="gone"/>
 
+    <com.android.systemui.statusbar.phone.ObservableScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="@dimen/systemui_size_zero"
+        android:layout_gravity="bottom|center"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:fillViewport="true"
+        android:visibility="gone">
+    </com.android.systemui.statusbar.phone.ObservableScrollView>
+
+    <ViewStub
+        android:id="@+id/keyguard_user_switcher"
+        android:layout="@layout/keyguard_user_switcher"
+        android:layout_height="@dimen/systemui_size_zero"
+        android:layout_width="match_parent"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/keyguard_status_bar"
+        android:visibility="gone" />
+
     <include
        layout="@layout/status_bar_notification_info" />
 
