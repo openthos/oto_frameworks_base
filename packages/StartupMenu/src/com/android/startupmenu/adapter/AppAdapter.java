@@ -1,4 +1,4 @@
-package com.android.systemui.startupmenu.adapter;
+package com.android.startupmenu.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,14 +12,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.systemui.R;
-import com.android.systemui.startupmenu.StartupMenuActivity;
-import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.bean.Type;
-import com.android.systemui.startupmenu.dialog.AppDialog;
-import com.android.systemui.startupmenu.dialog.CommonAppDialog;
-import com.android.systemui.startupmenu.util.Constants;
-import com.android.systemui.startupmenu.util.SqliteOperate;
+import com.android.startupmenu.R;
+import com.android.startupmenu.StartupMenuActivity;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.bean.Type;
+import com.android.startupmenu.dialog.AppDialog;
+import com.android.startupmenu.dialog.CommonAppDialog;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOperate;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.android.systemui.startupmenu.util;
+package com.android.startupmenu.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

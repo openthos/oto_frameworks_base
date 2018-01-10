@@ -1,11 +1,11 @@
-package com.android.systemui.startupmenu.util;
+package com.android.startupmenu.util;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
 import android.content.Context;
 import android.content.ContentValues;
 
-import com.android.systemui.startupmenu.bean.AppInfo;
+import com.android.startupmenu.bean.AppInfo;
 
 /*
 * Created by Cao Yongren on 15-5-2017

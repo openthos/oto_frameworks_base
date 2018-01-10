@@ -1,4 +1,4 @@
-package com.android.systemui.startupmenu.util;
+package com.android.startupmenu.util;
 
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;

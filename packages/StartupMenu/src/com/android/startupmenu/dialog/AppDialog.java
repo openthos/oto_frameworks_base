@@ -1,6 +1,6 @@
-package com.android.systemui.startupmenu.dialog;
+package com.android.startupmenu.dialog;
 
-import com.android.systemui.R;
+import com.android.startupmenu.R;
 
 import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
@@ -20,10 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.database.Cursor;
 
-import com.android.systemui.startupmenu.StartupMenuActivity;
-import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.util.Constants;
-import com.android.systemui.startupmenu.util.SqliteOperate;
+import com.android.startupmenu.StartupMenuActivity;
+
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOperate;
 
 import android.net.Uri;
 import android.provider.Settings;

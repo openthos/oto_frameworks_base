@@ -1,4 +1,4 @@
-package com.android.systemui.startupmenu;
+package com.android.startupmenu;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.util.Constants;
-import com.android.systemui.startupmenu.util.SqliteOperate;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOperate;
 
 import java.io.File;
 import java.util.List;

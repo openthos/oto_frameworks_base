@@ -21,7 +21,6 @@
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
         coreApp="true">
-    <uses-permission android:name="android.permission.SHUTDOWN" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -324,13 +323,7 @@
                 <category android:name="com.android.internal.category.PLATLOGO" />
             </intent-filter>
         </activity>
-        <!-- startupmenu -->
-        <activity
-            android:name=".startupmenu.StartupMenuActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
         <!-- a gallery of delicious treats -->
         <service
             android:name=".DessertCaseDream"
@@ -373,7 +366,7 @@
 
         <!-- startup menu activity -->
         <activity
-            android:name=".startupmenu.StartupMenuActivity"
+            android:name=".StartupMenu"
             android:exported="true"
             android:label="@string/screen_pinning_title"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
@@ -381,6 +374,7 @@
             android:excludeFromRecents="true">
         </activity>
 
+        <!-- startup menu LockActivity -->
         <activity
             android:name=".LocknActivity"
             android:exported="true"
@@ -406,23 +400,6 @@
                     <action
                         android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
                 </intent-filter>
-        </receiver>
-
-        <receiver android:name=".startupmenu.InstalledReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".startupmenu.SqliteReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.android.startupmenu.SQLITE_CHANGE" />
-                <action android:name="com.android.action.PACKAGE_SEND"/>
-            </intent-filter>
         </receiver>
 
         <!-- Doze with notifications, run in main sysui process for every user  -->

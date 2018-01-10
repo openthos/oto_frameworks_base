@@ -432,29 +432,4 @@
     <string name="friday">五</string>
     <string name="saturday">六</string>
     <string name="sunday">日</string>
-    <!-- startupmenu -->
-    <string name="startup_menu">"Startup menu"</string>
-    <string name="file_manager">文件管理</string>
-    <string name="system_setting">设置</string>
-    <string name="common_application">常用软件</string>
-    <string name="name_sort">A-Z</string>
-    <string name="time_sort">安装时间</string>
-    <string name="click_sort">使用频率</string>
-    <string name="power_source">电源</string>
-    <string name="power_off">关机</string>
-    <string name="system_restart">重新启动</string>
-    <string name="system_sleep">睡眠</string>
-    <string name="system_lock">锁定</string>
-    <string name="my_open">"打开"</string>
-    <string name="my_mobile_phone_mode_run">"以手机模式运行"</string>
-    <string name="my_desktop_run">"以桌面模式运行"</string>
-    <string name="fixed_the_taskbar">"固定到任务栏"</string>
-    <string name="my_uninstall">"卸载"</string>
-    <string name="removed_the_list">"从此列表中删除"</string>
-    <string name="omit">…</string>
-    <string name="lockedapptext">固定到任务栏</string>
-    <string name="unlockedapptext">解除固定</string>
-    <string name="software_search" msgid="1103867596330271848">"软件搜索"</string>
-    <string name="remove_application">移除应用：</string>
-
 </resources>

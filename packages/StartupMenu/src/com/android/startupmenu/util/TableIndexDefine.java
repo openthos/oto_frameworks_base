@@ -1,4 +1,4 @@
-package com.android.systemui.startupmenu.util;
+package com.android.startupmenu.util;
 
 /*
  * Created by Cao Yongren on 10-5-2017.

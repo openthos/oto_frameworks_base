@@ -14,7 +14,7 @@
  *
  */
 
-package com.android.systemui.startupmenu;
+package com.android.startupmenu;
 
 import java.io.File;
 import java.text.Collator;
@@ -24,12 +24,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.android.systemui.startupmenu.adapter.AppAdapter;
-import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.bean.Type;
-import com.android.systemui.startupmenu.util.Constants;
-import com.android.systemui.startupmenu.util.SqliteOpenHelper;
-import com.android.systemui.startupmenu.util.TableIndexDefine;
+import com.android.startupmenu.adapter.AppAdapter;
+import com.android.startupmenu.bean.AppInfo;
+import com.android.startupmenu.bean.Type;
+import com.android.startupmenu.util.Constants;
+import com.android.startupmenu.util.SqliteOpenHelper;
+import com.android.startupmenu.util.TableIndexDefine;
 
 import android.os.RemoteException;
 import android.os.UserHandle;
@@ -64,7 +64,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.SharedPreferences;
 
 import java.io.UnsupportedEncodingException;
-import com.android.systemui.R;
 /*
  * Annotation
  *
