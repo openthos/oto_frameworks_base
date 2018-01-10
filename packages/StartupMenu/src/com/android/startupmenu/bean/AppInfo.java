@@ -13,6 +13,7 @@ public class AppInfo{
     private long installTime;
     private int clickCounts;
     private String activityName;
+    private boolean isSystemApp;
 
     public AppInfo() {
     }
@@ -69,5 +70,13 @@ public class AppInfo{
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(pkgName);
         intent.setComponent(new ComponentName(pkgName, activityName));
         return intent;
+    }
+
+    public boolean isSystemApp() {
+        return isSystemApp;
+    }
+
+    public void setSystemApp(boolean isSystemApp) {
+        this.isSystemApp = isSystemApp;
     }
 }

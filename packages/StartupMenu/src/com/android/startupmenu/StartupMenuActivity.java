@@ -31,6 +31,7 @@ import com.android.startupmenu.util.Constants;
 import com.android.startupmenu.util.SqliteOpenHelper;
 import com.android.startupmenu.util.TableIndexDefine;
 
+import android.content.pm.ApplicationInfo;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.Slog;
@@ -403,9 +404,14 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
             appInfo.setAppIcon(reInfo.loadIcon(pm));
             appInfo.setActivityName(reInfo.activityInfo.name);
             appInfo.setClickCounts(0);
+            appInfo.setSystemApp(isSystemApp(reInfo));
             mAllAppInfos.add(appInfo);
         }
         initDisplayAppInfos();
+    }
+
+     private boolean isSystemApp(ResolveInfo resolveInfo) {
+        return (resolveInfo.activityInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0;
     }
 
     /* query sqlDataBase , sort by getClickCounts.

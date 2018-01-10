@@ -80,10 +80,9 @@ public class AppDialog extends Dialog implements OnTouchListener {
 
         mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(mPkgName) ||
                 ApplicationInfo.isRealFullScreenStyleWindow(mPkgName);
-        if (mIsFullScreen) {
-            mRunAsPhone.setEnabled(false);
-            mRunAsPhone.setTextColor(Color.parseColor(Constants.TEXT_COLOR_GRAY));
-        }
+
+        setEnableRunMode();
+
         mOpen.setOnTouchListener(this);
         mRunAsPhone.setOnTouchListener(this);
 
@@ -101,11 +100,16 @@ public class AppDialog extends Dialog implements OnTouchListener {
         mDialogHeight = mLayout.getMeasuredHeight();
     }
 
-    public void setEnableOpenwith(boolean can) {
-        if (can) {
-            mOpen.setTextColor(Color.parseColor("#000000"));
+    private void setEnableRunMode() {
+        if (mAppInfo.isSystemApp()) {
+            mRunAsDesktop.setEnabled(false);
+            mRunAsPhone.setEnabled(false);
+        } else if (mIsFullScreen) {
+            mRunAsPhone.setEnabled(false);
+            mRunAsDesktop.setEnabled(true);
         } else {
-            mOpen.setTextColor(Color.parseColor("#b19898"));
+            mRunAsDesktop.setEnabled(true);
+            mRunAsPhone.setEnabled(true);
         }
     }
 

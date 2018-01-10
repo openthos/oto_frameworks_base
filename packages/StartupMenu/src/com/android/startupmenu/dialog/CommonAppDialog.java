@@ -54,10 +54,8 @@ public class CommonAppDialog extends Dialog implements OnClickListener {
 
         mIsFullScreen = ApplicationInfo.isMaximizedStyleWindow(mPkgName) ||
                 ApplicationInfo.isRealFullScreenStyleWindow(mPkgName);
-        if (mIsFullScreen) {
-            mRunAsPhone.setEnabled(false);
-            mRunAsPhone.setTextColor(Color.parseColor(Constants.TEXT_COLOR_GRAY));
-        }
+
+        setEnableRunMode();
 
         mOpen.setOnClickListener(this);
         mRunAsPhone.setOnClickListener(this);
@@ -70,11 +68,16 @@ public class CommonAppDialog extends Dialog implements OnClickListener {
         mRemove.setOnHoverListener(hoverListener);
     }
 
-    public void setEnableOpenwith(boolean can) {
-        if (can) {
-            mOpen.setTextColor(Color.parseColor("#000000"));
+    private void setEnableRunMode() {
+        if (mAppInfo.isSystemApp()) {
+            mRunAsDesktop.setEnabled(false);
+            mRunAsPhone.setEnabled(false);
+        } else if (mIsFullScreen) {
+            mRunAsDesktop.setEnabled(true);
+            mRunAsPhone.setEnabled(false);
         } else {
-            mOpen.setTextColor(Color.parseColor("#b19898"));
+            mRunAsDesktop.setEnabled(true);
+            mRunAsPhone.setEnabled(true);
         }
     }
 
