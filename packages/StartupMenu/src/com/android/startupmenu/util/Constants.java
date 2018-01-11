@@ -9,7 +9,6 @@ import android.content.pm.ApplicationInfo;
 
 public class Constants {
     public static final String TEXT_COLOR_GRAY = "#8B8970";
-    public static final String FACTORY_TEST_PKGNAME = "com.openthos.factorytest";
 
     public static final int EDITTEXT_LENGTH_MAX = 10;
     public static final int COMMON_APP_NUM = 8;

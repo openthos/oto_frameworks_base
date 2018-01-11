@@ -522,7 +522,6 @@
     <string-array name="fullscreen_style_window">
         <item>"com.togic.livevideo"</item>
         <item>"com.android.otovirtualgui"</item>
-        <item>"com.openthos.factorytest"</item>
         <item>"jackpal.androidterm"</item>
         <item>"com.bf.sgs.hdexp"</item>
         <item>"com.rovio.angrybirdsseasons"</item>

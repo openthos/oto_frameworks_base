@@ -8733,7 +8733,6 @@ package android.content.pm {
     field public static final java.lang.String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
     field public static final java.lang.String APPNAME_OTO_FILEMANAGER = "com.openthos.filemanager";
     field public static final java.lang.String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
-    field public static final java.lang.String APPNAME_OTO_TEST_IN_FACTORY = "com.openthos.factorytest";
     field public static final java.lang.String APPNAME_OTO_VIRTUAL_GUI = "com.android.otovirtualgui";
     field public static final java.lang.String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY = "com.android.otovirtualgui.MainActivity";
     field public static final java.lang.String APPNAME_PHOTO_MANAGER = "de.k3b.android.androFotoFinder";

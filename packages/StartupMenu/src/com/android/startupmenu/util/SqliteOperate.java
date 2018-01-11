@@ -16,9 +16,6 @@ public class SqliteOperate {
     * When run app, need change SqlDataBase and sharedPreference.
     */
     public static void updateDataStorage(Context context, AppInfo appInfo) {
-        if (appInfo.getPkgName().equals(Constants.FACTORY_TEST_PKGNAME)) {
-            return;
-        }
         SqliteOpenHelper sqliteOpenHelper = SqliteOpenHelper.getInstance(context);
         SQLiteDatabase db = sqliteOpenHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + TableIndexDefine.TABLE_APP_PERPO +
