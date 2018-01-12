@@ -5,10 +5,10 @@
     android:background="#ffffff"
     android:orientation="vertical" >
 
-    <!-- <TextView
-        android:id="@+id/type_sort"
-        style="@style/Mstyle"
-        android:text="@string/type_sort" /> -->
+    <TextView
+        android:id="@+id/default_sort"
+        style="@style/SortMstyle"
+        android:text="@string/default_sort"/>
 
     <TextView
         android:id="@+id/click_sort"

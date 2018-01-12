@@ -80,6 +80,7 @@ import java.io.UnsupportedEncodingException;
 
 public class StartupMenuActivity extends Activity implements OnClickListener {
 
+    public static final int DEFAULT_SORT = 0;
     public static final int NAME_SORT = 1;
     public static final int NAME_SORT_REVERSE = -1;
     public static final int TIME_SORT = 2;
@@ -106,6 +107,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
     private EditText mEditText;
     private ImageView mIvArrowGray;
     private TextView mTvSortShow;
+    private TextView mDefaultSort;
     private TextView mClickSort;
     private TextView mTimeSort;
     private TextView mNameSort;
@@ -168,7 +170,7 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
 
         mTvSortShow.setText("");
         mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
-        mType = mSharedPreference.getInt("sortType", NAME_SORT);
+        mType = mSharedPreference.getInt("sortType", DEFAULT_SORT);
         mFocus = false;
         mFilterAppPkgNames = new ArrayList<>();
         String[] array = getResources().getStringArray(
@@ -325,6 +327,13 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
                 sortOrder();
                 mGridAdapter.notifyDataSetChanged();
                 break;
+            case R.id.default_sort:
+                mEditText.setText("");
+                mPopupWindow.dismiss();
+                mType = DEFAULT_SORT;
+                sortOrder();
+                mGridAdapter.notifyDataSetChanged();
+                break;
             case R.id.name_sort:
                 mEditText.setText("");
                 mPopupWindow.dismiss();
@@ -365,14 +374,17 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
         mSelectView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT));
         // The frequency about running app.
+        mDefaultSort = (TextView) mSelectView.findViewById(R.id.default_sort);
         mClickSort = (TextView) mSelectView.findViewById(R.id.click_sort);
         mTimeSort = (TextView) mSelectView.findViewById(R.id.time_sort);
         mNameSort = (TextView) mSelectView.findViewById(R.id.name_sort);
 
+        mDefaultSort.setOnClickListener(this);
         mClickSort.setOnClickListener(this);
         mTimeSort.setOnClickListener(this);
         mNameSort.setOnClickListener(this);
 
+        mDefaultSort.setOnHoverListener(hoverListenerSort);
         mClickSort.setOnHoverListener(hoverListenerSort);
         mTimeSort.setOnHoverListener(hoverListenerSort);
         mNameSort.setOnHoverListener(hoverListenerSort);
@@ -475,34 +487,45 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
 
     private void sortOrder() {
         switch (mType) {
+            case DEFAULT_SORT:
+                mIvArrowGray.setVisibility(View.GONE);
+                mTvSortShow.setText(R.string.default_sort);
+                defaultSort();
+                break;
             case NAME_SORT:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 mTvSortShow.setText(R.string.name_sort);
                 nameSort();
                 break;
             case NAME_SORT_REVERSE:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mTvSortShow.setText(R.string.name_sort);
                 nameSort();
                 Collections.reverse(mDisplayAppInfos);
                 break;
             case TIME_SORT:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 mTvSortShow.setText(R.string.time_sort);
                 timeSort();
                 break;
             case TIME_SORT_REVERSE:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mTvSortShow.setText(R.string.time_sort);
                 timeSort();
                 Collections.reverse(mDisplayAppInfos);
                 break;
             case CLICK_SORT:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_up_arrow);
                 mTvSortShow.setText(R.string.click_sort);
                 clickSort();
                 break;
             case CLICK_SORT_REVERSE:
+                mIvArrowGray.setVisibility(View.VISIBLE);
                 mIvArrowGray.setImageResource(R.drawable.ic_start_menu_down_arrow);
                 mTvSortShow.setText(R.string.click_sort);
                 clickSort();
@@ -512,6 +535,21 @@ public class StartupMenuActivity extends Activity implements OnClickListener {
                 break;
         }
         saveSortTypeToSP(mType);
+    }
+
+    private void defaultSort() {
+        Collections.sort(mDisplayAppInfos, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo a1, AppInfo a2) {
+                if (a1.isSystemApp() && !a2.isSystemApp()) {
+                    return -1;
+                } else if (!a1.isSystemApp() && a2.isSystemApp()) {
+                    return 1;
+                } else {
+                    return a1.getAppLabel().compareTo(a2.getAppLabel());
+                }
+            }
+        });
     }
 
     private void nameSort() {

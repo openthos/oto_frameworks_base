@@ -28,7 +28,7 @@
     <string name="action_settings">Settings</string>
     <string name="name_sort">A - Z</string>
     <string name="time_sort">Time</string>
-    <string name="type_sort">Type</string>
+    <string name="default_sort">Default</string>
     <string name="system_loading">Loading...</string>
     <string name="common_software">Common softwares</string>
     <string name="click_sort">Click</string>
