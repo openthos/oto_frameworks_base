@@ -143,6 +143,9 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                         Intent intent = new Intent();
                         intent.setAction("com.android.wizard.FINISH");
                         startActivity(intent);
+                        Intent intents = new Intent();
+                        intents.setClassName("com.openthos.seafile", "com.openthos.seafile.MainSeafileService");
+                        startService(intents);
                         break;
 
                     default:
