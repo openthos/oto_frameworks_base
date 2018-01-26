@@ -50,6 +50,7 @@
     <string name="warning_dialog_message">Are you sure do not set up lock screen password?</string>
     <string name="warning_dialog_ok">OK</string>
     <string name="warning_dialog_cancel">Cancel</string>
+    <string name="appstore_download_app">Downloading apps from appstore</string>
     <string name="tips_chinese">是否跳过工厂测试程序</string>
     <string name="tips_chinese_t">是否跳過工廠測試程式</string>
     <string name="tips_english">Whether to skip a program of Factory test</string>
@@ -57,4 +58,14 @@
     <string name="tips_japanese">工場出荷時のテストプログラムをスキップするかどうか</string>
     <string name="tips_yes">YES</string>
     <string name="tips_no">NO</string>
+    <string name="multichoice_item_wallpaper">Wallpaper</string>
+    <string name="multichoice_item_wifi">Wifi</string>
+    <string name="multichoice_item_email">Email</string>
+    <string name="multichoice_item_appdata">Appdata</string>
+    <string name="multichoice_item_startupmenu">Startupmenu</string>
+    <string name="multichoice_item_browser">Browser</string>
+    <string name="multichoice_item_app">App</string>
+    <string name="multichoice_button_restore">Restore</string>
+    <string name="multichoice_button_cancel">Cancel</string>
+    <string name="restore_progress">Restoring</string>
 </resources>

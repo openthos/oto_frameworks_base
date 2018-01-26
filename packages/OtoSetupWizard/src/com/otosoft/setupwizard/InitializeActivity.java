@@ -2,6 +2,7 @@ package com.otosoft.setupwizard;
 
 import android.os.Bundle;
 import android.os.AsyncTask;
+import android.os.IBinder;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.content.pm.PackageParser;
 import android.content.pm.PackageUserState;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.ComponentName;
 import android.view.View;
 import android.view.View.OnClickListener;
 import java.io.File;
@@ -23,14 +25,33 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.ArrayList;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.view.View.OnClickListener;
+import java.util.Map;
+import java.util.HashMap;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.RemoteException;
+import com.openthos.seafile.ISeafileService;
 
 public class InitializeActivity extends BaseActivity {
-
     private static final String APP_PATH = "/data/vendor/app";
+    private static final String APP_DOWNLOAD_PATH = "/storage/emulated/legacy/Download/app";
     private static final String KEY_SPACE = " ";
     private static final String KEY_SPRIT = "/";
+    private static final int INDEX_WALLPAPER = 0;
+    private static final int INDEX_WIFI = 1;
+    private static final int INDEX_EMAIL = 2;
+    private static final int INDEX_APPDATA = 3;
+    private static final int INDEX_STARTUPMENU = 4;
+    private static final int INDEX_BROWSER = 5;
+    private static final int INDEX_APP = 6;
     private LinearLayout mLinearLayout;
     private TextView mInitializedProgress;
     private TextView mInitializedNext;
@@ -38,10 +59,16 @@ public class InitializeActivity extends BaseActivity {
     private ArrayList<String> mApkPaths;
     private InstallAsyncTask mInstallTask;
     private SharedPreferences mSp;
-    private int mTotalApks;
+    private int mTotalApks, mDownloadApks, mTotal;
+    private static InitializeActivity mInitializeActivity;
+    private Map<String, String> mAppStoreAppMap;
+    private boolean mIsAppStoreApps;
+    private ISeafileService iSeafileService;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAppStoreAppMap = new HashMap<>();
+        mInitializeActivity = this;
         setContentView(R.layout.activity_initialize_pager);
         mInitializedProgress = (TextView) findViewById(R.id.initialize_progress);
         mInitializedNext = (TextView) findViewById(R.id.tv_next);
@@ -57,6 +84,10 @@ public class InitializeActivity extends BaseActivity {
                 }
             }.start();
         }
+    }
+
+    public static InitializeActivity getInitializeActivity() {
+        return mInitializeActivity;
     }
 
     public void onResume() {
@@ -93,6 +124,44 @@ public class InitializeActivity extends BaseActivity {
         } catch(Exception e){}
     }
 
+    private void initializeAppStoreApp() {
+        mAppNames = new ArrayList();
+        mApkPaths = new ArrayList();
+        File file = new File(APP_DOWNLOAD_PATH);
+        File[] files = file.listFiles();
+        mTotalApks = files.length;
+        try {
+            for (int i = 0; i < mTotalApks; i++) {
+                String name = files[i].getName();
+                if (name.endsWith(".apk")) {
+                    mApkPaths.add(files[i].getAbsolutePath());
+                     getAppName(files[i].getAbsolutePath());
+                }
+            }
+            mTotalApks = mApkPaths.size();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addAppStoreAppInfoToMap(
+            boolean hasData, String appFileName, String appName, int total) {
+        if (hasData) {
+            mTotal = total;
+            mDownloadApks++;
+            mAppStoreAppMap.put(appFileName, appName);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                mInitializedProgress.setText(getText(R.string.appstore_download_app)
+                        + " : " + mDownloadApks + "/" + mTotal);
+                }
+            });
+        } else {
+            startActivity();
+        }
+    }
+
     private void getAppName(String path) {
         File sourceFile = new File(path);
         final PackageParser parser = new PackageParser();
@@ -121,7 +190,12 @@ public class InitializeActivity extends BaseActivity {
     }
 
     private void installSlient(String apkPath) {
-        String cmd = "pm install -r " + apkPath;
+        String cmd;
+        if (apkPath.endsWith(".apk")) {
+            cmd = "pm install " + apkPath;
+        } else {
+            cmd = "pm install -r " + apkPath;
+        }
         Process process = null;
         DataOutputStream os = null;
         try {
@@ -160,6 +234,12 @@ public class InitializeActivity extends BaseActivity {
         super.onBackPressed();
     }
 
+    public void InstallAppStoreApps() {
+        initializeAppStoreApp();
+        mInstallTask = new InstallAsyncTask();
+        mInstallTask.execute();
+    }
+
     public class InstallAsyncTask extends AsyncTask<Void, Object, Void>{
 
         @Override
@@ -176,17 +256,108 @@ public class InitializeActivity extends BaseActivity {
 
         @Override
         protected void onProgressUpdate(Object... values) {
+            if (mInitializedProgress.getVisibility() == View.GONE) {
+                mInitializedProgress.setVisibility(View.VISIBLE);
+            }
             int index = (int)values[0];
             String appName = (String)values[1];
-            mInitializedProgress.setText(getText(R.string.initialize_progress)
-                          + KEY_SPACE + appName + KEY_SPACE + index + KEY_SPRIT + mTotalApks);
+            if (!mIsAppStoreApps) {
+                mInitializedProgress.setText(getText(R.string.initialize_progress)
+                              + KEY_SPACE + appName + KEY_SPACE + index + KEY_SPRIT + mTotalApks);
+            } else {
+                mInitializedProgress.setText(getText(R.string.restore_progress)
+                              + KEY_SPACE + appName + KEY_SPACE + index + KEY_SPRIT + mTotalApks);
+            }
         }
 
         @Override
         protected void onPostExecute(Void avoid) {
             mSp.edit().putBoolean(INSTALLED_FINISH, true).commit();
-            startActivity();
+            if (!mIsAppStoreApps) {
+                // check cloudservice account
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.openthos.seafile",
+                        "com.openthos.seafile.SeafileService"));
+                intent.setAction("com.openthos.seafile.Seafile_Service");
+                bindService(intent, new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        iSeafileService = ISeafileService.Stub.asInterface(service);
+                        try {
+                            if (iSeafileService.getUserName() != null) {
+                                mIsAppStoreApps = true;
+                                showSyncOptionDialog();
+                            } else {
+                                startActivity();
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                            startActivity();
+                        }
+                    }
+
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+                    }
+                }, BIND_AUTO_CREATE);
+            } else {
+                startActivity();
+            }
         }
+    }
+
+    private void showSyncOptionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InitializeActivity.this);
+        final String[] items = new String[] {getString(R.string.multichoice_item_wallpaper),
+                getString(R.string.multichoice_item_wifi),
+                getString(R.string.multichoice_item_email),
+                getString(R.string.multichoice_item_appdata),
+                getString(R.string.multichoice_item_startupmenu),
+                getString(R.string.multichoice_item_browser),
+                getString(R.string.multichoice_item_app)};
+        final boolean[] selectedItems = new boolean[] {
+                false, false, false, false, false, false, false};
+        builder.setMultiChoiceItems(items,null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                selectedItems[which] = !selectedItems[which];
+            }
+        });
+
+        builder.setPositiveButton(getString(R.string.multichoice_button_restore),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                try {
+                    iSeafileService.restoreSettings(selectedItems[INDEX_WALLPAPER],
+                            selectedItems[INDEX_WIFI], selectedItems[INDEX_EMAIL],
+                            selectedItems[INDEX_APPDATA], selectedItems[INDEX_STARTUPMENU],
+                            selectedItems[INDEX_BROWSER], selectedItems[INDEX_APP]);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        mInitializedProgress.setText(getText(R.string.appstore_download_app));
+                        }
+                    });
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    startActivity();
+                }
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.multichoice_button_cancel),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                startActivity();
+            }
+        });
+        builder.setCancelable(false);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void setWallpaper() {
