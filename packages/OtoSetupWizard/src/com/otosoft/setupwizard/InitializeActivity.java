@@ -2,7 +2,6 @@ package com.otosoft.setupwizard;
 
 import android.os.Bundle;
 import android.os.AsyncTask;
-import android.os.IBinder;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.content.pm.PackageParser;
 import android.content.pm.PackageUserState;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.content.ComponentName;
 import android.view.View;
 import android.view.View.OnClickListener;
 import java.io.File;
@@ -35,8 +33,6 @@ import android.content.DialogInterface;
 import android.view.View.OnClickListener;
 import java.util.Map;
 import java.util.HashMap;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
 import android.os.RemoteException;
 import com.openthos.seafile.ISeafileService;
 
@@ -67,6 +63,7 @@ public class InitializeActivity extends BaseActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        iSeafileService = ((SetupWizardApplication) getApplication()).mISeafileService;
         mAppStoreAppMap = new HashMap<>();
         mInitializeActivity = this;
         setContentView(R.layout.activity_initialize_pager);
@@ -275,31 +272,17 @@ public class InitializeActivity extends BaseActivity {
             mSp.edit().putBoolean(INSTALLED_FINISH, true).commit();
             if (!mIsAppStoreApps) {
                 // check cloudservice account
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.openthos.seafile",
-                        "com.openthos.seafile.SeafileService"));
-                intent.setAction("com.openthos.seafile.Seafile_Service");
-                bindService(intent, new ServiceConnection() {
-                    @Override
-                    public void onServiceConnected(ComponentName name, IBinder service) {
-                        iSeafileService = ISeafileService.Stub.asInterface(service);
-                        try {
-                            if (iSeafileService.getUserName() != null) {
-                                mIsAppStoreApps = true;
-                                showSyncOptionDialog();
-                            } else {
-                                startActivity();
-                            }
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                            startActivity();
-                        }
+                try {
+                    if (iSeafileService.getUserName() != null) {
+                        mIsAppStoreApps = true;
+                        showSyncOptionDialog();
+                    } else {
+                        startActivity();
                     }
-
-                    @Override
-                    public void onServiceDisconnected(ComponentName name) {
-                    }
-                }, BIND_AUTO_CREATE);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    startActivity();
+                }
             } else {
                 startActivity();
             }

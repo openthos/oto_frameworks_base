@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.text.Editable;
@@ -143,9 +144,12 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                         Intent intent = new Intent();
                         intent.setAction("com.android.wizard.FINISH");
                         startActivity(intent);
-                        Intent intents = new Intent();
-                        intents.setClassName("com.openthos.seafile", "com.openthos.seafile.MainSeafileService");
-                        startService(intents);
+                        try {
+                            ((SetupWizardApplication) getApplication()).
+                                    mISeafileService.updateAccount();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                         break;
 
                     default:
