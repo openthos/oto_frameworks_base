@@ -740,6 +740,7 @@ public class Activity extends ContextThemeWrapper
     /* package */ NonConfigurationInstances mLastNonConfigurationInstances;
 
     private Window mWindow;
+    WindowManager.MultiWindow.ResizeWindow mResizeWindow;
 
     private WindowManager mWindowManager;
     /*package*/ View mDecor = null;
@@ -961,6 +962,7 @@ public class Activity extends ContextThemeWrapper
             mShowQQWeChatTip.sendEmptyMessageDelayed(SHOW_QQ_DIALOG_MESSAGE,
                                                      SHOW_QQWECHAT_DIALOG_TIME);
         }
+        mResizeWindow = new WindowManager.MultiWindow.MoveWindow();
     }
 
     /**
@@ -4988,6 +4990,73 @@ public class Activity extends ContextThemeWrapper
         } else {
             mParent.setRequestedOrientation(requestedOrientation);
         }
+    }
+
+    public void onTouchWindow(MotionEvent event) {
+        if (mParent == null) {
+            try {
+                if (mDecor != null && mDecor.getViewRootImpl() != null) {
+                    Rect nowRect = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                    //mDecor.getViewRootImpl().setWinFrame(
+                    nowRect = mWindow.onTouchWindow(event.getAction(),
+                    (int) event.getRawX(), (int) event.getRawY(),
+                    nowRect, mResizeWindow, true);//);
+                    if (nowRect != null) {
+                        mDecor.getViewRootImpl().setWinFrame(nowRect);
+                        mDecor.invalidate();
+                    }
+                }
+            } catch (RemoteException e) {
+                // Empty
+            }
+        } else {
+            mParent.onTouchWindow(event);
+        }
+    }
+
+    public void toggleFullScreen() {
+        if (mParent == null) {
+            try {
+                if (mDecor != null && mDecor.getViewRootImpl() != null) {
+                    Rect nowRect = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                    mDecor.getViewRootImpl().setWinFrame(mWindow.toggleFullScreen(nowRect));
+                    mDecor.invalidate();
+                }
+            } catch (RemoteException e) {
+                // Empty
+            }
+        } else {
+            mParent.toggleFullScreen();
+        }
+    }
+
+    public void onMinimize() {
+        if (mParent == null) {
+            try {
+                if (mDecor != null && mDecor.getViewRootImpl() != null) {
+                    Rect nowRect = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                    mWindow.onMinimize(nowRect);
+                }
+            } catch (RemoteException e) {
+                // Empty
+            }
+        } else {
+            mParent.onMinimize();
+        }
+    }
+
+    public boolean isFullScreen() {
+        if (mParent == null) {
+            try {
+                if (mDecor != null && mDecor.getViewRootImpl() != null) {
+                    Rect nowRect = ActivityManagerNative.getDefault().getStackBounds(getStackId());
+                    return nowRect.equals(mWindow.getFullScreen());
+                }
+            } catch (RemoteException e) {
+                // Empty
+            }
+        }
+        return mParent.isFullScreen();
     }
 
     /**

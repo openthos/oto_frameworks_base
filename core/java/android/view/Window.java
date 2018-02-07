@@ -1947,7 +1947,9 @@ public abstract class Window {
     }
 
     public boolean hasHeader() {
-        return mMultiWindow.mHeader;
+        String packageName = getContext().getPackageName();
+        boolean inFennec = packageName.equals("org.mozilla.fennec_root");
+        return mMultiWindow.mHeader && !inFennec;
     }
 
     public void setHeader(boolean header) {

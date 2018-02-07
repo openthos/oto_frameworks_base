@@ -2657,9 +2657,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             }
 
             int y = (int) ev.getRawY();
-            boolean shown = mDecorMW.isHeaderShown();
 
-            if ((y < WINDOW_HEADER_SENSE_HEIGHT) && !shown) {
+            boolean shown = mDecorMW.isHeaderShown();
+            String packageName = getContext().getPackageName();
+            boolean inFennec = packageName.equals("org.mozilla.fennec_root");
+
+            if ((y < WINDOW_HEADER_SENSE_HEIGHT) && !shown && !inFennec) {
                 mDecorMW.showHeader(true);
                 return true;
             } else if ((y > getHeaderHeightReal()) && shown) {
