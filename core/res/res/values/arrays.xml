@@ -490,7 +490,8 @@
         <item>"com.autodesk.autocadws"</item>
         <item>"com.avector.itw.itwmj16hd"</item>
         <item>"com.amazon.windowshop"</item>
-        <item>"com.jecelyin.editor.v2s"</item>
+        <item>"com.openthos.editor.v2"</item>
+        <item>"com.openthos.taskmanager"</item>
     </string-array>
     <string-array name="maximized_style_window">
         <item>"com.android.camera2"</item>

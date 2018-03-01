@@ -49,7 +49,7 @@ public class ActivityInfo extends ComponentInfo
     public static final String ISSUE_WIN_OTO_FILEMANAGER =
                  "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
     public static final String ISSUE_WIN_TEXT_EDITOR =
-                 "com.jecelyin.editor.v2/com.jecelyin.editor.v2.ui.MainActivity";
+                 "com.openthos.editor.v2/com.openthos.editor.v2.ui.MainActivity";
     public static final String INPUTUINAME_TENCENT_WECHAT =
                  "com.tencent.mm.ui.account.mobile.MobileInputUI";
     public static final String LAUNCHERNAME_TENCENT_QQ =
