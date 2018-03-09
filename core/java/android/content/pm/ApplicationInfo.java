@@ -110,7 +110,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ANDROID_INPUTMETHOD_PINYIN
                                                = "com.android.inputmethod.pinyin/.PinyinIME";
 
-    public static final String APPNAME_FENNEC = "org.mozilla.fennec_root";
+    public static final String APPNAME_FENNEC = "org.mozilla.fennec_openthos";
 
     public static final String APPNAME_CTMC_CLOUDTIMES = "com.cloudtimes.ctmc";
 

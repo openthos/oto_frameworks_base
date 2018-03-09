@@ -2660,7 +2660,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
             boolean shown = mDecorMW.isHeaderShown();
             String packageName = getContext().getPackageName();
-            boolean inFennec = packageName.equals("org.mozilla.fennec_root");
+            boolean inFennec = packageName.equals(ApplicationInfo.APPNAME_FENNEC);
 
             if ((y < WINDOW_HEADER_SENSE_HEIGHT) && !shown && !inFennec) {
                 mDecorMW.showHeader(true);
