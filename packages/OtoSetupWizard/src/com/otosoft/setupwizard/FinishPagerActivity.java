@@ -12,6 +12,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.provider.Settings;
 import com.android.internal.app.LocalePicker;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class FinishPagerActivity extends BaseActivity {
                 Intent intent = new Intent();
                 intent.setAction(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
                 FinishPagerActivity.this.sendBroadcast(intent);
+                int dpi = Settings.System.getInt(getContentResolver(), "system_dpi", 160);
+                SystemProperties.set("sys.sf.lcd_density.recommend", String.valueOf(dpi));
             }
         });
     }

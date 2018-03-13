@@ -23,6 +23,10 @@
     <string name="language_english">English</string>
     <string name="setup_next">下一步</string>
     <string name="setup_device_setting">本机设置</string>
+    <string name="display_setting">显示设置</string>
+    <string name="dpi_low">低分辨率(120)</string>
+    <string name="dpi_medium">中分辨率(160)</string>
+    <string name="dpi_high">高分辨率(240)</string>
     <string name="initialize_progress_title">请稍候，正在为您准备应用环境...</string>
     <string name="initialize_progress">正在初始化</string>
     <string name="initialize_finish">初始化完成</string>

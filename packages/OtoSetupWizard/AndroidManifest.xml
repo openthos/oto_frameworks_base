@@ -38,6 +38,16 @@
             </intent-filter>
         </activity>
         <activity android:excludeFromRecents="true"
+                  android:name="com.otosoft.setupwizard.DisplayActivity"
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar"
+                  android:windowSoftInputMode="adjustPan|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="com.android.wizard.DISPLAY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity android:excludeFromRecents="true"
                   android:name="com.otosoft.setupwizard.InitializeActivity"
                   android:theme="@android:style/Theme.Material.Light.NoActionBar"
                   android:windowSoftInputMode="adjustPan|stateHidden">

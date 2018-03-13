@@ -109,7 +109,7 @@ public class SetupWizardActivity extends BaseActivity {
                         updateLocale(mCurrentLocale);
                         break;
                 }
-                SetupWizardActivity.this.startActivity(SetupWizardActivity.this.buildWifiSetupIntent());
+                SetupWizardActivity.this.startActivity(new Intent("com.android.wizard.DISPLAY"));
             }
         });
         new PreInstallThread("/sdcard/Desktop", "UserGuide.html").start();
@@ -162,18 +162,6 @@ public class SetupWizardActivity extends BaseActivity {
         if (intent != null && (intent.getFlags() & 67108864) != 0 && intent.getBooleanExtra("extra_clear_top", false)) {
             ((SetupWizardApplication) getApplication()).onSetupFinishedReally(this);
         }
-    }
-
-    private Intent buildWifiSetupIntent() {
-        //Intent intent = new Intent("com.otosoft.setupwizard.SETUP_WIFI_NETWORK");
-        Intent intent = new Intent("com.android.net.wifi.SETUP_WIFI_NETWORK");
-        intent.putExtra("firstRun", true);
-        intent.putExtra("allowSkip", true);
-        intent.putExtra("useImmersiveMode", true);
-        intent.putExtra("theme", "material_light");
-        intent.putExtra("wifi_auto_finish_on_connect", false);
-        intent.putExtra("scriptUri", "NotUsedNow");
-        return intent;
     }
 
     private void updateLocale(Locale locale) {

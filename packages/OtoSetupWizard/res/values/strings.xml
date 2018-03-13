@@ -22,6 +22,10 @@
     <string name="language_chinese">中文（简体）</string>
     <string name="language_english">English</string>
     <string name="setup_next">Next</string>
+    <string name="dpi_low">LDPI(120)</string>
+    <string name="dpi_medium">MDPI(160)</string>
+    <string name="dpi_high">HDPI(240)</string>
+    <string name="display_setting">Display Device</string>
     <string name="setup_device_setting">Setting Device</string>
     <string name="initialize_progress_title">System initializing for the first time usage...</string>
     <string name="initialize_progress">Installing</string>
