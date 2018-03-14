@@ -1,7 +1,6 @@
 package com.otosoft.setupwizard;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.app.admin.DevicePolicyManager;
@@ -137,14 +136,7 @@ public class UserSetupActivity extends BaseActivity {
     }
 
     private void startActivity() {
-        File file = new File("/data/vendor/app");
-        SharedPreferences sp = getSharedPreferences(PRE_INSTALL_CACHE, Context.MODE_PRIVATE);
-        boolean initializeFinish = sp.getBoolean(INSTALLED_FINISH, false);
-        if (file.exists() && file.listFiles().length > 1 && !initializeFinish) {
-            startActivity(new Intent("com.android.wizard.INITIALIZE"));
-        } else {
-            startActivity(new Intent("com.android.wizard.STARTUSE"));
-        }
+        startActivity(new Intent("com.android.wizard.INITIALIZE"));
     }
 
     public void onResume() {

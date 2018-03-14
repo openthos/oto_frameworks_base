@@ -5,7 +5,6 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files) \
 LOCAL_ASSET_FILES += $(call find-subdir-assets) \
-        src/com/otosoft/IAppStoreCallback.aidl \
         ../../../../packages/apps/OtoCloudService/src/com/openthos/seafile/ISeafileService.aidl
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4
