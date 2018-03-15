@@ -19,7 +19,7 @@ import android.content.pm.PackageParser;
 import android.content.pm.PackageUserState;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.DataOutputStream;
@@ -31,10 +31,8 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-
 
 import android.os.Environment;
 import android.os.RemoteException;
@@ -77,17 +75,22 @@ public class InitializeActivity extends BaseActivity {
                 String pkgName = files[i].getName();
                 File[] apks = files[i].listFiles();
                 for (File apk : apks) {
+                    String appName = getAppName(apk.getAbsolutePath());
+                    if (TextUtils.isEmpty(appName)) {
+                        continue;
+                    }
+                    mAppNames.add(appName);
                     mApkPaths.add(apk.getAbsolutePath());
-                    getAppName(apk.getAbsolutePath());
                 }
             }
         } catch (Exception e) {
         }
     }
 
-    private void getAppName(String path) {
+    private final PackageParser parser = new PackageParser();
+
+    private String getAppName(String path) {
         File sourceFile = new File(path);
-        final PackageParser parser = new PackageParser();
         try {
             PackageParser.Package pkg = parser.parseMonolithicPackage(sourceFile, 0);
             parser.collectManifestDigest(pkg);
@@ -107,12 +110,11 @@ public class InitializeActivity extends BaseActivity {
                 label = (info.applicationInfo.nonLocalizedLabel != null) ?
                         info.applicationInfo.nonLocalizedLabel : info.applicationInfo.packageName;
             }
-            mAppNames.add(label.toString());
-            return;
+            return label.toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mAppNames.add("");
+        return "";
     }
 
     private void installSlient(String apkPath) {

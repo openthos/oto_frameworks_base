@@ -18,17 +18,19 @@ import com.android.internal.app.LocalePicker;
 import com.openthos.seafile.ISeafileService;
 
 public class SetupWizardApplication extends Application {
-    private final ComponentName REAL_HOME = new ComponentName("com.otosoft.filemanager", "com.otosoft.launcher.Launcher");
+    private final ArrayList<Runnable> mFinishRunnables = new ArrayList();
     private final Runnable mDisableSetupRunnable = new Runnable() {
         public void run() {
-            SetupWizardApplication.this.getPackageManager().setComponentEnabledSetting(new ComponentName(SetupWizardApplication.this, SetupWizardActivity.class), 2, 0);
+            getPackageManager().setComponentEnabledSetting(
+                    new ComponentName(
+                            SetupWizardApplication.this, SetupWizardActivity.class),
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
         }
     };
-    private final ArrayList<Runnable> mFinishRunnables = new ArrayList();
     private final Runnable mProvisionedRunnable = new Runnable() {
         public void run() {
-            Global.putInt(SetupWizardApplication.this.getContentResolver(), "device_provisioned", 1);
-            Secure.putInt(SetupWizardApplication.this.getContentResolver(), "user_setup_complete", 1);
+            Global.putInt(getContentResolver(), "device_provisioned", 1);
+            Secure.putInt(getContentResolver(), "user_setup_complete", 1);
         }
     };
 
@@ -53,22 +55,14 @@ public class SetupWizardApplication extends Application {
         }, BIND_AUTO_CREATE);
     }
 
-    public void onSetupFinished(Activity activity) {
-        Intent i = new Intent(this, SetupWizardActivity.class);
-        i.setFlags(67108864);
-        i.putExtra("extra_clear_top", true);
-        activity.startActivity(i);
-    }
-
-    public void onSetupFinishedReally(Activity activity) {
-        this.mFinishRunnables.clear();
-        this.mFinishRunnables.add(this.mProvisionedRunnable);
-        this.mFinishRunnables.add(this.mDisableSetupRunnable);
+    public void onSetupFinishedReally() {
+        mFinishRunnables.clear();
+        mFinishRunnables.add(this.mDisableSetupRunnable);
+        mFinishRunnables.add(this.mProvisionedRunnable);
         Iterator i$ = this.mFinishRunnables.iterator();
         while (i$.hasNext()) {
             ((Runnable) i$.next()).run();
         }
-        activity.finish();
     }
 
     public void runForTest(Activity activity) {

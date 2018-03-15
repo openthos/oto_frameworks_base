@@ -30,14 +30,13 @@ public class FinishPagerActivity extends BaseActivity {
         mButtonStart.getBackground().setAlpha(25);
         this.mButtonStart.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ((SetupWizardApplication) FinishPagerActivity.this.getApplication())
-                        .onSetupFinished(FinishPagerActivity.this);
-                //send broadcast to control status bar finish
+                ((SetupWizardApplication) getApplication()).onSetupFinishedReally();
                 Intent intent = new Intent();
                 intent.setAction(Intent.STATUS_BAR_SHOW_FINISH_ACTIVITY);
                 FinishPagerActivity.this.sendBroadcast(intent);
                 int dpi = Settings.System.getInt(getContentResolver(), "system_dpi", 160);
                 SystemProperties.set("sys.sf.lcd_density.recommend", String.valueOf(dpi));
+                finish();
             }
         });
     }

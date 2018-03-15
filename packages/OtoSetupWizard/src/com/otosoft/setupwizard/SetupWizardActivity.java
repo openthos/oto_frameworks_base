@@ -158,12 +158,6 @@ public class SetupWizardActivity extends BaseActivity {
     public void onBackPressed() {
     }
 
-    protected void onNewIntent(Intent intent) {
-        if (intent != null && (intent.getFlags() & 67108864) != 0 && intent.getBooleanExtra("extra_clear_top", false)) {
-            ((SetupWizardApplication) getApplication()).onSetupFinishedReally(this);
-        }
-    }
-
     private void updateLocale(Locale locale) {
         LocalePicker.updateLocale(locale);
     }
