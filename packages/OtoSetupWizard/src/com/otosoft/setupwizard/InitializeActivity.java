@@ -51,8 +51,8 @@ public class InitializeActivity extends BaseActivity {
     private static final int INDEX_BROWSER = 5;
     private static final int INDEX_APP = 6;
     private TextView mInitializedProgress;
-    private ArrayList<String> mAppNames;
-    private ArrayList<String> mApkPaths;
+    private ArrayList<String> mAppNames = new ArrayList();
+    private ArrayList<String> mApkPaths = new ArrayList();
     private int mTotalApks;
     private ISeafileService iSeafileService;
 
@@ -65,12 +65,12 @@ public class InitializeActivity extends BaseActivity {
     }
 
     private void initializeApp() {
-        mAppNames = new ArrayList();
-        mApkPaths = new ArrayList();
+        mAppNames.clear();
+        mApkPaths.clear();
         File file = new File(APP_PATH);
-        File[] files = file.listFiles();
-        mTotalApks = files.length;
-        try {
+        if (file.exists()){
+            File[] files = file.listFiles();
+            mTotalApks = files.length;
             for (int i = 0; i < mTotalApks; i++) {
                 String pkgName = files[i].getName();
                 File[] apks = files[i].listFiles();
@@ -83,7 +83,6 @@ public class InitializeActivity extends BaseActivity {
                     mApkPaths.add(apk.getAbsolutePath());
                 }
             }
-        } catch (Exception e) {
         }
     }
 
