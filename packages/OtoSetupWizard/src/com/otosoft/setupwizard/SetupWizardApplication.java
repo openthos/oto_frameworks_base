@@ -24,7 +24,7 @@ public class SetupWizardApplication extends Application {
             getPackageManager().setComponentEnabledSetting(
                     new ComponentName(
                             SetupWizardApplication.this, SetupWizardActivity.class),
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
         }
     };
     private final Runnable mProvisionedRunnable = new Runnable() {
@@ -57,8 +57,8 @@ public class SetupWizardApplication extends Application {
 
     public void onSetupFinishedReally() {
         mFinishRunnables.clear();
-        mFinishRunnables.add(this.mDisableSetupRunnable);
         mFinishRunnables.add(this.mProvisionedRunnable);
+        mFinishRunnables.add(this.mDisableSetupRunnable);
         Iterator i$ = this.mFinishRunnables.iterator();
         while (i$.hasNext()) {
             ((Runnable) i$.next()).run();
