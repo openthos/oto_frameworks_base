@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.provider.Settings;
 import com.android.internal.app.LocalePicker;
 
-import android.content.pm.PackageManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,22 +54,17 @@ public class SetupWizardActivity extends BaseActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PackageManager packageManager = getPackageManager();
         //make the app compatability available
         SystemProperties.set(PROPERTY_NATIVEBRIDGE,"1");
         setContentView(R.layout.activity_setupwizard);
-        findViewById(R.id.background).setVisibility(View.GONE);
         //send broadcast to control status bar
         Intent intent1 = new Intent();
         intent1.setAction(Intent.STATUS_BAR_HIDE_BOOT_EXIT);
         SetupWizardActivity.this.sendBroadcast(intent1);
-        Settings.System.putInt(getContentResolver(),
-                android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);
-        //set default timezone
-        final AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setTimeZone("Asia/Shanghai"); // TODO: need a time zone picker page.
         //set time 24 hour
         Settings.System.putString(getContentResolver(), Settings.System.TIME_12_24, HOURS_24);
+        Settings.System.putInt(getContentResolver(),
+                android.provider.Settings.System.SCREEN_OFF_TIMEOUT, DEFAULT_SLEEP_TIME);
         this.mChinese = (TextView) findViewById(R.id.tv_chinese);
         this.mEnglish = (TextView) findViewById(R.id.tv_english);
         Resources res = getBaseContext().getResources();

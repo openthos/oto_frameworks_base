@@ -38,7 +38,6 @@ public class SetupWizardApplication extends Application {
 
     @Override
     public void onCreate() {
-        LocalePicker.updateLocale(Locale.CHINA);
         super.onCreate();
         Intent intent = new Intent();
         intent.setComponent(new ComponentName("com.openthos.seafile",

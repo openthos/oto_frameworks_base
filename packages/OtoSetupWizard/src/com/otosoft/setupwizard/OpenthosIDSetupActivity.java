@@ -8,6 +8,9 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.Parcel;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -52,6 +55,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.net.NetworkInfo;
 import android.net.ConnectivityManager;
+import com.openthos.seafile.ISeafileService;
 
 public class OpenthosIDSetupActivity extends BaseActivity {
     private TextView mVerify;
@@ -72,11 +76,13 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private static String CODE_SUCCESS ="1000";
     private ContentResolver mResolver;
     private String mCookie = "";
-    public static final int MSG_GET_CSRF = 0x1001;
-    public static final int MSG_GET_CSRF_OK = 0x1002;
-    public static final int MSG_REGIST_SEAFILE = 0x1003;
+    public static final int MSG_REGIST_SEAFILE = 0x1001;
     public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
+    public static final int MSG_REGIST_SEAFILE_FAILED = 0x1005;
     private ConnectivityManager mCM;
+    private ISeafileService iSeafileService;
+    private IBinder mSeafileBinder = new SeafileBinder();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_openthos_id_setup);
@@ -118,7 +124,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     getText(R.string.toast_openthos_password_wrong),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            mHandler.sendEmptyMessage(MSG_GET_CSRF);
+                            mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
                             Uri uriInsert =
                                   Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
                             ContentValues values = new ContentValues();
@@ -130,28 +136,31 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    case MSG_GET_CSRF:
-                        getCsrf();
-                        break;
-                    case MSG_GET_CSRF_OK:
-                        mCookie = (String) msg.obj;
-                        mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
-                        break;
                     case MSG_REGIST_SEAFILE:
-                        registSeafile();
-                        break;
-                    case MSG_REGIST_SEAFILE_OK:
-                        Intent intent = new Intent();
-                        intent.setAction("com.android.wizard.FINISH");
-                        startActivity(intent);
+                        iSeafileService
+                                = ((SetupWizardApplication) getApplication()).mISeafileService;
                         try {
-                            ((SetupWizardApplication) getApplication()).
-                                    mISeafileService.updateAccount();
+                            iSeafileService.setBinder(mSeafileBinder);
+                            iSeafileService.regiestAccount(openthosID, password );
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
                         break;
-
+                    case MSG_REGIST_SEAFILE_OK:
+                        try {
+                            iSeafileService.unsetBinder(mSeafileBinder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent = new Intent();
+                        intent.setAction("com.android.wizard.FINISH");
+                        startActivity(intent);
+                        break;
+                    case MSG_REGIST_SEAFILE_FAILED:
+                        Toast.makeText(OpenthosIDSetupActivity.this,
+                                getText(R.string.toast_openthos_password_wrong),
+                                Toast.LENGTH_SHORT).show();
+                        break;
                     default:
                         Toast.makeText(OpenthosIDSetupActivity.this,
                                 getText(R.string.toast_network_not_connect),
@@ -301,21 +310,21 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         }
     }
 
-    private void getCsrf() {
-        RequestThread thread = new RequestThread(mHandler,
-               "https://dev.openthos.org/accounts/register/", null, RequestThread.RequestType.GET);
-        thread.start();
-    }
+    private class SeafileBinder extends Binder {
 
-    private void registSeafile() {
-        List<NameValuePair> list = new ArrayList<>();
-        list.add(new BasicNameValuePair("csrfmiddlewaretoken",mCookie.split("=")[1].trim()));
-        list.add(new BasicNameValuePair("email", openthosID));
-        list.add(new BasicNameValuePair("password1", password));
-        list.add(new BasicNameValuePair("password2", password));
-        RequestThread thread = new RequestThread(mHandler,
-               "https://dev.openthos.org/accounts/register/", list, RequestThread.RequestType.POST,
-                mCookie);
-        thread.start();
+        @Override
+        protected boolean onTransact(
+                int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+            if (code == iSeafileService.getCodeRegiestSuccess()) {
+                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_OK);
+                reply.writeNoException();
+                return true;
+            } else if (code == iSeafileService.getCodeRegiestFailed()) {
+                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_FAILED);
+                reply.writeNoException();
+                return true;
+            }
+            return super.onTransact(code, data, reply, flags);
+        }
     }
 }
