@@ -262,13 +262,12 @@ public class NotificationPanelView extends PanelView implements
             lp.gravity = panelGravity;
             mNotificationStackScroller.setLayoutParams(lp);
         }
-/*
-        lp = (LinearLayout.LayoutParams) mScrollView.getLayoutParams();
+
+        lp = (FrameLayout.LayoutParams) mNotificationContainerParent.getLayoutParams();
         if (lp.width != panelWidth) {
             lp.width = panelWidth;
-            lp.gravity = panelGravity;
-            mScrollView.setLayoutParams(lp);
-        }*/
+            mNotificationContainerParent.setLayoutParams(lp);
+        }
     }
 
     @Override
