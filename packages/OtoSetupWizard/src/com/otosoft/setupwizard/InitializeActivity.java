@@ -17,13 +17,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageParser;
 import android.content.pm.PackageUserState;
+import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import java.io.File;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -242,10 +245,27 @@ public class InitializeActivity extends BaseActivity {
                 getString(R.string.multichoice_item_app)};
         final boolean[] selectedItems = new boolean[]{
                 false, false, false, false, false, false, false};
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addCategory(Intent.CATEGORY_BROWSABLE);
+        Uri uri = Uri.parse("https://");
+        intent.setData(uri);
+        final List<ResolveInfo> browsers = getPackageManager().queryIntentActivities(
+                intent, PackageManager.GET_INTENT_FILTERS);
+        final List<String> syncBrowsers = new ArrayList();
         builder.setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 selectedItems[which] = !selectedItems[which];
+                if (which == INDEX_BROWSER && isChecked) {
+                    final String[] browsersName = new String[browsers.size()];
+                    final boolean[] browsersSelect = new boolean[browsers.size()];
+                    for (int i = 0; i < browsers.size(); i++) {
+                        syncBrowsers.add(browsers.get(i).activityInfo.packageName);
+                        browsersName[i] = browsers.get(i).loadLabel(getPackageManager()).toString();
+                        browsersSelect[i] = true;
+                    }
+                    showSyncBrowserDialog(browsersName, browsersSelect);
+                }
             }
         });
 
@@ -255,10 +275,12 @@ public class InitializeActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         try {
+                            List<String> browsers = new ArrayList();
+                            browsers.add("OtoSetupWizard");
                             iSeafileService.restoreSettings(selectedItems[INDEX_WALLPAPER],
                                     selectedItems[INDEX_WIFI], selectedItems[INDEX_EMAIL],
                                     selectedItems[INDEX_APPDATA], selectedItems[INDEX_STARTUPMENU],
-                                    selectedItems[INDEX_BROWSER], selectedItems[INDEX_APP]);
+                                    selectedItems[INDEX_BROWSER], syncBrowsers, selectedItems[INDEX_APP]);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -283,6 +305,20 @@ public class InitializeActivity extends BaseActivity {
         builder.setCancelable(false);
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void showSyncBrowserDialog(String[] browsersName, boolean[] browsersSelect) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMultiChoiceItems(browsersName, browsersSelect, null);
+        builder.setPositiveButton(getString(R.string.warning_dialog_ok),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.create().show();
     }
 
     private void initWallpaper() {
