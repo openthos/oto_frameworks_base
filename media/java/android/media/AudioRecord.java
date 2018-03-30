@@ -16,6 +16,8 @@
 
 package android.media;
 
+import android.app.ActivityThread;
+import android.app.AppOpsManager;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -27,7 +29,11 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.SystemProperties;
 import android.util.Log;
+import android.content.Context;
+import android.content.ContentResolver;
+import android.provider.Settings;
 
 /**
  * The AudioRecord class manages the audio resources for Java applications
@@ -609,6 +615,13 @@ public class AudioRecord
             throw new IllegalStateException("startRecording() called on an "
                     + "uninitialized AudioRecord.");
         }
+
+        String packageName = ActivityThread.currentPackageName();
+        final ContentResolver resolver = ((Context) ActivityThread.
+                    currentActivityThread().getSystemContext()).getContentResolver();
+        int audioState = Settings.Global.getInt(
+                    resolver, packageName + AppOpsManager.OP_RECORD_AUDIO, 0);
+        SystemProperties.set("audio.use_fake", String.valueOf(audioState));
 
         // start recording
         synchronized(mRecordingStateLock) {

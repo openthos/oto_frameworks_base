@@ -963,7 +963,7 @@ static JNINativeMethod camMethods[] = {
   { "setPreviewCallbackSurface",
     "(Landroid/view/Surface;)V",
     (void *)android_hardware_Camera_setPreviewCallbackSurface },
-  { "startPreview",
+  { "_startPreview",
     "()V",
     (void *)android_hardware_Camera_startPreview },
   { "_stopPreview",

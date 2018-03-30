@@ -17,12 +17,17 @@
 package android.media;
 
 import android.app.ActivityThread;
+import android.app.AppOpsManager;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.view.Surface;
+import android.content.Context;
+import android.content.ContentResolver;
+import android.provider.Settings;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -746,6 +751,13 @@ public class MediaRecorder
         } else {
             throw new IOException("No valid output file");
         }
+
+        String packageName = ActivityThread.currentPackageName();
+        final ContentResolver resolver = ((Context) ActivityThread.
+                    currentActivityThread().getSystemContext()).getContentResolver();
+        int audioState = Settings.Global.getInt(
+                    resolver, packageName + AppOpsManager.OP_RECORD_AUDIO, 0);
+        SystemProperties.set("audio.use_fake", String.valueOf(audioState));
 
         _prepare();
     }

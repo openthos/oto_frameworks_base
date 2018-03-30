@@ -17,9 +17,11 @@
 package android.hardware;
 
 import android.app.ActivityThread;
+import android.app.AppOpsManager;
 import android.annotation.SdkConstant;
 import android.annotation.SdkConstant.SdkConstantType;
 import android.content.Context;
+import android.content.ContentResolver;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -31,6 +33,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.SystemProperties;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -40,6 +43,7 @@ import android.util.Log;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.provider.Settings;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -722,7 +726,17 @@ public class Camera {
      * called, {@link Camera.PreviewCallback#onPreviewFrame(byte[], Camera)}
      * will be called when preview data becomes available.
      */
-    public native final void startPreview();
+    private native final void _startPreview();
+
+    public final void startPreview() {
+        String packageName = ActivityThread.currentPackageName();
+        final ContentResolver resolver = ((Context) ActivityThread.
+                    currentActivityThread().getSystemContext()).getContentResolver();
+        int cameraState = Settings.Global.getInt(resolver, packageName + AppOpsManager.OP_CAMERA, 0);
+        SystemProperties.set("camera.use_fake", String.valueOf(cameraState));
+
+        _startPreview();
+    }
 
     /**
      * Stops capturing and drawing preview frames to the surface, and
