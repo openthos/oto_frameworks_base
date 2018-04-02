@@ -22,9 +22,14 @@
     <string name="language_chinese">中文（简体）</string>
     <string name="language_english">English</string>
     <string name="setup_next">Next</string>
-    <string name="dpi_low">LDPI(120)</string>
-    <string name="dpi_medium">MDPI(160)</string>
-    <string name="dpi_high">HDPI(240)</string>
+    <string name="laptop_1366">Laptop 1366x768/1280x720 Screen</string>
+    <string name="laptop_1920">Laptop 1920x1080 Screen</string>
+    <string name="laptop_2560">Laptop 2560x1440 or above Screen</string>
+    <string name="desktop_1920">Desktop 1920x1080 Display</string>
+    <string name="desktop_2560">Desktop 2560x1440 Display</string>
+    <string name="desktop_3840">Desktop 4K(3840x2160) Display</string>
+    <string name="fhd_tv">FHDTV or Projector</string>
+    <string name="uhd_tv">UHDTV or Projector</string>
     <string name="display_setting">Display Device</string>
     <string name="setup_device_setting">Setting Device</string>
     <string name="initialize_progress_title">System initializing for the first time usage...</string>

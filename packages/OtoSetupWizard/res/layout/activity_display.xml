@@ -18,45 +18,48 @@
             style="@style/common_main_title_style"
             android:text="@string/display_setting"/>
 
-        <LinearLayout
+        <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="393dp"
             android:background="#FFFFFF"
+            android:paddingLeft="72dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_dpi_low"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:textColor="#444444"
-                android:textSize="14sp"
-                android:paddingLeft="72dp"
-                android:gravity ="center_vertical"
+            <RadioButton
+                android:id="@+id/tv_laptop_1366"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/selector_item_color"
-                android:text="@string/dpi_low"/>
-            <TextView
-                android:id="@+id/tv_dpi_medium"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:textColor="#444444"
-                android:textSize="14sp"
-                android:paddingLeft="72dp"
-                android:gravity ="center_vertical"
-                android:background="@drawable/selector_item_color"
-                android:text="@string/dpi_medium"/>
-            <TextView
-                android:id="@+id/tv_dpi_high"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:textColor="#444444"
-                android:textSize="14sp"
-                android:paddingLeft="72dp"
-                android:gravity ="center_vertical"
-                android:background="@drawable/selector_item_color"
-                android:text="@string/dpi_high"/>
+                android:text="@string/laptop_1366"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_laptop_1920"
+                android:text="@string/laptop_1920"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_laptop_2560"
+                android:text="@string/laptop_2560"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_desktop_1920"
+                android:text="@string/desktop_1920"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_desktop_2560"
+                android:text="@string/desktop_2560"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_deskptop_3840"
+                android:text="@string/desktop_3840"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_fhd"
+                android:text="@string/fhd_tv"
+                style="@style/common_display_style" />
+            <RadioButton
+                android:id="@+id/tv_uhd"
+                android:text="@string/uhd_tv"
+                style="@style/common_display_style" />
 
-        </LinearLayout>
+        </RadioGroup>
          <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
