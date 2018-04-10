@@ -10,6 +10,7 @@
         android:layout_width="@dimen/startupmenu_layout_size_one_hundred_and_eighty"
         android:layout_height="match_parent"
         android:background="#5a41a2"
+        android:paddingBottom="@dimen/status_bar_height_real"
         android:orientation="vertical">
 
         <TextView
@@ -101,6 +102,7 @@
         android:layout_height="match_parent"
         android:background="#1affffff"
         android:orientation="vertical"
+        android:paddingBottom="@dimen/status_bar_height_real"
         android:paddingLeft="@dimen/startupmenu_layout_size_sixteen"
         android:paddingRight="@dimen/startupmenu_layout_size_sixteen">
 

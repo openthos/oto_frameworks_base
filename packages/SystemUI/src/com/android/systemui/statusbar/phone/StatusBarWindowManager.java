@@ -89,6 +89,14 @@ public class StatusBarWindowManager {
         mLpChanged.copyFrom(mLp);
     }
 
+    public void updateStatusBarView(View statusBarView, int barHeight) {
+        mLp.height = barHeight;
+        mStatusBarView = statusBarView;
+        mBarHeight = barHeight;
+        mWindowManager.updateViewLayout(mStatusBarView, mLp);
+        mLpChanged.copyFrom(mLp);
+    }
+
     private void applyKeyguardFlags(State state) {
         if (state.keyguardShowing) {
             mLpChanged.flags |= WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;

@@ -4060,7 +4060,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateShowSearchHoldoff();
         updateRowStates();
         mScreenPinningRequest.onConfigurationChanged();
+        updateStatusHeight();
         rebuildDialog();
+    }
+
+    private void updateStatusHeight() {
+        final Resources res = mContext.getResources();
+        mNaturalBarHeight =
+                res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height_real);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mStatusBarView.getLayoutParams();
+        if (lp.height != mNaturalBarHeight) {
+            lp.height = mNaturalBarHeight;
+            mStatusBarView.setLayoutParams(lp);
+        }
+        mStatusBarWindowManager.updateStatusBarView(mStatusBarWindow, mNaturalBarHeight);
     }
 
     public void rebuildDialog() {

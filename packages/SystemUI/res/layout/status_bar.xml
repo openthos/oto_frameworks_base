@@ -53,7 +53,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/systemui_size_four"
             android:layout_width="@dimen/systemui_size_sixtyfour"
-            android:layout_height="@dimen/status_bar_icon_size_big"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/systemui_size_two"
             android:layout_marginBottom="@dimen/systemui_size_two"
             android:src="@drawable/ic_sysbar_menu"
@@ -64,7 +64,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginTop="@dimen/systemui_size_four"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/status_bar_icon_size_big"
+            android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/status_bar_startup_menu"
             android:layout_toLeftOf="@+id/status_bar_contents">
 

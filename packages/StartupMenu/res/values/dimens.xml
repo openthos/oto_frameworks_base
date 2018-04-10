@@ -68,5 +68,5 @@
     <!--StartupMenu textview size -->
     <dimen name="startupmenu_text_size_twelve">12sp</dimen>
     <dimen name="startupmenu_text_size_fourteen">14sp</dimen>
-
+    <dimen name="status_bar_height_real">40dp</dimen>
 </resources>
