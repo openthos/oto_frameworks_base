@@ -34,4 +34,5 @@ interface IEthernetManager
     //add ethernet
     void Trackstart();
     void Trackstop();
+    void setEthernetState(boolean up);
 }

@@ -167,4 +167,12 @@ public class EthernetManager {
         } catch (NullPointerException | RemoteException e) {
         }
     }
+
+    public void setEthernetState(boolean up) {
+        try {
+            mService.setEthernetState(up);
+        } catch (NullPointerException | RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }
