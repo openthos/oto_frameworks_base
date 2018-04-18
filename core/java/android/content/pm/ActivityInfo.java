@@ -47,7 +47,7 @@ public class ActivityInfo extends ComponentInfo
     public static final String ISSUE_WIN_WPS_SPREADSHEET =
                  "cn.wps.moffice.spreadsheet.multiactivity";
     public static final String ISSUE_WIN_OTO_FILEMANAGER =
-                 "com.openthos.filemanager/com.openthos.filemanager.MainActivity";
+                 "org.openthos.filemanager/org.openthos.filemanager.MainActivity";
     public static final String ISSUE_WIN_TEXT_EDITOR =
                  "com.openthos.editor.v2/com.openthos.editor.v2.ui.MainActivity";
     public static final String INPUTUINAME_TENCENT_WECHAT =
@@ -58,7 +58,7 @@ public class ActivityInfo extends ComponentInfo
     public static final String DOCUMENTS_ACTIVITY = "com.android.documentsui.DocumentsActivity";
 
     public static final String FILEMANAGER_PICKER_ACTIVITY =
-                                                      "com.openthos.filemanager.PickerActivity";
+                                                      "org.openthos.filemanager.PickerActivity";
 
     /**
      * A style resource identifier (in the package's resources) of this

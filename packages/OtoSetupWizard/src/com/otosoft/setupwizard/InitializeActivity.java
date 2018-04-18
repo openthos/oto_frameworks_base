@@ -40,7 +40,7 @@ import android.content.DialogInterface;
 import android.os.Environment;
 import android.os.RemoteException;
 
-import com.openthos.seafile.ISeafileService;
+import org.openthos.seafile.ISeafileService;
 
 public class InitializeActivity extends BaseActivity {
     private static final String APP_PATH = "/data/vendor/app";

@@ -24,7 +24,7 @@ public class Constants {
 //    public static final int FLAG_ACTIVITY_RUN_PHONE_MODE = Intent.FLAG_ACTIVITY_RUN_PHONE_MODE;
 //    public static final int FLAG_ACTIVITY_RUN_PC_MODE = Intent.FLAG_ACTIVITY_RUN_PC_MODE;
 
-    public static final String APPNAME_OTO_FILEMANAGER = "com.openthos.filemanager";
+    public static final String APPNAME_OTO_FILEMANAGER = "org.openthos.filemanager";
     public static final String STATUS_BAR_SHOW_SUGGEST = "android.intent.statusbar.show.suggest";
     public static final String ACTION_OPEN_APPLICATION = "android.intent.action.OPEN_APPLICATION";
     public static final String ACTION_STARTUPMENU_SEND_INFO_LOCK = "com.android.action.STARTMENU_INFO_SEND";

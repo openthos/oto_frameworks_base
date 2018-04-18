@@ -1362,7 +1362,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     void startKeyboardMap() {
         Intent launch = new Intent();
         launch.setClassName(ApplicationInfo.APPNAME_OTO_KEYBOARDMAP,
-                "com.openthos.keyboardmap.KeymapService");
+                "org.openthos.keyboardmap.KeymapService");
         mContext.startService(launch);
     }
 

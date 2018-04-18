@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import com.android.internal.app.LocalePicker;
-import com.openthos.seafile.ISeafileService;
+import org.openthos.seafile.ISeafileService;
 
 public class SetupWizardApplication extends Application {
     private final ArrayList<Runnable> mFinishRunnables = new ArrayList();
@@ -40,8 +40,8 @@ public class SetupWizardApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.openthos.seafile",
-                "com.openthos.seafile.SeafileService"));
+        intent.setComponent(new ComponentName("org.openthos.seafile",
+                "org.openthos.seafile.SeafileService"));
         bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {

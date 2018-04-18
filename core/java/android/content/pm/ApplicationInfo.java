@@ -58,7 +58,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ROVIO_ANGRYBIRDSSEASONS = "com.rovio.angrybirdsseasons";
     public static final String APPNAME_EMINDSOFT_FILEMANAGER = "com.emindsoft.filemanager";
     public static final String APPNAME_CYANOGENMOD_FILEMANAGER = "com.cyanogenmod.filemanager";
-    public static final String APPNAME_OTO_FILEMANAGER = "com.openthos.filemanager";
+    public static final String APPNAME_OTO_FILEMANAGER = "org.openthos.filemanager";
     public static final String APPNAME_CHAOZHUO_FILEMANAGER = "com.chaozhuo.filemanager";
     public static final String APPNAME_DUOWAN_PAD = "com.duowan.pad";
     public static final String APPNAME_TUNIU_HD_UI = "com.tuniu.HD.ui";
@@ -102,7 +102,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY
                                                = "com.android.otovirtualgui.MainActivity";
     public static final String APPNAME_OTO_LAUNCHER = "com.android.launcher3";
-    public static final String APPNAME_OTO_APPSTORE = "com.openthos.appstore";
+    public static final String APPNAME_OTO_APPSTORE = "org.openthos.appstore";
     public static final String APPNAME_CHROMIUM = "org.chromium.chrome";
     public static final String APPNAME_ZHIHAOLE = "cn.zhl.book";
     public static final String APPNAME_ZHIHAOLE_VIDEO = "com.zhl.zhl_individual_tutor";
@@ -129,7 +129,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
 
     public static final String APPNAME_PHOTO_MANAGER = "de.k3b.android.androFotoFinder";
 
-    public static final String APPNAME_OTO_KEYBOARDMAP = "com.openthos.keyboardmap";
+    public static final String APPNAME_OTO_KEYBOARDMAP = "org.openthos.keyboardmap";
 
     public static final int AUTO_STARTUP_MODE = 0;
     public static final int PHONE_STARTUP_MODE = 1;

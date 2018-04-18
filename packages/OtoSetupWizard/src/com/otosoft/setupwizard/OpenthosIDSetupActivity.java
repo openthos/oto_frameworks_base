@@ -55,7 +55,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.net.NetworkInfo;
 import android.net.ConnectivityManager;
-import com.openthos.seafile.ISeafileService;
+import org.openthos.seafile.ISeafileService;
 
 public class OpenthosIDSetupActivity extends BaseActivity {
     private TextView mVerify;

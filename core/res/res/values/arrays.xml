@@ -478,13 +478,13 @@
         <item>"com.github.openthos.printer.localprint"</item>
         <item>"cn.com.emindsoft.emindstore"</item>
         <item>"com.microsoft.office.outlook"</item>
-        <item>"com.openthos.appstore"</item>
-        <item>"com.openthos.filemanager"</item>
+        <item>"org.openthos.appstore"</item>
+        <item>"org.openthos.filemanager"</item>
         <item>"com.mxtech.videoplayer.ad"</item>
         <item>"cn.zhl.book"</item>
         <item>"com.zhl.zhl_individual_tutor"</item>
         <item>"org.videolan.vlc"</item>
-        <item>"com.openthos.ota"</item>
+        <item>"org.openthos.ota"</item>
         <item>"com.eolwral.osmonitor"</item>
         <item>"com.oasisfeng.greenify"</item>
         <item>"com.autodesk.autocadws"</item>
