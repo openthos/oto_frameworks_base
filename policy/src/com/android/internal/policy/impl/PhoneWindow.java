@@ -2360,6 +2360,19 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                     .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) != 0);
         }
 
+        private boolean isMMList(View child) {
+            return (child instanceof ViewGroup)
+                       && (getContext().getApplicationInfo()
+                                    .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) != 0);
+        }
+
+        private boolean isMMSwipeBackLayout(View child) {
+            return getContext().getApplicationInfo().packageName.
+                                        compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0
+                          && child.getClass().getName().
+                                        compareTo("com.tencent.mm.ui.widget.SwipeBackLayout") == 0;
+        }
+
         public Rect getContentRect() {
             int h = getHeaderHeight();
             int padding = getFramePadding();
@@ -2404,7 +2417,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index, ViewGroup.LayoutParams params) {
-            if (mContentParent == null || isWhiteList(child)) {
+            if (mContentParent == null || (isWhiteList(child) && isMMList(child))) {
                 super.addView(child, index, params);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2414,7 +2427,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index) {
-            if (isWhiteList(child)) {
+            if (isMMSwipeBackLayout(child)) {
+                return;
+            } else if (isWhiteList(child) && isMMList(child)) {
                 super.addView(child, index);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2424,7 +2439,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void removeView(View view) {
-            if (isWhiteList(view)) {
+            if (isWhiteList(view) && isMMList(view)) {
                 super.removeView(view);
             } else {
                 /* Forbid to remove root view, explicitly */

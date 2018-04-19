@@ -490,8 +490,9 @@
         <item>"com.autodesk.autocadws"</item>
         <item>"com.avector.itw.itwmj16hd"</item>
         <item>"com.amazon.windowshop"</item>
-        <item>"com.openthos.editor.v2"</item>
-        <item>"com.openthos.taskmanager"</item>
+        <item>"org.openthos.editor.v2"</item>
+        <item>"org.openthos.taskmanager"</item>
+        <item>"org.openthos.photomanager"</item>
     </string-array>
     <string-array name="maximized_style_window">
         <item>"com.android.camera2"</item>
@@ -523,6 +524,7 @@
     </string-array>
     <string-array name="fullscreen_style_window">
         <item>"com.togic.livevideo"</item>
+        <item>"com.sohuott.tv.vod"</item>
         <item>"com.android.otovirtualgui"</item>
         <item>"jackpal.androidterm"</item>
         <item>"com.bf.sgs.hdexp"</item>
