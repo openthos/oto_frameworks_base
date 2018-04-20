@@ -108,7 +108,7 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final String APPNAME_ZHIHAOLE_VIDEO = "com.zhl.zhl_individual_tutor";
     public static final String PACKAGENAME_TAG = "package";
     public static final String APPNAME_ANDROID_INPUTMETHOD_PINYIN
-                                               = "com.android.inputmethod.pinyin/.PinyinIME";
+                                               = "org.openthos.inputmethod.pinyin/.PinyinIME";
 
     public static final String APPNAME_FENNEC = "org.mozilla.fennec_openthos";
 
