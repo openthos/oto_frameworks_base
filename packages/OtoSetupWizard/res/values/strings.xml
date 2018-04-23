@@ -69,7 +69,6 @@
     <string name="tips_no">NO</string>
     <string name="multichoice_item_wallpaper">Wallpaper</string>
     <string name="multichoice_item_wifi">Wifi</string>
-    <string name="multichoice_item_email">Email</string>
     <string name="multichoice_item_appdata">Appdata</string>
     <string name="multichoice_item_startupmenu">Startupmenu</string>
     <string name="multichoice_item_browser">Browser</string>

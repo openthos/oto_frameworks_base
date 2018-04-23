@@ -63,7 +63,6 @@
     <string name="appstore_download_app">正在从应用商店下载应用</string>
     <string name="multichoice_item_wallpaper">壁纸</string>
     <string name="multichoice_item_wifi">无线网</string>
-    <string name="multichoice_item_email">邮箱</string>
     <string name="multichoice_item_appdata">应用数据</string>
     <string name="multichoice_item_startupmenu">开始菜单</string>
     <string name="multichoice_item_browser">浏览器</string>

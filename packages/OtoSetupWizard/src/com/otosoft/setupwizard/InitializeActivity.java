@@ -48,11 +48,10 @@ public class InitializeActivity extends BaseActivity {
     private static final String KEY_SPRIT = "/";
     private static final int INDEX_WALLPAPER = 0;
     private static final int INDEX_WIFI = 1;
-    private static final int INDEX_EMAIL = 2;
-    private static final int INDEX_APPDATA = 3;
-    private static final int INDEX_STARTUPMENU = 4;
-    private static final int INDEX_BROWSER = 5;
-    private static final int INDEX_APP = 6;
+    private static final int INDEX_APPDATA = 2;
+    private static final int INDEX_STARTUPMENU = 3;
+    private static final int INDEX_BROWSER = 4;
+    private static final int INDEX_APP = 5;
     private TextView mInitializedProgress;
     private ArrayList<String> mAppNames = new ArrayList();
     private ArrayList<String> mApkPaths = new ArrayList();
@@ -238,13 +237,12 @@ public class InitializeActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] items = new String[]{getString(R.string.multichoice_item_wallpaper),
                 getString(R.string.multichoice_item_wifi),
-                getString(R.string.multichoice_item_email),
                 getString(R.string.multichoice_item_appdata),
                 getString(R.string.multichoice_item_startupmenu),
                 getString(R.string.multichoice_item_browser),
                 getString(R.string.multichoice_item_app)};
         final boolean[] selectedItems = new boolean[]{
-                false, false, false, false, false, false, false};
+                false, false, false, false, false, false};
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         Uri uri = Uri.parse("https://");
@@ -276,9 +274,8 @@ public class InitializeActivity extends BaseActivity {
                         dialog.dismiss();
                         try {
                             List<String> browsers = new ArrayList();
-                            browsers.add("OtoSetupWizard");
                             iSeafileService.restoreSettings(selectedItems[INDEX_WALLPAPER],
-                                    selectedItems[INDEX_WIFI], selectedItems[INDEX_EMAIL],
+                                    selectedItems[INDEX_WIFI],
                                     selectedItems[INDEX_APPDATA], selectedItems[INDEX_STARTUPMENU],
                                     selectedItems[INDEX_BROWSER], syncBrowsers, selectedItems[INDEX_APP]);
                             runOnUiThread(new Runnable() {
