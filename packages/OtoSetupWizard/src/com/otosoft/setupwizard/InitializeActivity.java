@@ -243,29 +243,30 @@ public class InitializeActivity extends BaseActivity {
                 getString(R.string.multichoice_item_app)};
         final boolean[] selectedItems = new boolean[]{
                 false, false, false, false, false, false};
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        Uri uri = Uri.parse("https://");
-        intent.setData(uri);
-        final List<ResolveInfo> browsers = getPackageManager().queryIntentActivities(
-                intent, PackageManager.GET_INTENT_FILTERS);
         final List<String> syncBrowsers = new ArrayList();
-        builder.setMultiChoiceItems(items, null, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                selectedItems[which] = !selectedItems[which];
-                if (which == INDEX_BROWSER && isChecked) {
-                    final String[] browsersName = new String[browsers.size()];
-                    final boolean[] browsersSelect = new boolean[browsers.size()];
-                    for (int i = 0; i < browsers.size(); i++) {
-                        syncBrowsers.add(browsers.get(i).activityInfo.packageName);
-                        browsersName[i] = browsers.get(i).loadLabel(getPackageManager()).toString();
-                        browsersSelect[i] = true;
+        final List<String> syncAppdata = new ArrayList();
+        try {
+            final List<ResolveInfo> browsers =
+                    iSeafileService.getAppsInfo(iSeafileService.getTagBrowserImport());
+            final List<ResolveInfo> appdata =
+                    iSeafileService.getAppsInfo(iSeafileService.getTagAppdataImport());
+            builder.setMultiChoiceItems(items, null,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        selectedItems[which] = !selectedItems[which];
+                        if (isChecked) {
+                            if (which == INDEX_BROWSER) {
+                                showSyncAppDialog(browsers, syncBrowsers);
+                            } else if (which == INDEX_APPDATA) {
+                                showSyncAppDialog(appdata, syncAppdata);
+                            }
+                        }
                     }
-                    showSyncBrowserDialog(browsersName, browsersSelect);
-                }
-            }
-        });
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         builder.setPositiveButton(getString(R.string.multichoice_button_restore),
                 new DialogInterface.OnClickListener() {
@@ -276,8 +277,10 @@ public class InitializeActivity extends BaseActivity {
                             List<String> browsers = new ArrayList();
                             iSeafileService.restoreSettings(selectedItems[INDEX_WALLPAPER],
                                     selectedItems[INDEX_WIFI],
-                                    selectedItems[INDEX_APPDATA], selectedItems[INDEX_STARTUPMENU],
-                                    selectedItems[INDEX_BROWSER], syncBrowsers, selectedItems[INDEX_APP]);
+                                    selectedItems[INDEX_APPDATA], syncAppdata,
+                                    selectedItems[INDEX_STARTUPMENU],
+                                    selectedItems[INDEX_BROWSER], syncBrowsers,
+                                    selectedItems[INDEX_APP]);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -304,9 +307,25 @@ public class InitializeActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void showSyncBrowserDialog(String[] browsersName, boolean[] browsersSelect) {
+    private void showSyncAppDialog(List<ResolveInfo> localList, List<String> syncList) {
+        String[] names = new String[localList.size()];
+        final boolean[] selects = new boolean[localList.size()];
+        int i = 0;
+        for (ResolveInfo info : localList) {
+            syncList.add(info.activityInfo.packageName);
+            names[i] = info.loadLabel(getPackageManager()).toString();
+            selects[i] = true;
+            i++;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMultiChoiceItems(browsersName, browsersSelect, null);
+        builder.setMultiChoiceItems(names, selects,
+                new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                selects[which] = !selects[which];
+            }
+        });
         builder.setPositiveButton(getString(R.string.warning_dialog_ok),
                 new DialogInterface.OnClickListener() {
             @Override
