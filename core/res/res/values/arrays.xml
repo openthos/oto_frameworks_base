@@ -490,7 +490,7 @@
         <item>"com.autodesk.autocadws"</item>
         <item>"com.avector.itw.itwmj16hd"</item>
         <item>"com.amazon.windowshop"</item>
-        <item>"org.openthos.editor.v2"</item>
+        <item>"org.openthos.editor"</item>
         <item>"org.openthos.taskmanager"</item>
         <item>"org.openthos.photomanager"</item>
     </string-array>
