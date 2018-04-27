@@ -149,11 +149,11 @@ public class InitializeActivity extends BaseActivity {
     }
 
     private void startActivity() {
-        try {
-            iSeafileService.unsetBinder(mSeafileBinder);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        //try {
+        //    iSeafileService.unsetBinder(mSeafileBinder);
+        //} catch (RemoteException e) {
+        //    e.printStackTrace();
+        //}
         Intent intent = new Intent();
         intent.setAction("com.android.wizard.STARTUSE");
         startActivity(intent);
@@ -214,22 +214,23 @@ public class InitializeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Void avoid) {
-            iSeafileService = ((SetupWizardApplication) getApplication()).mISeafileService;
-            try {
-                iSeafileService.setBinder(mSeafileBinder);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (!TextUtils.isEmpty(iSeafileService.getUserName())) {
-                    showSyncOptionDialog();
-                } else {
-                    startActivity();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                startActivity();
-            }
+            //iSeafileService = ((SetupWizardApplication) getApplication()).mISeafileService;
+            //try {
+            //    iSeafileService.setBinder(mSeafileBinder);
+            //} catch (RemoteException e) {
+            //    e.printStackTrace();
+            //}
+            //try {
+            //    if (!TextUtils.isEmpty(iSeafileService.getUserName())) {
+            //        showSyncOptionDialog();
+            //    } else {
+            //        startActivity();
+            //    }
+            //} catch (RemoteException e) {
+            //    e.printStackTrace();
+            //    startActivity();
+            //}
+            startActivity();
         }
     }
 
