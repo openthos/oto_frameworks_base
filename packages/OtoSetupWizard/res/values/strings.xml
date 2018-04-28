@@ -8,6 +8,7 @@
     <string name="str_language">Language</string>
     <string name="title_openthos_id">Confirm Openthos ID</string>
     <string name="openthos_id_name">Openthos ID</string>
+    <string name="openthos_id_email">Email</string>
     <string name="openthos_id_password">Password</string>
     <string name="str_verify">Verify</string>
     <string name="str_skip">Skip</string>
@@ -48,8 +49,10 @@
     <string name="toast_openthos_register_computer_name">ComputerName is empty</string>
     <string name="toast_openthos_register_user_name">UserName is empty</string>
     <string name="toast_openthos_register_password_not_equals"> Two input passwords are not consistent</string>
-    <string name="toast_register_successful"> register successful!</string>
+    <string name="toast_register_successful"> Register successful!</string>
+    <string name="toast_register_failed"> Register failed!</string>
     <string name="toast_verify_successful">Verify successful!</string>
+    <string name="toast_verify_failed">Verify failed!</string>
     <string name="str_email">Input a valid email address</string>
     <string name="enter_password_again">Enter password again</string>
     <string name="register_openthos_title">Register Openthos ID</string>

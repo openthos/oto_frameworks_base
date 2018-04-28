@@ -7,6 +7,7 @@
     <string name="str_language">语言</string>
     <string name="title_openthos_id">验证 Openthos ID</string>
     <string name="openthos_id_name">Openthos ID</string>
+    <string name="openthos_id_email">邮箱</string>
     <string name="openthos_id_password">密码</string>
     <string name="str_verify">验证</string>
     <string name="str_skip">跳过</string>
@@ -49,8 +50,10 @@
     <string name="toast_openthos_register_password_empty">密码不能为空</string>
     <string name="toast_openthos_register_computer_name">主机名不能为空</string>
     <string name="toast_openthos_register_user_name">用户名不能为空</string>
-    <string name="toast_register_successful">注册成功！</string>
+    <string name="toast_register_successful"> 注册成功!</string>
+    <string name="toast_register_failed"> 注册失败!</string>
     <string name="toast_verify_successful">验证成功</string>
+    <string name="toast_verify_failed">验证失败!</string>
     <string name="str_email">输入有效邮箱地址</string>
     <string name="enter_password_again">再次输入密码</string>
     <string name="register_openthos_title">注册 Openthos ID</string>

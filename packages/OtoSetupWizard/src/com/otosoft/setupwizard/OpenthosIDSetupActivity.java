@@ -65,6 +65,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private TextView mSkip;
     private TextView mRegister;
     private String openthosID;
+    private String openthosEmail;
     private String password;
     private int result;
     private Handler mHandler;
@@ -76,9 +77,9 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private static String CODE_SUCCESS ="1000";
     private ContentResolver mResolver;
     private String mCookie = "";
-    public static final int MSG_REGIST_SEAFILE = 0x1001;
-    public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
-    public static final int MSG_REGIST_SEAFILE_FAILED = 0x1005;
+    public static final int MSG_LOGIN_SEAFILE_OK = 0x1006;
+    public static final int MSG_LOGIN_SEAFILE_FAILED = 0x1007;
+    public static final int MSG_LOGIN_SEAFILE = 0x1008;
     private ConnectivityManager mCM;
     private ISeafileService iSeafileService;
     private IBinder mSeafileBinder = new SeafileBinder();
@@ -124,7 +125,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     getText(R.string.toast_openthos_password_wrong),
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
+                        //    mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
                             Uri uriInsert =
                                   Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
                             ContentValues values = new ContentValues();
@@ -136,17 +137,26 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    case MSG_REGIST_SEAFILE:
+                    case MSG_LOGIN_SEAFILE:
                         iSeafileService
                                 = ((SetupWizardApplication) getApplication()).mISeafileService;
                         try {
                             iSeafileService.setBinder(mSeafileBinder);
-                            iSeafileService.regiestAccount(openthosID, password );
+                            iSeafileService.loginAccount(openthosID,  password);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
                         break;
-                    case MSG_REGIST_SEAFILE_OK:
+                    case MSG_LOGIN_SEAFILE_OK:
+                        Uri uriInsert =
+                              Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
+                        ContentValues values = new ContentValues();
+                        values.put("OpenthosID", openthosID);
+                        values.put("password", password);
+                        mResolver.insert(uriInsert, values);
+                        Toast.makeText(OpenthosIDSetupActivity.this,
+                                getText(R.string.toast_verify_successful),
+                                Toast.LENGTH_SHORT).show();
                         try {
                             iSeafileService.unsetBinder(mSeafileBinder);
                         } catch (RemoteException e) {
@@ -156,9 +166,9 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                         intent.setAction("com.android.wizard.FINISH");
                         startActivity(intent);
                         break;
-                    case MSG_REGIST_SEAFILE_FAILED:
+                    case MSG_LOGIN_SEAFILE_FAILED:
                         Toast.makeText(OpenthosIDSetupActivity.this,
-                                getText(R.string.toast_openthos_password_wrong),
+                                getText(R.string.toast_verify_failed),
                                 Toast.LENGTH_SHORT).show();
                         break;
                     default:
@@ -174,26 +184,27 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             public void onClick(View v) {
                 openthosID = mEditTextOpenthosID.getText().toString().trim();
                 password = mEditTextPassword.getText().toString().trim();
-                NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
-                if (networkINfo == null) {
-                    Toast.makeText(OpenthosIDSetupActivity.this,
-                            getText(R.string.toast_network_not_connect),
-                            Toast.LENGTH_SHORT).show();
-                }
-                //verify openthos id and password
-                if (openthosID.isEmpty()) {
-                    Toast.makeText(OpenthosIDSetupActivity.this,
-                            getText(R.string.toast_openthos_id_empty),
-                            Toast.LENGTH_SHORT).show();
-                } else if (password.isEmpty()) {
-                    Toast.makeText(OpenthosIDSetupActivity.this,
-                            getText(R.string.toast_openthos_password_empty),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    params.put("username", openthosID);
-                    params.put("password", password);
-                    submitPostData(params, encode);
-                }
+                mHandler.sendEmptyMessage(MSG_LOGIN_SEAFILE);
+                //NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
+                //if (networkINfo == null) {
+                //    Toast.makeText(OpenthosIDSetupActivity.this,
+                //            getText(R.string.toast_network_not_connect),
+                //            Toast.LENGTH_SHORT).show();
+                //}
+                ////verify openthos id and password
+                //if (openthosID.isEmpty()) {
+                //    Toast.makeText(OpenthosIDSetupActivity.this,
+                //            getText(R.string.toast_openthos_id_empty),
+                //            Toast.LENGTH_SHORT).show();
+                //} else if (password.isEmpty()) {
+                //    Toast.makeText(OpenthosIDSetupActivity.this,
+                //            getText(R.string.toast_openthos_password_empty),
+                //            Toast.LENGTH_SHORT).show();
+                //} else {
+                //    params.put("username", openthosID);
+                //    params.put("password", password);
+                //    submitPostData(params, encode);
+                //}
             }
         });
         mPrev.setOnClickListener(new OnClickListener() {
@@ -315,12 +326,13 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         @Override
         protected boolean onTransact(
                 int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            if (code == iSeafileService.getCodeRegiestSuccess()) {
-                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_OK);
+                    android.util.Log.i("chenpeng_SeafileBinder", code + "");
+            if (code == iSeafileService.getCodeLoginSuccess()) {
+                mHandler.sendEmptyMessage(MSG_LOGIN_SEAFILE_OK);
                 reply.writeNoException();
                 return true;
-            } else if (code == iSeafileService.getCodeRegiestFailed()) {
-                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_FAILED);
+            } else if (code == iSeafileService.getCodeLoginFailed()) {
+                mHandler.sendEmptyMessage(MSG_LOGIN_SEAFILE_FAILED);
                 reply.writeNoException();
                 return true;
             }

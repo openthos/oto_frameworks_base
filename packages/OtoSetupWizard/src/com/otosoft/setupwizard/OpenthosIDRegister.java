@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -47,6 +51,7 @@ import android.util.Log;
 import android.widget.Toast;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openthos.seafile.ISeafileService;
 
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
@@ -59,12 +64,11 @@ import android.support.v4.app.NotificationCompat;
 public class OpenthosIDRegister extends BaseActivity {
     private TextView mPrev;
     private TextView mRegister;
-    private EditText mEditTextOpenthosID;
-    private EditText mEditTextPassword;
-    private EditText mEditTextAgainPassword;
-    private String openthosID;
+    private EditText mEditTextOpenthosID, mEditTextOpenthosEmail;
+    private EditText mEditTextOpenthosPass, mEditTextOpenthosPassConfirm;
+    private String openthosID, openthosEmail;
     private String password;
-    private String againpassword;
+    private String confirmPassword;
     private int result;
     private Handler mHandler;
     private final Map<String,String> params = new HashMap<String,String>();
@@ -73,6 +77,12 @@ public class OpenthosIDRegister extends BaseActivity {
     private ContentResolver mResolver;
     private ConnectivityManager mCM;
     private String TAG = "OpenthosIDRegister";
+    private ISeafileService iSeafileService;
+    private IBinder mSeafileBinder = new SeafileBinder();
+    public static final int MSG_REGIST_SEAFILE = 0x1001;
+    public static final int MSG_REGIST_SEAFILE_OK = 0x1004;
+    public static final int MSG_REGIST_SEAFILE_FAILED = 0x1005;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_register);
@@ -82,6 +92,12 @@ public class OpenthosIDRegister extends BaseActivity {
         mRegister = (TextView) findViewById(R.id.tv_register);
         //input user name
         mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
+        //input user email
+        mEditTextOpenthosEmail = (EditText) findViewById(R.id.edittext_openthos_email);
+        //input user password
+        mEditTextOpenthosPass = (EditText) findViewById(R.id.edittext_openthos_pass);
+        //confirm user password
+        mEditTextOpenthosPassConfirm = (EditText) findViewById(R.id.edittext_openthos_pass_confirm);
 
         mResolver = getContentResolver();
 
@@ -115,6 +131,31 @@ public class OpenthosIDRegister extends BaseActivity {
                             mNotificationManager.notify(0, mBuilder.build());
                         }
                         break;
+                    case MSG_REGIST_SEAFILE:
+                        iSeafileService
+                                = ((SetupWizardApplication) getApplication()).mISeafileService;
+                        try {
+                            iSeafileService.setBinder(mSeafileBinder);
+                            iSeafileService.regiestAccount(openthosID, openthosEmail, password);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case MSG_REGIST_SEAFILE_OK:
+                        Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_register_successful),
+                                Toast.LENGTH_SHORT).show();
+                        try {
+                            iSeafileService.unsetBinder(mSeafileBinder);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case MSG_REGIST_SEAFILE_FAILED:
+                        Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_register_failed),
+                                Toast.LENGTH_SHORT).show();
+                        break;
                     default:
                         Toast.makeText(OpenthosIDRegister.this,
                                 getText(R.string.toast_network_not_connect),
@@ -131,11 +172,15 @@ public class OpenthosIDRegister extends BaseActivity {
         });
         mRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                openthosID = mEditTextOpenthosID.getText().toString().trim();
-                params.put("name", openthosID);
-                params.put("mail", openthosID);
-                params.put("form_id", "user_register_form");
-                params.put("form_build_id", "form-WkUSPmAzO4z-HBjYe03NyRvjNsx44ZDrMGJ8nYAJWfU");
+                //Bundle bundle = new Bundle();
+                //bundle.putString("id", openthosID);
+                //bundle.putString("email", openthosEmail);
+                //bundle.putString("passwd", password);
+                //intent.putExtra("regist info", bundle);
+                //params.put("name", openthosID);
+                //params.put("mail", openthosID);
+                //params.put("form_id", "user_register_form");
+                //params.put("form_build_id", "form-WkUSPmAzO4z-HBjYe03NyRvjNsx44ZDrMGJ8nYAJWfU");
 
                 NetworkInfo networkINfo = mCM.getActiveNetworkInfo();
                 if (networkINfo == null) {
@@ -144,7 +189,12 @@ public class OpenthosIDRegister extends BaseActivity {
                         Toast.LENGTH_SHORT).show();
                 }
 
-                submitPostData(params, encode);
+                //submitPostData(params, encode);
+                openthosID = mEditTextOpenthosID.getText().toString().trim();
+                openthosEmail = mEditTextOpenthosEmail.getText().toString().trim();
+                password = mEditTextOpenthosPass.getText().toString().trim();
+                confirmPassword = mEditTextOpenthosPassConfirm.getText().toString().trim();
+                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
             }
         });
 
@@ -232,4 +282,22 @@ public class OpenthosIDRegister extends BaseActivity {
         return resultData;
     }
 
+    private class SeafileBinder extends Binder {
+
+        @Override
+        protected boolean onTransact(
+                int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+                    android.util.Log.i("chenpeng_SeafileBinder", code + "");
+            if (code == iSeafileService.getCodeRegiestSuccess()) {
+                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_OK);
+                reply.writeNoException();
+                return true;
+            } else if (code == iSeafileService.getCodeRegiestFailed()) {
+                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_FAILED);
+                reply.writeNoException();
+                return true;
+            }
+            return super.onTransact(code, data, reply, flags);
+        }
+    }
 }
