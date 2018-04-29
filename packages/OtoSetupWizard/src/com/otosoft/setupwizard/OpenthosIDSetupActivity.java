@@ -126,12 +126,6 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                         //    mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE);
-                            Uri uriInsert =
-                                  Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
-                            ContentValues values = new ContentValues();
-                            values.put("OpenthosID", openthosID);
-                            values.put("password", password);
-                            mResolver.insert(uriInsert, values);
                             Toast.makeText(OpenthosIDSetupActivity.this,
                                     getText(R.string.toast_verify_successful),
                                     Toast.LENGTH_SHORT).show();
@@ -150,10 +144,6 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                     case MSG_LOGIN_SEAFILE_OK:
                         Uri uriInsert =
                               Uri.parse("content://com.otosoft.tools.myprovider/openthosID");
-                        ContentValues values = new ContentValues();
-                        values.put("OpenthosID", openthosID);
-                        values.put("password", password);
-                        mResolver.insert(uriInsert, values);
                         Toast.makeText(OpenthosIDSetupActivity.this,
                                 getText(R.string.toast_verify_successful),
                                 Toast.LENGTH_SHORT).show();

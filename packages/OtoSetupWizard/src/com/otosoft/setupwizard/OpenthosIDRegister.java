@@ -150,6 +150,7 @@ public class OpenthosIDRegister extends BaseActivity {
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
+                        OpenthosIDRegister.this.onBackPressed();
                         break;
                     case MSG_REGIST_SEAFILE_FAILED:
                         Toast.makeText(OpenthosIDRegister.this,
