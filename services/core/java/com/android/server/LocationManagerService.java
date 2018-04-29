@@ -128,6 +128,9 @@ public class LocationManagerService extends ILocationManager.Stub {
             "com.android.location.service.v3.NetworkLocationProvider";
     private static final String FUSED_LOCATION_SERVICE_ACTION =
             "com.android.location.service.FusedLocationProvider";
+    private static final String FAKELOCATION = "fakeLocation";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
 
     private static final int MSG_LOCATION_CHANGED = 1;
 
@@ -282,7 +285,7 @@ public class LocationManagerService extends ILocationManager.Stub {
         intentFilter.addAction(Intent.ACTION_USER_SWITCHED);
         intentFilter.addAction(Intent.ACTION_MANAGED_PROFILE_ADDED);
         intentFilter.addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED);
-
+        intentFilter.addAction(Intent.ACTION_FAKE_LOCATION);
         mContext.registerReceiverAsUser(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -292,9 +295,26 @@ public class LocationManagerService extends ILocationManager.Stub {
                 } else if (Intent.ACTION_MANAGED_PROFILE_ADDED.equals(action)
                         || Intent.ACTION_MANAGED_PROFILE_REMOVED.equals(action)) {
                     updateUserProfiles(mCurrentUserId);
+                } else if (Intent.ACTION_FAKE_LOCATION.equals(action)) {
+                    fakeLocation(intent);
                 }
             }
         }, UserHandle.ALL, intentFilter, null, mLocationHandler);
+    }
+
+    private void fakeLocation(Intent intent) {
+        Bundle location = intent.getBundleExtra(FAKELOCATION);
+        double latitude = Double.parseDouble(location.getString(LATITUDE));
+        double longitude = Double.parseDouble(location.getString(LONGITUDE));
+        Location l = new Location(LocationManager.GPS_PROVIDER);
+
+        l.setLatitude(latitude);
+        l.setLongitude(longitude);
+        l.setAccuracy(100f);
+        l.setTime(System.currentTimeMillis());
+        l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+
+        reportLocation(l, false);
     }
 
     /**
@@ -2177,6 +2197,12 @@ public class LocationManagerService extends ILocationManager.Stub {
                 continue;
             }
 
+            if (isLocationGranted(receiver.mPackageName)) {
+                if (D) Log.d("lxx-", "skipping loc update for location granted apps: " +
+                        receiver.mPackageName);
+                continue;
+            }
+
             Location notifyLocation = null;
             if (receiver.mAllowedResolutionLevel < RESOLUTION_LEVEL_FINE) {
                 notifyLocation = coarseLocation;  // use coarse location
@@ -2359,6 +2385,19 @@ public class LocationManagerService extends ILocationManager.Stub {
                 PackageManager.PERMISSION_GRANTED) {
             throw new SecurityException("Requires ACCESS_MOCK_LOCATION permission");
         }
+    }
+
+    private boolean isLocationGranted(String packageName) {
+        int coarseLocation = Settings.Global.getInt(mContext.getContentResolver(),
+                    packageName + AppOpsManager.OP_COARSE_LOCATION, 0);
+        int gpsLocation = Settings.Global.getInt(mContext.getContentResolver(),
+                    packageName + AppOpsManager.OP_GPS, 0);
+        int fineLocation = Settings.Global.getInt(mContext.getContentResolver(),
+                    packageName + AppOpsManager.OP_FINE_LOCATION, 0);
+        if (coarseLocation == 0 && gpsLocation == 0 && fineLocation == 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
