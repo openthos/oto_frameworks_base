@@ -2198,7 +2198,7 @@ public class LocationManagerService extends ILocationManager.Stub {
             }
 
             if (isLocationGranted(receiver.mPackageName)) {
-                if (D) Log.d("lxx-", "skipping loc update for location granted apps: " +
+                if (D) Log.d(TAG, "skipping loc update for location granted apps: " +
                         receiver.mPackageName);
                 continue;
             }

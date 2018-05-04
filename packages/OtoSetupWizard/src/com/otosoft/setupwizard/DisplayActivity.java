@@ -114,7 +114,10 @@ public class DisplayActivity extends BaseActivity implements View.OnClickListene
     }
 
     private int getInitIndex() {
-        int index = LAPTOP_1920;
+        int index = Settings.System.getInt(getContentResolver(), SYSTEM_DPI, -1);
+        if (index != -1) {
+            return index;
+        }
         int level = Settings.Global.getInt(getContentResolver(), BatteryManager.EXTRA_LEVEL, 0);
         int density = SystemProperties.getInt(DPI_INFO_IN_CONFIG, NUM_DPI_MEDIUM);
         switch (density) {
