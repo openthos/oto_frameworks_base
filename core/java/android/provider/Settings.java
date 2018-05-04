@@ -2016,10 +2016,10 @@ public final class Settings {
         public static final String SCREEN_OFF_TIMEOUT_CHARGING = "screen_off_timeout_charging";
         public static final String SCREEN_OFF_TIMEOUT_UNCHARGE = "screen_off_timeout_uncharge";
 
-	/**
-	 * The screen backlight brightness between 0 and 255.
-	 */
-	public static final String SCREEN_BRIGHTNESS = "screen_brightness";
+        /**
+        * The screen backlight brightness between 0 and 255.
+        */
+        public static final String SCREEN_BRIGHTNESS = "screen_brightness";
 
         /**
          * The screen charging backlight brightness between 0 and 255.

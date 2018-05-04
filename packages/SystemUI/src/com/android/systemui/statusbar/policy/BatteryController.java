@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.FileDescriptor;
@@ -84,6 +85,7 @@ public class BatteryController extends BroadcastReceiver {
             mCharged = status == BatteryManager.BATTERY_STATUS_FULL;
             mCharging = mCharged || status == BatteryManager.BATTERY_STATUS_CHARGING;
 
+            Settings.Global.putInt(context.getContentResolver(), BatteryManager.EXTRA_LEVEL, mLevel);
             fireBatteryLevelChanged();
         } else if (action.equals(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)) {
             updatePowerSave();

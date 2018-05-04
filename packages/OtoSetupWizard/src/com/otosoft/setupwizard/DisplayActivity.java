@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemProperties;
+import android.os.BatteryManager;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -72,7 +73,6 @@ public class DisplayActivity extends BaseActivity implements View.OnClickListene
         mFHD.setOnClickListener(this);
         mUHD.setOnClickListener(this);
 
-        int index = Settings.System.getInt(getContentResolver(), SYSTEM_DPI, LAPTOP_1920);
         if (filtDisplayMetrics()) {
             mL2560.setEnabled(false);
             mD2560.setEnabled(false);
@@ -84,9 +84,8 @@ public class DisplayActivity extends BaseActivity implements View.OnClickListene
             mD3840.setTextColor(Color.GRAY);
             mFHD.setTextColor(Color.GRAY);
             mUHD.setTextColor(Color.GRAY);
-            index = LAPTOP_1366;
         }
-        switch (index) {
+        switch (getInitIndex()) {
             case LAPTOP_1366:
                 mL1366.setChecked(true);
                 break;
@@ -112,6 +111,28 @@ public class DisplayActivity extends BaseActivity implements View.OnClickListene
                 mUHD.setChecked(true);
                 break;
         }
+    }
+
+    private int getInitIndex() {
+        int index = LAPTOP_1920;
+        int level = Settings.Global.getInt(getContentResolver(), BatteryManager.EXTRA_LEVEL, 0);
+        int density = SystemProperties.getInt(DPI_INFO_IN_CONFIG, NUM_DPI_MEDIUM);
+        switch (density) {
+            case 120:
+                index = LAPTOP_1366;
+                break;
+            case 160:
+                index = (level == 0 ? DESKTOP_1920 : LAPTOP_1920);
+                break;
+            case 240:
+                index = (level == 0 ? DESKTOP_2560 : LAPTOP_2560);
+                break;
+            case 320:
+                index = DESKTOP_3840;
+                break;
+        }
+        Settings.System.putInt(getContentResolver(), SYSTEM_DPI, index);
+        return index;
     }
 
     private Intent buildWifiSetupIntent() {
