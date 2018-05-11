@@ -3224,9 +3224,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                         mActionModePopup.setHeight(WRAP_CONTENT);
                         mShowActionModePopup = new Runnable() {
                             public void run() {
-                                mActionModePopup.showAtLocation(
-                                        mActionModeView.getApplicationWindowToken(),
-                                        Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0);
+                                //mActionModePopup.showAtLocation(
+                                //        mActionModeView.getApplicationWindowToken(),
+                                //        Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0);
                             }
                         };
                     } else {
