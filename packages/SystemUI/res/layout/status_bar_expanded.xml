@@ -29,14 +29,8 @@
         layout="@layout/keyguard_status_view"
         android:visibility="gone" />
 
-    <com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="@integer/notification_panel_layout_gravity"
-        android:id="@+id/notification_container_parent"
-        android:clipToPadding="false"
-        android:clipChildren="false">
-
+    <include
+        layout="@layout/openthos_notification_panel"/>
         <FrameLayout
             android:id="@+id/qs_frame"
             android:layout="@layout/qs_panel"
@@ -46,14 +40,6 @@
             android:clipToPadding="false"
             android:clipChildren="false"
             systemui:viewType="com.android.systemui.plugins.qs.QS" />
-
-        <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
-            android:id="@+id/notification_stack_scroller"
-            android:layout_marginTop="@dimen/notification_panel_margin_top"
-            android:layout_width="@dimen/notification_panel_width"
-            android:layout_height="match_parent"
-            android:layout_gravity="@integer/notification_panel_layout_gravity"
-            android:layout_marginBottom="@dimen/close_handle_underlap" />
 
         <include layout="@layout/ambient_indication"
             android:id="@+id/ambient_indication_container" />
@@ -75,13 +61,9 @@
             android:layout_marginTop="@dimen/status_bar_header_height_keyguard"
             android:text="@string/report_rejected_touch"
             android:visibility="gone" />
-
-    </com.android.systemui.statusbar.phone.NotificationsQuickSettingsContainer>
-
     <include
         layout="@layout/keyguard_bottom_area"
         android:visibility="gone" />
-
     <com.android.systemui.statusbar.AlphaOptimizedView
         android:id="@+id/qs_navbar_scrim"
         android:layout_height="96dp"
@@ -89,5 +71,4 @@
         android:layout_gravity="bottom"
         android:visibility="invisible"
         android:background="@drawable/qs_navbar_scrim" />
-
 </com.android.systemui.statusbar.phone.NotificationPanelView>

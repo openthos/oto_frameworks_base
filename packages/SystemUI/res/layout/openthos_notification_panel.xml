@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/notification_panel_width"
+    android:layout_height="match_parent"
+    android:weightSum = "3"
+    android:layout_gravity="@integer/notification_panel_layout_gravity"
+    android:id="@+id/notification_container_parent"
+    android:background="@drawable/system_bar_background"
+    android:orientation="vertical"
+    android:clipToPadding="false"
+    android:clipChildren="false">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:textColor="#99ffffff"
+            android:text="@string/notification_info"/>
+        <Button
+	    android:id="@+id/notification_manager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/notification_clear_all"
+            android:layout_marginRight="20dp"
+            android:background="#1Affffff"
+            android:text="@string/clear_all"/>
+        <Button
+            android:id="@+id/notification_clear_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="#1Affffff"
+            android:text="@string/notification_manager"/>
+    </RelativeLayout>
+
+    <!-- start of notification panel -->
+    <LinearLayout
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="0dp"
+        android:layout_weight="1.6"
+        android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="@dimen/notification_panel_width"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.android.systemui.statusbar.stack.NotificationStackScrollLayout
+                android:id="@+id/notification_stack_scroller"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no" />
+        </FrameLayout>
+    </LinearLayout>
+    <!-- end of notification panel -->
+
+    <!-- start of print panel -->
+    <LinearLayout
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="#1Affffff">
+
+            <TextView
+                android:id="@+id/print_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_centerVertical="true"
+                android:text="@string/print_message"
+                android:textColor="#99ffffff"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/printManager"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="16dp"
+                android:layout_centerVertical="true"
+                android:paddingRight="8dp"
+                android:background="@null"
+                android:text="@string/print_manager"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+        <!-- printer job layout -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_height="200dp" >
+            <LinearLayout
+                android:id="@+id/printer_job_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+    <!-- end of print panel -->
+
+    <!-- start qs panel-->
+    <LinearLayout
+        android:weightSum = "4"
+        android:layout_weight="0.2"
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="@dimen/qs_margin_fifty"
+        android:id="@+id/qs_panel_layout"
+        android:background="#1Affffff">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/qs_shot_screen"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_notification_isolation_on"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/qs_font_size_sixteen"
+                android:text="@string/notification_shot_screen"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/qs_isolation"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_notification_isolation_on"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/qs_font_size_sixteen"
+                android:text="@string/notification_isolation_on"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/qs_settings"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_notification_setting"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/qs_font_size_sixteen"
+                android:text="@string/notification_settings"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/qs_projection"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_notification_projection_on"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/qs_font_size_sixteen"
+                android:text="@string/notification_projection"/>
+        </LinearLayout>
+    </LinearLayout>
+    <!-- end quick settings layout -->
+</LinearLayout>

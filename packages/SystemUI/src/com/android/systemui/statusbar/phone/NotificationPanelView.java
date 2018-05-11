@@ -119,7 +119,7 @@ public class NotificationPanelView extends PanelView implements
     private KeyguardStatusView mKeyguardStatusView;
     private View mReserveNotificationSpace;
     private View mQsNavbarScrim;
-    protected NotificationsQuickSettingsContainer mNotificationContainerParent;
+    //protected NotificationsQuickSettingsContainer mNotificationContainerParent;
     protected NotificationStackScrollLayout mNotificationStackScroller;
     private boolean mAnimateNextTopPaddingChange;
 
@@ -258,8 +258,8 @@ public class NotificationPanelView extends PanelView implements
         mKeyguardStatusBar = findViewById(R.id.keyguard_header);
         mKeyguardStatusView = findViewById(R.id.keyguard_status_view);
 
-        mNotificationContainerParent = (NotificationsQuickSettingsContainer)
-                findViewById(R.id.notification_container_parent);
+        //mNotificationContainerParent = (NotificationsQuickSettingsContainer)
+        //        findViewById(R.id.notification_container_parent);
         mNotificationStackScroller = (NotificationStackScrollLayout)
                 findViewById(R.id.notification_stack_scroller);
         mNotificationStackScroller.setOnHeightChangedListener(this);
@@ -1090,7 +1090,7 @@ public class NotificationPanelView extends PanelView implements
             requestPanelHeightUpdate();
             mFalsingManager.setQsExpanded(expanded);
             mStatusBar.setQsExpanded(expanded);
-            mNotificationContainerParent.setQsExpanded(expanded);
+            //mNotificationContainerParent.setQsExpanded(expanded);
         }
     }
 

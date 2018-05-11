@@ -881,4 +881,10 @@
     <dimen name="systemui_height_calendarview">154dp</dimen>
     <dimen name="systemui_date_text_size">10sp</dimen>
 
+    <dimen name="notification_panel_height">560dp</dimen>
+    <!-- notification dimens -->
+    <dimen name="size_sixty">60dp</dimen>
+    <dimen name="qs_icon_size_thirty">30dp</dimen>
+    <dimen name="qs_font_size_sixteen">16sp</dimen>
+    <dimen name="qs_margin_fifty">50dp</dimen>
 </resources>

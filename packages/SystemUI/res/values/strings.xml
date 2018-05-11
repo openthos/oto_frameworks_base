@@ -2115,4 +2115,15 @@
     <string name="battery_percent">"Battery <xliff:g id="TIME">%1$d</xliff:g>"</string>
     <string name="battery_saver_settings">Set energy saving mode</string>
 
+    <!-- notification  -->
+    <string name="notification_info">information</string>
+    <string name="clear_all">clear all</string>
+    <string name="notification_manager">manager</string>
+    <string name="print_manager">print manager</string>
+    <string name="print_message">print message</string>
+    <string name="notification_shot_screen">shot screen</string>
+    <string name="notification_settings">settings</string>
+    <string name="notification_isolation">isolation</string>
+    <string name="notification_projection">projection</string>
+    <string name="notification_isolation_on">isolation</string>
 </resources>
