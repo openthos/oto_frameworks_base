@@ -2416,8 +2416,10 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
                     "resumeTopActivityLocked: Pausing " + mResumedActivity);
             if (mStackSupervisor.getFocusedStack().mStackId == FREEFORM_WORKSPACE_STACK_ID) {
                 pausing = false;
+                mResumedActivity.state = ActivityState.PAUSED;
+            } else {
+                pausing |= startPausingLocked(userLeaving, false, next, false);
             }
-            pausing |= startPausingLocked(userLeaving, false, next, false);
         }
         if (pausing && !resumeWhilePausing) {
             if (DEBUG_SWITCH || DEBUG_STATES) Slog.v(TAG_STATES,

@@ -3128,12 +3128,12 @@ public abstract class ViewGroup extends View implements ViewParent, ViewManager 
      * messages will be delivered here.
      */
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (ev.isFromSource(InputDevice.SOURCE_MOUSE)
-                && ev.getAction() == MotionEvent.ACTION_DOWN
-                && ev.isButtonPressed(MotionEvent.BUTTON_PRIMARY)
-                && isOnScrollbarThumb(ev.getX(), ev.getY())) {
-            return true;
-        }
+        //if (ev.isFromSource(InputDevice.SOURCE_MOUSE)
+        //        && ev.getAction() == MotionEvent.ACTION_DOWN
+        //        && ev.isButtonPressed(MotionEvent.BUTTON_PRIMARY)
+        //        && isOnScrollbarThumb(ev.getX(), ev.getY())) {
+        //    return true;
+        //}
         return false;
     }
 

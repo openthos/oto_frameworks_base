@@ -1797,7 +1797,7 @@ class ActivityStarter {
                 if (StackId.resizeStackWithLaunchBounds(stackId)) {
                     mService.resizeStack(
                             stackId, mLaunchBounds, true, !PRESERVE_WINDOWS, ANIMATE, -1);
-                } else {
+                } else if (stackId != FREEFORM_WORKSPACE_STACK_ID) {
                     mStartActivity.getTask().updateOverrideConfiguration(mLaunchBounds);
                 }
             }

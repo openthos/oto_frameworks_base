@@ -1604,12 +1604,18 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             // Note: If not on the freeform workspace, we ignore the bounds.
             return true;
         }
-        final boolean landscape = bounds.width() > bounds.height();
-        if (mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PRESERVE_ORIENTATION) {
-            return mBounds == null || landscape == (mBounds.width() > mBounds.height());
+
+        if (bounds != null) {
+            return true;
         }
-        return (mResizeMode != RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY || !landscape)
-                && (mResizeMode != RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY || landscape);
+
+        return false;
+        //final boolean landscape = bounds.width() > bounds.height();
+        //if (mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PRESERVE_ORIENTATION) {
+        //    return mBounds == null || landscape == (mBounds.width() > mBounds.height());
+        //}
+        //return (mResizeMode != RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY || !landscape)
+        //        && (mResizeMode != RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY || landscape);
     }
 
     /**

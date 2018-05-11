@@ -2191,6 +2191,11 @@ final class ActivityRecord extends ConfigurationContainer implements AppWindowCo
     }
 
     void setRequestedOrientation(int requestedOrientation) {
+        if (task.getStackId() == FREEFORM_WORKSPACE_STACK_ID) {
+            Rect taskBounds = service.getTaskBounds(task.taskId);
+            task.changeTaskOrientation(task.taskId, taskBounds);
+            return;
+        }
         final int displayId = getDisplayId();
         final Configuration displayConfig =
                 mStackSupervisor.getDisplayOverrideConfiguration(displayId);
@@ -2524,7 +2529,7 @@ final class ActivityRecord extends ConfigurationContainer implements AppWindowCo
             configChanged |= CONFIG_UI_MODE;
         }
 
-        return (changes&(~configChanged)) != 0;
+        return (changes&(~configChanged)) != 0 && !isResizeOnlyChange(changes);
     }
 
     /**

@@ -359,9 +359,10 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
      * @return true if orientation should not get changed upon resizing operation.
      */
     boolean preserveOrientationOnResize() {
-        return mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY
-                || mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY
-                || mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PRESERVE_ORIENTATION;
+        return false;
+        //return mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY
+        //        || mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY
+        //        || mResizeMode == RESIZE_MODE_FORCE_RESIZABLE_PRESERVE_ORIENTATION;
     }
 
     boolean cropWindowsToStackBounds() {
