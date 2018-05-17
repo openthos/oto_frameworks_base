@@ -2325,6 +2325,15 @@ public class Editor {
         public boolean isShowing() {
             return mPopupWindow.isShowing();
         }
+
+        protected void updatePosition() {
+            computeLocalPosition();
+
+            final PositionListener positionListener = getPositionListener();
+            updatePosition(positionListener.getPositionX(), positionListener.getPositionY());
+
+            mContentView.setVisibility(View.VISIBLE);
+        }
     }
 
     private class SuggestionsPopupWindow extends PinnedPopupWindow implements OnItemClickListener {
@@ -2918,6 +2927,7 @@ public class Editor {
     private class ActionPopupWindow extends PinnedPopupWindow implements OnClickListener {
         private static final int POPUP_TEXT_LAYOUT =
                 com.android.internal.R.layout.text_edit_action_popup_text;
+        private TextView mSelectAllTextView;
         private TextView mPasteTextView;
         private TextView mCopyTextView;
         private TextView mCutTextView;
@@ -2943,6 +2953,12 @@ public class Editor {
 
             LayoutParams wrapContent = new LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            mSelectAllTextView = (TextView) inflater.inflate(POPUP_TEXT_LAYOUT, null);
+            mSelectAllTextView.setLayoutParams(wrapContent);
+            mContentView.addView(mSelectAllTextView);
+            mSelectAllTextView.setText(com.android.internal.R.string.selectAll);
+            mSelectAllTextView.setOnClickListener(this);
 
             mPasteTextView = (TextView) inflater.inflate(POPUP_TEXT_LAYOUT, null);
             mPasteTextView.setLayoutParams(wrapContent);
@@ -2973,6 +2989,7 @@ public class Editor {
         public void show() {
             boolean canPaste = mTextView.canPaste();
             boolean canSuggest = mTextView.isSuggestionsEnabled() && isCursorInsideSuggestionSpan();
+            mSelectAllTextView.setVisibility(mTextView.selectAllText() ? View.VISIBLE: View.GONE);
             mPasteTextView.setVisibility(canPaste ? View.VISIBLE : View.GONE);
             mCopyTextView.setVisibility(mTextView.canCopy() ? View.VISIBLE : View.GONE);
             mCutTextView.setVisibility(mTextView.canCut() ? View.VISIBLE : View.GONE);
@@ -2985,7 +3002,9 @@ public class Editor {
 
         @Override
         public void onClick(View view) {
-            if (view == mPasteTextView && mTextView.canPaste()) {
+            if (view == mSelectAllTextView) {
+                mTextView.onTextContextMenuItem(TextView.ID_SELECT_ALL);
+            } else if (view == mPasteTextView && mTextView.canPaste()) {
                 mTextView.onTextContextMenuItem(TextView.ID_PASTE);
                 hide();
             } else if (view == mCopyTextView && mTextView.canCopy()) {
@@ -3429,7 +3448,7 @@ public class Editor {
                         mLastParentY = parentPositionY;
                     }
 
-                    onHandleMoved();
+                    mActionPopupWindow.mContentView.setVisibility(View.GONE);
                 }
 
                 if (isVisible()) {
@@ -3525,6 +3544,9 @@ public class Editor {
                 case MotionEvent.ACTION_UP:
                     filterOnTouchUp();
                     mIsDragging = false;
+                    if (mActionPopupWindow != null) {
+                        mActionPopupWindow.updatePosition();
+                    }
                     break;
 
                 case MotionEvent.ACTION_CANCEL:
