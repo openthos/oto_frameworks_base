@@ -116,7 +116,7 @@ public class OpenthosIDRegister extends BaseActivity {
                         if ((masthead !=null)) {
                             Log.i(TAG, "register failed");
                             Toast.makeText(OpenthosIDRegister.this,
-                                getText(R.string.toast_register_fail), Toast.LENGTH_SHORT).show();
+                                msg.obj.toString(), Toast.LENGTH_SHORT).show();
                         } else {
                             Log.i(TAG, "register OK");
                             Toast.makeText(OpenthosIDRegister.this,
@@ -136,25 +136,25 @@ public class OpenthosIDRegister extends BaseActivity {
                                 = ((SetupWizardApplication) getApplication()).mISeafileService;
                         try {
                             iSeafileService.setBinder(mSeafileBinder);
-                            iSeafileService.regiestAccount(openthosID, openthosEmail, password);
+                            iSeafileService.registeAccount(openthosID, openthosEmail, password);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
                         break;
                     case MSG_REGIST_SEAFILE_OK:
-                        Toast.makeText(OpenthosIDRegister.this,
-                                getText(R.string.toast_register_successful),
-                                Toast.LENGTH_SHORT).show();
                         try {
                             iSeafileService.unsetBinder(mSeafileBinder);
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
-                        OpenthosIDRegister.this.onBackPressed();
+                        Toast.makeText(OpenthosIDRegister.this,
+                                getText(R.string.toast_register_successful),
+                                Toast.LENGTH_SHORT).show();
+                        finish();
                         break;
                     case MSG_REGIST_SEAFILE_FAILED:
                         Toast.makeText(OpenthosIDRegister.this,
-                                getText(R.string.toast_register_failed),
+                                msg.obj.toString(),
                                 Toast.LENGTH_SHORT).show();
                         break;
                     default:
@@ -294,7 +294,10 @@ public class OpenthosIDRegister extends BaseActivity {
                 reply.writeNoException();
                 return true;
             } else if (code == iSeafileService.getCodeRegiestFailed()) {
-                mHandler.sendEmptyMessage(MSG_REGIST_SEAFILE_FAILED);
+                Message msg = new Message();
+                msg.obj = data.readString();
+                msg.what = MSG_REGIST_SEAFILE_FAILED;
+                mHandler.sendMessage(msg);
                 reply.writeNoException();
                 return true;
             }
