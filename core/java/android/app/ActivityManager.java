@@ -430,7 +430,7 @@ public class ActivityManager {
     public int getMemoryClass() {
         return staticGetMemoryClass();
     }
-    
+
     /** @hide */
     static public int staticGetMemoryClass() {
         // Really brain dead right now -- just take this from the configured
@@ -978,6 +978,20 @@ public class ActivityManager {
             // System dead, we will be dead too soon!
             return null;
         }
+    }
+
+    /*
+     * get all stack info, when open window.
+     *
+     * @return Returns a list of stack info.
+     */
+    @Deprecated
+    public List<StackInfo> getAllStackInfos() throws SecurityException {
+       try {
+           return ActivityManagerNative.getDefault().getAllStackInfos();
+       } catch (RemoteException e) {
+           return new ArrayList();
+       }
     }
 
     /**

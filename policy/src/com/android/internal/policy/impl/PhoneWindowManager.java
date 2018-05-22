@@ -23,6 +23,7 @@ import android.provider.ContactsContract;
 import android.net.Uri;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
+import android.app.ActivityManager.StackInfo;
 import android.app.AppOpsManager;
 import android.app.IUiModeManager;
 import android.app.ProgressDialog;
@@ -1392,21 +1393,28 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             final ActivityManager mActivityManager = (ActivityManager)
                 context.getSystemService(Context.ACTIVITY_SERVICE);
 
-            final List<RecentTaskInfo> recentTasks =
-                mActivityManager.getRecentTasks(Integer.MAX_VALUE, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-
+            List<Integer> stackIdList = new ArrayList<>();
+            List<StackInfo> stackInfoList = mActivityManager.getAllStackInfos();
+            for (int i = 0; i < stackInfoList.size(); i++) {
+                //exclude the launcher and mini window
+                if (stackInfoList.get(i).stackId == 0 || (
+                    stackInfoList.get(i).bounds.left >= metrics.widthPixels &&
+                    stackInfoList.get(i).bounds.top  >= metrics.heightPixels &&
+                    stackInfoList.get(i).bounds.right >= metrics.widthPixels &&
+                    stackInfoList.get(i).bounds.bottom >= metrics.heightPixels)) {
+                    continue;
+                }
+                stackIdList.add(stackInfoList.get(i).stackId);
+            }
+            Rect mini = new Rect(0, 0, 1, 1);
+            Rect defaultWindowSize = new Rect(200,200,800,600);
+            /*
             ActivityInfo homeActivityInfo =
                 new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME)
                 .resolveActivityInfo(mPackageManager, 0);
-            int index = 0;
-            int numTasks = recentTasks.size();
-            Log.d(TAG, "numTasks" + numTasks);
-            Rect mini = new Rect(0, 0, 1, 1);
-            Rect defaultWindowSize = new Rect(200,200,800,600);
-            List<Integer> stackIdList = new ArrayList<>();
             for (int i = 0; i < numTasks; ++i) {
                 final RecentTaskInfo mRecentTaskInfo = recentTasks.get(i);
-                // exclude the home activity
+                // exclude the home activity launcher
                 Intent intent = new Intent(mRecentTaskInfo.baseIntent);
                 if (mRecentTaskInfo.origActivity != null) {
                     intent.setComponent(mRecentTaskInfo.origActivity);
@@ -1425,6 +1433,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     final int id = mRecentTaskInfo.stackId;
                     stackIdList.add(id);
             }
+            */
             Rect actualWindowSize = new Rect();
             Rect outOfScreen = new Rect();
             if (mIsMini) {
