@@ -8683,7 +8683,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                     "removeTask()");
             long ident = Binder.clearCallingIdentity();
             try {
-                return removeTaskByIdLocked(taskId, true);
+                return removeTaskByIdLocked(taskId, false);
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -20019,21 +20019,6 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     private boolean closeActivity(int stackId, boolean individual, int activities) {
         boolean succeed;
-
-        ActivityStack activityStack = mStackSupervisor.getStack(stackId);
-        if (activityStack != null && activityStack.isStartupMenuStack()) {
-            /**
-             * Remove StartupMenu from screen,
-             * Avoid kill StartupMenu process.
-             */
-            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-            Rect rect = new Rect(getStackBounds(stackId).left + metrics.getWidthPixelsFullScreen(),
-                             getStackBounds(stackId).top  + metrics.getHeightPixelsFullScreen(),
-                             getStackBounds(stackId).right + metrics.getWidthPixelsFullScreen(),
-                             getStackBounds(stackId).bottom + metrics.getHeightPixelsFullScreen());
-            mWindowManager.relayoutWindow(stackId, rect);
-            return true;
-        }
 
         synchronized (mSBAThread) {
             if(individual && activities == 0) {
