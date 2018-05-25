@@ -208,6 +208,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
+import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.view.Window;
@@ -344,6 +345,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private boolean mForceStatusBarHide = false;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     private StatusBarWindowManager mStatusBarWindowManager;
+    private SettingsObserverInput mSettingsObserverInput;
     private UnlockMethodCache mUnlockMethodCache;
     private DozeServiceHost mDozeServiceHost;
     private boolean mScreenOnComingFromTouch;
@@ -806,6 +808,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
         });
         loadPkg();
+        mSettingsObserverInput = new SettingsObserverInput(mHandler, mContext);
+        mSettingsObserverInput.registerObserver();
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
         mKeyboardMap = (ImageView) mStatusBarView.findViewById(R.id.status_bar_keyboard);
@@ -1134,7 +1138,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mWifiButton.setOnHoverListener(hoverListeners);
         mNotification.setOnHoverListener(hoverListeners);
         registerCustomBroadcastReceiver();
-        mInputMethodIcon.sendEmptyMessage(INPUTMETHOD_MESSAGE_WHAT);
+        updateInputIcon();
         return mStatusBarView;
     }
 
@@ -1158,34 +1162,50 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
-    Handler mInputMethodIcon = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            InputMethodManager imm = (InputMethodManager)
-                          mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            List<InputMethodInfo> inputMethodList = imm.getInputMethodList();
-            PackageManager pm = mContext.getPackageManager();
-            String currentInputMethodId = Settings.Secure.getString(
-                   mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
-            for (InputMethodInfo im : inputMethodList) {
-                if (im.getId().equals(currentInputMethodId)) {
-                    if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {
-                        mInputButton.setImageResource(
-                                        R.drawable.statusbar_switch_input_method);
-                    } else if (im.getId().equals(
-                               ApplicationInfo.APPNAME_ANDROID_INPUTMETHOD_PINYIN)) {
-                        mInputButton.setImageResource(
-                                        R.drawable.statusbar_switch_input_method_pinyin);
-                    } else {
-                        Drawable inputMethodIcon = im.loadIcon(pm);
-                        mInputButton.setImageDrawable(inputMethodIcon);
-                    }
-                }
-            }
-            mInputMethodIcon.sendEmptyMessageDelayed(INPUTMETHOD_MESSAGE_WHAT,
-                                                       INPUTMETHOD_SEND_MESSAGE);
+    // When monitor input method data change from systemui or settings,
+    // update icon on status bar
+    private class SettingsObserverInput extends ContentObserver {
+        private Context mContext;
+        public SettingsObserverInput(Handler handler, Context context) {
+            super(handler);
+            mContext = context;
         }
-    };
+
+        @Override
+        public void onChange(boolean selfChange) {
+            updateInputIcon();
+        }
+
+        public void registerObserver() {
+            final ContentResolver cr = mContext.getContentResolver();
+            cr.registerContentObserver(
+                  Settings.Secure.getUriFor(Settings.Secure.DEFAULT_INPUT_METHOD), false, this);
+            cr.registerContentObserver(Settings.Secure.getUriFor(
+                  Settings.Secure.SELECTED_INPUT_METHOD_SUBTYPE), false, this);
+        }
+
+        public void unregisterObserver() {
+            mContext.getContentResolver().unregisterContentObserver(this);
+        }
+    }
+
+    private void updateInputIcon() {
+        InputMethodManager imm = (InputMethodManager)
+                      mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> inputMethodList = imm.getInputMethodList();
+        String currentInputMethodId = Settings.Secure.getString(
+                      mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+        for (InputMethodInfo im : inputMethodList) {
+            if (im.getId().equals(currentInputMethodId)) {
+                if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {//os input
+                    mInputButton.setImageResource(
+                                    R.drawable.statusbar_switch_input_method);
+                    return;
+                } // other input methods;
+                mInputButton.setImageDrawable(im.loadIcon(mContext.getPackageManager()));
+            }
+        }
+    }
 
     public static BaseSettingDialog getWifiDialog() {
         return mWifiPopupWindow;
@@ -4408,6 +4428,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         if (mdbStatusBar != null) {
             mdbStatusBar.close();
+        }
+        if (mSettingsObserverInput != null) {
+            mSettingsObserverInput.unregisterObserver();
         }
     }
 
