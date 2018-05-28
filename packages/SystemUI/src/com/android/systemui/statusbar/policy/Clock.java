@@ -123,7 +123,10 @@ public class Clock extends TextView implements DemoMode {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+            if (action.equals(Intent.ACTION_TIME_TICK)
+                    && Calendar.getInstance().get(Calendar.SECOND) != 0) {
+                return;
+            } else if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
                 String tz = intent.getStringExtra("time-zone");
                 mCalendar = Calendar.getInstance(TimeZone.getTimeZone(tz));
                 if (mClockFormat != null) {

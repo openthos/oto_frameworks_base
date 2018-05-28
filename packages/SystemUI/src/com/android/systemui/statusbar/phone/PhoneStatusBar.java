@@ -203,6 +203,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -293,7 +294,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private static final int INPUTMETHOD_SEND_MESSAGE = 100;
     private static final int INPUTMETHOD_MESSAGE_WHAT = 0;
     private static final int VERSION_SQLDATABASE = 1;
+    private static final int BATTERY_NULL = 0;
     private static final int BATTERY_LOW = 25;
+    private static final int BATTERY_MIDDLE = 50;
     private static final int BATTERY_HIGH = 75;
     private static final int DIALOG_OFFSET_PART_THREE = 3;
     private static final int DIMENSION_OFFSET_LOCATION = 7;
@@ -464,6 +467,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private CustomBroadcastReceiver mCustomBroadcastReceiver;
     private StatusBarSqlDatabase mMsohStatusBar;
     private SQLiteDatabase mdbStatusBar;
+
+    private int mBatteryLevel = -1;
 
     private HorizontalScrollView mStatusBarHorizontalScrollView;
     ContentValues mValues = new ContentValues();
@@ -930,6 +935,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mLocationController = new LocationControllerImpl(mContext); // will post a notification
         mBatteryButton = (KeyButtonView) mStatusBarView.findViewById(R.id.status_bar_battery);
         mBatteryController = new BatteryController(mContext);
+
+        final Map<Integer, Drawable> drawableMap = new HashMap<>();
+        drawableMap.put(BATTERY_NULL, mContext.getDrawable(R.drawable.statusbar_battery));
+        drawableMap.put(BATTERY_LOW, mContext.getDrawable(R.drawable.statusbar_battery_low));
+        drawableMap.put(BATTERY_MIDDLE, mContext.getDrawable(R.drawable.ic_notice_battery_half));
+        drawableMap.put(BATTERY_HIGH, mContext.getDrawable(R.drawable.statusbar_battery_high));
+
         mBatteryController.addStateChangedCallback(new BatteryStateChangeCallback() {
             @Override
             public void onPowerSaveChanged() {
@@ -950,18 +962,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 Settings.System.putInt(context.getContentResolver(),
                         Settings.System.SCREEN_BRIGHTNESS, brightness);
 
-                if (charging || pluggedIn || level == 0) {
-                    mBatteryButton.setImageDrawable(mContext.getDrawable(
-                            R.drawable.statusbar_battery));
-                } else if (level >= BATTERY_HIGH) {
-                    mBatteryButton.setImageDrawable(mContext.getDrawable(
-                            R.drawable.statusbar_battery_high));
-                } else if (level >= BATTERY_LOW && level <= BATTERY_HIGH) {
-                    mBatteryButton.setImageDrawable(mContext.getDrawable(
-                            R.drawable.ic_notice_battery_half));
-                } else {
-                    mBatteryButton.setImageDrawable(mContext.getDrawable(
-                            R.drawable.statusbar_battery_low));
+                if ((charging || pluggedIn || level == 0) && mBatteryLevel != BATTERY_NULL) {
+                    mBatteryButton.setImageDrawable(drawableMap.get(BATTERY_NULL));
+                    mBatteryLevel = BATTERY_NULL;
+                } else if (level < BATTERY_LOW && mBatteryLevel != BATTERY_LOW) {
+                    mBatteryButton.setImageDrawable(drawableMap.get(BATTERY_LOW));
+                    mBatteryLevel = BATTERY_LOW;
+                } else if (level >= BATTERY_LOW && level < BATTERY_HIGH && mBatteryLevel != BATTERY_MIDDLE) {
+                    mBatteryButton.setImageDrawable(drawableMap.get(BATTERY_MIDDLE));
+                    mBatteryLevel = BATTERY_MIDDLE;
+                } else if (level >= BATTERY_HIGH && mBatteryLevel != BATTERY_HIGH) {
+                    mBatteryButton.setImageDrawable(drawableMap.get(BATTERY_HIGH));
+                    mBatteryLevel = BATTERY_HIGH;
                 }
             }
         });
