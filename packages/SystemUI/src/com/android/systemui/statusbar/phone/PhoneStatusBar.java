@@ -1295,17 +1295,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     View.OnHoverListener hideShowHover = new View.OnHoverListener() {
-         public boolean onHover(View v, MotionEvent event) {
-             int action = event.getAction();
-             switch (action) {
-                 case MotionEvent.ACTION_HOVER_ENTER:
-                     v.setBackgroundResource(R.color.rightMenuFocus);
-                     break;
-                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(android.R.color.transparent);
-                     break;
-             }
-             return false;
+        public boolean onHover(View v, MotionEvent event) {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setBackgroundResource(android.R.color.white);
+                    ((TextView) v).setTextColor(
+                            mContext.getResources().getColor(android.R.color.black));
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    ((TextView) v).setTextColor(
+                            mContext.getResources().getColor(android.R.color.white));
+                    break;
+            }
+            return false;
          }
     };
 

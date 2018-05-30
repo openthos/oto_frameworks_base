@@ -521,10 +521,12 @@ public class ActivityKeyView extends ImageView {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    v.setBackgroundResource(android.R.color.white);
+                    ((TextView) v).setTextColor(getResources().getColor(android.R.color.black));
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    v.setBackgroundResource(android.R.color.transparent);
+                    v.setBackgroundResource(R.color.rightMenuFocus);
+                    ((TextView) v).setTextColor(getResources().getColor(android.R.color.white));
                     break;
             }
             return false;

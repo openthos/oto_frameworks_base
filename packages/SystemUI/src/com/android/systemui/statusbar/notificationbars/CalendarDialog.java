@@ -36,6 +36,7 @@ public class CalendarDialog extends BaseSettingDialog
     private boolean mIs24Hour;
     private SimpleDateFormat mDateFormat;
     private SimpleDateFormat mTimeFormat;
+    private Date mDate;
 
     public CalendarDialog(Context context) {
         super(context);
@@ -60,6 +61,7 @@ public class CalendarDialog extends BaseSettingDialog
     private void initData() {
         mCalendarSet.setText(R.string.set_date_and_time);
 
+        mDate = new Date();
         updateFormat();
         mDateFormat = new SimpleDateFormat("yyyy-MM-dd EEEE");
     }
@@ -150,12 +152,12 @@ public class CalendarDialog extends BaseSettingDialog
             @Override
             public void run() {
                 while (isShowing()) {
-                    final Date date = Calendar.getInstance().getTime();
+                    mDate.setTime(System.currentTimeMillis());
                     mContentView.post(new Runnable() {
                         @Override
                         public void run() {
-                            mCalendarTime.setText(showTime(date));
-                            mCalendarDate.setText(showMonth(date));
+                            mCalendarTime.setText(showTime(mDate));
+                            mCalendarDate.setText(showMonth(mDate));
                             mCalendarMonth.setText(getMonthTetx(mCalendarView.getCalendarYear(),
                                     mCalendarView.getCalendarMonth()));
                         }
@@ -182,6 +184,9 @@ public class CalendarDialog extends BaseSettingDialog
         mCalendarView.clearAll();
         mCalendarMonth.setText(getMonthTetx(years, month));
         mCalendarView.showCalendar(years, month);
+        mDate.setTime(System.currentTimeMillis());
+        mCalendarTime.setText(showTime(mDate));
+        mCalendarDate.setText(showMonth(mDate));
         updateView();
     }
 }
