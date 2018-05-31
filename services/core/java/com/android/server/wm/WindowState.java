@@ -327,6 +327,9 @@ final class WindowState implements WindowManagerPolicy.WindowState {
      */
     boolean mRebuilding;
 
+    /** Currently window computeFrameLw repeatly? */
+    boolean mReApply = false;
+
     // Input channel and input window handle used by the input dispatcher.
     final InputWindowHandle mInputWindowHandle;
     InputChannel mInputChannel;
@@ -599,9 +602,6 @@ final class WindowState implements WindowManagerPolicy.WindowState {
         final int fw = mFrame.width();
         final int fh = mFrame.height();
 
-        //System.out.println("In: w=" + w + " h=" + h + " container=" +
-        //                   container + " x=" + mAttrs.x + " y=" + mAttrs.y);
-
         float x, y;
         if (mEnforceSizeCompat) {
             x = mAttrs.x * mGlobalScale;
@@ -630,9 +630,19 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                         x = x + stack.getMultiWindow().getFramePadding();
                         y = y - mParentFrame.top;
                     } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
-                           && ApplicationInfo.isWeChatIssuePopupWindow(mAttrs.gravity, (int) y)) {
+                          && mAttrs.type != WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL) {
+                        if (mReApply) {
+                            return;
+                        }
+                        boolean isShowUp = mService.getCurrentPointerY() > y;
+                        if (isShowUp) {
+                            y = mService.getCurrentPointerY() - mParentFrame.top - h;
+                        } else {
+                            y = mService.getCurrentPointerY() - mParentFrame.top;
+                        }
                         x = mParentFrame.right - mService.getCurrentPointerX() - w
                             + 2 * stack.getMultiWindow().getFramePadding();
+                        mReApply = true;
                     } else if (ApplicationInfo.APPNAME_OFFICE_OUTLOOK.equals(mAttrs.packageName)
                                && w == pw) { // receiver tips
                         x = x + stack.getMultiWindow().getFramePadding();

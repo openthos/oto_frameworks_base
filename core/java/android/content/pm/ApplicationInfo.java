@@ -135,8 +135,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
     public static final int PHONE_STARTUP_MODE = 1;
     public static final int DESKTOP_STARTUP_MODE = 2;
 
-    public static final int WECHAT_POPUPWINDOW_DIFF_POS_Y = 150;
-
     /**
      * Default task affinity of all activities in this application. See 
      * {@link ActivityInfo#taskAffinity} for more information.  This comes 
@@ -712,10 +710,6 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         String[] fullscreenWindowApps = Resources.getSystem().
                             getStringArray(com.android.internal.R.array.fullscreen_style_window);
         return Arrays.asList(fullscreenWindowApps).contains(pkgName);
-    }
-
-    public static boolean isWeChatIssuePopupWindow(int gravity, int y) { // assume it's WeChat pkg.
-        return (y > WECHAT_POPUPWINDOW_DIFF_POS_Y) && (gravity == (Gravity.RIGHT | Gravity.TOP));
     }
 
     public boolean needShadow() {

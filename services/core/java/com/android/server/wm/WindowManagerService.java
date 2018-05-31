@@ -7779,6 +7779,8 @@ public class WindowManagerService extends IWindowManager.Stub
                     } else {
                         mCurrentStackId = -1;
                     }
+                    mCurrentPointerX = x;
+                    mCurrentPointerY = y;
                     break;
                 case POINTER_EVENT_ACTION_MOVE:
                     if (mCurrentStackId != -1) {
@@ -7795,8 +7797,6 @@ public class WindowManagerService extends IWindowManager.Stub
                         mStack.onTouchEvent(MotionEvent.ACTION_UP, x, y, dcAndMe.downTime);
                         mStack = null;
                     }
-                    mCurrentPointerX = x;
-                    mCurrentPointerY = y;
                     // Fall through
                 default:
                     mCurrentStackId = -1;
