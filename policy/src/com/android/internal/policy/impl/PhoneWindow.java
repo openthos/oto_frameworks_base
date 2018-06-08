@@ -3860,8 +3860,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
     }
 
     private boolean needHidePointer() {
-        return getContext().getApplicationInfo().packageName.compareTo(
-                                            ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI) == 0;
+        return (getContext().getApplicationInfo().packageName.compareTo(
+                                            ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI) == 0)
+               || (getContext().getApplicationInfo().packageName.compareTo(
+                                            ApplicationInfo.APPNAME_OTO_ANDROIDSTUDIO) == 0);
     }
 
     private class HoverListener implements OnHoverListener {

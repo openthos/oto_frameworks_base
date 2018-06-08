@@ -4,8 +4,8 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-subdir-java-files) \
-LOCAL_ASSET_FILES += $(call find-subdir-assets) \
         ../../../../packages/apps/OtoCloudService/src/org/openthos/seafile/ISeafileService.aidl
+LOCAL_ASSET_FILES += $(call find-subdir-assets) \
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4
 LOCAL_PACKAGE_NAME := OtoSetupWizard

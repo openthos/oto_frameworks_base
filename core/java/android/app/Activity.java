@@ -4736,6 +4736,7 @@ public class Activity extends ContextThemeWrapper
             || mActivityInfo.name.equals(ApplicationInfo.APPNAME_TOGIC_LAUNCHER_SPLASHACTIVITY)
             || mActivityInfo.name.equals(ApplicationInfo.APPNAME_JACKPAL_ANDROIDTERM_TERMACTIVITY)
             || mActivityInfo.name.equals(ApplicationInfo.APPNAME_OTO_VIRTUAL_GUI_MAINACTIVITY)
+            || mActivityInfo.name.equals(ApplicationInfo.APPNAME_OTO_ANDROIDSTUDIO)
             || mActivityInfo.name.equals(ApplicationInfo.APPNAME_POWERSOURCE)) {
             Intent intent = new Intent();
             intent.setAction(Intent.STATUS_BAR_SHOW);
