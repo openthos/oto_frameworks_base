@@ -1,6 +1,7 @@
 package com.otosoft.setupwizard;
 
 import android.app.Service;
+import android.media.MediaScannerConnection;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -57,7 +58,8 @@ public class InitializeActivity extends BaseActivity {
     private ArrayList<String> mApkPaths = new ArrayList();
     private int mTotalApks;
     private ISeafileService iSeafileService;
-
+    private ArrayList<String> files = new ArrayList<>();
+    private ArrayList<String> types = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,23 +216,6 @@ public class InitializeActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Void avoid) {
-            //iSeafileService = ((SetupWizardApplication) getApplication()).mISeafileService;
-            //try {
-            //    iSeafileService.setBinder(mSeafileBinder);
-            //} catch (RemoteException e) {
-            //    e.printStackTrace();
-            //}
-            //try {
-            //    if (!TextUtils.isEmpty(iSeafileService.getUserName())) {
-            //        showSyncOptionDialog();
-            //    } else {
-            //        startActivity();
-            //    }
-            //} catch (RemoteException e) {
-            //    e.printStackTrace();
-            //    startActivity();
-            //}
-            startActivity();
         }
     }
 
@@ -339,7 +324,7 @@ public class InitializeActivity extends BaseActivity {
     }
 
     private void initWallpaper() {
-        File f = new File(
+        final File f = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
                 "wallpaper");
         if (!f.exists()) {
@@ -347,6 +332,15 @@ public class InitializeActivity extends BaseActivity {
             new Thread() {
                 public void run() {
                     unzipWallpapers();
+                    MediaScannerConnection.scanFile(InitializeActivity.this,
+                            files.toArray(new String[files.size()]),
+                            types.toArray(new String[types.size()]),
+                            new MediaScannerConnection.OnScanCompletedListener() {
+                                @Override
+                                public void onScanCompleted(String path, Uri uri) {
+                                    startActivity();
+                                }
+                            });
                 }
             }.start();
         }
@@ -367,6 +361,8 @@ public class InitializeActivity extends BaseActivity {
                     file.mkdir();
                 } else {
                     file = new File(outputDirectory + File.separator + entry.getName());
+                    files.add(file.getAbsolutePath());
+                    types.add("image/*");
                     file.createNewFile();
                     FileOutputStream outputStream = new FileOutputStream(file);
                     while ((count = zipInputStream.read(buffer)) > 0) {
