@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="layoutFocus">#e9edf0</color>
-    <color name="layoutQuitFocus">#88000000</color>
-    <color name="gray">#b19898</color>
-    <color name="black">#000000</color>
+
+    <color name="blue">#5a41a2</color>
+    <color name="background">#f2e9edf0</color>
+    <color name="text_gray">#939aa3</color>
+    <!--<color name="app_background">#e9edf0</color>-->
+    <color name="app_background">#FFFFE0</color>
 </resources>

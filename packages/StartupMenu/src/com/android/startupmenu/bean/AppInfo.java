@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
-public class AppInfo{
+public class AppInfo {
 
     private String appLabel;
     private Drawable appIcon;
@@ -14,6 +14,7 @@ public class AppInfo{
     private int clickCounts;
     private String activityName;
     private boolean isSystemApp;
+    private boolean isFullScreen;
 
     public AppInfo() {
     }
@@ -58,6 +59,10 @@ public class AppInfo{
         this.clickCounts = clickCounts;
     }
 
+    public void updateClickCount() {
+        clickCounts++;
+    }
+
     public String getActivityName() {
         return activityName;
     }
@@ -78,5 +83,13 @@ public class AppInfo{
 
     public void setSystemApp(boolean isSystemApp) {
         this.isSystemApp = isSystemApp;
+    }
+
+    public boolean isFullScreen() {
+        return isFullScreen;
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        isFullScreen = fullScreen;
     }
 }

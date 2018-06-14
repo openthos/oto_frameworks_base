@@ -1,8 +1,5 @@
 package com.android.startupmenu.util;
 
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-
 /**
  * Created by ljh on 17-5-17.
  */
