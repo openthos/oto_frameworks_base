@@ -272,17 +272,6 @@ class DisplayContent {
                 }
             }
         }
-        WindowList windows = getWindowList();
-        for (int i = windows.size() - 1; i >= 0; --i) {
-            final WindowState win = windows.get(i);
-            if (win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG
-                        || win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT) {
-                if (win.mFrame.contains(x, y)) {
-                    homeId = -1;
-                    break;
-                }
-            }
-        }
 
         return homeId;
     }
@@ -299,6 +288,15 @@ class DisplayContent {
                 mTouchExcludeRegion.op(mTmpRect, Region.Op.DIFFERENCE);
             }
         }
+    }
+
+    boolean touchExludeRegion(int x, int y) {
+        WindowState win = mService.mCurrentFocus;
+        return  win != null && (
+                win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG ||
+                win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
+                win.getAttrs().type == WindowManager.LayoutParams.TYPE_APPLICATION_PANEL
+                ) && win.getFrameLw().contains(x, y);
     }
 
     void switchUserStacks(int newUserId) {

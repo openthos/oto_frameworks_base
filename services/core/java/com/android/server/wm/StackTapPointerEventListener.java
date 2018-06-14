@@ -68,10 +68,12 @@ public class StackTapPointerEventListener implements PointerEventListener {
                 mDownY = motionEvent.getY();
                 WindowManager wm = (WindowManager) mService.mContext
                                    .getSystemService(Context.WINDOW_SERVICE);
-                int height = wm.getDefaultDisplay().getHeight();
+                int barHeight = mService.mContext.getResources().getDimensionPixelSize(
+                                            com.android.internal.R.dimen.status_bar_height_real);
                 if ((!mTouchExcludeRegion.contains((int)mDownX, (int)mDownY)
                         || DisplayContent.sCurrentTouchedDisplay != mDisplayContent.getDisplayId())
-                        && (mDownY < height)) {
+                        && (mDownY < (mDisplayContent.getDisplayInfo().logicalHeight - barHeight))
+                        && (!mDisplayContent.touchExludeRegion((int)mDownX, (int)mDownY))) {
                     DisplayContent.sCurrentTouchedDisplay = mDisplayContent.getDisplayId();
                     mService.mH.obtainMessage(H.TAP_OUTSIDE_STACK, (int)mDownX, (int)mDownY,
                                               mDisplayContent).sendToTarget();
