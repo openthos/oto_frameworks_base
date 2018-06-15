@@ -728,6 +728,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_STARTUP_SOUND = 23;
     private static final int MSG_STARTUP_APP_SETTINGS = 24;
     private static final int MSG_STARTUP_KEYBOARD_MAP = 25;
+    private static final int MSG_STARTUP_TERMUX = 26;
 
     private boolean mIsMini;
     private Map<Integer, Rect> mTreeMap = new TreeMap<>();
@@ -812,6 +813,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_STARTUP_APP_SETTINGS:
                     startAppSettings();
+                    break;
+                case MSG_STARTUP_TERMUX:
+                    startTermux();
                     break;
             }
         }
@@ -1308,6 +1312,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHandler.sendEmptyMessage(MSG_STARTUP_KEYBOARD_MAP);
     }
 
+    public void sendTermux() {
+        mHandler.removeMessages(MSG_STARTUP_TERMUX);
+        mHandler.sendEmptyMessage(MSG_STARTUP_TERMUX);
+    }
+
     public void sendAppManager() {
         mHandler.removeMessages(MSG_STARTUP_APP_SETTINGS);
         mHandler.sendEmptyMessage(MSG_STARTUP_APP_SETTINGS);
@@ -1353,6 +1362,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             PackageManager manager = mContext.getPackageManager();
             Intent lanuch = new Intent();
             lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_OTO_FILEMANAGER);
+            lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mContext.startActivity(lanuch);
+        } catch (ActivityNotFoundException e) {
+            Slog.w(TAG, "No activity to handle assist action.", e);
+        }
+    }
+
+    void startTermux() {
+        try {
+            PackageManager manager = mContext.getPackageManager();
+            Intent lanuch = new Intent();
+            lanuch = manager.getLaunchIntentForPackage(ApplicationInfo.APPNAME_COM_TERMUX);
             lanuch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             mContext.startActivity(lanuch);
         } catch (ActivityNotFoundException e) {
@@ -2968,6 +2989,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 sendKeyboardMap();
                 mHomeKeyHasEffect = false;
             }
+        } else if (keyCode == KeyEvent.KEYCODE_T) {
+            if (down && event.isAltPressed() && event.isCtrlPressed()) {
+                sendTermux();
+            }
         } else if (!event.isAltPressed() && keyCode == KeyEvent.KEYCODE_ESCAPE) {
             if (down && (repeatCount == 0) && mHomeKeyDown) {
                 sendAppManager();
@@ -3181,7 +3206,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             String category = sApplicationLaunchKeyCategories.get(keyCode);
             if (category != null) {
                 Intent intent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, category);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 try {
                     startActivityAsUser(intent, UserHandle.CURRENT);
                 } catch (ActivityNotFoundException ex) {
