@@ -898,14 +898,16 @@ public class PopupWindow {
      */
     public void showAtLocation(View parent, int gravity, int x, int y) {
         ViewRootImpl root = parent.getViewRootImpl();
-        View view = root.getView();
-        if (parent.getContext().getApplicationInfo().packageName.compareTo(
-                    ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0
-            &&  (parent.getClass().getName().compareTo(
-                    "com.tencent.mm.pluginsdk.ui.chat.ChattingContent") == 0)) {
-            int paddingTop = ((WindowDecorView) view).getWindowTopBorderPadding();
-            Rect rect = root.getWinFrame();
-            mHeight += rect.top + paddingTop; // restore Wechat popup menu height.
+        if (root != null) {
+            View view = root.getView();
+            if (parent.getContext().getApplicationInfo().packageName.compareTo(
+                        ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0
+                &&  (parent.getClass().getName().compareTo(
+                        "com.tencent.mm.pluginsdk.ui.chat.ChattingContent") == 0)) {
+                int paddingTop = ((WindowDecorView) view).getWindowTopBorderPadding();
+                Rect rect = root.getWinFrame();
+                mHeight += rect.top + paddingTop; // restore Wechat popup menu height.
+            }
         }
         showAtLocation(parent.getWindowToken(), gravity, x, y);
     }
