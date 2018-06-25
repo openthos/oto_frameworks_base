@@ -30,6 +30,7 @@ oneway interface IStatusBar
     void animateExpandSettingsPanel();
     void animateCollapsePanels();
     void showStatusBarView();
+    void showStartupMenu();
     void showStatusBarViewSuggest();
     void showStatusBarViewPowerSleep();
     void hideStatusBarView();

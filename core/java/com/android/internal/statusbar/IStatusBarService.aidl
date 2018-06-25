@@ -26,6 +26,7 @@ interface IStatusBarService
 {
     void expandNotificationsPanel();
     void showStatusBar();
+    void showStartupMenu();
     void showStatusBarSuggest();
     void showStatusBarPowerSleep();
     void hideStatusBar();

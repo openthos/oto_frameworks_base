@@ -72,6 +72,7 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_SHOW_HOME_PANEL                = 30 << MSG_SHIFT;
     private static final int MSG_SHOW_STATUSBAR_VIEW_POWER_SLEEP= 31 << MSG_SHIFT;
     private static final int MSG_SHOW_INPUT_METHOD_PANEL        = 32 << MSG_SHIFT;
+    private static final int MSG_SHOW_STARTUP_MENU              = 33 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -97,6 +98,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void disable(int state, boolean animate);
         public void animateExpandNotificationsPanel();
         public void showStatusBarView();
+        public void showStartupMenu();
         public void showStatusBarViewSuggest();
         public void showStatusBarViewPowerSleep();
         public void hideStatusBarView();
@@ -170,6 +172,11 @@ public class CommandQueue extends IStatusBar.Stub {
             mHandler.removeMessages(MSG_SHOW_STATUSBAR_VIEW);
             mHandler.sendEmptyMessage(MSG_SHOW_STATUSBAR_VIEW);
         }
+    }
+
+    public void showStartupMenu() {
+        mHandler.removeMessages(MSG_SHOW_STARTUP_MENU);
+        mHandler.sendEmptyMessage(MSG_SHOW_STARTUP_MENU);
     }
 
     public void showStatusBarViewSuggest() {
@@ -435,6 +442,9 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SHOW_STATUSBAR_VIEW:
                     mCallbacks.showStatusBarView();
+                    break;
+                case MSG_SHOW_STARTUP_MENU:
+                    mCallbacks.showStartupMenu();
                     break;
                 case MSG_SHOW_STATUSBAR_VIEW_SUGGEST:
                     mCallbacks.showStatusBarViewSuggest();

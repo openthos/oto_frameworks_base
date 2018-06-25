@@ -72,6 +72,9 @@ public class TvStatusBar extends BaseStatusBar {
     }
 
     @Override
+    public void showStartupMenu() {}
+
+    @Override
     public void showStatusBarViewSuggest() {
     }
 

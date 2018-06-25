@@ -1565,23 +1565,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     void startupMenuInternal() {
-        // Don't need use 'killStartupMenu()'.
-        /*
-        try {
-            if (ActivityManagerNative.getDefault().killStartupMenu()) {
-                return;
-            }
-        } catch (RemoteException e) {
-            Log.e("LADEHUNTER","Exception when try to kill starup menu !!!!",null);
-        }
-        */
-
-        final Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.android.startupmenu",
-                                              "com.android.startupmenu.StartupMenuActivity"));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU
-                        | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        mContext.startActivity(intent);
+        showStartupMenu();
     }
 
     void showGlobalActionsInternal() {
@@ -6964,6 +6948,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mStatusBarService.showStatusBar();
         } catch(Exception e) {
         }
+    }
+
+    private void showStartupMenu() {
+        try {
+            mStatusBarService.showStartupMenu();
+        } catch(Exception e) {}
     }
 
     @Override

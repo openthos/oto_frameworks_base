@@ -115,6 +115,17 @@ public class StatusBarManager {
             throw new RuntimeException(ex);
         }
     }
+
+    public void showStartupMenu() {
+        try {
+            final IStatusBarService svc = getService();
+            if (svc != null) {
+                svc.showStartupMenu();
+            }
+        } catch (RemoteException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     
     public void showStatusBarSuggest() {
         try {

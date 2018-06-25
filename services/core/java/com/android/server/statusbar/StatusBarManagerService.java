@@ -234,6 +234,16 @@ public class StatusBarManagerService extends IStatusBarService.Stub {
     }
 
     @Override
+    public void showStartupMenu() {
+        enforceExpandStatusBar();
+        if (mBar != null) {
+            try {
+               mBar.showStartupMenu();
+            } catch (RemoteException ex) {}
+        }
+    }
+
+    @Override
     public void showStatusBarSuggest() {
         enforceExpandStatusBar();
 

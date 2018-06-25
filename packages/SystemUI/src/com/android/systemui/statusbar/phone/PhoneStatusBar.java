@@ -2986,6 +2986,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
+    public void showStartupMenu() {
+        showStatusBarView();
+        mStartupMenuManager.showStartupMenu();
+        if (mNotificationPanel != null && mNotificationPanel.isQsExpanded()) {
+            mNotificationPanel.setPanelHide();
+        }
+        dismissSystemDilog();
+        ActivityKeyView.dismissDialog();
+    }
+
+    @Override
     public void showStatusBarViewSuggest() {
         if (mForceStatusBarHide == false) {
             showStatusBarViewMarkless();
