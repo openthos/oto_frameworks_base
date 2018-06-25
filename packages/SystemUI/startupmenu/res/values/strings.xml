@@ -1,0 +1,20 @@
+<resources>
+    <string name="startup_menu">Start menu</string>
+    <string name="file_manager">File manager</string>
+    <string name="system_setting">Setting</string>
+    <string name="common_application">Common Application</string>
+    <string name="default_sort">Default</string>
+    <string name="name_sort">A-Z</string>
+    <string name="time_sort">Time</string>
+    <string name="click_sort">Click</string>
+    <string name="power">Power</string>
+    <string name="open">Open</string>
+    <string name="phone_mode">Phone mode</string>
+    <string name="desktop_mode">Desktop mode</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="remove_application">Remove application: </string>
+    <string name="lock_to_task_bar">Lock to task bar</string>
+    <string name="unlock_from_task_bar">Unlock from task bar</string>
+    <string name="software_search">Software search</string>
+</resources>

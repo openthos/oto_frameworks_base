@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_menu">
+        <item>@string/open</item>
+        <item>@string/phone_mode</item>
+        <item>@string/desktop_mode</item>
+        <item>@string/remove_from_list</item>
+    </string-array>
+
+    <string-array name="grid_menu_lock">
+        <item>@string/open</item>
+        <item>@string/phone_mode</item>
+        <item>@string/desktop_mode</item>
+        <item>@string/unlock_from_task_bar</item>
+        <item>@string/uninstall</item>
+    </string-array>
+
+    <string-array name="grid_menu_unlock">
+        <item>@string/open</item>
+        <item>@string/phone_mode</item>
+        <item>@string/desktop_mode</item>
+        <item>@string/lock_to_task_bar</item>
+        <item>@string/uninstall</item>
+    </string-array>
+
+    <string-array name="sort_show">
+        <item>@string/default_sort</item>
+        <item>@string/time_sort</item>
+        <item>@string/click_sort</item>
+        <item>@string/name_sort</item>
+    </string-array>
+</resources>

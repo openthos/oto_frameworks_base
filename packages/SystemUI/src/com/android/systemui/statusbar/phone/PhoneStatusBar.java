@@ -184,6 +184,7 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout.OnChildLocationsChangedListener;
 import com.android.systemui.statusbar.stack.StackScrollAlgorithm;
 import com.android.systemui.statusbar.stack.StackScrollState.ViewState;
+import com.android.systemui.StartupMenuManager;
 import com.android.systemui.volume.VolumeComponent;
 import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.CalendarDialog;
@@ -192,7 +193,7 @@ import com.android.systemui.statusbar.notificationbars.WifiDialog;
 import com.android.systemui.statusbar.notificationbars.BatteryDialog;
 import com.android.systemui.statusbar.notificationbars.InputMethodDialog;
 import com.android.systemui.settings.BrightnessDialog;
-import android.content.ComponentName;
+
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodInfo;
 
@@ -806,6 +807,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
                 if ((event.getButtonState()) == MotionEvent.BUTTON_PRIMARY
                         && (event.getAction() == MotionEvent.ACTION_DOWN)) {
+                    mStartupMenuManager.hideStartupMenu();
                     dismissDialog();
                 }
                 ActivityKeyView.dismissDialog();
@@ -1128,16 +1130,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         lp.y = 0;
         window.setAttributes(lp);
         mInputMethodPopupWindow = new InputMethodDialog(mContext);
+        mStartupMenuManager = StartupMenuManager.getInstance(mContext);
         mStartupMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent();
-                intent.setComponent(new ComponentName(ANDROID_DOCUMENTUI,
-                                    ANDROID_DOCUMENTUI_STARTUPMENU));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                 | Intent.FLAG_ACTIVITY_RUN_STARTUP_MENU
-                                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                mContext.startActivity(intent);
+                mStartupMenuManager.showStartupMenu();
                 dismissSystemDilog();
             }
         });
@@ -4109,6 +4106,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mScreenPinningRequest.onConfigurationChanged();
         updateStatusHeight();
         rebuildDialog();
+        mStartupMenuManager.reCreateView();
     }
 
     private void updateStatusHeight() {

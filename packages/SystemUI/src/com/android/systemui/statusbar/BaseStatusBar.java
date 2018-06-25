@@ -19,7 +19,6 @@ package com.android.systemui.statusbar;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.Notification;
@@ -97,15 +96,13 @@ import com.android.systemui.SearchPanelView;
 import com.android.systemui.SwipeHelper;
 import com.android.systemui.SystemUI;
 import com.android.systemui.statusbar.NotificationData.Entry;
-import com.android.systemui.statusbar.phone.NavigationBarView;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 import com.android.systemui.statusbar.policy.HeadsUpNotificationView;
 import com.android.systemui.statusbar.policy.PreviewInflater;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
+import com.android.systemui.StartupMenuManager;
 import com.android.systemui.statusbar.taskview.TaskViewDialog;
-import com.android.systemui.statusbar.notificationbars.VolumeDialog;
 import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
-import com.android.systemui.settings.BrightnessDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +165,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected BaseSettingDialog mBatteryPopupWindow;
     protected BaseSettingDialog mInputMethodPopupWindow;
     protected BaseSettingDialog mBrightnessDialog;
+    protected StartupMenuManager mStartupMenuManager;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;

@@ -4,6 +4,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) \
+    $(call all-java-files-under, startupmenu/src) \
     src/com/android/systemui/EventLogTags.logtags
 
 LOCAL_STATIC_JAVA_LIBRARIES := Keyguard
@@ -13,11 +14,15 @@ LOCAL_PACKAGE_NAME := SystemUI
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
 
+LOCAL_OVERRIDES_PACKAGES := StartupMenu
+
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 LOCAL_RESOURCE_DIR := \
     frameworks/base/packages/Keyguard/res \
+    $(LOCAL_PATH)/startupmenu/res \
     $(LOCAL_PATH)/res
+
 LOCAL_AAPT_FLAGS := --auto-add-overlay --extra-packages com.android.keyguard
 
 include $(BUILD_PACKAGE)
