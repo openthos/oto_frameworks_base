@@ -292,11 +292,19 @@ class DisplayContent {
 
     boolean touchExludeRegion(int x, int y) {
         WindowState win = mService.mCurrentFocus;
-        return  win != null && (
-                win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG ||
-                win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
-                win.getAttrs().type == WindowManager.LayoutParams.TYPE_APPLICATION_PANEL
-                ) && win.getFrameLw().contains(x, y);
+        if (win != null && (
+            win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG ||
+            win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
+            win.getAttrs().type == WindowManager.LayoutParams.TYPE_PHONE ||
+            win.getAttrs().type == WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)) {
+            for (int i = getWindowList().size() - 1; i >= 0; i--) {
+                final WindowState wins = getWindowList().get(i);
+                if (wins != null && wins.getFrameLw().contains(x, y)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void switchUserStacks(int newUserId) {
