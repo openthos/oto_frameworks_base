@@ -45,7 +45,7 @@ public class StartupMenuManager {
                             | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
             mParams.format = PixelFormat.TRANSPARENT;
         }
-        mStartupMenuView.clearSearchView();
+        mStartupMenuView.refresh();
         mWindowManager.addView(mStartupMenuView, mParams);
         mIsShowing = true;
     }

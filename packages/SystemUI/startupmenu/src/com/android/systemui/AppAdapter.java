@@ -14,6 +14,7 @@ import com.android.systemui.bean.AppInfo;
 import com.android.systemui.bean.Type;
 import com.android.systemui.listener.OnClickCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppAdapter extends BaseAdapter {
@@ -23,10 +24,10 @@ public class AppAdapter extends BaseAdapter {
     private static View mTempView;
     private OnClickCallback mOnClickCallback;
 
-    public AppAdapter(Context context, Type type, List<AppInfo> appInfos) {
+    public AppAdapter(Context context, Type type) {
         mContext = context;
         mType = type;
-        mAppInfos = appInfos;
+        mAppInfos = new ArrayList<>();
     }
 
     @Override
@@ -71,6 +72,14 @@ public class AppAdapter extends BaseAdapter {
 
     public void setOnClickCallback(OnClickCallback onClickCallback) {
         mOnClickCallback = onClickCallback;
+    }
+
+    public void refresh(List<AppInfo> appInfos) {
+        mAppInfos.clear();
+        if (appInfos != null) {
+            mAppInfos.addAll(appInfos);
+        }
+        notifyDataSetChanged();
     }
 
     private class ViewHolder implements View.OnTouchListener, View.OnHoverListener {

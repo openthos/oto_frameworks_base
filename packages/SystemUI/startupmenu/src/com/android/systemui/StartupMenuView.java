@@ -110,8 +110,8 @@ public class StartupMenuView extends FrameLayout
         mGridDatas = new ArrayList<>();
         mListDatas = new ArrayList<>();
 
-        mGridAdapter = new AppAdapter(getContext(), Type.GRID, mGridDatas);
-        mListAdapter = new AppAdapter(getContext(), Type.LIST, mListDatas);
+        mGridAdapter = new AppAdapter(getContext(), Type.GRID);
+        mListAdapter = new AppAdapter(getContext(), Type.LIST);
         mGridView.setAdapter(mGridAdapter);
         mListView.setAdapter(mListAdapter);
         mMenuDialog = MenuDialog.getInstance(getContext());
@@ -132,17 +132,21 @@ public class StartupMenuView extends FrameLayout
     }
 
     private void init() {
-        new DataTask(getContext(), new Callback() {
+        SqliteOpenHelper.getInstance(getContext()).queryAllDataStorage(new Callback() {
             @Override
             public void callback(Map<String, AppInfo> appInfoMap) {
                 mAllDatas.clear();
                 for (AppInfo appInfo : appInfoMap.values()) {
                     mAllDatas.add(appInfo);
                 }
-                reloadGridAppInfos();
-                reloadListAppInfos();
             }
-        }).execute();
+        });
+    }
+
+    public void refresh() {
+        mSearch.setText("");
+        reloadGridAppInfos();
+        reloadListAppInfos();
     }
 
     private void initListener() {
@@ -280,10 +284,6 @@ public class StartupMenuView extends FrameLayout
         StartupMenuManager.getInstance(getContext()).hideStartupMenu();
     }
 
-    public void clearSearchView() {
-        mSearch.setText("");
-    }
-
     private void reloadListAppInfos() {
         mListDatas.clear();
         Collections.sort(mAllDatas, new Comparator<AppInfo>() {
@@ -308,7 +308,7 @@ public class StartupMenuView extends FrameLayout
                 break;
             }
         }
-        mListAdapter.notifyDataSetChanged();
+        mListAdapter.refresh(mListDatas);
     }
 
     private void reloadGridAppInfos() {
@@ -375,7 +375,7 @@ public class StartupMenuView extends FrameLayout
             default:
                 break;
         }
-        mGridAdapter.notifyDataSetChanged();
+        mGridAdapter.refresh(mGridDatas);
         mSharedPreference.edit().putInt("sortType", mType).commit();
     }
 
@@ -536,7 +536,7 @@ public class StartupMenuView extends FrameLayout
             }
         }
         mListDatas.remove(appInfo);
-        mListAdapter.notifyDataSetChanged();
+        mListAdapter.refresh(mListDatas);
         SqliteOpenHelper.getInstance(getContext()).deleteDataStorage(appInfo.getPkgName());
     }
 
