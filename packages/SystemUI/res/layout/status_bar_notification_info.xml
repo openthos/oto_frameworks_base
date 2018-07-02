@@ -73,6 +73,7 @@
                     android:paddingRight="@dimen/systemui_size_eight"
                     android:background="@null"
                     android:text="@string/print_manager"
+                    android:visibility="gone"
                     android:textSize="@dimen/systemui_textsize_twelve" />
             </RelativeLayout>
 

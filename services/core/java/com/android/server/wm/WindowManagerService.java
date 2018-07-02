@@ -314,6 +314,7 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private static final int STATUS_BAR_CHK_HEIGHT = 1;
     private static final int STATUS_BAR_SKIP_SENSE_HEIGHT = 70;
+    private static final int WINDOW_OFFSET_PADDING = 26;
 
     final private KeyguardDisableHandler mKeyguardDisableHandler;
 
@@ -7739,6 +7740,19 @@ public class WindowManagerService extends IWindowManager.Stub
 
             if ((y < displayInfo.logicalHeight - STATUS_BAR_CHK_HEIGHT) || !mStatusBarAutoHide
                                                   || mStatusBarSkipSense || mLockMachine.mLocked) {
+                // when window is full, move mouse to up hide statusbar.
+                WindowState window = WindowManagerService.this.mCurrentFocus;
+                DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+                int barHeight = mContext.getResources().getDimensionPixelSize(
+                                         com.android.internal.R.dimen.status_bar_height_real);
+                int moveHeight = dc.getDisplayInfo().logicalHeight - barHeight;
+                if (window != null && y < moveHeight && mStatusBarAutoHide
+                        && window.getFrameLw().left <= -WINDOW_OFFSET_PADDING
+                        && window.getFrameLw().top <= -WINDOW_OFFSET_PADDING
+                        && window.getFrameLw().right >= metrics.widthPixels + WINDOW_OFFSET_PADDING
+                        && window.getFrameLw().bottom >= metrics.heightPixels + WINDOW_OFFSET_PADDING) {
+                    hideStatusbarBroadcast();
+                }
                 return;
             }
             showStatusbarBroadcast();
