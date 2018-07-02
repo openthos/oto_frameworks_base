@@ -1155,7 +1155,8 @@ public class PopupWindow {
         p.type = mWindowLayoutType;
         p.token = token;
         p.softInputMode = mSoftInputMode;
-        p.setTitle("PopupWindow:" + Integer.toHexString(hashCode()));
+        p.setTitle("PopupWindow:" + Integer.toHexString(hashCode()) +
+                    " Showing by:" + (mIsDropdown ? " showAsDropDown" : " showAtLocation"));
 
         return p;
     }

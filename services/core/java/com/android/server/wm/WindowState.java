@@ -629,7 +629,8 @@ final class WindowState implements WindowManagerPolicy.WindowState {
                             && x == 0.0) { // send/recv box
                         x = x + stack.getMultiWindow().getFramePadding();
                         y = y - mParentFrame.top;
-                    } else if (ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
+                    } else if (this.toString().contains("showAtLocation")
+                          && ApplicationInfo.APPNAME_TENCENT_WECHAT.equals(mAttrs.packageName)
                           && mAttrs.type != WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL) {
                         if (mReApply) {
                             return;
