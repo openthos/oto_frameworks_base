@@ -2360,17 +2360,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                                     .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_QQ) != 0);
         }
 
-        private boolean isMMList(View child) {
-            return (child instanceof ViewGroup)
-                       && (getContext().getApplicationInfo()
-                                    .packageName.compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) != 0);
-        }
-
-        private boolean isMMSwipeBackLayout(View child) {
+        private boolean isMMHomeUI(View child) {
             return getContext().getApplicationInfo().packageName.
                                         compareTo(ApplicationInfo.APPNAME_TENCENT_WECHAT) == 0
-                          && child.getClass().getName().
-                                        compareTo("com.tencent.mm.ui.widget.SwipeBackLayout") == 0;
+                     && child.getClass().getName().
+                          compareTo("com.tencent.mm.ui.HomeUI$FitSystemWindowLayoutView") == 0;
         }
 
         public Rect getContentRect() {
@@ -2417,7 +2411,12 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index, ViewGroup.LayoutParams params) {
-            if (mContentParent == null || (isWhiteList(child) && isMMList(child))) {
+            if (isMMHomeUI(child)){
+                View contentRoot = ((ViewGroup) child).getChildAt(0);
+                ((ViewGroup) child).removeView(contentRoot);
+                mDecor.addView(contentRoot);
+                mContentParent.addView(child, index, params);
+            } else if (mContentParent == null || isWhiteList(child)) {
                 super.addView(child, index, params);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2427,9 +2426,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void addView(View child, int index) {
-            if (isMMSwipeBackLayout(child)) {
-                return;
-            } else if (isWhiteList(child) && isMMList(child)) {
+            if (isWhiteList(child)) {
                 super.addView(child, index);
             } else {
                 /* Single root view for decor, and use mContentParent for child instead of */
@@ -2439,7 +2436,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
 
         @Override
         public void removeView(View view) {
-            if (isWhiteList(view) && isMMList(view)) {
+            if (isWhiteList(view)) {
                 super.removeView(view);
             } else {
                 /* Forbid to remove root view, explicitly */
