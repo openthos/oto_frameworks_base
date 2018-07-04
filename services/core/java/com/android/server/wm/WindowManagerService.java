@@ -12109,14 +12109,6 @@ public class WindowManagerService extends IWindowManager.Stub
         return mStatusBarAutoHide && !mStatusBarLock;
     }
 
-    public int getRealScreenHeight(int realLogicalHeight) {
-       if (mStatusBarAutoHide) {
-           return realLogicalHeight;
-       } else {
-           return mContext.getResources().getDisplayMetrics().heightPixels;
-       }
-    }
-
     class DisplayContentAndMotionEvent {
         public DisplayContent displayContent;
         public long  downTime;

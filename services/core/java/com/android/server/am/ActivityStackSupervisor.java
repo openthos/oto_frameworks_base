@@ -4496,8 +4496,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                 for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                     ActivityStack stack = stacks.get(stackNdx);
                     if (stack.mStackId == stackId) {
-                        return mWindowManager.getRealScreenHeight(
-                                      mActivityDisplays.get(displayNdx).mDisplayInfo.logicalHeight);
+                        return mActivityDisplays.get(displayNdx).mDisplayInfo.logicalHeight;
                     }
                 }
             }
