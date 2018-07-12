@@ -44,7 +44,7 @@ import android.os.RemoteException;
 import org.openthos.seafile.ISeafileService;
 
 public class InitializeActivity extends BaseActivity {
-    private static final String APP_PATH = "/data/vendor/app";
+    private static final String APP_PATH = "/system/preinstall";
     private static final String KEY_SPACE = " ";
     private static final String KEY_SPRIT = "/";
     private static final int INDEX_WALLPAPER = 0;
@@ -75,18 +75,20 @@ public class InitializeActivity extends BaseActivity {
         if (file.exists()){
             File[] files = file.listFiles();
             mTotalApks = files.length;
-            for (int i = 0; i < mTotalApks; i++) {
-                String pkgName = files[i].getName();
-                File[] apks = files[i].listFiles();
-                for (File apk : apks) {
-                    String appName = getAppName(apk.getAbsolutePath());
-                    if (TextUtils.isEmpty(appName)) {
-                        continue;
-                    }
-                    mAppNames.add(appName);
-                    mApkPaths.add(apk.getAbsolutePath());
+            //for (int i = 0; i < mTotalApks; i++) {
+            //    String pkgName = files[i].getName();
+                //File[] apks = files[i].listFiles();
+            Log.e("Openthos--","-----initializeApp--files:"+files);
+            for (File apk : files) {
+                String appName = getAppName(apk.getAbsolutePath());
+                if (TextUtils.isEmpty(appName)) {
+                    continue;
                 }
+                mAppNames.add(appName);
+                mApkPaths.add(apk.getAbsolutePath());
+            	Log.e("Openthos--","-----initializeApp--app_path:"+apk.getAbsolutePath());
             }
+            //}
         }
     }
 
