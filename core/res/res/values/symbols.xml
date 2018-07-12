@@ -2187,6 +2187,7 @@
   <java-symbol type="bool" name="config_defaultInTouchMode" />
 
   <!-- Multiwindow -->
+  <java-symbol type="id" name="mwVideoBtn" />
   <java-symbol type="id" name="mwCloseBtn" />
   <java-symbol type="id" name="mwLaunchBtn" />
   <java-symbol type="id" name="mwMaximizeBtn" />
@@ -2222,6 +2223,7 @@
   <java-symbol type="drawable" name="mw_app_header_focused" />
   <java-symbol type="drawable" name="mw_app_header_unfocused" />
   <java-symbol type="drawable" name="mw_btn_add_content" />
+  <java-symbol type="drawable" name="mw_btn_video" />
   <java-symbol type="drawable" name="mw_btn_close" />
   <java-symbol type="drawable" name="mw_btn_maximize" />
   <java-symbol type="drawable" name="mw_btn_minimize" />

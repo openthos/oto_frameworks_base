@@ -38,6 +38,17 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
         <ImageButton
+            android:id="@+id/mwVideoBtn"
+            android:layout_width="@dimen/mwImgBt_size_thirty_five"
+            android:layout_height="@dimen/mwImgBt_size_thirty_five"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:padding="10dp"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            android:src="@drawable/mw_btn_video" />
+        <ImageButton
             android:id="@+id/mwRotateBtn"
             android:layout_width="@dimen/mwImgBt_size_thirty_five"
             android:layout_height="@dimen/mwImgBt_size_thirty_five"

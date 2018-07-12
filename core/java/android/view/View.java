@@ -88,6 +88,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ScrollBarDrawable;
 import android.widget.WindowDecorView;
+import android.widget.ImageButton;
 
 import static android.os.Build.VERSION_CODES.*;
 import static java.lang.Math.max;
@@ -3576,6 +3577,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     private static SparseArray<String> mAttributeMap;
 
     private boolean mMayMSOfficeFirstSkipView = false;
+
+    private ImageButton mMMVideoRotateBtn;
 
     /**
      * Simple constructor to use when creating a view from code.
@@ -17868,7 +17871,38 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         mMeasuredWidth = measuredWidth;
         mMeasuredHeight = measuredHeight;
 
+        if (getContext().getPackageName().compareTo("com.tencent.mm") == 0
+                    && this instanceof TextureView && getLayoutParams() != null
+                    && getViewRootImpl() != null) {
+            if (mMeasuredHeight > mMeasuredWidth) {
+                setRotation(90);
+                mMeasuredWidth = measuredHeight;
+                mMeasuredHeight = measuredWidth;
+            }
+            setTextureViewRotation(measuredWidth, measuredHeight);
+        }
+
         mPrivateFlags |= PFLAG_MEASURED_DIMENSION_SET;
+    }
+
+    private void setTextureViewRotation(final int width, final int height) {
+        View decor = getViewRootImpl().getView();
+        if (decor != null) {
+            if (mMMVideoRotateBtn == null) {
+                mMMVideoRotateBtn = (ImageButton)decor.
+                            findViewById(com.android.internal.R.id.mwVideoBtn);
+            }
+            mMMVideoRotateBtn.setVisibility(View.VISIBLE);
+            decor.invalidate();
+            mMMVideoRotateBtn.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setRotation(0);
+                    mMeasuredWidth = width;
+                    mMeasuredHeight = height;
+                }
+            });
+        }
     }
 
     private boolean isDecorValid() {
