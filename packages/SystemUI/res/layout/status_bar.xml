@@ -199,14 +199,31 @@
                    systemui:keyCode="100008"
                    systemui:keyRepeat="true" />
 
-
-                <ImageView
-                    android:id="@+id/status_bar_notification"
+                <RelativeLayout
                     android:layout_width="@dimen/systemui_size_thirtytwo"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="@dimen/systemui_size_eight"
-                    android:paddingRight="@dimen/systemui_size_eight"
-                    android:src="@drawable/statusbar_action_center" />
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/status_bar_notification"
+                        android:layout_width="@dimen/systemui_size_thirtytwo"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:paddingLeft="@dimen/systemui_size_eight"
+                        android:paddingRight="@dimen/systemui_size_eight"
+                        android:src="@drawable/statusbar_action_center" />
+
+                    <ImageView
+                        android:id="@+id/red_dot"
+                        android:layout_width="@dimen/systemui_size_ten"
+                        android:layout_height="@dimen/systemui_size_ten"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/status_bar_notification"
+                        android:layout_marginRight="@dimen/systemui_padding_five"
+                        android:layout_marginTop="@dimen/systemui_padding_five"
+                        android:src="@drawable/red_dot_shape"
+                        android:visibility="gone" />
+                </RelativeLayout>
 
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"

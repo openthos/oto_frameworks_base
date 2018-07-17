@@ -425,6 +425,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     */
     protected void setNotificationIconHighlight() {}
 
+    protected void clearNotificationIconHighlight() {}
+
     private final NotificationListenerService mNotificationListener =
             new NotificationListenerService() {
         @Override

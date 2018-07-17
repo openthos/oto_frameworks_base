@@ -361,6 +361,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
     private ImageView mNotification;
+    private ImageView mRedDot;
     private ImageView mKeyboardMap;
     private View mClock;
     int mPixelFormat;
@@ -688,8 +689,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     protected void setNotificationIconHighlight() {
-        mNotification.setBackgroundResource(R.color.notificationHighlight);
-        mNotification.getBackground().setAlpha(BACKGROUND_ALPHA_VALUE);
+        mRedDot.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void clearNotificationIconHighlight() {
+        mRedDot.setVisibility(View.GONE);
     }
 
     @Override
@@ -1118,6 +1123,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         mNotification = (ImageView)mStatusBarView.findViewById(R.id.status_bar_notification);
+        mRedDot = (ImageView)mStatusBarView.findViewById(R.id.red_dot);
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         mBrightnessDialog = new BrightnessDialog (mContext);
@@ -1609,7 +1615,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         });
 
         performDismissAllAnimations(viewsToHide);
-
+        clearNotificationIconHighlight();
     }
 
     private void performDismissAllAnimations(ArrayList<View> hideAnimatedList) {

@@ -199,6 +199,9 @@ public class PhoneStatusBarView extends PanelBar {
                         barConsumedEvent ? 1 : 0);
             }
         }
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mBar.clearNotificationIconHighlight();
+        }
 
         return barConsumedEvent || super.onTouchEvent(event);
     }

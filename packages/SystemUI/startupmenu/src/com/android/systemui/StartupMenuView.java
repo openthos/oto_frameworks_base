@@ -535,8 +535,8 @@ public class StartupMenuView extends FrameLayout
                 break;
             }
         }
-        mListDatas.remove(appInfo);
-        mListAdapter.refresh(mListDatas);
+        reloadListAppInfos();
+        reloadGridAppInfos();
         SqliteOpenHelper.getInstance(getContext()).deleteDataStorage(appInfo.getPkgName());
     }
 

@@ -139,5 +139,6 @@
     <color name="showSortBackground">#ffffff</color>
     <color name="app_background">#e9edf0</color>
     <color name="appUsualFocusBackground">#301678</color>
+    <color name="red">#ffff0000</color>
 
 </resources>
