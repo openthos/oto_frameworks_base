@@ -75,10 +75,6 @@ public class InitializeActivity extends BaseActivity {
         if (file.exists()){
             File[] files = file.listFiles();
             mTotalApks = files.length;
-            //for (int i = 0; i < mTotalApks; i++) {
-            //    String pkgName = files[i].getName();
-                //File[] apks = files[i].listFiles();
-            Log.e("Openthos--","-----initializeApp--files:"+files);
             for (File apk : files) {
                 String appName = getAppName(apk.getAbsolutePath());
                 if (TextUtils.isEmpty(appName)) {
@@ -86,9 +82,7 @@ public class InitializeActivity extends BaseActivity {
                 }
                 mAppNames.add(appName);
                 mApkPaths.add(apk.getAbsolutePath());
-            	Log.e("Openthos--","-----initializeApp--app_path:"+apk.getAbsolutePath());
             }
-            //}
         }
     }
 
@@ -153,11 +147,6 @@ public class InitializeActivity extends BaseActivity {
     }
 
     private void startActivity() {
-        //try {
-        //    iSeafileService.unsetBinder(mSeafileBinder);
-        //} catch (RemoteException e) {
-        //    e.printStackTrace();
-        //}
         Intent intent = new Intent();
         intent.setAction("com.android.wizard.STARTUSE");
         startActivity(intent);
@@ -198,7 +187,6 @@ public class InitializeActivity extends BaseActivity {
             new WallpaperAsyncTask().execute();
         }
     }
-    private IBinder mSeafileBinder = new SeafileBinder();
 
     public class WallpaperAsyncTask extends AsyncTask<Void, Object, Void> {
         @Override
@@ -219,80 +207,6 @@ public class InitializeActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Void avoid) {
         }
-    }
-
-    private void showSyncOptionDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final String[] items = new String[]{getString(R.string.multichoice_item_wallpaper),
-                getString(R.string.multichoice_item_wifi),
-                getString(R.string.multichoice_item_appdata),
-                getString(R.string.multichoice_item_startupmenu),
-                getString(R.string.multichoice_item_browser),
-                getString(R.string.multichoice_item_app)};
-        final boolean[] selectedItems = new boolean[]{
-                false, false, false, false, false, false};
-        final List<String> syncBrowsers = new ArrayList();
-        final List<String> syncAppdata = new ArrayList();
-        try {
-            final List<ResolveInfo> browsers =
-                    iSeafileService.getAppsInfo(iSeafileService.getTagBrowserImport());
-            final List<ResolveInfo> appdata =
-                    iSeafileService.getAppsInfo(iSeafileService.getTagAppdataImport());
-            builder.setMultiChoiceItems(items, null,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        selectedItems[which] = !selectedItems[which];
-                        if (isChecked) {
-                            if (which == INDEX_BROWSER) {
-                                showSyncAppDialog(browsers, syncBrowsers);
-                            } else if (which == INDEX_APPDATA) {
-                                showSyncAppDialog(appdata, syncAppdata);
-                            }
-                        }
-                    }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        builder.setPositiveButton(getString(R.string.multichoice_button_restore),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        try {
-                            List<String> browsers = new ArrayList();
-                            iSeafileService.restoreSettings(selectedItems[INDEX_WALLPAPER],
-                                    selectedItems[INDEX_WIFI],
-                                    selectedItems[INDEX_APPDATA], syncAppdata,
-                                    selectedItems[INDEX_STARTUPMENU],
-                                    selectedItems[INDEX_BROWSER], syncBrowsers,
-                                    selectedItems[INDEX_APP]);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mInitializedProgress.setText(getText(R.string.appstore_download_app));
-                                }
-                            });
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                            startActivity();
-                        }
-                    }
-                });
-
-        builder.setNegativeButton(getString(R.string.multichoice_button_cancel),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        startActivity();
-                    }
-                });
-        builder.setCancelable(false);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     private void showSyncAppDialog(List<ResolveInfo> localList, List<String> syncList) {
@@ -377,23 +291,6 @@ public class InitializeActivity extends BaseActivity {
             zipInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private class SeafileBinder extends Binder {
-        
-        @Override
-        protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-            if (code == iSeafileService.getCodeSendOut()) {
-                mInitializedProgress.setText(data.readString());
-                reply.writeNoException();
-                return true;
-            } else if (code == iSeafileService.getCodeRestoreFinish()) {
-                startActivity();
-                reply.writeNoException();
-                return true;
-            }
-            return super.onTransact(code, data, reply, flags);
         }
     }
 }
