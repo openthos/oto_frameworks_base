@@ -419,7 +419,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     };
 
-    protected void onChangeUserInfo(final boolean bl) {}
     /*
     * When accept a notification, notification icon changes hightlight.
     */
@@ -454,7 +453,6 @@ public abstract class BaseStatusBar extends SystemUI implements
                     Notification n = sbn.getNotification();
                     // notification bar information is empty
                     if (n.contentView != null) {
-                        onChangeUserInfo(true);
                         mRankingMap = rankingMap;
                     }
 
@@ -494,14 +492,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Notification notification = sbn.getNotification();
                     // notification bar information is empty
-                    if ( notification.contentView == null) {
-                        onChangeUserInfo(false);
-                    } else {
-                        onChangeUserInfo(true);
-                    }
-
                     removeNotification(sbn.getKey(), rankingMap);
                 }
             });
@@ -1467,9 +1458,6 @@ public abstract class BaseStatusBar extends SystemUI implements
             public void onClick(View v) {
                 removeNotification(sbn.getKey(), mRankingMap);
                 updateNotificationRanking(mRankingMap);
-                if (mNotificationData.getActiveNotifications().size() <= 0) {
-                    onChangeUserInfo(false);
-                }
             }
         });
 

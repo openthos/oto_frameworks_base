@@ -678,16 +678,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     };
 
     @Override
-    protected void onChangeUserInfo(final boolean bl) {
-        super.onChangeUserInfo(bl);
-        if (bl) {
-            mNotificationClearAll.setEnabled(true);
-        } else {
-            mNotificationClearAll.setEnabled(false);
-        }
-    }
-
-    @Override
     protected void setNotificationIconHighlight() {
         mRedDot.setVisibility(View.VISIBLE);
     }
@@ -2095,7 +2085,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private void updateNotificationShade() {
         if (mStackScroller == null) return;
-
         // Do not modify the notifications during collapse.
         if (isCollapsing()) {
             addPostCollapseAction(new Runnable() {
@@ -2198,6 +2187,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mState != StatusBarState.KEYGUARD &&
                 mNotificationData.hasActiveClearableNotifications();
         mStackScroller.updateDismissView(showDismissView);
+        mNotificationClearAll.setEnabled(showDismissView);
     }
 
     private void updateEmptyShadeView() {
