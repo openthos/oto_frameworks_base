@@ -899,8 +899,8 @@ public final class ActivityStackSupervisor implements DisplayListener {
         ActivityInfo aInfo = resolveActivity(intent, resolvedType, startFlags,
                 profilerInfo, userId);
 
-        if (aInfo.packageName.compareTo("android") == 0 || (aInfo.packageName +
-                    "/" + aInfo.name).compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
+        if (aInfo != null && (aInfo.packageName.compareTo("android") == 0 || (aInfo.packageName
+                + "/" + aInfo.name).compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_RUN_FULLSCREEN);
         }
