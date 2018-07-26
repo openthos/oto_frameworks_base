@@ -200,7 +200,8 @@ public class PhoneStatusBarView extends PanelBar {
             }
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            mBar.clearNotificationIconHighlight();
+            mBar.getNewMessageMap().clear();
+            mBar.updateNotificationIconHighlight(0);
         }
 
         return barConsumedEvent || super.onTouchEvent(event);

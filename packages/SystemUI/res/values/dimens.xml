@@ -643,6 +643,7 @@
     <dimen name="navigation_lights_width">128dp</dimen>
     <dimen name="navigation_controls_key_width">132dp</dimen>
     <dimen name="systemui_textsize_five">5sp</dimen>
+    <dimen name="systemui_textsize_six">6sp</dimen>
     <dimen name="systemui_textsize_eight">8sp</dimen>
     <dimen name="systemui_textsize_ten">10sp</dimen>
     <dimen name="systemui_textsize_twelve">12sp</dimen>

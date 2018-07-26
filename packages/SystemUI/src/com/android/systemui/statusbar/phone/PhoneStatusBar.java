@@ -361,7 +361,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private KeyButtonView mVolumeButton;
     private KeyButtonView mWifiButton;
     private ImageView mNotification;
-    private ImageView mRedDot;
+    private TextView mRedDot;
     private ImageView mKeyboardMap;
     private View mClock;
     int mPixelFormat;
@@ -678,13 +678,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     };
 
     @Override
-    protected void setNotificationIconHighlight() {
-        mRedDot.setVisibility(View.VISIBLE);
+    protected void updateNotificationIconHighlight(int newMessageCount) {
+        if (newMessageCount == 0) {
+            mRedDot.setVisibility(View.GONE);
+        } else {
+            mRedDot.setText(String.valueOf(newMessageCount));
+            mRedDot.setVisibility(View.VISIBLE);
+        }
     }
 
-    @Override
-    protected void clearNotificationIconHighlight() {
-        mRedDot.setVisibility(View.GONE);
+    public Map<String, StatusBarNotification> getNewMessageMap() {
+        return mNewMessageMap;
     }
 
     @Override
@@ -874,6 +878,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNotificationClearAll = (Button) mEmptyShadeView.findViewById(R.id.clearAll);
         mStackScroller.setEmptyShadeView(mEmptyShadeView);
 
+        mNewMessageMap = new HashMap<>();
         mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
                 R.layout.status_bar_notification_dismiss_all, mStackScroller, false);
         mDismissView.setOnButtonClickListener(new View.OnClickListener() {
@@ -1113,7 +1118,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mVolumeButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_sound);
         mWifiButton = (KeyButtonView)mStatusBarView.findViewById(R.id.status_bar_wifi);
         mNotification = (ImageView)mStatusBarView.findViewById(R.id.status_bar_notification);
-        mRedDot = (ImageView)mStatusBarView.findViewById(R.id.red_dot);
+        mRedDot = (TextView) mStatusBarView.findViewById(R.id.red_dot);
         mVolumePopupWindow = new VolumeDialog(mContext);
         mWifiPopupWindow = new WifiDialog(mContext);
         mBrightnessDialog = new BrightnessDialog (mContext);
@@ -1605,7 +1610,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         });
 
         performDismissAllAnimations(viewsToHide);
-        clearNotificationIconHighlight();
     }
 
     private void performDismissAllAnimations(ArrayList<View> hideAnimatedList) {
@@ -2044,6 +2048,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void removeNotification(String key, RankingMap ranking) {
+        mNewMessageMap.remove(key);
+        updateNotificationIconHighlight(mNewMessageMap.size());
         if (ENABLE_HEADS_UP && mHeadsUpNotificationView.getEntry() != null
                 && key.equals(mHeadsUpNotificationView.getEntry().notification.getKey())) {
             mHeadsUpNotificationView.clear();

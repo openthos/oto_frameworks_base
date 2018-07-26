@@ -107,6 +107,7 @@ import com.android.systemui.statusbar.notificationbars.BaseSettingDialog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.android.keyguard.KeyguardHostView.OnDismissAction;
 
@@ -166,6 +167,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected BaseSettingDialog mInputMethodPopupWindow;
     protected BaseSettingDialog mBrightnessDialog;
     protected StartupMenuManager mStartupMenuManager;
+    protected Map<String, StatusBarNotification> mNewMessageMap;
     // all notifications
     protected NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
@@ -422,9 +424,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     /*
     * When accept a notification, notification icon changes hightlight.
     */
-    protected void setNotificationIconHighlight() {}
-
-    protected void clearNotificationIconHighlight() {}
+    protected void updateNotificationIconHighlight(int newMessageCount) {}
 
     private final NotificationListenerService mNotificationListener =
             new NotificationListenerService() {
@@ -460,7 +460,8 @@ public abstract class BaseStatusBar extends SystemUI implements
                     if (n.contentView != null) {
                         mRankingMap = rankingMap;
                     }
-
+                    mNewMessageMap.put(sbn.getKey(), sbn);
+                    updateNotificationIconHighlight(mNewMessageMap.size());
                     boolean isUpdate = mNotificationData.get(sbn.getKey()) != null
                             || isHeadsUp(sbn.getKey());
 
@@ -1456,7 +1457,6 @@ public abstract class BaseStatusBar extends SystemUI implements
         vetoButton.setContentDescription(mContext.getString(
                 R.string.accessibility_remove_notification));
 
-        setNotificationIconHighlight();
         final ImageButton notificationItemDelete
                 = (ImageButton) row.findViewById(R.id.delete_notification);
         notificationItemDelete.setOnClickListener(new View.OnClickListener() {
