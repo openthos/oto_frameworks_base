@@ -638,6 +638,12 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     if (r != null && r.state != ActivityState.RESUMED) {
                         return false;
                     }
+                } else {
+                    final ActivityRecord record = stack.mResumedActivity;
+                    if (record != null && record.packageName != null
+                            && ApplicationInfo.isForceShowNotifications(record.packageName)) {
+                        return false;
+                    }
                 }
             }
         }
@@ -669,20 +675,20 @@ public final class ActivityStackSupervisor implements DisplayListener {
      * @return true if any activity was paused as a result of this call.
      */
     boolean pauseBackStacks(boolean userLeaving, boolean resuming, boolean dontWait) {
-        if (multiwindowEnabled()) {
-            return false;
-        }
-
         boolean someActivityPaused = false;
         for (int displayNdx = mActivityDisplays.size() - 1; displayNdx >= 0; --displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             for (int stackNdx = stacks.size() - 1; stackNdx >= 0; --stackNdx) {
                 final ActivityStack stack = stacks.get(stackNdx);
-                if (!isFrontStack(stack) && stack.mResumedActivity != null) {
+                if (!isFrontStack(stack) && stack.mResumedActivity != null
+                        && (!multiwindowEnabled() || ApplicationInfo.isForceShowNotifications(
+                        stack.mResumedActivity.packageName))) {
                     if (DEBUG_STATES) Slog.d(TAG, "pauseBackStacks: stack=" + stack +
                             " mResumedActivity=" + stack.mResumedActivity);
                     someActivityPaused |= stack.startPausingLocked(userLeaving, false, resuming,
                             dontWait);
+                } else {
+                    someActivityPaused |= false;
                 }
             }
         }

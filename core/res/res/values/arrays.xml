@@ -537,4 +537,8 @@
         <item>"com.the10tons.sparkle.free"</item>
         <item>"com.tencent.tmgp.sgame"</item>
     </string-array>
+    <string-array name="force_show_notifications">
+        <item>"com.tencent.mobileqq"</item>
+        <item>"com.tencent.mm"</item>
+    </string-array>
 </resources>

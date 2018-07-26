@@ -451,6 +451,11 @@ public abstract class BaseStatusBar extends SystemUI implements
                 @Override
                 public void run() {
                     Notification n = sbn.getNotification();
+                    if (n.fullScreenIntent == null
+                            && ApplicationInfo.isForceShowNotifications(sbn.getPackageName())) {
+                        n.fullScreenIntent = PendingIntent.getActivity(mContext,
+                                1, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+                    }
                     // notification bar information is empty
                     if (n.contentView != null) {
                         mRankingMap = rankingMap;

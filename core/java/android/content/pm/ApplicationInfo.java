@@ -713,6 +713,12 @@ public class ApplicationInfo extends PackageItemInfo implements Parcelable {
         return Arrays.asList(fullscreenWindowApps).contains(pkgName);
     }
 
+    public static boolean isForceShowNotifications(String pkgName) {
+        String[] notifications = Resources.getSystem().
+                getStringArray(com.android.internal.R.array.force_show_notifications);
+        return Arrays.asList(notifications).contains(pkgName);
+    }
+
     public boolean needShadow() {
         return needShadow(packageName);
     }

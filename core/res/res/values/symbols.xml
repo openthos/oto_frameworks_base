@@ -1111,6 +1111,7 @@
   <java-symbol type="array" name="desktop_style_window" />
   <java-symbol type="array" name="maximized_style_window" />
   <java-symbol type="array" name="fullscreen_style_window" />
+  <java-symbol type="array" name="force_show_notifications" />
 
   <java-symbol type="drawable" name="default_wallpaper" />
   <java-symbol type="drawable" name="indicator_input_error" />
