@@ -17751,6 +17751,17 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         if (this.toString().indexOf("io.vov.vitamio.widget.VideoView") != -1
                 && getContext().getPackageName().compareTo("com.xuetangx.mobile") == 0) {
             ((SurfaceView) this).getHolder().setFixedSize(measuredWidth, measuredHeight);
+        } else if (getClass().getName().compareTo("com.tencent.mm.ui.LayoutListenerView") == 0
+                        && getContext().getPackageName().compareTo("com.tencent.mm") == 0) {
+            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+            Rect decorRect = getViewRootImpl().getWinFrame();
+            int h = decorRect.height() - decor.getWindowBorderPadding()
+                                      - decor.getWindowHeaderPadding();
+            ViewGroup.LayoutParams params = getLayoutParams();
+
+            if (params.height != ViewGroup.LayoutParams.MATCH_PARENT && measuredHeight > h) {
+                params.height = h;
+            }
         } else if (getClass().getName().compareTo(
                "com.tencent.mm.plugin.sight.encode.ui.SightCameraTextureView") == 0) {
             WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
