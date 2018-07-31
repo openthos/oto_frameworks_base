@@ -55,6 +55,7 @@ import android.app.StatusBarManager;
 import android.app.admin.DevicePolicyManager;
 import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
+import android.content.pm.ApplicationInfo;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -314,7 +315,6 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private static final int STATUS_BAR_CHK_HEIGHT = 1;
     private static final int STATUS_BAR_SKIP_SENSE_HEIGHT = 70;
-    private static final int WINDOW_OFFSET_PADDING = 26;
 
     final private KeyguardDisableHandler mKeyguardDisableHandler;
 
@@ -7742,15 +7742,14 @@ public class WindowManagerService extends IWindowManager.Stub
                                                   || mStatusBarSkipSense || mLockMachine.mLocked) {
                 // when window is full, move mouse to up hide statusbar.
                 WindowState window = WindowManagerService.this.mCurrentFocus;
-                DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
                 int barHeight = mContext.getResources().getDimensionPixelSize(
                                          com.android.internal.R.dimen.status_bar_height_real);
-                int moveHeight = dc.getDisplayInfo().logicalHeight - barHeight;
-                if (window != null && y < moveHeight && mStatusBarAutoHide
-                        && window.getFrameLw().left <= -WINDOW_OFFSET_PADDING
-                        && window.getFrameLw().top <= -WINDOW_OFFSET_PADDING
-                        && window.getFrameLw().right >= metrics.widthPixels + WINDOW_OFFSET_PADDING
-                        && window.getFrameLw().bottom >= metrics.heightPixels + WINDOW_OFFSET_PADDING) {
+                int screenHeight = dc.getDisplayInfo().logicalHeight;
+                int screenWidth = dc.getDisplayInfo().logicalWidth;
+                if (window != null && mStatusBarAutoHide && y < (screenHeight - barHeight)
+                        && (window.getFrameLw().right + window.getFrameLw().left) == screenWidth
+                        && (window.getFrameLw().bottom + window.getFrameLw().top) == screenHeight
+                        && !window.getOwningPackage().equals(ApplicationInfo.APPNAME_OTO_LAUNCHER)) {
                     hideStatusbarBroadcast();
                 }
                 return;
