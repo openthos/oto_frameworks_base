@@ -827,6 +827,17 @@ public class TelephonyManager {
             "android.telephony.event.EVENT_HANDOVER_VIDEO_FROM_WIFI_TO_LTE";
 
     /**
+     * {@link android.telecom.Connection} event used to indicate that an IMS call has be
+     * successfully handed over from LTE to WIFI.
+     * <p>
+     * Sent via {@link android.telecom.Connection#sendConnectionEvent(String, Bundle)}.
+     * The {@link Bundle} parameter is expected to be null when this connection event is used.
+     * @hide
+     */
+    public static final String EVENT_HANDOVER_VIDEO_FROM_LTE_TO_WIFI =
+            "android.telephony.event.EVENT_HANDOVER_VIDEO_FROM_LTE_TO_WIFI";
+
+    /**
      * {@link android.telecom.Connection} event used to indicate that an IMS call failed to be
      * handed over from LTE to WIFI.
      * <p>
@@ -4594,7 +4605,7 @@ public class TelephonyManager {
             ITelephony telephony = getITelephony();
             if (telephony == null)
                 return null;
-            return telephony.getForbiddenPlmns(subId, appType);
+            return telephony.getForbiddenPlmns(subId, appType, mContext.getOpPackageName());
         } catch (RemoteException ex) {
             return null;
         } catch (NullPointerException ex) {
