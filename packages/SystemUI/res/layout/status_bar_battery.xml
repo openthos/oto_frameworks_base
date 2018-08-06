@@ -25,6 +25,7 @@
         android:textSize="@dimen/systemui_textsize_twelve"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
+        android:layout_marginTop="@dimen/systemui_size_five"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
@@ -32,6 +33,7 @@
         android:layout_gravity="center"
         android:textSize="@dimen/systemui_textsize_twelve"
         android:textColor="#FFFFFF"
+        android:layout_marginTop="@dimen/systemui_size_five"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

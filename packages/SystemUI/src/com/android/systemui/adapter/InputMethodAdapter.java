@@ -62,9 +62,6 @@ public class InputMethodAdapter extends BaseAdapter {
         view.setOnHoverListener(hoverListener);
         view.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (appInfo.isSelected()) {
-                    return;
-                }
                 mInputMethodManager.showInputMethodPicker();
             }
         });

@@ -71,7 +71,7 @@ public class InputMethodDialog extends BaseSettingDialog {
         String currentInputMethodId = Settings.Secure.getString(
                 mContext.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
         mListViewAppInfo.clear();
-        mMethodList = mInputMethodManager.getInputMethodList();
+        mMethodList = mInputMethodManager.getEnabledInputMethodList();
         InputAppInfo appInfo;
         for (InputMethodInfo mi : mMethodList) {
             appInfo = new InputAppInfo();
