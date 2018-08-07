@@ -296,6 +296,7 @@ class DisplayContent {
             win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG ||
             win.getAttrs().type == WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ||
             win.getAttrs().type == WindowManager.LayoutParams.TYPE_PHONE ||
+            win.getAttrs().type == WindowManager.LayoutParams.TYPE_BASE_APPLICATION ||
             win.getAttrs().type == WindowManager.LayoutParams.TYPE_APPLICATION_PANEL)) {
             for (int i = getWindowList().size() - 1; i >= 0; i--) {
                 final WindowState wins = getWindowList().get(i);
