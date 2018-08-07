@@ -493,6 +493,7 @@
         <item>"org.openthos.editor"</item>
         <item>"org.openthos.taskmanager"</item>
         <item>"org.openthos.photomanager"</item>
+        <item>"org.openthos.privacyman"</item>
     </string-array>
     <string-array name="maximized_style_window">
         <item>"com.android.camera2"</item>
