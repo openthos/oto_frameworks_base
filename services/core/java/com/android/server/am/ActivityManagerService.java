@@ -2237,7 +2237,9 @@ public final class ActivityManagerService extends ActivityManagerNative
                         } catch (InterruptedException e) {
                         }
                     } catch (Exception e) {
+			/* Too many logs
                         Slog.e(TAG, "Unexpected exception for System Background Assistant");
+			*/
                     }
                 }
             }
