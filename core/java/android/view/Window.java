@@ -1918,8 +1918,16 @@ public abstract class Window {
         return mDialog;
     }
 
+    public void setRealStackId(int id) {
+        mMultiWindow.mRealStackId = id;
+    }
+
     public void setStackId(int id) {
         mMultiWindow.mStackId = id;
+    }
+
+    public int getRealStackId() {
+        return mMultiWindow.mRealStackId;
     }
 
     public int getStackId() {

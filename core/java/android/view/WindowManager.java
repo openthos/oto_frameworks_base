@@ -2073,6 +2073,7 @@ public interface WindowManager extends ViewManager {
         public static final double CORRECT_FACTOR_OUTSIDE = 0.6;
 
         public int mStackId = -1;
+        public int mRealStackId = -1;
 
         public int mBorderPadding = 0;
         public int mTopBorderPadding = 0;
@@ -2176,6 +2177,7 @@ public interface WindowManager extends ViewManager {
 
         public void writeToParcel(Parcel out, int flags) {
             out.writeInt(mStackId);
+            out.writeInt(mRealStackId);
             out.writeInt(mBorderPadding);
             out.writeInt(mTopBorderPadding);
             out.writeInt(mShadowPadding);
@@ -2232,6 +2234,7 @@ public interface WindowManager extends ViewManager {
 
         public void readFromParcel(Parcel in) {
             mStackId = in.readInt();
+            mRealStackId = in.readInt();
             mBorderPadding = in.readInt();
             mTopBorderPadding = in.readInt();
             mShadowPadding = in.readInt();

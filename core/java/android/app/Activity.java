@@ -6095,6 +6095,25 @@ public class Activity extends ContextThemeWrapper
         mParent = parent;
     }
 
+    public int getRealStackId() {
+        try {
+            int taskId = getTaskId();
+            List<StackInfo> stacks = ActivityManagerNative.getDefault().getAllStackInfos();
+            for (StackInfo info : stacks) {
+                if ((info.stackId != 0) && (info.taskIds != null)) {
+                    for (int i = 0; i < info.taskIds.length; i++) {
+                        if (taskId == info.taskIds[i]) {
+                            return info.stackId;
+                        }
+                    }
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public int getStackId() {
         if ((mIntent != null) &&
                 (((mIntent.getFlags() & Intent.FLAG_ACTIVITY_RUN_IN_WINDOW) == 0) ||
@@ -6123,6 +6142,7 @@ public class Activity extends ContextThemeWrapper
     private void setWindowAttributes() {
         mWindow.setTaskId(getTaskId());
         mWindow.setStackId(getStackId());
+        mWindow.setRealStackId(getRealStackId());
         mWindow.setShadow(isNeedShadow());
         mWindow.setHeader(isNeedHeader());
         mWindow.setOuterBorder(isNeedOuterBorder());

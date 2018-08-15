@@ -4271,7 +4271,7 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
                         KeyEvent.sendKeyEventBack();
                     } else {
                         try {
-                            ActivityManagerNative.getDefault().closeActivity(getStackId());
+                            ActivityManagerNative.getDefault().closeActivity(getRealStackId());
                         } catch (RemoteException e) {
                             Log.e(TAG, "Close button failes", e);
                         }
@@ -4687,6 +4687,13 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
         if(isMWWindow()) {
             mDecorMW = new DecorMW();
             mDecorMW.init(mContentRoot);
+        } else if (getRealStackId() != -1) {
+            try {
+                ActivityManagerNative.getDefault().createStatusbarActivity(
+                                            getRealStackId(),getContext().getPackageName());
+            } catch (RemoteException e) {
+                Log.e(TAG, "create statusbar activity failed", e);
+            }
         }
 
         ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);

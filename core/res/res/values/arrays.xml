@@ -538,6 +538,10 @@
         <item>"com.the10tons.sparkle.free"</item>
         <item>"com.tencent.tmgp.sgame"</item>
     </string-array>
+    <string-array name="run_in_singlewindow">
+        <item>"com.android.systemui"</item>
+        <item>"com.futuremark.pcmark.android.benchmark"</item>
+    </string-array>
     <string-array name="force_show_notifications">
         <item>"com.tencent.mobileqq"</item>
         <item>"com.tencent.mm"</item>

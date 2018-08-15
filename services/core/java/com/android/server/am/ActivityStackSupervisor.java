@@ -1649,7 +1649,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             // FIXME: mContext is not merged into 5.1 originally.
             if (multiwindowEnabled() && (r.intent != null)
-                                     && r.packageName.compareTo("com.android.systemui") != 0) {
+                            && !ApplicationInfo.isRunInSingleWindow(r.packageName)) {
                 r.intent.addFlags(Intent.FLAG_ACTIVITY_RUN_IN_WINDOW);
             }
             if (r.shortComponentName.compareTo(SINGLEWINDOW_ACTIVITY_RESOLVER) == 0) {
@@ -1683,7 +1683,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
              * TietoTODO: this loop returns first stack which is not a homestack
              * Use the same stack for regular apps (non multiwindow).
              */
-            if (!isMultiwindow && r.packageName.compareTo("com.android.systemui") != 0) {
+            if (!isMultiwindow && !ApplicationInfo.isRunInSingleWindow(r.packageName)) {
                 final ActivityContainer container = r.mInitialActivityContainer;
                 if (container != null) {
                     // The first time put it on the desired stack, after this put on task stack.
@@ -1712,7 +1712,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
             // Need to create an app stack for this user.
             int stackId = createStackOnDisplay(getNextStackId(), Display.DEFAULT_DISPLAY, isMultiwindow);
-            if (r.packageName.compareTo("com.android.systemui") == 0) {
+            if (ApplicationInfo.isRunInSingleWindow(r.packageName)) {
                 ActivityDisplay displayfs = mActivityDisplays.get(Display.DEFAULT_DISPLAY);
                 Rect rectFullScreenForSystem = new Rect(0, 0, displayfs.mDisplayInfo.logicalWidth,
                                                         displayfs.mDisplayInfo.logicalHeight);
