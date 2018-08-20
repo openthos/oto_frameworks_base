@@ -8123,9 +8123,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             } break;
             case AccessibilityNodeInfo.ACTION_FOCUS: {
                 if (!hasFocus()) {
-                    // Get out of touch mode since accessibility
-                    // wants to move focus around.
-                    getViewRootImpl().ensureTouchMode(false);
+                    ViewRootImpl viewRootImpl = getViewRootImpl();
+                    if (viewRootImpl != null) {
+                        // Get out of touch mode since accessibility
+                        // wants to move focus around.
+                        viewRootImpl.ensureTouchMode(false);
+                    }
                     return requestFocus();
                 }
             } break;
@@ -8504,8 +8507,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     }
 
     boolean isAccessibilityFocusedViewOrHost() {
-        return isAccessibilityFocused() || (getViewRootImpl() != null && getViewRootImpl()
-                .getAccessibilityFocusedHost() == this);
+        ViewRootImpl viewRootImpl = getViewRootImpl();
+        return isAccessibilityFocused() || (viewRootImpl != null
+                        && viewRootImpl.getAccessibilityFocusedHost() == this);
     }
 
     /**
@@ -12894,8 +12898,10 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             int state = cache.state;
             WindowDecorView decor = null;
 
-            if (getViewRootImpl().getView() instanceof WindowDecorView) {
-                decor = (WindowDecorView) getViewRootImpl().getView();
+            ViewRootImpl viewRoot = getViewRootImpl();
+            if (viewRoot != null) {
+                View view = viewRoot.getView();
+                decor = (view instanceof WindowDecorView) ? (WindowDecorView) view : null;
             }
 
             boolean canDisappear = (cache.scrollBar == null) || (decor == null)
@@ -17511,10 +17517,13 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      */
     public void requestLayout() {
 
+        ViewRootImpl viewRoot = getViewRootImpl();
         if (this.toString().indexOf("videoview_container") != -1
                     && getContext().getPackageName().compareTo("tv.danmaku.bili") == 0
-                    && getLayoutParams() != null && getViewRootImpl() != null) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+                    && getLayoutParams() != null && viewRoot != null) {
+            View view = viewRoot.getView();
+            WindowDecorView decor = (view instanceof WindowDecorView) ?
+                            (WindowDecorView) view : null;
             if (decor != null) {
                 int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
                 int h = decor.getHeight() - decor.getWindowBorderPadding()
@@ -17543,7 +17552,6 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         if (mAttachInfo != null && mAttachInfo.mViewRequestingLayout == null) {
             // Only trigger request-during-layout logic if this is the view requesting it,
             // not the views in its parent hierarchy
-            ViewRootImpl viewRoot = getViewRootImpl();
             if (viewRoot != null && viewRoot.isInLayout()) {
                 if (!viewRoot.requestLayoutDuringLayout(this)) {
                     return;
@@ -17748,13 +17756,20 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         final float WECHAT_TEXTUREVIEW_HEIGHT_FACTOR = 0.52f;
         final int WECHAT_TEXTUREVIEW_WIDTH_PADDING = 120;
 
+        ViewRootImpl viewRootImpl = getViewRootImpl();
+        WindowDecorView decor = null;
+        if (viewRootImpl != null) {
+            View view = viewRootImpl.getView();
+            decor = (view instanceof WindowDecorView) ? (WindowDecorView) view : null;
+        }
+
         if (this.toString().indexOf("io.vov.vitamio.widget.VideoView") != -1
                 && getContext().getPackageName().compareTo("com.xuetangx.mobile") == 0) {
             ((SurfaceView) this).getHolder().setFixedSize(measuredWidth, measuredHeight);
         } else if (getClass().getName().compareTo("com.tencent.mm.ui.LayoutListenerView") == 0
-                        && getContext().getPackageName().compareTo("com.tencent.mm") == 0) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
-            Rect decorRect = getViewRootImpl().getWinFrame();
+                        && getContext().getPackageName().compareTo("com.tencent.mm") == 0
+                        && decor != null) {
+            Rect decorRect = viewRootImpl.getWinFrame();
             int h = decorRect.height() - decor.getWindowBorderPadding()
                                       - decor.getWindowHeaderPadding();
             ViewGroup.LayoutParams params = getLayoutParams();
@@ -17762,17 +17777,16 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             if (params.height != ViewGroup.LayoutParams.MATCH_PARENT && measuredHeight > h) {
                 params.height = h;
             }
-        } else if (getClass().getName().compareTo(
+        } else if (decor != null && getClass().getName().compareTo(
                "com.tencent.mm.plugin.sight.encode.ui.SightCameraTextureView") == 0) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
             measuredHeight = (int) ((float) decor.getHeight()
                                     * WECHAT_SIGHT_TEXTUREVIEW_HEIGHT_FACTOR);
             if (measuredWidth > w) {
                 measuredWidth = w;
             }
-        } else if (getClass().getName().compareTo("com.tencent.mm.ui.base.MMTextureView") == 0) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+        } else if (getClass().getName().compareTo("com.tencent.mm.ui.base.MMTextureView") == 0
+                        && decor != null) {
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
             int h = (int) ((float) decor.getHeight() * WECHAT_TEXTUREVIEW_HEIGHT_FACTOR);
             if (measuredWidth >= measuredHeight) {
@@ -17789,8 +17803,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredHeight = (int) ((float) w / mRatio);
                 measuredWidth = w;
             }
-        } else if (getClass().getName().compareTo(WECHAT_PLAY_TEXTUREVIEW) == 0) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
+        } else if (decor != null && getClass().getName().compareTo(WECHAT_PLAY_TEXTUREVIEW) == 0) {
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding()
                                      - WECHAT_TEXTUREVIEW_WIDTH_PADDING;
             if (mRatio <= 0.0f) {
@@ -17806,9 +17819,8 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                 measuredWidth = (int) ((float) measuredHeight * (float) measuredHeight
                                        / (float) measuredWidth);
             }
-        } else if (isDecorValid() && matchSpecialMeasured()) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
-            Rect decorRect = getViewRootImpl().getWinFrame();
+        } else if (isDecorValid() && decor != null && matchSpecialMeasured()) {
+            Rect decorRect = viewRootImpl.getWinFrame();
             int w = decorRect.width() - 2 * decor.getWindowBorderPadding();
             int h = decorRect.height() - decor.getWindowBorderPadding()
                                       - decor.getWindowHeaderPadding();
@@ -17836,10 +17848,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
                     measuredHeight = (int) ((float) w / ratio1);
                 }
             }
-        } else if (isDecorValid() && blacklistIdForMeasure()
+        } else if (isDecorValid() && decor != null && blacklistIdForMeasure()
                    && (measuredWidth > WindowManager.MW_WINDOW_MIN_WIDTH)
                    && (measuredHeight > WindowManager.MW_WINDOW_MIN_HEIGHT)) {
-            WindowDecorView decor = (WindowDecorView) getViewRootImpl().getView();
             int w = decor.getWidth() - 2 * decor.getWindowBorderPadding();
             int h = decor.getHeight() - decor.getWindowBorderPadding()
                                       - decor.getWindowHeaderPadding();
@@ -17870,12 +17881,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
             }
         }
 
-        if (getViewRootImpl() != null) {
-            View decor = getViewRootImpl().getView();
-            if ((decor != null) && (decor instanceof WindowDecorView)) {
-                if (mMayMSOfficeFirstSkipView) {
-                    ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
-                }
+        if (decor != null) {
+            if (mMayMSOfficeFirstSkipView) {
+                ((WindowDecorView) decor).setMayMSOfficeFirstSkipViewDecor(true);
             }
         }
 
@@ -17884,7 +17892,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
         if (getContext().getPackageName().compareTo("com.tencent.mm") == 0
                     && this instanceof TextureView && getLayoutParams() != null
-                    && getViewRootImpl() != null) {
+                    && viewRootImpl != null) {
             if (mMeasuredHeight > mMeasuredWidth) {
                 setRotation(90);
                 mMeasuredWidth = measuredHeight;
@@ -17897,7 +17905,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     }
 
     private void setTextureViewRotation(final int width, final int height) {
-        View decor = getViewRootImpl().getView();
+        WindowDecorView decor = null;
+        ViewRootImpl viewRootImpl = getViewRootImpl();
+        if (viewRootImpl != null) {
+            View view = viewRootImpl.getView();
+            decor = (view instanceof WindowDecorView) ? (WindowDecorView) view : null;
+        }
         if (decor != null) {
             if (mMMVideoRotateBtn == null) {
                 mMMVideoRotateBtn = (ImageButton)decor.
@@ -17917,11 +17930,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     }
 
     private boolean isDecorValid() {
-        if (getViewRootImpl() == null) {
+        ViewRootImpl viewRootImpl = getViewRootImpl();
+        if (viewRootImpl == null) {
             return false;
         }
 
-        View decor = getViewRootImpl().getView();
+        View decor = viewRootImpl.getView();
         if ((decor == null) || !(decor instanceof WindowDecorView)) {
             return false;
         }
@@ -18656,11 +18670,13 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
 
                 final ViewRootImpl root = getViewRootImpl();
 
-                // Cache the local state object for delivery with DragEvents
-                root.setLocalDragState(myLocalState);
+                if (root != null) {
+                    // Cache the local state object for delivery with DragEvents
+                    root.setLocalDragState(myLocalState);
 
-                // repurpose 'shadowSize' for the last touch point
-                root.getLastTouchPoint(shadowSize);
+                    // repurpose 'shadowSize' for the last touch point
+                    root.getLastTouchPoint(shadowSize);
+                }
 
                 okay = mAttachInfo.mSession.performDrag(mAttachInfo.mWindow, token,
                         shadowSize.x, shadowSize.y,
