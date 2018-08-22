@@ -5877,8 +5877,10 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback,
             height -= getTopFramePadding() + getHeaderHeight() + getFramePadding();
 
             DisplayMetrics.setFullScreenSize(metrics.widthPixels, metrics.heightPixels);
-            Display.setSizePixels(width, height);
             Resources.setVirtualScreenSize(width, height);
+            if (!getContext().getPackageName().contains("com.microsoft.office")) {
+                Display.setSizePixels(width, height);
+            }
         }
     }
 
