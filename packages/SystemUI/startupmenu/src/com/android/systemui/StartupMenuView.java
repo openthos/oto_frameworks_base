@@ -122,6 +122,7 @@ public class StartupMenuView extends FrameLayout
         IntentFilter installFilter = new IntentFilter();
         installFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         installFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        installFilter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         installFilter.addDataScheme("package");
         getContext().registerReceiver(mInstallReceiver, installFilter);
 
