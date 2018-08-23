@@ -170,6 +170,7 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
         // flag set, we are now losing it.  That should be a very rare case
         // and we can live with this.
         intent.setFlags(intent.getFlags()&~Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        intent.setFlags(intent.getFlags()&~Intent.FLAG_RUN_FULLSCREEN);
         return intent;
     }
 
