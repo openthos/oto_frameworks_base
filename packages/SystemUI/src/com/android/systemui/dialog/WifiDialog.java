@@ -15,11 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.systemui.R;
@@ -50,7 +50,7 @@ public final class WifiDialog extends BaseDialog {
     private WifiManager mWifiManager;
 
     private ListView mWifiListView;
-    private Switch mWifiEnableBtn;
+    private CheckBox mWifiEnableBtn;
     private TextView mWifiEnable;
     private TextView mEthernetConfigure;
 
@@ -95,7 +95,7 @@ public final class WifiDialog extends BaseDialog {
         mWifiEnableLayout = (LinearLayout) mContentView.findViewById(R.id.wifi_enable_layout);
         mLayout = (LinearLayout) mContentView.findViewById(R.id.wifi_layout);
         mWifiEnable = (TextView) mContentView.findViewById(R.id.wifi_enable);
-        mWifiEnableBtn = (Switch) mContentView.findViewById(R.id.wifi_enable_btn);
+        mWifiEnableBtn = (CheckBox) mContentView.findViewById(R.id.wifi_enable_btn);
         mEthernetConfigure = (TextView) mContentView.findViewById(R.id.ethernet_configure);
     }
 
@@ -105,7 +105,7 @@ public final class WifiDialog extends BaseDialog {
         mLayout.setLayoutParams(new LinearLayout.LayoutParams(
                 mWifiEnableLayout.getMeasuredWidth(), ViewGroup.LayoutParams.WRAP_CONTENT));
         mMaxListViewHeight =
-                getContext().getResources().getDimensionPixelOffset(R.dimen.systemui_size_wifi_height);
+                getContext().getResources().getDimensionPixelOffset(R.dimen.max_list_wifi_height);
         mWifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         mScanResults = new ArrayList<>();
         mNetInfoAdapter = new NetInfoAdapter();

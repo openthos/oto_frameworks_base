@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="24dp"
-              android:background="#342464"
+              android:background="@color/common_hover_bg"
               android:orientation="horizontal"
-              android:padding="@dimen/startupmenu_small_padding">
+              android:padding="@dimen/small_padding">
 
     <ImageView
         android:id="@+id/input_method_img"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="@dimen/padding_fifteen"
+        android:layout_height="@dimen/padding_fifteen"
         android:layout_gravity="center"
         />
 

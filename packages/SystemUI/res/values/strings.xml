@@ -2059,12 +2059,12 @@
         can’t verify your response.</string>
 
     <!--startupmenu-->
-    <string name="common_application">common app</string>
+    <string name="common_application">Common Application</string>
     <string name="system_setting">Setting</string>
-    <string name="power_source">Power</string>
-    <string name="file_manager">File Manager</string>
+    <string name="power">Power</string>
+    <string name="file_manager">File manager</string>
     <string name="software_search">Software search</string>
-    <string name="click_sort">click sort</string>
+    <string name="click_sort">Click</string>
     <string name="name_sort">A - Z</string>
     <string name="time_sort">Time</string>
     <string name="default_sort">Default</string>
@@ -2072,10 +2072,13 @@
     <string name="close">Close</string>
     <string name="phone_mode">Phone mode</string>
     <string name="desktop_mode">Desktop mode</string>
-    <string name="lock_app">Lock app</string>
-    <string name="unlock_app">Unlock app</string>
-    <string name="uninstall">Unistall</string>
-    <string name="remove_out">Remove out</string>
+    <string name="lock_to_task_bar">Lock to task bar</string>
+    <string name="unlock_from_task_bar">Unlock from task bar</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="remove_application">Remove application:</string>
+
+
 
     <!--calendar-->
     <string name="year">-</string>

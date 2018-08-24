@@ -4,19 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.View;
-import android.util.Log;
 import android.util.AttributeSet;
-import android.widget.Toast;
-import android.widget.ImageView;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.android.systemui.SysUiServiceProvider;
-import com.android.systemui.DejankUtils;
 import com.android.systemui.dialog.BaseDialog;
 import com.android.systemui.dialog.BatteryDialog;
 import com.android.systemui.dialog.CalendarDialog;
@@ -24,21 +23,18 @@ import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.InputMethodDialog;
 import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.dialog.VolumeDialog;
-import com.android.systemui.dialog.MenuDialog;
 import com.android.systemui.dialog.WifiDialog;
-import com.android.systemui.startupmenu.DialogType;
 
 import com.android.systemui.R;
 
-/**
- * Created by cao on 17-9-26.
- */
+import java.util.List;
 
 public class OpenthosStatusBarView extends PanelBar {
+    private static final String SYSTEM_INPUT_METHOD_ID = "com.android.inputmethod.latin/.LatinIME";
     private static final String TAG = "OpenthosStatusBarView";
 
+    private InputMethodManager mInputMethodManager;
     private StatusBar mStatusBar;
-    private Context mContext;
     private ImageView mStartupMenu;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private ImageView mInputView;
@@ -48,8 +44,7 @@ public class OpenthosStatusBarView extends PanelBar {
     private ImageView mNotificationView;
     private CalendarDisplayView mCalendarView;
     private ImageView mHomeView;
-    private HorizontalScrollView mScrollStatusBar;
-    private LinearLayout mllScrollContents;
+    private LinearLayout mLlScrollContents;
     private View mEmptyStatusBar;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mInputManagerDialog;
@@ -64,8 +59,7 @@ public class OpenthosStatusBarView extends PanelBar {
 
     public OpenthosStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        mStatusBar = SysUiServiceProvider.getComponent(mContext, StatusBar.class);
+        mStatusBar = SysUiServiceProvider.getComponent(context, StatusBar.class);
     }
 
     @Override
@@ -85,7 +79,10 @@ public class OpenthosStatusBarView extends PanelBar {
 
     @Override
     protected void onFinishInflate() {
+        super.onFinishInflate();
         initView();
+        initData();
+        initListener();
     }
 
     private void initView() {
@@ -97,15 +94,19 @@ public class OpenthosStatusBarView extends PanelBar {
         mNotificationView = (ImageView) findViewById(R.id.iv_notification_status_bar);
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mHomeView = (ImageView) findViewById(R.id.iv_home_status_bar);
-        mScrollStatusBar = (HorizontalScrollView) findViewById(R.id.sroll_status_bar);
         mEmptyStatusBar = (View) findViewById(R.id.empty_statusbar);
-        mllScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
+        mLlScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
+    }
+
+    private void initData() {
+        mInputMethodManager =
+                (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        updateInputMethodIcon();
         initDialog();
-        mStartupMenuDialog = StartupMenuDialog.getInstance(getContext());
-        openthosStatusBarClickListener();
     }
 
     private void initDialog() {
+        mStartupMenuDialog = new StartupMenuDialog(getContext());
         mInputManagerDialog = new InputMethodDialog(getContext());
         mBatteryDialog = new BatteryDialog(getContext());
         mWifiDialog = new WifiDialog(getContext());
@@ -113,7 +114,11 @@ public class OpenthosStatusBarView extends PanelBar {
         mCalendarDialog = new CalendarDialog(getContext());
     }
 
-    private void openthosStatusBarClickListener() {
+    public StartupMenuDialog getStartupMenuDialog() {
+        return (StartupMenuDialog) mStartupMenuDialog;
+    }
+
+    private void initListener() {
         mStartupMenu.setOnClickListener(mOpenthosStatusbarListener);
         mInputView.setOnClickListener(mOpenthosStatusbarListener);
         mBatteryView.setOnClickListener(mOpenthosStatusbarListener);
@@ -123,8 +128,7 @@ public class OpenthosStatusBarView extends PanelBar {
         mCalendarView.setOnClickListener(mOpenthosStatusbarListener);
         mHomeView.setOnClickListener(mOpenthosStatusbarListener);
         mEmptyStatusBar.setOnClickListener(mOpenthosStatusbarListener);
-        mScrollStatusBar.setOnClickListener(mOpenthosStatusbarListener);
-        mllScrollContents.setOnClickListener(mOpenthosStatusbarListener);
+//        mLlScrollContents.setOnClickListener(mOpenthosStatusbarListener);
     }
 
     private View.OnClickListener mOpenthosStatusbarListener = new View.OnClickListener() {
@@ -158,10 +162,7 @@ public class OpenthosStatusBarView extends PanelBar {
                 case R.id.iv_home_status_bar:
                     Intent home = new Intent(Intent.ACTION_MAIN);
                     home.addCategory(Intent.CATEGORY_HOME);
-                    mContext.startActivity(home);
-                    break;
-                case R.id.sroll_status_bar:
-                    //Handle events
+                    getContext().startActivity(home);
                     break;
                 case R.id.ll_scroll_icon_contents:
                     //Handle events
@@ -180,16 +181,16 @@ public class OpenthosStatusBarView extends PanelBar {
 
     public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
         if (charging || pluggedIn || level == 0) {
-            mBatteryView.setImageDrawable(mContext.getDrawable(
+            mBatteryView.setImageDrawable(getContext().getDrawable(
                     R.mipmap.statusbar_battery));
         } else if (level >= 75) {
-            mBatteryView.setImageDrawable(mContext.getDrawable(
+            mBatteryView.setImageDrawable(getContext().getDrawable(
                     R.mipmap.statusbar_battery_high));
         } else if (level >= 25 && level <= 75) {
-            mBatteryView.setImageDrawable(mContext.getDrawable(
+            mBatteryView.setImageDrawable(getContext().getDrawable(
                     R.mipmap.ic_notice_battery_half));
         } else {
-            mBatteryView.setImageDrawable(mContext.getDrawable(
+            mBatteryView.setImageDrawable(getContext().getDrawable(
                     R.mipmap.statusbar_battery_low));
         }
     }
@@ -209,7 +210,7 @@ public class OpenthosStatusBarView extends PanelBar {
         mEmptyStatusBar.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mStatusBar.mShowTaskbarDialog.show(DialogType.SHOW_TASKBAR, mDownX, mDownY);
+//                MenuDialog.getInstance(mContext).show(DialogType.SHOW_TASKBAR, mDownX, mDownY);
                 return false;
             }
         });
@@ -236,6 +237,21 @@ public class OpenthosStatusBarView extends PanelBar {
                 }
                 dialog.show(view);
                 mCurrentDialog = dialog;
+            }
+        }
+    }
+
+    public void updateInputMethodIcon() {
+        List<InputMethodInfo> inputMethodList = mInputMethodManager.getInputMethodList();
+        String currentInputMethodId = Settings.Secure.getString(
+                getContext().getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+        for (InputMethodInfo im : inputMethodList) {
+            if (im.getId().equals(currentInputMethodId)) {
+                if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {//os input
+                    mInputView.setImageResource(R.drawable.statusbar_switch_input_method);
+                    return;
+                } // other input methods;
+                mInputView.setImageDrawable(im.loadIcon(getContext().getPackageManager()));
             }
         }
     }
@@ -267,17 +283,14 @@ public class OpenthosStatusBarView extends PanelBar {
 
     public void onDensityOrFontScaleChanged() {
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
-        layoutParams.height = getResources().getDimensionPixelSize(
-                R.dimen.status_bar_height);
-        layoutParams.width = getResources().getDimensionPixelSize(
-                R.dimen.status_bar_height);
+        layoutParams.height = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
+        layoutParams.width = getResources().getDimensionPixelSize(R.dimen.status_bar_height);
         setLayoutParams(layoutParams);
     }
 
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mStartupMenuDialog = StartupMenuDialog.reCreateStartupMenudialog(getContext());
-        initDialog();
+        onFinishInflate();
     }
 }

@@ -863,23 +863,13 @@
     <dimen name="phone_size_width">320dp</dimen>
     <dimen name="phone_size_height">480dp</dimen>
 
-    <dimen name="startupmenu_grid_icon_size">50dp</dimen>
-    <dimen name="startupmenu_list_icon_size">30dp</dimen>
-    <dimen name="startupmenu_big_padding">15dp</dimen>
-    <dimen name="startupmenu_small_padding">5dp</dimen>
-    <dimen name="startupmenu_common_app_width">180dp</dimen>
-    <dimen name="startupmenu_grid_width">310dp</dimen>
-    <dimen name="systemui_size_wifi_height">400dp</dimen>
-    <dimen name="startupmenu_search_icon_size">10dp</dimen>
-    <dimen name="startupmenu_layout_height">40dp</dimen>
-    <dimen name="startupmenu_layout_small_height">24dp</dimen>
-    <dimen name="startupmenu_app_grid_width">80dp</dimen>
-    <dimen name="startupmenu_text_size">13sp</dimen>
     <dimen name="systemui_pop_date_text_size">24sp</dimen>
     <dimen name="systemui_size_calendar">296dp</dimen>
     <dimen name="systemui_width_calendarview">224dp</dimen>
     <dimen name="systemui_height_calendarview">154dp</dimen>
     <dimen name="systemui_date_text_size">10sp</dimen>
+    <dimen name="calendar_date_height">24dp</dimen>
+    <dimen name="calendar_icon_size">10dp</dimen>
 
     <dimen name="notification_panel_height">560dp</dimen>
     <!-- notification dimens -->
@@ -887,4 +877,29 @@
     <dimen name="qs_icon_size_thirty">30dp</dimen>
     <dimen name="qs_font_size_sixteen">16sp</dimen>
     <dimen name="qs_margin_fifty">50dp</dimen>
+
+    <dimen name="common_layout_height">40dp</dimen>
+    <dimen name="max_list_wifi_height">400dp</dimen>
+
+    <!--StartupMenu-->
+    <dimen name="start_menu_left_width">180dp</dimen>
+    <dimen name="start_menu_right_width">310dp</dimen>
+    <dimen name="status_bar_height_real">40dp</dimen>
+    <dimen name="start_row_item_width">80dp</dimen>
+    <dimen name="start_img_size_small">20dp</dimen>
+    <dimen name="start_icon_size_small">32dp</dimen>
+    <dimen name="start_icon_size_big">48dp</dimen>
+    <dimen name="common_text_size">14sp</dimen>
+
+    <dimen name="big_padding">15dp</dimen>
+    <dimen name="small_padding">5dp</dimen>
+    <dimen name="padding_one">1dp</dimen>
+    <dimen name="padding_three">3dp</dimen>
+    <dimen name="padding_five">5dp</dimen>
+    <dimen name="padding_ten">10dp</dimen>
+    <dimen name="padding_fifteen">15dp</dimen>
+    <dimen name="padding_twenty">20dp</dimen>
+    <dimen name="padding_thirty">30dp</dimen>
+    <dimen name="padding_fifty">50dp</dimen>
+
 </resources>

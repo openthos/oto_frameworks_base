@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /* //device/apps/common/assets/res/any/colors.xml
 **
 ** Copyright 2012, The Android Open Source Project
@@ -18,19 +17,25 @@
 */
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string-array name="sort_show">
+        <item>@string/default_sort</item>
+        <item>@string/time_sort</item>
+        <item>@string/click_sort</item>
+        <item>@string/name_sort</item>
+    </string-array>
 
     <string-array name="list_menu">
         <item>@string/open</item>
         <item>@string/phone_mode</item>
         <item>@string/desktop_mode</item>
-        <item>@string/remove_out</item>
+        <item>@string/remove_from_list</item>
     </string-array>
 
     <string-array name="grid_menu_lock">
         <item>@string/open</item>
         <item>@string/phone_mode</item>
         <item>@string/desktop_mode</item>
-        <item>@string/lock_app</item>
+        <item>@string/unlock_from_task_bar</item>
         <item>@string/uninstall</item>
     </string-array>
 
@@ -38,23 +43,25 @@
         <item>@string/open</item>
         <item>@string/phone_mode</item>
         <item>@string/desktop_mode</item>
-        <item>@string/unlock_app</item>
+        <item>@string/lock_to_task_bar</item>
         <item>@string/uninstall</item>
     </string-array>
 
-    <string-array name="bar_menu_normal">
-        <item>@string/close</item>
-        <item>@string/lock_app</item>
-    </string-array>
-
-    <string-array name="bar_menu_docked_closed">
+    <string-array name="bar_menu_lock_close">
         <item>@string/open</item>
-        <item>@string/unlock_app</item>
+        <item>@string/unlock_from_task_bar</item>
+        <item>@string/phone_mode</item>
+        <item>@string/desktop_mode</item>
     </string-array>
 
-    <string-array name="bar_menu_docked_open">
+    <string-array name="bar_menu_lock_open">
         <item>@string/close</item>
-        <item>@string/unlock_app</item>
+        <item>@string/unlock_from_task_bar</item>
+    </string-array>
+
+    <string-array name="bar_menu_unlock_open">
+        <item>@string/close</item>
+        <item>@string/lock_to_task_bar</item>
     </string-array>
 
     <string-array name="bar_show_hide">

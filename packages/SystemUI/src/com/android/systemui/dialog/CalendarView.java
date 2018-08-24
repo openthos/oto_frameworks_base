@@ -127,7 +127,7 @@ public class CalendarView extends ViewFlipper implements
         LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(
                                   LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1);
         Resources res = getResources();
-        mTB = res.getDimension(R.dimen.startupmenu_search_icon_size);
+        mTB = res.getDimension(R.dimen.calendar_icon_size);
         title.setLayoutParams(layout);
         oneCalendar.addView(title);
 

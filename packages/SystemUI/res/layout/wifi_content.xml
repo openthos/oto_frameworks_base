@@ -24,26 +24,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/startupmenu_small_padding"
+            android:layout_marginRight="@dimen/small_padding"
             android:layout_weight="1"
             android:focusable="false"
             android:singleLine="true"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/startupmenu_text_size"/>
+            android:textSize="@dimen/common_text_size"/>
 
         <ImageView
             android:id="@+id/wifi_has_psw"
-            android:layout_width="@dimen/startupmenu_big_padding"
+            android:layout_width="@dimen/big_padding"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/wifi_content_level"
-            android:layout_width="@dimen/startupmenu_big_padding"
+            android:layout_width="@dimen/big_padding"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/startupmenu_small_padding"
-            android:layout_marginRight="@dimen/startupmenu_small_padding"
+            android:layout_marginLeft="@dimen/small_padding"
+            android:layout_marginRight="@dimen/small_padding"
             android:focusable="false"
             />
     </LinearLayout>

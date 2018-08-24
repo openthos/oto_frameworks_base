@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.startupmenu;
+package com.android.systemui.startupmenu.bean;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -23,32 +23,34 @@ import android.os.UserManager;
 
 import java.io.Serializable;
 
-public class AppEntry implements Serializable {
+public class AppInfo implements Serializable {
     static final long serialVersionUID = -3982172488299272068L;
 
     private String label;
     private String packageName;
     private String activityName;
+    private ComponentName componentName;
     private Long userId;
     private Long installTime;
     private Long lastTimeUsed;
     private int useCounts;
     private Drawable icon;
-    private ComponentName componentName;
+    private boolean isSystemApp;
+    private boolean isLocked;
 
-    public AppEntry() {
+    public AppInfo() {
     }
 
-    public AppEntry(String packageName) {
+    public AppInfo(String packageName) {
         this.packageName = packageName;
     }
 
-    public AppEntry(String packageName, String activityName) {
+    public AppInfo(String packageName, String activityName) {
         this.packageName = packageName;
         this.activityName = activityName;
     }
 
-    public AppEntry(ComponentName componentName) {
+    public AppInfo(ComponentName componentName) {
         this.componentName = componentName;
         this.packageName = componentName.getPackageName();
         this.activityName = componentName.getClassName();
@@ -133,5 +135,19 @@ public class AppEntry implements Serializable {
         this.icon = icon;
     }
 
+    public boolean isSystemApp() {
+        return isSystemApp;
+    }
 
+    public void setSystemApp(boolean systemApp) {
+        isSystemApp = systemApp;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
 }

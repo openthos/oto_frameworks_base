@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.android.systemui.statusbar.phone.OpenthosStatusBarView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/openthos_status_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,38 +12,38 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
+        <com.android.systemui.statusbar.view.ScapeImageView
             android:id="@+id/iv_startupmenu_status_bar"
-            android:layout_width="64dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:src="@mipmap/statusbar_sysbar_menu"/>
-
-        <!--  icon scroll layout-->
-        <HorizontalScrollView
-            android:id="@+id/sroll_status_bar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp">
+            android:layout_margin="@dimen/padding_five"
+            android:background="@mipmap/statusbar_sysbar_menu"
+            app:scapeSize="1" />
 
-            <LinearLayout
-                android:id="@+id/ll_scroll_icon_contents"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+        <View
+            android:layout_width="@dimen/padding_one"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/padding_ten"
+            android:layout_marginLeft="@dimen/padding_three"
+            android:layout_marginRight="@dimen/padding_three"
+            android:layout_marginTop="@dimen/padding_ten"
+            android:background="@color/white" />
 
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_scroll_icon_contents"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        </HorizontalScrollView>
+        </LinearLayout>
 
         <View
             android:id="@+id/empty_statusbar"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/startupmenu_small_padding"
-            android:layout_weight="1"/>
+            android:layout_marginRight="@dimen/padding_five"
+            android:layout_weight="1" />
 
         <!-- input/battery/wifi/volume/notification/date/home -->
         <LinearLayout
@@ -51,50 +52,60 @@
             android:layout_gravity="end"
             android:orientation="horizontal">
 
-            <ImageView
+            <com.android.systemui.statusbar.view.ScapeImageView
                 android:id="@+id/iv_input_status_bar"
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
                 android:background="@drawable/statusbar_img_hover_select"
-                android:src="@mipmap/statusbar_switch_input_method"/>
+                android:padding="@dimen/padding_five"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/statusbar_switch_input_method"
+                app:scapeSize="0.8" />
 
-            <ImageView
+            <com.android.systemui.statusbar.view.ScapeImageView
                 android:id="@+id/iv_battery_status_bar"
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
                 android:background="@drawable/statusbar_img_hover_select"
-                android:src="@mipmap/statusbar_battery"/>
+                android:padding="@dimen/padding_five"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/statusbar_battery"
+                app:scapeSize="0.8" />
 
-            <ImageView
+            <com.android.systemui.statusbar.view.ScapeImageView
                 android:id="@+id/iv_wifi_status_bar"
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
                 android:background="@drawable/statusbar_img_hover_select"
-                android:src="@mipmap/statusbar_wifi"/>
+                android:padding="@dimen/padding_five"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/statusbar_wifi"
+                app:scapeSize="0.8" />
 
-            <ImageView
+            <com.android.systemui.statusbar.view.ScapeImageView
                 android:id="@+id/iv_volume_status_bar"
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
                 android:background="@drawable/statusbar_img_hover_select"
-                android:src="@mipmap/statusbar_sound"/>
+                android:padding="@dimen/padding_five"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/statusbar_sound"
+                app:scapeSize="0.8" />
 
-            <ImageView
+            <com.android.systemui.statusbar.view.ScapeImageView
                 android:id="@+id/iv_notification_status_bar"
-                android:layout_width="32dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
                 android:background="@drawable/statusbar_img_hover_select"
-                android:src="@mipmap/statusbar_action_center"/>
+                android:padding="@dimen/padding_five"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/statusbar_action_center"
+                app:scapeSize="0.8" />
 
             <com.android.systemui.dialog.CalendarDisplayView
                 android:id="@+id/iv_date_status_bar"
@@ -102,23 +113,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
-                android:paddingLeft="@dimen/startupmenu_small_padding"
-                android:paddingRight="@dimen/startupmenu_small_padding"
+                android:paddingLeft="@dimen/padding_five"
+                android:paddingRight="@dimen/padding_five"
                 android:textAppearance="@style/TextAppearance.StatusBar.Clock"
-                android:textSize="@dimen/systemui_date_text_size"/>
+                android:textSize="@dimen/systemui_date_text_size" />
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="@dimen/padding_one"
                 android:layout_height="match_parent"
-                android:background="@color/input_bg"/>
+                android:background="@color/input_bg" />
 
             <ImageView
                 android:id="@+id/iv_home_status_bar"
                 android:layout_width="10dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"
-                />
+                android:layout_margin="5dp" />
         </LinearLayout>
     </LinearLayout>
 

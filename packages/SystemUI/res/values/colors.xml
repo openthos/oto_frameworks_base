@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright 2010, The Android Open Source Project
  *
@@ -156,13 +155,16 @@
     <!--systemui: startupmenu: status bar: colors  -->
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="grid_bg">#e9edf0</color>
+    <color name="calendar_bg">#3f2d76</color>
+    <color name="dark_blue">#000080</color>
     <color name="common_hover_bg">#5a41a2</color>
-    <color name="grid_hover_bg">#e9edf0</color>
+    <color name="grid_hover_bg">#FFFFE0</color>
     <color name="grid_unhover_bg">#00ffffff</color>
     <color name="input_bg">#cfcaca</color>
     <color name="inputmethodfocus">#5b41a2</color>
+    <color name="gray_text">#939aa3</color>
 
     <color name="zen_introduction">#ffffffff</color>
 
-    <color name="gray_text">#939aa3</color>
 </resources>

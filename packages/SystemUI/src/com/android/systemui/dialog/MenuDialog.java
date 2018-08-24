@@ -1,11 +1,7 @@
 package com.android.systemui.dialog;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -13,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -21,32 +16,27 @@ import android.widget.TextView;
 
 import com.android.systemui.R;
 import com.android.systemui.SysUiServiceProvider;
-import com.android.systemui.sql.SqliteOperate;
-import com.android.systemui.startupmenu.AppEntry;
-import com.android.systemui.startupmenu.LaunchAppUtil;
-import com.android.systemui.startupmenu.DialogType;
+import com.android.systemui.startupmenu.bean.AppInfo;
+import com.android.systemui.startupmenu.listener.OnMenuClick;
 import com.android.systemui.statusbar.phone.StatusBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by ljh on 17-9-14.
- */
-
-public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickListener {
+public class MenuDialog extends BaseDialog {
     private List<String> mDatas;
     private DialogAdapter mAdapter;
     private ListView mListView;
-    private AppEntry mAppEntry;
-    private ComponentName mComponentName;
+    private AppInfo mAppInfo;
+    private OnMenuClick mOnMenuClick;
     private int mWidth;
     private int mHeight;
-    private int mStatusBarHeight;
     private StatusBar mStatusBar;
+    private int mStatusBarHeight;
+    private DialogType mDialogType;
 
-    public MenuDialog(@NonNull Context context) {
+    public MenuDialog(Context context) {
         super(context);
         mContentView = LayoutInflater.from(getContext()).inflate(R.layout.menu_dialog, null, false);
         setContentView(mContentView);
@@ -56,7 +46,6 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
     }
 
     public void initListener() {
-        mListView.setOnItemClickListener(this);
     }
 
     public void initView() {
@@ -72,20 +61,42 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
                 getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
     }
 
-    public void show(DialogType type, AppEntry appEntry, int x, int y) {
-        mAppEntry = appEntry;
-        mComponentName = appEntry.getComponentName();
+    public void showSort(View view) {
+        mDialogType = DialogType.SORT;
+        mAppInfo = null;
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        Window dialogWindow = getWindow();
+        dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.format = PixelFormat.TRANSPARENT;
+        lp.dimAmount = 0;
+
+        prepareData();
+        lp.x = location[0] + view.getWidth() - mWidth;
+        lp.y = location[1] + view.getHeight();
+        dialogWindow.setAttributes(lp);
+        show();
+    }
+
+    public void show(DialogType type, AppInfo appInfo, int x, int y) {
+        mDialogType = type;
+        mAppInfo = appInfo;
         show(type, x, y);
     }
 
-    public void show(DialogType type, ComponentName componentName, View view) {
-        mComponentName = componentName;
-        prepareData(type);
+    public void show(DialogType type, AppInfo appInfo, View view) {
+        mDialogType = type;
+        mAppInfo = appInfo;
+        prepareData();
         show(view);
     }
 
     public void show(DialogType type, int x, int y) {
-        prepareData(type);
+        mDialogType = type;
+        prepareData();
         Window dialogWindow = getWindow();
         dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
@@ -98,7 +109,8 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
                 lp.x = x - mWidth / 2;
                 lp.y = 0;
                 break;
-            default:
+            case GRID:
+            case LIST:
                 dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
                 lp.x = x;
                 if (y > mPoint.y - mHeight - mStatusBarHeight) {
@@ -107,6 +119,8 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
                     lp.y = y;
                 }
                 break;
+            default:
+                break;
         }
         dialogWindow.setAttributes(lp);
         show();
@@ -114,41 +128,49 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (!hasFocus) {
-            dismiss();
+        if (hasFocus && isStartupMenu()) {
+            StartupMenuDialog startupMenuDialog = mStatusBar.getStartupMenuDialog();
+            if (startupMenuDialog != null) {
+                startupMenuDialog.setCanDismiss(false);
+            }
         }
+        super.onWindowFocusChanged(hasFocus);
     }
 
     /**
      * init dialog data by dialog type
-     * @param type
      */
-    private void prepareData(DialogType type) {
+    private void prepareData() {
         mDatas.clear();
         String[] sArr = null;
-        switch (type) {
+        switch (mDialogType) {
             case GRID:
-                if (mStatusBar.isLocked(mComponentName)) {
-                    sArr = getContext().getResources().getStringArray(R.array.grid_menu_unlock);
-                } else {
+                if (mAppInfo.isLocked()) {
                     sArr = getContext().getResources().getStringArray(R.array.grid_menu_lock);
+                } else {
+                    sArr = getContext().getResources().getStringArray(R.array.grid_menu_unlock);
                 }
                 break;
             case LIST:
                 sArr = getContext().getResources().getStringArray(R.array.list_menu);
                 break;
+            case SORT:
+                sArr = getContext().getResources().getStringArray(R.array.sort_show);
+                break;
             case SHOW_TASKBAR:
                 sArr = getContext().getResources().getStringArray(R.array.bar_show_hide);
                 break;
-            case BAR_LOCK_OPEN:
-                sArr = getContext().getResources().getStringArray(R.array.bar_menu_docked_open);
-                break;
             case BAR_LOCK_CLOSE:
-                sArr = getContext().getResources().getStringArray(R.array.bar_menu_docked_closed);
+                sArr = getContext().getResources().getStringArray(R.array.bar_menu_lock_close);
                 break;
-            case BAR_NORMAL:
-                sArr = getContext().getResources().getStringArray(R.array.bar_menu_normal);
+            case BAR_LOCK_OPEN:
+                sArr = getContext().getResources().getStringArray(R.array.bar_menu_lock_open);
+                break;
+            case BAR_UNLOCK_OPEN:
+                sArr = getContext().getResources().getStringArray(R.array.bar_menu_unlock_open);
+                break;
+            case NOTIFY_NAME:
+                sArr = new String[]{mAppInfo.getLabel()};
                 break;
         }
         mDatas.addAll(Arrays.asList(sArr));
@@ -166,56 +188,13 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
         mListView.setLayoutParams(new LinearLayout.LayoutParams(mWidth, mHeight));
     }
 
-    /**
-     * init click event
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        dismiss();
-        String content = mDatas.get(position);
-        if (content.equals(getContext().getString(R.string.open))) {
-            LaunchAppUtil.launchApp(getContext(), mComponentName);
-            SqliteOperate.updateDataStorage(getContext(), mAppEntry);
-        } else if (content.equals(getContext().getString(R.string.phone_mode))) {
-            LaunchAppUtil.launchApp(getContext(), mComponentName, LaunchAppUtil.PHONE_MODE);
-            SqliteOperate.updateDataStorage(getContext(), mAppEntry);
-        } else if (content.equals(getContext().getString(R.string.desktop_mode))) {
-            LaunchAppUtil.launchApp(getContext(), mComponentName, LaunchAppUtil.DESKTOP_MODE);
-            SqliteOperate.updateDataStorage(getContext(), mAppEntry);
-        } else if (content.equals(getContext().getString(R.string.lock_app))) {
-            mStatusBar.locked(mComponentName);
-        } else if (content.equals(getContext().getString(R.string.unlock_app))) {
-            mStatusBar.unlocked(mComponentName);
-        } else if (content.equals(getContext().getString(R.string.remove_out))) {
-            StartupMenuDialog.getInstance(getContext()).mListDatas.remove(mAppEntry);
-            StartupMenuDialog.getInstance(getContext()).mListAdapter.notifyDataSetChanged();
-            SqliteOperate.deleteDataStorage(getContext(), mAppEntry.getPackageName());
-        } else if (content.equals(getContext().getString(R.string.uninstall))) {
-            uninstallApp();
-        } else if (content.equals(getContext().getString(R.string.close))) {
-            mStatusBar.closeApp(mComponentName);
-        } else if (content.equals(getContext().getString(R.string.status_bar_info_show))) {
-
-        } else if (content.equals(getContext().getString(R.string.status_bar_info_hide))) {
-
-        }
+    public boolean isStartupMenu() {
+        return mDialogType != null && (mDialogType == DialogType.GRID
+                || mDialogType == DialogType.LIST || mDialogType == DialogType.SORT);
     }
 
-    private void dismissAndHideStartMenu(boolean hideStartMenu) {
-        dismiss();
-    }
-
-    /**
-     * uninstall app
-     */
-    private void uninstallApp() {
-        Uri uri = Uri.parse("package:" + mAppEntry.getPackageName());
-        Intent intent = new Intent(Intent.ACTION_DELETE, uri);
-        getContext().startActivity(intent);
+    public void setOnMenuClick(OnMenuClick menuClick) {
+        mOnMenuClick = menuClick;
     }
 
     private class DialogAdapter extends BaseAdapter {
@@ -243,6 +222,8 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
                         LayoutInflater.from(getContext()).inflate(R.layout.menu_dialog_item, parent, false);
                 holder = new ViewHolder(convertView);
                 convertView.setTag(holder);
+                holder.text.setOnHoverListener(mHoverListener);
+                holder.text.setOnClickListener(mClickListener);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
@@ -250,25 +231,45 @@ public class MenuDialog extends BaseDialog implements AdapterView.OnItemClickLis
             return convertView;
         }
 
-        private class ViewHolder implements View.OnHoverListener {
-            private TextView text;
-
-            public ViewHolder(View view) {
-                text = (TextView) view.findViewById(R.id.text);
-                view.setOnHoverListener(this);
+        private View.OnClickListener mClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnMenuClick != null) {
+                    if (mDialogType == DialogType.SORT) {
+                        mOnMenuClick.sortShow(v, MenuDialog.this,
+                                ((TextView) v).getText().toString());
+                    } else {
+                        mOnMenuClick.menuClick(v, MenuDialog.this,
+                                mAppInfo, ((TextView) v).getText().toString());
+                    }
+                }
             }
+        };
 
+        private View.OnHoverListener mHoverListener = new View.OnHoverListener() {
             @Override
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
                         v.setBackgroundResource(R.color.common_hover_bg);
+                        ((TextView) v).setTextColor(getContext()
+                                .getResources().getColor(android.R.color.white));
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
                         v.setBackgroundResource(android.R.color.white);
+                        ((TextView) v).setTextColor(getContext()
+                                .getResources().getColor(android.R.color.black));
                         break;
                 }
                 return false;
+            }
+        };
+
+        private class ViewHolder {
+            private TextView text;
+
+            public ViewHolder(View view) {
+                text = (TextView) view.findViewById(R.id.text);
             }
         }
     }

@@ -130,5 +130,9 @@
     <attr name="darkIconTheme" format="reference" />
     <attr name="wallpaperTextColor" format="reference|color" />
     <attr name="wallpaperTextColorSecondary" format="reference|color" />
+
+    <declare-styleable name="ScapeImageView">
+        <attr name="scapeSize" format="float"/>
+    </declare-styleable>
 </resources>
 

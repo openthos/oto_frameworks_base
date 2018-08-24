@@ -36,7 +36,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
-import android.app.IActivityManager;
 import android.app.ActivityManager;
 import android.app.ActivityManager.StackId;
 import android.app.ActivityOptions;
@@ -69,8 +68,6 @@ import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -141,7 +138,6 @@ import android.widget.DateTimeView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.FrameLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -179,8 +175,7 @@ import com.android.systemui.UiOffloadThread;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.classifier.FalsingLog;
 import com.android.systemui.classifier.FalsingManager;
-import com.android.systemui.dialog.MenuDialog;
-import com.android.systemui.dialog.TaskbarIcon;
+import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
 import com.android.systemui.doze.DozeHost;
 import com.android.systemui.doze.DozeLog;
@@ -204,13 +199,10 @@ import com.android.systemui.recents.events.EventBus;
 import com.android.systemui.recents.events.activity.AppTransitionFinishedEvent;
 import com.android.systemui.recents.events.activity.UndockingTaskEvent;
 import com.android.systemui.recents.misc.SystemServicesProxy;
-import com.android.systemui.sql.SqliteOpenHelper;
-import com.android.systemui.sql.SqliteOperate;
-import com.android.systemui.sql.TaskbarIconField;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.stackdivider.WindowManagerProxy;
-import com.android.systemui.startupmenu.LaunchAppUtil;
-import com.android.systemui.startupmenu.DialogType;
+import com.android.systemui.startupmenu.bean.AppInfo;
+import com.android.systemui.startupmenu.utils.AppOperateManager;
 import com.android.systemui.statusbar.ActivatableNotificationView;
 import com.android.systemui.statusbar.BackDropView;
 import com.android.systemui.statusbar.CommandQueue;
@@ -260,6 +252,7 @@ import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout
         .OnChildLocationsChangedListener;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
+import com.android.systemui.statusbar.view.TaskBarIcon;
 import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
@@ -357,7 +350,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             View.STATUS_BAR_TRANSIENT | View.NAVIGATION_BAR_TRANSIENT;
     private static final long AUTOHIDE_TIMEOUT_MS = 2250;
 
-    /** The minimum delay in ms between reports of notification visibility. */
+    /**
+     * The minimum delay in ms between reports of notification visibility.
+     */
     private static final int VISIBILITY_REPORT_MIN_DELAY_MS = 500;
 
     /**
@@ -448,7 +443,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     Point mCurrentDisplaySize = new Point();
 
     protected LinearLayout mActivityLayout;
-    protected int mPrevTaskId;
+    protected int mPrevTaskId = -1;
     protected StatusBarWindowView mStatusBarWindow;
     protected OpenthosStatusBarView mOpenthosStatusBarView;
     protected PhoneStatusBarView mStatusBarView;
@@ -803,7 +798,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
     private HashMap<ExpandableNotificationRow, List<ExpandableNotificationRow>> mTmpChildOrderMap
             = new HashMap<>();
-    private Map<ComponentName, TaskbarIcon> mShowIcons = new HashMap<>();
+    private Map<String, TaskBarIcon> mShowIcons = new HashMap<>();
     private RankingMap mLatestRankingMap;
     private boolean mNoAnimationOnNextBarModeChange;
     private FalsingManager mFalsingManager;
@@ -819,7 +814,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private NavigationBarFragment mNavigationBar;
     private View mNavigationBarView;
-    public MenuDialog mShowTaskbarDialog;
     private RankingMap mRankingMap;
 
     @Override
@@ -891,6 +885,18 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mLockscreenSettingsObserver,
                 UserHandle.USER_ALL);
 
+        mContext.getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.DEFAULT_INPUT_METHOD),
+                false,
+                mInputMethodSettingsObserver,
+                UserHandle.USER_ALL);
+
+        mContext.getContentResolver().registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.SELECTED_INPUT_METHOD_SUBTYPE),
+                false,
+                mInputMethodSettingsObserver,
+                UserHandle.USER_ALL);
+
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
@@ -933,7 +939,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         // Set up the initial icon state
         int N = iconSlots.size();
-        for (int i=0; i < N; i++) {
+        for (int i = 0; i < N; i++) {
             mCommandQueue.setIcon(iconSlots.get(i), icons.get(i));
         }
 
@@ -1027,6 +1033,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         Dependency.get(ActivityStarterDelegate.class).setActivityStarterImpl(this);
 
         Dependency.get(ConfigurationController.class).addCallback(this);
+
+        AppOperateManager.getInstance(mContext).reloadData();
+        initTaskbarIcons();
     }
 
     protected void createIconController() {
@@ -1100,16 +1109,16 @@ public class StatusBar extends SystemUI implements DemoMode,
             mNotificationPanelDebugText.setVisibility(View.VISIBLE);
         }
 
-        try {
-            boolean showNav = mWindowManagerService.hasNavigationBar();
-            if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
-            if (showNav) {
-                //createNavigationBar();
-                addOpenthosStatusBarLayout();
-            }
-        } catch (RemoteException ex) {
-            // no window manager? good luck with that
-        }
+        // try {
+        //     boolean showNav = mWindowManagerService.hasNavigationBar();
+        //     if (DEBUG) Log.v(TAG, "hasNavigationBar=" + showNav);
+        //     if (showNav) {
+        //         createNavigationBar();
+        //     }
+        // } catch (RemoteException ex) {
+        //     // no window manager? good luck with that
+        // }
+        addOpenthosStatusBarLayout();
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1302,9 +1311,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         mButtonNotificationClearAll = (Button) mNotificationPanel.findViewById(R.id.notification_clear_all);
         mButtonNotificationManager.setOnClickListener(mNotificationClickListener);
         mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
-
-        mShowTaskbarDialog = new MenuDialog(mContext);
-        initTaskbarIcons();
     }
 
     //add openthos status bar view.
@@ -1541,6 +1547,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         mOpenthosStatusBarView = (OpenthosStatusBarView) View.inflate(
                 context, R.layout.openthos_status_bar, null);
 
+    }
+
+    public StartupMenuDialog getStartupMenuDialog() {
+        return mOpenthosStatusBarView.getStartupMenuDialog();
     }
 
     public void clearAllNotifications() {
@@ -3365,170 +3375,103 @@ public class StatusBar extends SystemUI implements DemoMode,
         return mFingerprintUnlockController;
     }
 
-    public void iconClose(int taskId) {
-        for (ComponentName cmp : mShowIcons.keySet()) {
-            TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
-            if (taskbarIcon.getTaskId() == taskId) {
-                if (!taskbarIcon.isLocked()) {
-                    mActivityLayout.removeView(taskbarIcon.getIconLayout());
-                    mShowIcons.remove(cmp);
+    private void initTaskbarIcons() {
+//        SqliteOpenHelper.getInstance(mContext).queryLockedApp(new DataCallback() {
+//            @Override
+//            public void callback(Map<String, AppInfo> appInfoMaps) {
+//                for (String packageName : appInfoMaps.keySet()) {
+//                    TaskBarButtonView buttonView =
+//                            new TaskBarButtonView(mContext, appInfoMaps.get(packageName));
+//                    mActivityLayout.addView(buttonView);
+//                    mShowIcons.put(packageName, buttonView);
+//                }
+//            }
+//        });
+    }
+
+    @Override
+    public void changeStatusBarIcon(int taskId, ComponentName componentName, boolean keep) {
+        Log.i("StatusBar", "taskId " + taskId + " keep " + keep + " cmp" + componentName);
+        if (!keep || componentName == null) {
+            iconClose(taskId);
+            return;
+        }
+        bindIconToTaskId(taskId, componentName);
+    }
+
+    public void bindIconToTaskId(int taskId, ComponentName componentName) {
+        if (!canAdd(componentName.getPackageName())) {
+            return;
+        }
+        if (mPrevTaskId != -1) {
+            for (TaskBarIcon buttonView : mShowIcons.values()) {
+                if (mPrevTaskId == buttonView.getTaskId()) {
+                    buttonView.setFocusInApplications(false);
                 }
-                taskbarIcon.setRun(false);
+            }
+        }
+
+        String packageName = componentName.getPackageName();
+        TaskBarIcon buttonView = mShowIcons.get(packageName);
+        if (buttonView == null) {
+            buttonView = new TaskBarIcon(mContext, packageName);
+            mActivityLayout.addView(buttonView);
+            mShowIcons.put(packageName, buttonView);
+        }
+
+        buttonView.setTaskId(taskId);
+        buttonView.setFocusInApplications(true);
+        mPrevTaskId = taskId;
+    }
+
+    private boolean canAdd(String packageName) {
+        AppInfo appInfo = AppOperateManager.getInstance(mContext).getAppInfo(packageName);
+        return appInfo != null && appInfo.getIcon() != null;
+    }
+
+    public void iconClose(int taskId) {
+        for (TaskBarIcon buttonView : mShowIcons.values()) {
+            if (taskId == buttonView.getTaskId()) {
+                if (!buttonView.isLocked()) {
+                    mActivityLayout.removeView(buttonView);
+                    mShowIcons.remove(buttonView.getPackageName());
+                } else {
+                    buttonView.close();
+                }
                 break;
             }
         }
     }
 
-    public boolean isLocked(ComponentName componentName) {
-        if (mShowIcons.get(componentName) != null) {
-            return mShowIcons.get(componentName).isLocked();
-        }
-        return false;
-    }
-
-    public void locked(ComponentName componentName) {
-        TaskbarIcon taskbarIcon = mShowIcons.get(componentName);
-        if (taskbarIcon == null) {
-            taskbarIcon = new TaskbarIcon(componentName, createIconLayout(componentName));
-            mShowIcons.put(componentName, taskbarIcon);
-            SqliteOperate.saveTaskbarIcon(mContext, taskbarIcon);
-        }
-        taskbarIcon.setLocked(true);
-    }
-
-    public void unlocked(ComponentName componentName) {
-        TaskbarIcon taskbarIcon = mShowIcons.get(componentName);
-        SqliteOperate.deleteTaskbarIcon(mContext, componentName.flattenToString());
-        if (taskbarIcon != null) {
-            if (!taskbarIcon.isRun()) {
-                mActivityLayout.removeView(taskbarIcon.getIconLayout());
-                mShowIcons.remove(componentName);
-            } else {
-                taskbarIcon.setLocked(false);
-            }
-        }
-    }
-
-    public void closeApp(ComponentName componentName) {
+    public void closeApp(String packageName) {
         try {
-            ActivityManager.getService().removeTask(mShowIcons.get(componentName).getTaskId());
+            TaskBarIcon buttonView = mShowIcons.get(packageName);
+            if (buttonView != null) {
+                ActivityManager.getService().removeTask(buttonView.getTaskId());
+            }
         } catch (Exception e) {
         }
     }
 
-    public Drawable getPackageIcon(String pkg) {
-        Drawable icon = null;
-        PackageManager pm = mContext.getPackageManager();
-        try {
-            ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
-            if (ai != null) {
-                icon = pm.getApplicationIcon(ai);
-            } else {
-                icon = pm.getDefaultActivityIcon();
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error during changeStatusBarIcon, set icon as default", e);
-            icon = pm.getDefaultActivityIcon();
+    public void addToTaskbar(String packageName) {
+        TaskBarIcon buttonView = mShowIcons.get(packageName);
+        if (buttonView == null) {
+            buttonView = new TaskBarIcon(mContext, packageName);
+            mActivityLayout.addView(buttonView);
+            mShowIcons.put(packageName, buttonView);
         }
-        return icon;
+        buttonView.locked();
     }
 
-    private FrameLayout createIconLayout(final ComponentName cmp) {
-        final FrameLayout iconLayout = (FrameLayout) View.inflate(mContext,
-                R.layout.statusbar_activity_button, null);
-        ImageView iconView = (ImageView) iconLayout.findViewById(R.id.icon_view);
-        iconView.setImageDrawable(getPackageIcon(cmp.getPackageName()));
-        iconView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    IActivityManager am = ActivityManager.getService();
-                    if (mShowIcons.get(cmp).isRun()) {
-                        am.setFocusedTask(mShowIcons.get(cmp).getTaskId());
-                    } else {
-                        LaunchAppUtil.launchApp(mContext, cmp);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error during setFocuesTask", e);
-                }
+    public void removeFromTaskbar(String packageName) {
+        TaskBarIcon buttonView = mShowIcons.get(packageName);
+        if (buttonView != null) {
+            if (!buttonView.isRun()) {
+                mActivityLayout.removeView(buttonView);
+                mShowIcons.remove(packageName);
             }
-        });
-        iconView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
-                if (taskbarIcon != null) {
-                    if (taskbarIcon.isRun() && taskbarIcon.isLocked()) {
-                        mShowTaskbarDialog.show(DialogType.BAR_LOCK_OPEN, cmp, iconLayout);
-                    } else if (taskbarIcon.isLocked()) {
-                        mShowTaskbarDialog.show(DialogType.BAR_LOCK_CLOSE, cmp, iconLayout);
-                    } else {
-                        mShowTaskbarDialog.show(DialogType.BAR_NORMAL, cmp, iconLayout);
-                    }
-                }
-                return true;
-            }
-        });
-        iconView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-        mActivityLayout.addView(iconLayout);
-        return iconLayout;
-    }
-
-    public void bindIconToTaskId(int taskId, ComponentName cmp) {
-        if (mPrevTaskId != 0) {
-            for (ComponentName componentName : mShowIcons.keySet()) {
-                if (mPrevTaskId == mShowIcons.get(componentName).getTaskId()) {
-                    mShowIcons.get(componentName).setFocus(false);
-		    break;
-                }
-            }
+            buttonView.unlocked();
         }
-        TaskbarIcon taskbarIcon = mShowIcons.get(cmp);
-        if (taskbarIcon == null) {
-            for (ComponentName componentName : mShowIcons.keySet()) {
-                if (mShowIcons.get(componentName).getTaskId() == taskId) {
-                    taskbarIcon = mShowIcons.get(componentName);
-                    break;
-                }
-            }
-            if (taskbarIcon == null) {
-                taskbarIcon = new TaskbarIcon(cmp, createIconLayout(cmp));
-                mShowIcons.put(cmp, taskbarIcon);
-            }
-        }
-        taskbarIcon.setFocus(true);
-        taskbarIcon.setRun(true);
-        taskbarIcon.setTaskId(taskId);
-        mPrevTaskId = taskId;
-    }
-
-    private void initTaskbarIcons() {
-        SqliteOpenHelper instance = SqliteOpenHelper.getInstance(mContext);
-        SQLiteDatabase db = instance.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + TaskbarIconField.TABLE_NAME, null);
-        while (cursor.moveToNext()) {
-            ComponentName cmp = ComponentName.unflattenFromString(
-                    cursor.getString(cursor.getColumnIndex(TaskbarIconField.COMPONENT_NAME)));
-            locked(cmp);
-        }
-        cursor.close();
-        db.close();
-    }
-
-    @Override
-    public void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) {
-        android.util.Log.i("ljh", "taskId " + taskId + " keep " + keep + " cmp" + cmp);
-        if (!keep || cmp == null) {
-            iconClose(taskId);
-            return;
-        }
-
-        bindIconToTaskId(taskId, cmp);
     }
 
     @Override
@@ -3864,12 +3807,12 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (mNotificationPanel != null) {
             pw.println("    mNotificationPanel=" +
                 mNotificationPanel + " params=" + mNotificationPanel.getLayoutParams().debug(""));
-            pw.print  ("      ");
+            pw.print("      ");
             mNotificationPanel.dump(fd, pw, args);
         }
         pw.println("  mStackScroller: ");
         if (mStackScroller != null) {
-            pw.print  ("      ");
+            pw.print("      ");
             mStackScroller.dump(fd, pw, args);
         }
         pw.println("  Theme:");
@@ -4098,12 +4041,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                     }
                     animateCollapsePanels(flags);
                 }
-            }
-            else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 finishBarAnimations();
                 resetUserExpandedStates();
-            }
-            else if (DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG.equals(action)) {
+            } else if (DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG.equals(action)) {
                 mQSPanel.showDeviceMonitoringDialog();
             }
         }
@@ -5125,7 +5066,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public void onActivated(ActivatableNotificationView view) {
-        onActivated((View)view);
+        onActivated((View) view);
         mStackScroller.setActivatedChild(view);
     }
 
@@ -5173,7 +5114,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     public void onActivationReset(ActivatableNotificationView view) {
         if (view == mStackScroller.getActivatedChild()) {
             mStackScroller.setActivatedChild(null);
-            onActivationReset((View)view);
+            onActivationReset((View) view);
         }
     }
 
@@ -5252,6 +5193,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     /**
      * TODO: Remove this method. Views should not be passed forward. Will cause theme issues.
+     *
      * @return bottom area view
      */
     public KeyguardBottomAreaView getKeyguardBottomAreaView() {
@@ -5637,7 +5579,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     /**
      * @return true if the screen is currently fully off, i.e. has finished turning off and has
-     *         since not started turning on.
+     * since not started turning on.
      */
     public boolean isScreenFullyOff() {
         return mScreenLifecycle.getScreenState() == ScreenLifecycle.SCREEN_OFF;
@@ -5941,7 +5883,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         @Override
         public void onDoubleTap(float screenX, float screenY) {
-            if (screenX > 0 && screenY > 0 && mAmbientIndicationContainer != null 
+            if (screenX > 0 && screenY > 0 && mAmbientIndicationContainer != null
                 && mAmbientIndicationContainer.getVisibility() == View.VISIBLE) {
                 mAmbientIndicationContainer.getLocationOnScreen(mTmpInt2);
                 float viewX = screenX - mTmpInt2[0];
@@ -6133,6 +6075,15 @@ public class StatusBar extends SystemUI implements DemoMode,
             // ... and refresh all the notifications
             updateLockscreenNotificationSetting();
             updateNotifications();
+        }
+    };
+
+    private final ContentObserver mInputMethodSettingsObserver = new ContentObserver(mHandler) {
+        @Override
+        public void onChange(boolean selfChange) {
+            if (mOpenthosStatusBarView != null) {
+                mOpenthosStatusBarView.updateInputMethodIcon();
+            }
         }
     };
 
@@ -6438,97 +6389,97 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     private final NotificationListenerWithPlugins mNotificationListener =
             new NotificationListenerWithPlugins() {
-        @Override
-        public void onListenerConnected() {
-            if (DEBUG) Log.d(TAG, "onListenerConnected");
-            onPluginConnected();
-            final StatusBarNotification[] notifications = getActiveNotifications();
-            if (notifications == null) {
-                Log.w(TAG, "onListenerConnected unable to get active notifications.");
-                return;
-            }
-            final RankingMap currentRanking = getCurrentRanking();
-            mHandler.post(new Runnable() {
                 @Override
-                public void run() {
-                    for (StatusBarNotification sbn : notifications) {
-                        try {
-                            addNotification(sbn, currentRanking);
-                        } catch (InflationException e) {
-                            handleInflationException(sbn, e);
+                public void onListenerConnected() {
+                    if (DEBUG) Log.d(TAG, "onListenerConnected");
+                    onPluginConnected();
+                    final StatusBarNotification[] notifications = getActiveNotifications();
+                    if (notifications == null) {
+                        Log.w(TAG, "onListenerConnected unable to get active notifications.");
+                        return;
+                    }
+                    final RankingMap currentRanking = getCurrentRanking();
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (StatusBarNotification sbn : notifications) {
+                                try {
+                                    addNotification(sbn, currentRanking);
+                                } catch (InflationException e) {
+                                    handleInflationException(sbn, e);
+                                }
+                            }
                         }
+                    });
+                }
+
+                @Override
+                public void onNotificationPosted(final StatusBarNotification sbn,
+                                                 final RankingMap rankingMap) {
+                    if (DEBUG) Log.d(TAG, "onNotificationPosted: " + sbn);
+                    if (sbn != null && !onPluginNotificationPosted(sbn, rankingMap)) {
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (sbn.getNotification().contentView != null) {
+                                    mRankingMap = rankingMap;
+                                }
+                                processForRemoteInput(sbn.getNotification());
+                                String key = sbn.getKey();
+                                mKeysKeptForRemoteInput.remove(key);
+                                boolean isUpdate = mNotificationData.get(key) != null;
+                                // In case we don't allow child notifications, we ignore children of
+                                // notifications that have a summary, since we're not going to show them
+                                // anyway. This is true also when the summary is canceled,
+                                // because children are automatically canceled by NoMan in that case.
+                                if (!ENABLE_CHILD_NOTIFICATIONS
+                                        && mGroupManager.isChildInGroupWithSummary(sbn)) {
+                                    if (DEBUG) {
+                                        Log.d(TAG, "Ignoring group child due to existing summary: " + sbn);
+                                    }
+
+                                    // Remove existing notification to avoid stale data.
+                                    if (isUpdate) {
+                                        removeNotification(key, rankingMap);
+                                    } else {
+                                        mNotificationData.updateRanking(rankingMap);
+                                    }
+                                    return;
+                                }
+                                try {
+                                    if (isUpdate) {
+                                        updateNotification(sbn, rankingMap);
+                                    } else {
+                                        addNotification(sbn, rankingMap);
+                                    }
+                                } catch (InflationException e) {
+                                    handleInflationException(sbn, e);
+                                }
+                            }
+                        });
                     }
                 }
-            });
-        }
 
-        @Override
-        public void onNotificationPosted(final StatusBarNotification sbn,
-                final RankingMap rankingMap) {
-            if (DEBUG) Log.d(TAG, "onNotificationPosted: " + sbn);
-            if (sbn != null && !onPluginNotificationPosted(sbn, rankingMap)) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (sbn.getNotification().contentView != null) {
-                            mRankingMap = rankingMap;
-                        }
-                        processForRemoteInput(sbn.getNotification());
-                        String key = sbn.getKey();
-                        mKeysKeptForRemoteInput.remove(key);
-                        boolean isUpdate = mNotificationData.get(key) != null;
-                        // In case we don't allow child notifications, we ignore children of
-                        // notifications that have a summary, since we're not going to show them
-                        // anyway. This is true also when the summary is canceled,
-                        // because children are automatically canceled by NoMan in that case.
-                        if (!ENABLE_CHILD_NOTIFICATIONS
-                            && mGroupManager.isChildInGroupWithSummary(sbn)) {
-                            if (DEBUG) {
-                                Log.d(TAG, "Ignoring group child due to existing summary: " + sbn);
-                            }
-
-                            // Remove existing notification to avoid stale data.
-                            if (isUpdate) {
-                                removeNotification(key, rankingMap);
-                            } else {
-                                mNotificationData.updateRanking(rankingMap);
-                            }
-                            return;
-                        }
-                        try {
-                            if (isUpdate) {
-                                updateNotification(sbn, rankingMap);
-                            } else {
-                                addNotification(sbn, rankingMap);
-                            }
-                        } catch (InflationException e) {
-                            handleInflationException(sbn, e);
-                        }
+                @Override
+                public void onNotificationRemoved(StatusBarNotification sbn,
+                                                  final RankingMap rankingMap) {
+                    if (DEBUG) Log.d(TAG, "onNotificationRemoved: " + sbn);
+                    if (sbn != null && !onPluginNotificationRemoved(sbn, rankingMap)) {
+                        final String key = sbn.getKey();
+                        mHandler.post(() -> removeNotification(key, rankingMap));
                     }
-                });
-            }
-        }
+                }
 
-        @Override
-        public void onNotificationRemoved(StatusBarNotification sbn,
-                final RankingMap rankingMap) {
-            if (DEBUG) Log.d(TAG, "onNotificationRemoved: " + sbn);
-            if (sbn != null && !onPluginNotificationRemoved(sbn, rankingMap)) {
-                final String key = sbn.getKey();
-                mHandler.post(() -> removeNotification(key, rankingMap));
-            }
-        }
+                @Override
+                public void onNotificationRankingUpdate(final RankingMap rankingMap) {
+                    if (DEBUG) Log.d(TAG, "onRankingUpdate");
+                    if (rankingMap != null) {
+                        RankingMap r = onPluginRankingUpdate(rankingMap);
+                        mHandler.post(() -> updateNotificationRanking(r));
+                    }
+                }
 
-        @Override
-        public void onNotificationRankingUpdate(final RankingMap rankingMap) {
-            if (DEBUG) Log.d(TAG, "onRankingUpdate");
-            if (rankingMap != null) {
-                RankingMap r = onPluginRankingUpdate(rankingMap);
-                mHandler.post(() -> updateNotificationRanking(r));
-            }
-        }
-
-    };
+            };
 
     private void updateCurrentProfilesCache() {
         synchronized (mCurrentProfiles) {
@@ -7568,7 +7519,7 @@ public class StatusBar extends SystemUI implements DemoMode,
             }
             stack.push((ExpandableNotificationRow) child);
         }
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             ExpandableNotificationRow row = stack.pop();
             NotificationData.Entry entry = row.getEntry();
             boolean isChildNotification =
