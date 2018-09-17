@@ -19,8 +19,7 @@ import com.android.systemui.startupmenu.bean.AppInfo;
 import com.android.systemui.startupmenu.listener.OnMenuClick;
 import com.android.systemui.startupmenu.utils.AppOperateManager;
 
-public class TaskBarIcon extends FrameLayout
-        implements View.OnClickListener, View.OnTouchListener,
+public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
         View.OnLongClickListener, OnMenuClick, View.OnHoverListener {
 
     private static MenuDialog mMenuDialog;
@@ -59,7 +58,6 @@ public class TaskBarIcon extends FrameLayout
     }
 
     private void initListener() {
-        setOnClickListener(this);
         setOnLongClickListener(this);
         setOnTouchListener(this);
         setOnHoverListener(this);
@@ -74,12 +72,10 @@ public class TaskBarIcon extends FrameLayout
     }
 
     @Override
-    public void onClick(View v) {
-        startRun();
-    }
-
-    @Override
     public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            startRun();
+        }
         return false;
     }
 

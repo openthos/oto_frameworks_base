@@ -119,21 +119,39 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initListener() {
-        mStartupMenu.setOnClickListener(mOpenthosStatusbarListener);
-        mInputView.setOnClickListener(mOpenthosStatusbarListener);
-        mBatteryView.setOnClickListener(mOpenthosStatusbarListener);
-        mWifiView.setOnClickListener(mOpenthosStatusbarListener);
-        mVolumeView.setOnClickListener(mOpenthosStatusbarListener);
-        mNotificationView.setOnClickListener(mOpenthosStatusbarListener);
-        mCalendarView.setOnClickListener(mOpenthosStatusbarListener);
-        mHomeView.setOnClickListener(mOpenthosStatusbarListener);
-        mEmptyStatusBar.setOnClickListener(mOpenthosStatusbarListener);
+        mStartupMenu.setOnTouchListener(mTouchListener);
+        mInputView.setOnTouchListener(mTouchListener);
+        mBatteryView.setOnTouchListener(mTouchListener);
+        mWifiView.setOnTouchListener(mTouchListener);
+        mVolumeView.setOnTouchListener(mTouchListener);
+        mNotificationView.setOnTouchListener(mTouchListener);
+        mCalendarView.setOnTouchListener(mTouchListener);
+        mHomeView.setOnTouchListener(mTouchListener);
+        mEmptyStatusBar.setOnTouchListener(mTouchListener);
 //        mLlScrollContents.setOnClickListener(mOpenthosStatusbarListener);
+
+	mInputView.setOnHoverListener(mHoverListener);
+	mBatteryView.setOnHoverListener(mHoverListener);
+	mWifiView.setOnHoverListener(mHoverListener);
+	mVolumeView.setOnHoverListener(mHoverListener);
+	mNotificationView.setOnHoverListener(mHoverListener);
+	mCalendarView.setOnHoverListener(mHoverListener);
     }
 
-    private View.OnClickListener mOpenthosStatusbarListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    private View.OnHoverListener mHoverListener = (View v, MotionEvent event) -> {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+                v.setBackground(getResources().getDrawable(R.color.common_hover_bg));
+                break;
+            case MotionEvent.ACTION_HOVER_EXIT:
+                v.setBackground(getResources().getDrawable(R.drawable.system_bar_background));
+                break;
+        }
+        return false;
+    };
+
+    private View.OnTouchListener mTouchListener = (View v, MotionEvent event) -> {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             switch (v.getId()) {
                 case R.id.iv_startupmenu_status_bar:
                     showDialog(mStartupMenu, mStartupMenuDialog);
@@ -177,6 +195,7 @@ public class OpenthosStatusBarView extends PanelBar {
                     break;
             }
         }
+        return false;
     };
 
     public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
