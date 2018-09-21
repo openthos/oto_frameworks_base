@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
+import static android.app.ActivityManager.StackId.FREEFORM_WORKSPACE_STACK_ID;
 import static android.content.pm.ActivityInfo.RESIZE_MODE_FORCE_RESIZABLE_LANDSCAPE_ONLY;
 import static android.content.pm.ActivityInfo.RESIZE_MODE_FORCE_RESIZABLE_PORTRAIT_ONLY;
 import android.content.pm.ActivityInfo;
@@ -181,8 +182,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                          new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mRotate.setVisibility((isTaskDocked() || !canResizeOrientation()) ? GONE : VISIBLE);
-                mRotate.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                mRotate.setVisibility(updateRotateState() ? VISIBLE : GONE );
             }
         });
     }
@@ -305,7 +305,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
      */
     public void onConfigurationChanged(boolean show) {
         mShow = show;
-        mRotate.setVisibility((getStackId() == 1 || !canResizeOrientation()) ? GONE : VISIBLE);
+        mRotate.setVisibility(updateRotateState() ? VISIBLE : GONE );
         updateCaptionVisibility();
     }
 
@@ -510,6 +510,11 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
 
     public View getCaption() {
         return mCaption;
+    }
+
+    private boolean updateRotateState() {
+        return !isTaskDocked() && canResizeOrientation()
+                    && getStackId() == FREEFORM_WORKSPACE_STACK_ID;
     }
 
     @Override
