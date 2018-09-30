@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ComponentName;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.os.PowerManager;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +17,7 @@ import android.widget.LinearLayout;
 import android.util.Log;
 import java.lang.reflect.Method;
 
+import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.LockReceiver;
 import com.android.systemui.R;
 
@@ -26,11 +29,15 @@ public class PowerSourceActivity extends Activity implements View.OnClickListene
     private LinearLayout mPowerLock;
     private LinearLayout mPowerRestart;
     private ImageView mPowerClose;
+    private IStatusBarService mBarService;
 
     @Override
     protected void onCreate(Bundle context) {
         super.onCreate(context);
         setContentView(R.layout.activity_power_source);
+
+        mBarService = IStatusBarService.Stub.asInterface(
+                ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
         initView();
         initListener();
@@ -147,9 +154,11 @@ public class PowerSourceActivity extends Activity implements View.OnClickListene
                 finish();
                 break;
             case R.id.power_restart:
-                PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-                pm.reboot("true");
-                //Runtime.getRuntime().exec("su -c \"/system/bin/reboot\"");
+                try {
+                    mBarService.reboot(false);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.power_lock:
                 DevicePolicyManager mDevicePolicyManager = (DevicePolicyManager)
