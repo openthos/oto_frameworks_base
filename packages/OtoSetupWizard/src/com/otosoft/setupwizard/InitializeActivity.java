@@ -148,7 +148,7 @@ public class InitializeActivity extends BaseActivity {
 
     private void startActivity() {
         Intent intent = new Intent();
-        intent.setAction("com.android.wizard.STARTUSE");
+        intent.setAction("com.android.wizard.FINISH");
         startActivity(intent);
     }
 

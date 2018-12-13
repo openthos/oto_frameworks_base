@@ -76,7 +76,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                         Intent intent = new Intent();
-                        intent.setAction("com.android.wizard.FINISH");
+                        intent.setAction("com.android.wizard.STARTUSE");
                         startActivity(intent);
                         break;
                     case MSG_LOGIN_SEAFILE_FAILED:
@@ -124,7 +124,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
         this.mSkip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setAction("com.android.wizard.FINISH");
+                intent.setAction("com.android.wizard.STARTUSE");
                 startActivity(intent);
             }
         });

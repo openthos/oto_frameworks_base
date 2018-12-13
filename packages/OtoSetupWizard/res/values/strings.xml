@@ -18,6 +18,7 @@
     <string name="str_screen_password">Screen Password</string>
     <string name="str_screen_password_confirm">Password confirm</string>
     <string name="title_openthos_finish">Openthos complete all configuration</string>
+    <string name="title_open_recoverui">OpenthosID is logged in, do you want to recover datas from backups of cloud services?</string>
     <string name="str_start_use">Start</string>
     <string name="common_title">setting your openthos</string>
     <string name="language_chinese">中文（简体）</string>

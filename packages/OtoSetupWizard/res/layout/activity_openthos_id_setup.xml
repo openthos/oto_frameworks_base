@@ -92,6 +92,7 @@
                 style="@style/common_button_style"
                 android:textColor="#888888"
                 android:text="@string/str_prev"
+                android:visibility="invisible"
                 android:layout_marginLeft="16dp"/>
             <TextView
                 android:id="@+id/tv_register"

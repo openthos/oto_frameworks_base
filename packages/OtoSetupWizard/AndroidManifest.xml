@@ -37,7 +37,7 @@
                 android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-                <action android:name="com.android.wizard.FINISH"/>
+                <action android:name="com.android.wizard.NEXT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -57,7 +57,7 @@
                 android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-                <action android:name="com.android.wizard.NEXT"/>
+                <action android:name="com.android.wizard.FINISH"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
