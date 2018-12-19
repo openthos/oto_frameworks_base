@@ -81,4 +81,5 @@
     <string name="multichoice_button_cancel">Cancel</string>
     <string name="restore_progress">Restoring</string>
     <string name="init_wallpaper">Init Wallpapers</string>
+    <string name="change_url">Change Server Url</string>
 </resources>

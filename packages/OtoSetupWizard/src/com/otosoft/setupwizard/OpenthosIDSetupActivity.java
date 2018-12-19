@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
     private EditText mEditTextPassword;
     private TextView mSkip;
     private TextView mRegister;
+    private Button mChangeUrl;
     private String openthosID;
     private String openthosEmail;
     private String password;
@@ -45,10 +47,11 @@ public class OpenthosIDSetupActivity extends BaseActivity {
 
         mPrev = (TextView) findViewById(R.id.tv_prev);
         mVerify = (TextView) findViewById(R.id.tv_verify);
-        this.mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
-        this.mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
+        mEditTextOpenthosID = (EditText) findViewById(R.id.edittext_openthos_id);
+        mEditTextPassword = (EditText) findViewById(R.id.edittext_openthos_password);
         mSkip = (TextView) findViewById(R.id.tv_skip);
         mRegister = (TextView) findViewById(R.id.tv_register);
+        mChangeUrl = (Button) findViewById(R.id.change_url);
 
         mCM = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -121,7 +124,7 @@ public class OpenthosIDSetupActivity extends BaseActivity {
                 OpenthosIDSetupActivity.this.onBackPressed();
             }
         });
-        this.mSkip.setOnClickListener(new OnClickListener() {
+        mSkip.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction("com.android.wizard.STARTUSE");
@@ -129,13 +132,25 @@ public class OpenthosIDSetupActivity extends BaseActivity {
             }
         });
 
-        this.mRegister.setOnClickListener(new OnClickListener() {
+        mRegister.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction("com.android.wizard.REGISTER");
                 startActivity(intent);
             }
         });
+
+        mChangeUrl.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                iSeafileService = ((SetupWizardApplication) getApplication()).mISeafileService;
+                try {
+                    iSeafileService.changeUrl();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
     }
 
     public void onResume() {

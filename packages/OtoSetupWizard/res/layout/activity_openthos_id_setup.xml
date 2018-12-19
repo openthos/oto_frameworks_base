@@ -14,42 +14,51 @@
             android:id="@+id/title"
             layout="@layout/common_title"/>
 
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="104dp"
-           android:background="#259b24"
-           android:orientation="vertical">
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="70dp"
-               android:textColor="#ffffff"
-               android:textSize="28sp"
-               android:paddingLeft="76dp"
-               android:paddingTop="20dp"
-               android:text="@string/verify_openthos_title"/>
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="5dp"/>
-           <TextView
-               android:layout_width="match_parent"
-               android:layout_height="32dp"
-               android:textColor="#ffffff"
-               android:textSize="12sp"
-               android:paddingLeft="72dp"
-               android:paddingBottom="13dp"
-               android:text="@string/verify_openthos_summary"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="104dp"
+            android:background="#259b24"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:textColor="#ffffff"
+                android:textSize="28sp"
+                android:paddingLeft="76dp"
+                android:paddingTop="20dp"
+                android:text="@string/verify_openthos_title"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="5dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                android:paddingLeft="72dp"
+                android:paddingBottom="13dp"
+                android:text="@string/verify_openthos_summary"/>
 
-       </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="361dp"
             android:background="#FFFFFF"
             android:orientation="vertical">
 
-            <LinearLayout
+            <Button
+                android:id="@+id/change_url"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:layout_marginTop="16dp"
+                android:padding="5dp"
+                android:text="@string/change_url"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
                 android:orientation="horizontal">
                 <TextView
                     style="@style/common_textview_style"

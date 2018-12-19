@@ -75,4 +75,5 @@
     <string name="multichoice_button_cancel">取消</string>
     <string name="restore_progress">正在还原</string>
     <string name="init_wallpaper">正在初始化壁纸</string>
+    <string name="change_url">更换服务器地址</string>
 </resources>
