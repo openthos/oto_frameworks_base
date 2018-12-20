@@ -1327,6 +1327,7 @@ public final class ActivityManagerService extends ActivityManagerNative
 
     final ServiceThread mHandlerThread;
     final MainHandler mHandler;
+    private DisplayMetrics mMetrics;
 
     final class MainHandler extends Handler {
         public MainHandler(Looper looper) {
@@ -2100,6 +2101,7 @@ public final class ActivityManagerService extends ActivityManagerNative
                 android.os.Process.THREAD_PRIORITY_FOREGROUND, false /*allowIo*/);
         mHandlerThread.start();
         mHandler = new MainHandler(mHandlerThread.getLooper());
+        mMetrics = mContext.getResources().getDisplayMetrics();
 
         mFgBroadcastQueue = new BroadcastQueue(this, mHandler,
                 "foreground", BROADCAST_FG_TIMEOUT, false);
@@ -20125,10 +20127,9 @@ public final class ActivityManagerService extends ActivityManagerNative
     }
 
     public boolean isValidRect(Rect rect) {
-        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
         return rect.right > DRAG_POS_OFFSET
-                    && rect.left < metrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
-                    && rect.top < metrics.getHeightPixelsFullScreen() - DRAG_POS_OFFSET;
+                    && rect.left < mMetrics.getWidthPixelsFullScreen() - DRAG_POS_OFFSET
+                    && rect.top < mMetrics.getHeightPixelsFullScreen() - DRAG_POS_OFFSET;
     }
 
     private void recordValidRect(int stackId) {
@@ -20143,8 +20144,8 @@ public final class ActivityManagerService extends ActivityManagerNative
                        && !activityRecord.packageName.equals(
                                       ApplicationInfo.APPNAME_ANDROID_SETTINGS)) {
                     final long token = Binder.clearCallingIdentity();
-                    Settings.Global.putRect(mContext.getContentResolver(),
-                                                    activityRecord.packageName, r);
+                    String key = activityRecord.packageName + "#" + mMetrics.widthPixels + mMetrics.heightPixels;
+                    Settings.Global.putRect(mContext.getContentResolver(), key, r);
                     Binder.restoreCallingIdentity(token);
                 }
             }

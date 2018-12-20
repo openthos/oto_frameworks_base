@@ -205,6 +205,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
     /** Short cut */
     WindowManagerService mWindowManager;
     DisplayManager mDisplayManager;
+    private DisplayMetrics mMetrics;
 
     /** Identifier counter for all ActivityStacks */
     private int mLastStackId = HOME_STACK_ID;
@@ -384,6 +385,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
             mDisplayManager =
                     (DisplayManager)mService.mContext.getSystemService(Context.DISPLAY_SERVICE);
             mDisplayManager.registerDisplayListener(this, null);
+            mMetrics = mWindowManager.getDisplayMetrics();
 
             Display[] displays = mDisplayManager.getDisplays();
             for (int displayNdx = displays.length - 1; displayNdx >= 0; --displayNdx) {
@@ -1759,17 +1761,18 @@ public final class ActivityStackSupervisor implements DisplayListener {
 
         // run phone mode
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PHONE_MODE) != 0) {
-            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
+            return mMetrics.getDefaultFrameRect(true);
         }
 
         //run pc mode
         if ((intentFlags & Intent.FLAG_ACTIVITY_RUN_PC_MODE) != 0) {
-            return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+            return mMetrics.getDefaultFrameRect(false);
         }
 
         //resume recorded rect
+        String key = pkgName + "#" + mMetrics.widthPixels + mMetrics.heightPixels;
         Rect rect = Settings.Global.getRect(
-                          mService.mContext.getContentResolver(), pkgName, null);
+                          mService.mContext.getContentResolver(), key, null);
         if (rect != null && mService.isValidRect(rect)) {
             return rect;
         }
@@ -1783,16 +1786,15 @@ public final class ActivityStackSupervisor implements DisplayListener {
                            logicalWidth, mActivityDisplays.get(displayId).mDisplayInfo.
                            logicalHeight - mWindowManager.getStatusBarHeight());
                 } else {
-                    return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
+                    return mMetrics.getDefaultFrameRect(
                                   !ApplicationInfo.isDesktopStyleWindow(pkgName));
                 }
             case ApplicationInfo.PHONE_STARTUP_MODE:
-                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(true);
+                return mMetrics.getDefaultFrameRect(true);
             case ApplicationInfo.DESKTOP_STARTUP_MODE:
-                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(false);
+                return mMetrics.getDefaultFrameRect(false);
             default:
-                return mWindowManager.getDisplayMetrics().getDefaultFrameRect(
-                           !ApplicationInfo.isDesktopStyleWindow(pkgName));
+                return mMetrics.getDefaultFrameRect(!ApplicationInfo.isDesktopStyleWindow(pkgName));
         }
     }
 
@@ -2877,7 +2879,6 @@ public final class ActivityStackSupervisor implements DisplayListener {
     ActivityStack getUpdateStack(){
         int numDisplays = mActivityDisplays.size();
         Rect bounds = new Rect();
-        DisplayMetrics metrics = mWindowManager.getDisplayMetrics();
         for (int displayNdx = 0; displayNdx < numDisplays; ++displayNdx) {
             ArrayList<ActivityStack> stacks = mActivityDisplays.valueAt(displayNdx).mStacks;
             if ((stacks != null) && (stacks.size() > 0)) {
@@ -2886,7 +2887,7 @@ public final class ActivityStackSupervisor implements DisplayListener {
                     int stackId = stack.getStackId();
                     if (stackId != HOME_STACK_ID) {
                         mWindowManager.getStackBounds(stackId, bounds);
-                        if(bounds.left < metrics.widthPixels && bounds.top < metrics.heightPixels) {
+                        if(bounds.left < mMetrics.widthPixels && bounds.top < mMetrics.heightPixels) {
                             return stack;
                         }
                     }
