@@ -347,6 +347,8 @@ public class NotificationStackScrollLayout extends ViewGroup
         clampScrollPosition();
         requestAnimationOnViewResize();
         requestChildrenUpdate();
+        invalidateParentIfNeeded();
+        updateChildren();
     }
 
     private void requestAnimationOnViewResize() {
