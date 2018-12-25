@@ -1465,6 +1465,11 @@ public abstract class BaseStatusBar extends SystemUI implements
                 updateNotificationRanking(mRankingMap);
             }
         });
+        if (sbn.isClearable()) {
+            notificationItemDelete.setVisibility(View.VISIBLE);
+        } else {
+            notificationItemDelete.setVisibility(View.GONE);
+        }
 
         // NB: the large icon is now handled entirely by the template
 
