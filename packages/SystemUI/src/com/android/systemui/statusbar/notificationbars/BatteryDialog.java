@@ -85,11 +85,11 @@ public class BatteryDialog extends BaseSettingDialog
         } else if (charging || pluggedIn) {
               mBatteryPercentage.setVisibility(View.VISIBLE);
               mBatteryRemaining.setVisibility(View.GONE);
-              if (level == 100) {
-                  mBatteryPercentage.setText(R.string.battery_percent_full);
-              } else {
+              if (level < 100) {
                   mBatteryPercentage.setText(mContext.getResources().getString(
                           R.string.battery_percent, level) + "%");
+              } else {
+                  mBatteryPercentage.setText(R.string.battery_percent_full);
               }
         } else {
             mBatteryPercentage.setVisibility(View.VISIBLE);
