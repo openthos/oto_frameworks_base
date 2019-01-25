@@ -2568,8 +2568,9 @@ public final class PowerManagerService extends SystemService
         public void onReceive(Context context, Intent intent) {
             synchronized (mLock) {
                 int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-                boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                                     status == BatteryManager.BATTERY_STATUS_FULL;
+                boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
+                                        || status == BatteryManager.BATTERY_STATUS_FULL
+                                        || status == BatteryManager.BATTERY_STATUS_UNKNOWN;
                 int screenOffTime = Settings.System.getIntForUser(mContext.getContentResolver(),
                         isCharging ? Settings.System.SCREEN_OFF_TIMEOUT_CHARGING
                                    : Settings.System.SCREEN_OFF_TIMEOUT_UNCHARGE,
