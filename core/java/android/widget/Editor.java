@@ -3448,7 +3448,7 @@ public class Editor {
                         mLastParentY = parentPositionY;
                     }
 
-                    mActionPopupWindow.mContentView.setVisibility(View.GONE);
+                    onHandleMoved();
                 }
 
                 if (isVisible()) {
