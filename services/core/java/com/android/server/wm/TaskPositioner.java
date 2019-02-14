@@ -67,7 +67,7 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
 
     // The margin the pointer position has to be within the side of the screen to be
     // considered at the side of the screen.
-    static final int SIDE_MARGIN_DIP = 100;
+    static final int SIDE_MARGIN_DIP = 10;
 
     @IntDef(flag = true,
             value = {

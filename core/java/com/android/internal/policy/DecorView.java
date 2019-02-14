@@ -1930,7 +1930,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             return false;
         }
         int y = (int) event.getRawY();
-        if (y < 20 && !isShowingCaption()) {
+        if (y < 2 && !isShowingCaption()) {
             setCaptionVisiblity(true);
             return true;
         } else if (isShowingCaption() && (y > getCaptionHeight())) {
