@@ -23060,10 +23060,12 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      */
     public final boolean isTaskDocked() {
         if (ViewDebug.DEBUG_POSITIONING) Log.d(VIEW_LOG_TAG, "isTaskDocked");
-        try {
-            return mAttachInfo.mSession.isTaskDocked(mAttachInfo.mWindow);
-        } catch (RemoteException e) {
-            Log.e(VIEW_LOG_TAG, "Unable to ensure Task isDocked", e);
+        if (mAttachInfo != null) {
+            try {
+                return mAttachInfo.mSession.isTaskDocked(mAttachInfo.mWindow);
+            } catch (RemoteException e) {
+                Log.e(VIEW_LOG_TAG, "Unable to ensure Task isDocked", e);
+            }
         }
         return false;
     }
