@@ -901,5 +901,5 @@
     <dimen name="padding_twenty">20dp</dimen>
     <dimen name="padding_thirty">30dp</dimen>
     <dimen name="padding_fifty">50dp</dimen>
-
+    <dimen name="size_fiftyfive">55dp</dimen>
 </resources>

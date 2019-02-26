@@ -62,6 +62,7 @@ import com.android.systemui.recents.misc.SystemServicesProxy;
 import com.android.systemui.recents.model.RecentsTaskLoader;
 import com.android.systemui.stackdivider.Divider;
 import com.android.systemui.statusbar.CommandQueue;
+import com.android.systemui.recents.taskview.TaskViewDialog;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -112,6 +113,7 @@ public class Recents extends SystemUI
     private Handler mHandler;
     private RecentsImpl mImpl;
     private int mDraggingInRecentsCurrentUser;
+    private TaskViewDialog mTaskViewDialog;;
 
     // Only For system user, this is the callbacks instance we return to each secondary user
     private RecentsSystemUser mSystemToUserCallbacks;
@@ -207,6 +209,7 @@ public class Recents extends SystemUI
         sTaskLoader = new RecentsTaskLoader(mContext);
         mHandler = new Handler();
         mImpl = new RecentsImpl(mContext);
+        mTaskViewDialog = TaskViewDialog.getInstance(mContext);
 
         // Check if there is a recents override package
         if (Build.IS_USERDEBUG || Build.IS_ENG) {
@@ -250,40 +253,8 @@ public class Recents extends SystemUI
     public void showRecentApps(boolean triggeredFromAltTab, boolean fromHome) {
         // Ensure the device has been provisioned before allowing the user to interact with
         // recents
-        if (!isUserSetup()) {
-            return;
-        }
-
-        if (proxyToOverridePackage(ACTION_SHOW_RECENTS)) {
-            return;
-        }
-        try {
-            ActivityManager.getService().closeSystemDialogs(SYSTEM_DIALOG_REASON_RECENT_APPS);
-        } catch (RemoteException e) {
-        }
-
-        int recentsGrowTarget = getComponent(Divider.class).getView().growsRecents();
-
-        int currentUser = sSystemServicesProxy.getCurrentUser();
-        if (sSystemServicesProxy.isSystemUser(currentUser)) {
-            mImpl.showRecents(triggeredFromAltTab, false /* draggingInRecents */,
-                    true /* animate */, false /* reloadTasks */, fromHome, recentsGrowTarget);
-        } else {
-            if (mSystemToUserCallbacks != null) {
-                IRecentsNonSystemUserCallbacks callbacks =
-                        mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
-                if (callbacks != null) {
-                    try {
-                        callbacks.showRecents(triggeredFromAltTab, false /* draggingInRecents */,
-                                true /* animate */, false /* reloadTasks */, fromHome,
-                                recentsGrowTarget);
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Callback failed", e);
-                    }
-                } else {
-                    Log.e(TAG, "No SystemUI callbacks found for user: " + currentUser);
-                }
-            }
+        if (mTaskViewDialog != null) {
+            mTaskViewDialog.showOrTabTaskView();
         }
     }
 
@@ -294,31 +265,8 @@ public class Recents extends SystemUI
     public void hideRecentApps(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
         // Ensure the device has been provisioned before allowing the user to interact with
         // recents
-        if (!isUserSetup()) {
-            return;
-        }
-
-        if (proxyToOverridePackage(ACTION_HIDE_RECENTS)) {
-            return;
-        }
-
-        int currentUser = sSystemServicesProxy.getCurrentUser();
-        if (sSystemServicesProxy.isSystemUser(currentUser)) {
-            mImpl.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
-        } else {
-            if (mSystemToUserCallbacks != null) {
-                IRecentsNonSystemUserCallbacks callbacks =
-                        mSystemToUserCallbacks.getNonSystemUserRecentsForUser(currentUser);
-                if (callbacks != null) {
-                    try {
-                        callbacks.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
-                    } catch (RemoteException e) {
-                        Log.e(TAG, "Callback failed", e);
-                    }
-                } else {
-                    Log.e(TAG, "No SystemUI callbacks found for user: " + currentUser);
-                }
-            }
+        if (mTaskViewDialog != null) {
+            mTaskViewDialog.hideTaskView();
         }
     }
 

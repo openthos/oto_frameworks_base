@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="@dimen/start_row_item_width"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/recents_freeform_layout_task_padding"
+        android:padding="@dimen/padding_five"
+        android:layout_gravity="center_horizontal|top"
+        android:background="@drawable/taskview_item_bg_normal"
+        android:id="@+id/linearLayoutItem">
+
+        <ImageView
+            android:layout_width="@dimen/size_fiftyfive"
+            android:layout_height="@dimen/size_fiftyfive"
+            android:id="@+id/imageView"
+            android:scaleType="fitXY"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center">
+
+        <TextView
+            android:layout_width="@dimen/size_fiftyfive"
+            android:layout_height="match_parent"
+            android:text="@string/app_name"
+            android:id="@+id/title"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/common_text_size"
+            android:textColor="#ffffff"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textAlignment="center" />
+    </LinearLayout>
+</LinearLayout>
