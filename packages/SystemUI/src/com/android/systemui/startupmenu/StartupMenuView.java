@@ -452,7 +452,7 @@ public class StartupMenuView extends FrameLayout
 
     private OnMenuClick mOnMenuClick = new OnMenuClick() {
         @Override
-        public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu) {
+        public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu, int taskId) {
             if (menu.equals(getContext().getString(R.string.open))) {
                 mOperateManager.openApplication(appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.phone_mode))) {
@@ -460,9 +460,10 @@ public class StartupMenuView extends FrameLayout
             } else if (menu.equals(getContext().getString(R.string.desktop_mode))) {
                 mOperateManager.runDesktopMode(appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {
-                mOperateManager.addToTaskbar(appInfo.getPackageName());
+                mOperateManager.addToTaskbar(-1, appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.unlock_from_task_bar))) {
-                mOperateManager.removeFromTaskbar(appInfo.getPackageName());
+                mOperateManager.removeFromTaskbar(appInfo.getComponentName());
+                appInfo.setLocked(false);
             } else if (menu.equals(getContext().getString(R.string.remove_from_list))) {
                 removeApplicaton(appInfo);
             } else if (menu.equals(getContext().getString(R.string.uninstall))) {

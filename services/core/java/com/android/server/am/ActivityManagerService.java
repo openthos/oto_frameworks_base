@@ -4978,11 +4978,11 @@ public class ActivityManagerService extends IActivityManager.Stub
         return ret;
     }
 
-    public void removeTaskIcon(int taskId) {
+    public void removeTaskIcon(int taskId, ComponentName cp) {
         StatusBarManagerInternal statusBarManager =
                            LocalServices.getService(StatusBarManagerInternal.class);
         if (statusBarManager != null) {
-            statusBarManager.changeStatusBarIcon(taskId, null, false);
+            statusBarManager.changeStatusBarIcon(taskId, cp, false);
         }
     }
 

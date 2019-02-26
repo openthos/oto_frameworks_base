@@ -65,7 +65,7 @@ public class BaseDialog extends Dialog {
             mContentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         }
         Window dialogWindow = getWindow();
-        dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialogWindow.setType(WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG);
         dialogWindow.setWindowAnimations(R.style.ShowDialog);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.format = PixelFormat.TRANSPARENT;

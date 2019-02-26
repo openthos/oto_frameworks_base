@@ -1,5 +1,7 @@
 package com.android.systemui.dialog;
 
+import android.app.ActivityManager;
+import android.app.IActivityManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
@@ -23,13 +25,16 @@ import com.android.systemui.statusbar.phone.StatusBar;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashSet;
 
 public class MenuDialog extends BaseDialog {
     private List<String> mDatas;
+    private HashSet<Integer> mTasks;
     private DialogAdapter mAdapter;
     private ListView mListView;
     private AppInfo mAppInfo;
     private OnMenuClick mOnMenuClick;
+    private int mTaskId;
     private int mWidth;
     private int mHeight;
     private StatusBar mStatusBar;
@@ -85,6 +90,22 @@ public class MenuDialog extends BaseDialog {
         mDialogType = type;
         mAppInfo = appInfo;
         show(type, x, y);
+    }
+
+    public void show(DialogType type, AppInfo appInfo, View view, int taskId) {
+        mDialogType = type;
+        mAppInfo = appInfo;
+        prepareData();
+        mTaskId = taskId;
+        show(view);
+    }
+
+    public void show(DialogType type, AppInfo appInfo, View view, HashSet<Integer> tasks) {
+        mDialogType = type;
+        mAppInfo = appInfo;
+        mTasks = tasks;
+        prepareData();
+        show(view);
     }
 
     public void show(DialogType type, AppInfo appInfo, View view) {
@@ -172,6 +193,12 @@ public class MenuDialog extends BaseDialog {
             case NOTIFY_NAME:
                 sArr = new String[]{mAppInfo.getLabel()};
                 break;
+            case SELECT_TASK:
+                sArr = new String[mTasks.size()];
+                for (int i = 0; i < mTasks.size(); i++) {
+                    sArr[i] = String.valueOf((int) mTasks.toArray()[i]);
+                }
+                break;
         }
         mDatas.addAll(Arrays.asList(sArr));
         mAdapter.notifyDataSetChanged();
@@ -224,12 +251,27 @@ public class MenuDialog extends BaseDialog {
                 convertView.setTag(holder);
                 holder.text.setOnHoverListener(mHoverListener);
                 holder.text.setOnClickListener(mClickListener);
+                holder.text.setOnTouchListener(mTouchListener);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.text.setText(getItem(position));
             return convertView;
         }
+
+        private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent e) {
+                if (mDialogType == DialogType.SELECT_TASK
+                        && e.getAction() == MotionEvent.ACTION_DOWN
+                        && e.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
+                    mOnMenuClick.menuClick(v, MenuDialog.this,
+                            mAppInfo, ((TextView) v).getText().toString(), -3);
+                    return true;
+                }
+                return false;
+            }
+        };
 
         private View.OnClickListener mClickListener = new View.OnClickListener() {
             @Override
@@ -238,9 +280,12 @@ public class MenuDialog extends BaseDialog {
                     if (mDialogType == DialogType.SORT) {
                         mOnMenuClick.sortShow(v, MenuDialog.this,
                                 ((TextView) v).getText().toString());
+                    } else if (mDialogType == DialogType.SELECT_TASK) {
+                        mOnMenuClick.menuClick(v, MenuDialog.this,
+                                mAppInfo, ((TextView) v).getText().toString(), -2);
                     } else {
                         mOnMenuClick.menuClick(v, MenuDialog.this,
-                                mAppInfo, ((TextView) v).getText().toString());
+                                mAppInfo, ((TextView) v).getText().toString(), mTaskId);
                     }
                 }
             }

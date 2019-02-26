@@ -113,8 +113,7 @@ public class LaunchAppUtil {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ActivityOptions options = ActivityOptions.makeBasic();
             try {
-                Method method = ActivityOptions.class.getMethod("setLaunchStackId", int.class);
-                method.invoke(options, FREEFORM_WORKSPACE_STACK_ID);
+                options.setLaunchStackId(FREEFORM_WORKSPACE_STACK_ID);
                 DisplayMetrics metrics = getRealDisplayMetrics(context);
                 int width1, width2, height1, height2;
                 switch (startMode) {

@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.IActivityManager;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,26 +21,46 @@ import com.android.systemui.startupmenu.bean.AppInfo;
 import com.android.systemui.startupmenu.listener.OnMenuClick;
 import com.android.systemui.startupmenu.utils.AppOperateManager;
 
-public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
-        View.OnLongClickListener, OnMenuClick, View.OnHoverListener {
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
+
+public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Serializable,
+        View.OnLongClickListener, View.OnClickListener, OnMenuClick, View.OnHoverListener {
 
     private static MenuDialog mMenuDialog;
-    private MenuDialog mHoverDialog;
+    private static MenuDialog mHoverDialog;
+    private static MenuDialog mTaskDialog;
     private AppOperateManager mOperateManager;
     private SqliteOpenHelper mOpenHelper;
     private ImageView mIconView;
     private View mFocuseView;
     private View mRunView;
+    private AppInfo mAppInfo;
+    private HashSet<Integer> mTasks = new HashSet<>();
 
     private String mPackageName;
+    private ComponentName mComponentName;
     private boolean mIsFocusInApplications;
     private boolean mIsRun;
     private int mTaskId;
+    private Rect mTmpRect = new Rect();
 
-    public TaskBarIcon(Context context, String packageName) {
+    public TaskBarIcon(Context context, ComponentName componentName, AppInfo appInfo) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.taskbar_button_layout, this);
-        mPackageName = packageName;
+        mComponentName = componentName;
+        mPackageName = componentName.getPackageName();
+        mAppInfo = appInfo;
+        initView();
+        initData();
+        initListener();
+    }
+    public TaskBarIcon(Context context, ComponentName componentName) {
+        super(context);
+        LayoutInflater.from(context).inflate(R.layout.taskbar_button_layout, this);
+        mComponentName = componentName;
+        mPackageName = componentName.getPackageName();
         initView();
         initData();
         initListener();
@@ -51,38 +73,63 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
     }
 
     private void initData() {
-        mOperateManager = AppOperateManager.getInstance(getContext());
-        mOpenHelper = SqliteOpenHelper.getInstance(getContext());
-        mIconView.setImageDrawable(getAppInfo().getIcon());
-        initDialog();
+        try {
+            mOperateManager = AppOperateManager.getInstance(getContext());
+            mOpenHelper = SqliteOpenHelper.getInstance(getContext());
+            mIconView.setImageDrawable(getContext().getPackageManager().
+                    getApplicationIcon(getAppInfo().getPackageName()));
+            initDialog();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initListener() {
         setOnLongClickListener(this);
         setOnTouchListener(this);
+        setOnClickListener(this);
         setOnHoverListener(this);
     }
 
     private void initDialog() {
         if (mMenuDialog == null) {
             mMenuDialog = new MenuDialog(getContext());
-            mMenuDialog.setOnMenuClick(this);
         }
-        mHoverDialog = new MenuDialog(getContext());
+        if (mHoverDialog == null) {
+            mHoverDialog = new MenuDialog(getContext());
+        }
+        if (mTaskDialog == null) {
+            mTaskDialog = new MenuDialog(getContext());
+        }
+        mMenuDialog.setOnMenuClick(this);
+        mTaskDialog.setOnMenuClick(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        startRun();
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            startRun();
+        if (event.getAction() == MotionEvent.ACTION_DOWN
+            && event.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
+            //startRun();
+            showDialog();
         }
+        mHoverDialog.dismiss();
         return false;
     }
 
     @Override
     public boolean onLongClick(View v) {
         showDialog();
-        return true;
+        return false;
+    }
+
+    public static void dismissHoverDialog() {
+        if (mHoverDialog.isShowing())
+            mHoverDialog.dismiss();
     }
 
     @Override
@@ -94,14 +141,16 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
                 }
                 break;
             case MotionEvent.ACTION_HOVER_EXIT:
-                mHoverDialog.dismiss();
+                ((View)getParent()).getBoundsOnScreen(mTmpRect);
+                if (!mTmpRect.contains((int) event.getRawX(), (int) event.getRawY()))
+                    mHoverDialog.dismiss();
                 break;
         }
         return false;
     }
 
     @Override
-    public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu) {
+    public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu, int taskId) {
         if (menu.equals(getContext().getString(R.string.open))) {
             mOperateManager.openApplication(appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.phone_mode))) {
@@ -109,12 +158,27 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
         } else if (menu.equals(getContext().getString(R.string.desktop_mode))) {
             mOperateManager.runDesktopMode(appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {
-            mOperateManager.addToTaskbar(appInfo.getPackageName());
+            mOperateManager.addToTaskbar(taskId, appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.unlock_from_task_bar))) {
-            mOperateManager.removeFromTaskbar(appInfo.getPackageName());
+            mOperateManager.removeFromTaskbar(appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.close))) {
-            mOperateManager.closeApp(appInfo.getPackageName());
+            Integer[] it = mTasks.toArray(new Integer[0]);
+            for (int i : it) {
+                mOperateManager.closeApp(i, appInfo.getPackageName());
+            }
         }
+        if (taskId == -2) {
+            try {
+                IActivityManager am = ActivityManager.getService();
+                am.setFocusedTask(Integer.parseInt(menu));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (taskId == -3) {
+            mOperateManager.closeApp(Integer.parseInt(menu), appInfo.getPackageName());
+        }
+        mHoverDialog.dismiss();
         dialog.dismiss();
     }
 
@@ -124,12 +188,13 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
     }
 
     private void showDialog() {
+        mMenuDialog.setOnMenuClick(this);
         if (!isRun()) {
-            mMenuDialog.show(DialogType.BAR_LOCK_CLOSE, getAppInfo(), this);
+            mMenuDialog.show(DialogType.BAR_LOCK_CLOSE, getAppInfo(), this, mTaskId);
         } else if (isLocked()) {
-            mMenuDialog.show(DialogType.BAR_LOCK_OPEN, getAppInfo(), this);
+            mMenuDialog.show(DialogType.BAR_LOCK_OPEN, getAppInfo(), this, mTaskId);
         } else {
-            mMenuDialog.show(DialogType.BAR_UNLOCK_OPEN, getAppInfo(), this);
+            mMenuDialog.show(DialogType.BAR_UNLOCK_OPEN, getAppInfo(), this, mTaskId);
         }
     }
 
@@ -147,11 +212,15 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
         try {
             IActivityManager am = ActivityManager.getService();
             if (isRun()) {
-                am.setFocusedTask(mTaskId);
+                if (mTasks.size() > 1) {
+                    mTaskDialog.show(DialogType.SELECT_TASK, getAppInfo(), this, mTasks);
+                } else {
+                    am.setFocusedTask(mTasks.iterator().next());
+                }
             } else {
-                mOperateManager.openApplication(getAppInfo().getComponentName());
+                mOperateManager.openApplication(mComponentName/*getAppInfo().getComponentName()*/);
             }
-            setFocusInApplications(true);
+            //setFocusInApplications(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,11 +231,15 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
     }
 
     public AppInfo getAppInfo() {
-        return mOperateManager.getAppInfo(mPackageName);
+        return mAppInfo != null ? mAppInfo : mOperateManager.getAppInfo(mPackageName);
     }
 
     public String getPackageName() {
         return mPackageName;
+    }
+
+    public ComponentName getComponentName() {
+        return mComponentName;
     }
 
     public boolean isLocked() {
@@ -215,6 +288,26 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener,
 
     public void setTaskId(int taskId) {
         mTaskId = taskId;
+        initDialog();
+    }
+
+    public boolean noRunTask() {
+        return mTasks.size() == 0;
+    }
+
+    public boolean containTask(int taskId) {
+        return mTasks.contains((Integer) taskId);
+    }
+
+    public void addTaskId(int taskId) {
+        mTasks.add(taskId);
+    }
+
+    public void closeTask(int taskId) {
+        mTasks.remove((Integer)taskId);
+        if (noRunTask()) {
+            close();
+        }
     }
 
     @Override

@@ -60,7 +60,12 @@ public class AppAdapter extends BaseAdapter {
         }
 
         AppInfo appInfo = mAppInfos.get(position);
-        holder.appIcon.setImageDrawable(appInfo.getIcon());
+        try {
+            holder.appIcon.setImageDrawable(
+                mContext.getPackageManager().getApplicationIcon(appInfo.getPackageName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         holder.tvAppLabel.setText(appInfo.getLabel());
         holder.layout.setTag(appInfo);
         return convertView;

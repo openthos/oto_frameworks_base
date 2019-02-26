@@ -67,6 +67,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.UserInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -256,14 +258,21 @@ import com.android.systemui.statusbar.view.TaskBarIcon;
 import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
+import com.android.systemui.startupmenu.SqliteOpenHelper;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -798,7 +807,9 @@ public class StatusBar extends SystemUI implements DemoMode,
     };
     private HashMap<ExpandableNotificationRow, List<ExpandableNotificationRow>> mTmpChildOrderMap
             = new HashMap<>();
-    private Map<String, TaskBarIcon> mShowIcons = new HashMap<>();
+    private HashMap<String, TaskBarIcon> mLockedIcons = new HashMap<>();
+    private LinkedHashMap<String, AppInfo> mLockedInfos = new LinkedHashMap<>();
+    private Map<String, TaskBarIcon> mRunIcons = new HashMap<>();
     private RankingMap mLatestRankingMap;
     private boolean mNoAnimationOnNextBarModeChange;
     private FalsingManager mFalsingManager;
@@ -3375,102 +3386,204 @@ public class StatusBar extends SystemUI implements DemoMode,
         return mFingerprintUnlockController;
     }
 
+    private String serialize(LinkedHashMap<String, AppInfo> appinfos) throws IOException {
+        long startTime = System.currentTimeMillis();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(appinfos);
+        String serStr = byteArrayOutputStream.toString("ISO-8859-1");
+        serStr = java.net.URLEncoder.encode(serStr, "UTF-8");
+        objectOutputStream.close();
+        byteArrayOutputStream.close();
+        long endTime = System.currentTimeMillis();
+        return serStr;
+    }
+
+    private LinkedHashMap<String, AppInfo> deSerialization(String str) throws IOException,
+            ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
+        String redStr = java.net.URLDecoder.decode(str, "UTF-8");
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                redStr.getBytes("ISO-8859-1"));
+        ObjectInputStream objectInputStream = new ObjectInputStream(
+                byteArrayInputStream);
+        LinkedHashMap<String, AppInfo> infos = (LinkedHashMap<String, AppInfo>) objectInputStream.readObject();
+        objectInputStream.close();
+        byteArrayInputStream.close();
+        long endTime = System.currentTimeMillis();
+        return infos;
+    }
+
+    void saveObject(String strObject) {
+        SharedPreferences sp = mContext.getSharedPreferences("lockedmap", 0);
+        Editor edit = sp.edit();
+        edit.putString("lockedmap", strObject);
+        edit.commit();
+    }
+
+    String getObject() {
+        SharedPreferences sp = mContext.getSharedPreferences("lockedmap", 0);
+        String re = sp.getString("lockedmap", null);
+        return re;
+    }
+
+
     private void initTaskbarIcons() {
-//        SqliteOpenHelper.getInstance(mContext).queryLockedApp(new DataCallback() {
-//            @Override
-//            public void callback(Map<String, AppInfo> appInfoMaps) {
-//                for (String packageName : appInfoMaps.keySet()) {
-//                    TaskBarButtonView buttonView =
-//                            new TaskBarButtonView(mContext, appInfoMaps.get(packageName));
-//                    mActivityLayout.addView(buttonView);
-//                    mShowIcons.put(packageName, buttonView);
-//                }
-//            }
-//        });
+        try {
+            for (AppInfo info : deSerialization(getObject()).values()) {
+                addToTaskbar(-1, info);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error during serialize", e);
+        }
     }
 
     @Override
     public void changeStatusBarIcon(int taskId, ComponentName componentName, boolean keep) {
         Log.i("StatusBar", "taskId " + taskId + " keep " + keep + " cmp" + componentName);
-        if (!keep || componentName == null) {
-            iconClose(taskId);
+        if (!keep) {
+            iconClose(taskId, componentName.getPackageName());
             return;
         }
         bindIconToTaskId(taskId, componentName);
     }
 
     public void bindIconToTaskId(int taskId, ComponentName componentName) {
-        if (!canAdd(componentName.getPackageName())) {
+        TaskBarIcon locked = mLockedIcons.get(componentName.getPackageName());
+        if (!canAdd(componentName.getPackageName()) && locked == null) {
             return;
         }
         if (mPrevTaskId != -1) {
-            for (TaskBarIcon buttonView : mShowIcons.values()) {
-                if (mPrevTaskId == buttonView.getTaskId()) {
+            for (TaskBarIcon buttonView : mRunIcons.values()) {
+                if (buttonView.containTask(mPrevTaskId)) {
                     buttonView.setFocusInApplications(false);
                 }
             }
         }
 
         String packageName = componentName.getPackageName();
-        TaskBarIcon buttonView = mShowIcons.get(packageName);
+        TaskBarIcon buttonView = mRunIcons.get(packageName);
         if (buttonView == null) {
-            buttonView = new TaskBarIcon(mContext, packageName);
-            mActivityLayout.addView(buttonView);
-            mShowIcons.put(packageName, buttonView);
+            buttonView = locked;
+            if (buttonView == null) {
+                buttonView = new TaskBarIcon(mContext, componentName);
+                mActivityLayout.addView(buttonView);
+            }
         }
 
-        buttonView.setTaskId(taskId);
+        mRunIcons.put(packageName, buttonView);
+        buttonView.addTaskId(taskId);
         buttonView.setFocusInApplications(true);
         mPrevTaskId = taskId;
     }
 
     private boolean canAdd(String packageName) {
-        AppInfo appInfo = AppOperateManager.getInstance(mContext).getAppInfo(packageName);
-        return appInfo != null && appInfo.getIcon() != null;
-    }
-
-    public void iconClose(int taskId) {
-        for (TaskBarIcon buttonView : mShowIcons.values()) {
-            if (taskId == buttonView.getTaskId()) {
-                if (!buttonView.isLocked()) {
-                    mActivityLayout.removeView(buttonView);
-                    mShowIcons.remove(buttonView.getPackageName());
-                } else {
-                    buttonView.close();
-                }
-                break;
-            }
+        try {
+            AppInfo appInfo = AppOperateManager.getInstance(mContext).getAppInfo(packageName);
+            PackageManager pm = mContext.getPackageManager();
+            Drawable icon = pm.getApplicationIcon(packageName);
+            return appInfo != null && icon != null;
+        } catch (Exception e) {
+            Log.e(TAG, "Error during add", e);
+            return false;
         }
     }
 
-    public void closeApp(String packageName) {
+    public void iconClose(int taskId, String packageName) {
+        TaskBarIcon buttonView = mRunIcons.get(packageName);
+        if (buttonView != null) {
+            buttonView.closeTask(taskId);
+            if (!buttonView.isLocked() && buttonView.noRunTask()) {
+                mActivityLayout.removeView(buttonView);
+                mRunIcons.remove(packageName);
+            }
+        } else {
+            Log.e(TAG, "taskid:" + taskId + " can't find icon to close");
+        }
+    }
+
+    public void closeApp(int taskId, String packageName) {
         try {
-            TaskBarIcon buttonView = mShowIcons.get(packageName);
+            TaskBarIcon buttonView = mRunIcons.get(packageName);
             if (buttonView != null) {
-                ActivityManager.getService().removeTask(buttonView.getTaskId());
+                ActivityManager.getService().removeTask(taskId);
+                iconClose(taskId, packageName);
+            } else {
+                Log.e(TAG, "taskId: " + taskId + " can't find running task");
             }
         } catch (Exception e) {
         }
     }
 
-    public void addToTaskbar(String packageName) {
-        TaskBarIcon buttonView = mShowIcons.get(packageName);
+    public void addToTaskbar(int taskId, AppInfo appInfo) {
+        ComponentName componentName = appInfo.getComponentName();
+        TaskBarIcon buttonView = mLockedIcons.get(componentName.getPackageName());
+        if (buttonView != null)
+            return;
+        buttonView = mRunIcons.get(componentName.getPackageName());
         if (buttonView == null) {
-            buttonView = new TaskBarIcon(mContext, packageName);
+            buttonView = new TaskBarIcon(mContext, componentName, appInfo);
             mActivityLayout.addView(buttonView);
-            mShowIcons.put(packageName, buttonView);
+        }
+        mLockedIcons.put(componentName.getPackageName(), buttonView);
+        mLockedInfos.put(componentName.getPackageName(), appInfo);
+        try {
+            saveObject(serialize(mLockedInfos));
+        } catch (Exception e) {
+            Log.e(TAG, "Error during serialize", e);
+        }
+        buttonView.locked();
+    }
+
+    public void addToTaskbar(int taskId, ComponentName componentName) {
+        AppInfo appInfo = AppOperateManager.getInstance(mContext).getAppInfo(componentName.getPackageName());
+        TaskBarIcon buttonView = mLockedIcons.get(componentName.getPackageName());
+        if (buttonView != null)
+            return;
+        buttonView = mRunIcons.get(componentName.getPackageName());
+        if (buttonView == null) {
+            buttonView = new TaskBarIcon(mContext, componentName);
+            mActivityLayout.addView(buttonView);
+        }
+        mLockedIcons.put(componentName.getPackageName(), buttonView);
+        mLockedInfos.put(componentName.getPackageName(), appInfo);
+        try {
+            saveObject(serialize(mLockedInfos));
+        } catch (Exception e) {
+            Log.e(TAG, "Error during serialize", e);
         }
         buttonView.locked();
     }
 
     public void removeFromTaskbar(String packageName) {
-        TaskBarIcon buttonView = mShowIcons.get(packageName);
+        for (TaskBarIcon buttonView : mLockedIcons.values()) {
+            if (buttonView.getPackageName().equals(packageName)) {
+                mActivityLayout.removeView(buttonView);
+                mLockedIcons.remove(packageName);
+                mLockedInfos.remove(packageName);
+                try {
+                    saveObject(serialize(mLockedInfos));
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during serialize", e);
+                }
+            }
+        }
+    }
+
+    public void removeFromTaskbar(ComponentName componentName) {
+        TaskBarIcon buttonView = mLockedIcons.get(componentName.getPackageName());
         if (buttonView != null) {
             if (!buttonView.isRun()) {
                 mActivityLayout.removeView(buttonView);
-                mShowIcons.remove(packageName);
             }
             buttonView.unlocked();
+            mLockedIcons.remove(componentName.getPackageName());
+            mLockedInfos.remove(componentName.getPackageName());
+            try {
+                saveObject(serialize(mLockedInfos));
+            } catch (Exception e) {
+                Log.e(TAG, "Error during serialize", e);
+            }
         }
     }
 

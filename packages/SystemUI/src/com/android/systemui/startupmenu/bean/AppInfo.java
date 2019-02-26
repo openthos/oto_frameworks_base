@@ -22,6 +22,7 @@ import android.os.Process;
 import android.os.UserManager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class AppInfo implements Serializable {
     static final long serialVersionUID = -3982172488299272068L;
@@ -29,12 +30,11 @@ public class AppInfo implements Serializable {
     private String label;
     private String packageName;
     private String activityName;
-    private ComponentName componentName;
     private Long userId;
     private Long installTime;
     private Long lastTimeUsed;
     private int useCounts;
-    private Drawable icon;
+    private ArrayList<Integer> mTasks = new ArrayList<>();
     private boolean isSystemApp;
     private boolean isLocked;
 
@@ -51,7 +51,6 @@ public class AppInfo implements Serializable {
     }
 
     public AppInfo(ComponentName componentName) {
-        this.componentName = componentName;
         this.packageName = componentName.getPackageName();
         this.activityName = componentName.getClassName();
     }
@@ -81,14 +80,13 @@ public class AppInfo implements Serializable {
     }
 
     public ComponentName getComponentName() {
-        if (componentName == null) {
-            componentName = new ComponentName(packageName, activityName);
-        }
+        ComponentName componentName = new ComponentName(packageName, activityName);
         return componentName;
     }
 
     public void setComponentName(ComponentName componentName) {
-        this.componentName = componentName;
+        packageName = componentName.getPackageName();
+        activityName = componentName.getClassName();
     }
 
     public Long getUserId(Context context) {
@@ -123,16 +121,16 @@ public class AppInfo implements Serializable {
         return useCounts;
     }
 
+    public int getTaskCount() {
+        return mTasks.size();
+    }
+
     public void setUseCounts(int useCounts) {
         this.useCounts = useCounts;
     }
 
-    public Drawable getIcon() {
-        return icon;
-    }
 
     public void setIcon(Drawable icon) {
-        this.icon = icon;
     }
 
     public boolean isSystemApp() {

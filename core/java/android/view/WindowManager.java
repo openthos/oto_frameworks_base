@@ -749,6 +749,8 @@ public interface WindowManager extends ViewManager {
          */
         public static final int TYPE_APPLICATION_OVERLAY = FIRST_SYSTEM_WINDOW + 38;
 
+        public static final int TYPE_STATUS_BAR_DIALOG = FIRST_SYSTEM_WINDOW + 39;
+
         /**
          * End of types of system windows.
          */
