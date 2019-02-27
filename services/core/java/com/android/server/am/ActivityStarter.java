@@ -1028,8 +1028,12 @@ class ActivityStarter {
 
         ActivityRecord reusedActivity = getReusableIntentActivity();
 
+        //final int preferredLaunchStackId =
+        //        (mOptions != null) ? mOptions.getLaunchStackId() : INVALID_STACK_ID;
         final int preferredLaunchStackId =
-                (mOptions != null) ? mOptions.getLaunchStackId() : INVALID_STACK_ID;
+                (mOptions != null) ? mOptions.getLaunchStackId() :
+                (sourceRecord != null ? sourceRecord.getTask().getStackId() :
+                                          FREEFORM_WORKSPACE_STACK_ID);
         final int preferredLaunchDisplayId =
                 (mOptions != null) ? mOptions.getLaunchDisplayId() : DEFAULT_DISPLAY;
 
@@ -2164,7 +2168,7 @@ class ActivityStarter {
         // If the activity is of a specific type, return the associated stack, creating it if
         // necessary
         if (r.isHomeActivity()) {
-            return mSupervisor.mHomeStack;
+            mLaunchBounds = new Rect(0, 0, 1920, 1008);
         }
         if (r.isRecentsActivity()) {
             return mSupervisor.getStack(RECENTS_STACK_ID, CREATE_IF_NEEDED, ON_TOP);
@@ -2275,7 +2279,8 @@ class ActivityStarter {
     }
 
     Rect getOverrideBounds(ActivityRecord r, ActivityOptions options, TaskRecord inTask) {
-        Rect newBounds = null;
+        Rect newBounds = (mSupervisor.mFocusedStack.mStackId == FREEFORM_WORKSPACE_STACK_ID
+                            || r.isHomeActivity()) ? new Rect(100, 100, 420, 580) : null;
         if (options != null && (r.isResizeable() || (inTask != null && inTask.isResizeable()))) {
             if (mSupervisor.canUseActivityOptionsLaunchBounds(
                     options, options.getLaunchStackId())) {

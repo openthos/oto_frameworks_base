@@ -856,7 +856,7 @@ public class ActivityManager {
          * there are other tasks in the stack.
          */
         public static boolean allowTopTaskToReturnHome(int stackId) {
-            return stackId != PINNED_STACK_ID;
+            return stackId != PINNED_STACK_ID && stackId != FREEFORM_WORKSPACE_STACK_ID;
         }
 
         /**

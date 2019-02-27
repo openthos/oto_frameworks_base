@@ -624,6 +624,9 @@ public abstract class Window {
         void enterPictureInPictureModeIfPossible();
 
         /** Returns the current stack Id for the window. */
+        boolean getIsHome();
+
+        /** Returns the current stack Id for the window. */
         int getWindowStackId() throws RemoteException;
 
         /** Press the back button of window header */

@@ -200,8 +200,12 @@ class LaunchingTaskPositioner {
 
     private void positionCenter(TaskRecord task, ArrayList<TaskRecord> tasks, int width,
             int height) {
-        mTmpProposal.set(mDefaultFreeformStartX, mDefaultFreeformStartY,
-                mDefaultFreeformStartX + width, mDefaultFreeformStartY + height);
+        if (task.isHomeTask()) {
+            mTmpProposal.set(0, 0, mDisplayWidth, mDisplayHeight);
+        } else {
+            mTmpProposal.set(mDefaultFreeformStartX, mDefaultFreeformStartY,
+                    mDefaultFreeformStartX + width, mDefaultFreeformStartY + height);
+        }
         position(task, tasks, mTmpProposal, ALLOW_RESTART, SHIFT_POLICY_DIAGONAL_DOWN);
     }
 
@@ -209,7 +213,7 @@ class LaunchingTaskPositioner {
             boolean allowRestart, int shiftPolicy) {
         mTmpOriginal.set(proposal);
         boolean restarted = false;
-        while (boundsConflict(proposal, tasks)) {
+        while (boundsConflict(proposal, tasks) && !task.isHomeTask()) {
             // Unfortunately there is already a task at that spot, so we need to look for some
             // other place.
             shiftStartingPoint(proposal, shiftPolicy);

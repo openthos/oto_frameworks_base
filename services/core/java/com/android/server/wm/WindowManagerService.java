@@ -2634,6 +2634,9 @@ public class WindowManagerService extends IWindowManager.Stub
 
     void setFocusTaskRegionLocked(AppWindowToken previousFocus) {
         final Task focusedTask = mFocusedApp != null ? mFocusedApp.getTask() : null;
+        if (focusedTask != null && focusedTask.isHomeTask()) {
+            return;
+        }
         final Task previousTask = previousFocus != null ? previousFocus.getTask() : null;
         final DisplayContent focusedDisplayContent =
                 focusedTask != null ? focusedTask.getDisplayContent() : null;
@@ -5967,7 +5970,13 @@ public class WindowManagerService extends IWindowManager.Stub
 
     // TODO: Move to DisplayContent
     boolean updateFocusedWindowLocked(int mode, boolean updateInputWindows) {
-        WindowState newFocus = mRoot.computeFocusedWindow();
+        WindowState newFocus;
+        if (mFocusedApp != null && mFocusedApp.getTask() != null
+                                && mFocusedApp.getTask().isHomeTask()) {
+            newFocus = mFocusedApp.findMainWindow();
+        } else {
+            newFocus = mRoot.computeFocusedWindow();
+        }
         if (mCurrentFocus != newFocus) {
             Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER, "wmUpdateFocus");
             // This check makes sure that we don't already have the focus

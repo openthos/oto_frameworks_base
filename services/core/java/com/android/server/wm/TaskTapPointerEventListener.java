@@ -59,9 +59,12 @@ public class TaskTapPointerEventListener implements PointerEventListener {
             case MotionEvent.ACTION_DOWN: {
                 final int x = (int) motionEvent.getX();
                 final int y = (int) motionEvent.getY();
+                final boolean isHomeFocused = (mService.mFocusedApp != null
+                                       && mService.mFocusedApp.getTask() != null
+                                       && mService.mFocusedApp.getTask().isHomeTask());
 
                 synchronized (this) {
-                    if (!mTouchExcludeRegion.contains(x, y)) {
+                    if (!mTouchExcludeRegion.contains(x, y) || isHomeFocused) {
                         mService.mH.obtainMessage(H.TAP_OUTSIDE_TASK,
                                 x, y, mDisplayContent).sendToTarget();
                     }

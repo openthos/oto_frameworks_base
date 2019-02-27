@@ -511,7 +511,6 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     boolean resize(Rect bounds, int resizeMode, boolean preserveWindow, boolean deferResume) {
-        Slog.e("LADEHUNTER", "resizing", new Exception());
         if (!isResizeable()) {
             Slog.w(TAG, "resizeTask: task " + this + " not resizeable.");
             return true;
@@ -1574,8 +1573,9 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     private boolean isResizeable(boolean checkSupportsPip) {
-        return (mService.mForceResizableActivities || ActivityInfo.isResizeableMode(mResizeMode)
-                || (checkSupportsPip && mSupportsPictureInPicture)) && !mTemporarilyUnresizable;
+        return getStackId() == FREEFORM_WORKSPACE_STACK_ID;
+        //return (mService.mForceResizableActivities || ActivityInfo.isResizeableMode(mResizeMode)
+        //        || (checkSupportsPip && mSupportsPictureInPicture)) && !mTemporarilyUnresizable;
     }
 
     boolean isResizeable() {

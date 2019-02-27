@@ -488,6 +488,7 @@ interface IActivityManager {
      */
     void positionTaskInStack(int taskId, int stackId, int position);
     int getActivityStackId(in IBinder token);
+    boolean getIsHome(in IBinder token);
     void exitFreeformMode(in IBinder token);
     void switchTaskFreeformAndFullscreen(in IBinder token);
     void changeTaskOrientation(in IBinder token);

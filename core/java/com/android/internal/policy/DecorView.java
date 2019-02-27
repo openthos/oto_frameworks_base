@@ -2020,7 +2020,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         final boolean isApplication = attrs.type == TYPE_BASE_APPLICATION ||
                 attrs.type == TYPE_APPLICATION || attrs.type == TYPE_DRAWN_APPLICATION;
         // Only a non floating application window on one of the allowed workspaces can get a caption
-        if (!mWindow.isFloating() && isApplication && mStackId > 0) {
+        if (!mWindow.isFloating() && isApplication && mStackId > 0 && !isHome()) {
             // Dependent on the brightness of the used title we either use the
             // dark or the light button frame.
             if (decorCaptionView == null) {
@@ -2165,6 +2165,14 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             return FULLSCREEN_WORKSPACE_STACK_ID;
         }
         return workspaceId;
+    }
+
+    private boolean isHome() {
+        final Window.WindowControllerCallback callback = mWindow.getWindowControllerCallback();
+        if (callback != null) {
+            return callback.getIsHome();
+        }
+        return false;
     }
 
     void clearContentView() {

@@ -10620,6 +10620,14 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public boolean getIsHome(IBinder token) throws RemoteException {
+        synchronized (this) {
+            final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+            return r != null ? r.isHomeActivity() : false;
+        }
+    }
+
+    @Override
     public int getActivityStackId(IBinder token) throws RemoteException {
         synchronized (this) {
             ActivityStack stack = ActivityRecord.getStackLocked(token);

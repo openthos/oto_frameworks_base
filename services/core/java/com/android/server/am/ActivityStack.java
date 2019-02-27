@@ -2534,7 +2534,7 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
             }
         } else {
             if (DEBUG_TRANSITION) Slog.v(TAG_TRANSITION, "Prepare open transition: no previous");
-            if (mNoAnimActivities.contains(next)) {
+            if (mNoAnimActivities.contains(next) || next.isHomeActivity()) {
                 anim = false;
                 mWindowManager.prepareAppTransition(TRANSIT_NONE, false);
             } else {
@@ -2820,8 +2820,10 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
         final int position = getAdjustedPositionForTask(task, mTaskHistory.size(), starting);
         mTaskHistory.add(position, task);
         updateTaskMovement(task, true);
-        mWindowContainerController.positionChildAtTop(task.getWindowContainerController(),
-                true /* includingParents */);
+        if (!task.isHomeTask()) {
+            mWindowContainerController.positionChildAtTop(task.getWindowContainerController(),
+                    true /* includingParents */);
+        }
     }
 
     /**

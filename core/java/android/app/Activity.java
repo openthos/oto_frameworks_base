@@ -3253,6 +3253,15 @@ public class Activity extends ContextThemeWrapper
         return ActivityManager.getService().getActivityStackId(mToken);
     }
 
+    @Override
+    public boolean getIsHome() {
+        try {
+            return ActivityManager.getService().getIsHome(mToken);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Puts the activity in picture-in-picture mode if the activity supports.
      * @see android.R.attr#supportsPictureInPicture
