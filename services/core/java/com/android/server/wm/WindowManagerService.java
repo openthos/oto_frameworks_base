@@ -2878,7 +2878,7 @@ public class WindowManagerService extends IWindowManager.Stub
 
     private void setWindowOpaqueLocked(IBinder token, boolean isOpaque) {
         final AppWindowToken wtoken = mRoot.getAppWindowToken(token);
-        if (wtoken != null) {
+        if (wtoken != null && !wtoken.getTask().inFreeformWorkspace()) {
             final WindowState win = wtoken.findMainWindow();
             if (win != null) {
                 win.mWinAnimator.setOpaqueLocked(isOpaque);
