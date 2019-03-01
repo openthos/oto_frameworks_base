@@ -84,6 +84,8 @@ public class ActivityOptions {
      */
     public static final String KEY_LAUNCH_BOUNDS = "android:activity.launchBounds";
 
+    public static final String KEY_FREEFORM_BOUNDS = "android:activity.freeformBounds";
+
     /**
      * Type of animation that arguments specify.
      * @hide
@@ -253,6 +255,7 @@ public class ActivityOptions {
 
     private String mPackageName;
     private Rect mLaunchBounds;
+    private Rect mFreeformBounds;
     private int mAnimationType = ANIM_NONE;
     private int mCustomEnterResId;
     private int mCustomExitResId;
@@ -812,6 +815,7 @@ public class ActivityOptions {
             Slog.w(TAG, e);
         }
         mLaunchBounds = opts.getParcelable(KEY_LAUNCH_BOUNDS);
+        mFreeformBounds = opts.getParcelable(KEY_FREEFORM_BOUNDS);
         mAnimationType = opts.getInt(KEY_ANIM_TYPE);
         switch (mAnimationType) {
             case ANIM_CUSTOM:
@@ -901,6 +905,11 @@ public class ActivityOptions {
         return this;
     }
 
+    public ActivityOptions setFreeformBounds(@Nullable Rect screenSpacePixelRect) {
+        mFreeformBounds = screenSpacePixelRect != null ? new Rect(screenSpacePixelRect) : null;
+        return this;
+    }
+
     /** @hide */
     public String getPackageName() {
         return mPackageName;
@@ -914,6 +923,10 @@ public class ActivityOptions {
     @Nullable
     public Rect getLaunchBounds() {
         return mLaunchBounds;
+    }
+
+    public Rect getFreeformBounds() {
+        return mFreeformBounds;
     }
 
     /** @hide */
@@ -1233,6 +1246,9 @@ public class ActivityOptions {
         Bundle b = new Bundle();
         if (mPackageName != null) {
             b.putString(KEY_PACKAGE_NAME, mPackageName);
+        }
+        if (mFreeformBounds != null) {
+            b.putParcelable(KEY_FREEFORM_BOUNDS, mFreeformBounds);
         }
         if (mLaunchBounds != null) {
             b.putParcelable(KEY_LAUNCH_BOUNDS, mLaunchBounds);

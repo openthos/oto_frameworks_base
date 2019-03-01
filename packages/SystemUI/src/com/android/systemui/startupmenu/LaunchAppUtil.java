@@ -115,27 +115,25 @@ public class LaunchAppUtil {
             try {
                 options.setLaunchStackId(FREEFORM_WORKSPACE_STACK_ID);
                 DisplayMetrics metrics = getRealDisplayMetrics(context);
-                int width1, width2, height1, height2;
+                int startX, startY, width, height;
                 switch (startMode) {
                     case STANDARD_MODE:
                         break;
                     case DESKTOP_MODE:
-                        width1 = metrics.widthPixels / 8;
-                        width2 = metrics.widthPixels - width1;
-                        height1 = metrics.heightPixels / 8;
-                        height2 = metrics.heightPixels - height1;
-                        options.setLaunchBounds(new Rect(width1, height1, width2, height2));
+                        startX = metrics.widthPixels / 4;
+                        startY = metrics.heightPixels / 4;
+                        width = metrics.widthPixels / 2;
+                        height = width / 16 * 9;
+                        options.setFreeformBounds(new Rect(startX, startY,
+                                                      startX + width, startY + height));
                         break;
                     case PHONE_MODE:
-                        width1 = metrics.widthPixels / 2;
-                        width2 = context.getResources().getDimensionPixelSize(R.dimen.phone_size_width) / 2;
-                        height1 = metrics.heightPixels / 2;
-                        height2 = context.getResources().getDimensionPixelSize(R.dimen.phone_size_height) / 2;
-                        options.setLaunchBounds(new Rect(
-                                width1 - width2,
-                                height1 - height2,
-                                width1 + width2,
-                                height1 + height2));
+                        startX = metrics.widthPixels / 4;
+                        startY = metrics.heightPixels / 4;
+                        height = metrics.heightPixels / 3 * 2;
+                        width = height / 16 * 9;
+                        options.setFreeformBounds(new Rect(startX, startY,
+                                                      startX + width, startY + height));
                         break;
                 }
                 return options.toBundle();

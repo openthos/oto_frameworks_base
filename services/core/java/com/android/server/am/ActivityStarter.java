@@ -1796,6 +1796,8 @@ class ActivityStarter {
                     mNewTaskIntent != null ? mNewTaskIntent : mIntent, mVoiceSession,
                     mVoiceInteractor, !mLaunchTaskBehind /* toTop */, mStartActivity.mActivityType);
             addOrReparentStartingActivity(task, "setTaskFromReuseOrCreateNewTask - mReuseTask");
+            if (mOptions != null && mOptions.getFreeformBounds() != null)
+                task.resize(mOptions.getFreeformBounds(), ActivityManager.RESIZE_MODE_FORCED, true, true);
             if (mLaunchBounds != null) {
                 final int stackId = mTargetStack.mStackId;
                 if (StackId.resizeStackWithLaunchBounds(stackId)) {
@@ -2167,9 +2169,6 @@ class ActivityStarter {
 
         // If the activity is of a specific type, return the associated stack, creating it if
         // necessary
-        if (r.isHomeActivity()) {
-            mLaunchBounds = new Rect(0, 0, 1920, 1008);
-        }
         if (r.isRecentsActivity()) {
             return mSupervisor.getStack(RECENTS_STACK_ID, CREATE_IF_NEEDED, ON_TOP);
         }
@@ -2280,7 +2279,7 @@ class ActivityStarter {
 
     Rect getOverrideBounds(ActivityRecord r, ActivityOptions options, TaskRecord inTask) {
         Rect newBounds = (mSupervisor.mFocusedStack.mStackId == FREEFORM_WORKSPACE_STACK_ID
-                            || r.isHomeActivity()) ? new Rect(100, 100, 420, 580) : null;
+                            || r.isHomeActivity()) ? new Rect(0, 0, 0, 0) : null;
         if (options != null && (r.isResizeable() || (inTask != null && inTask.isResizeable()))) {
             if (mSupervisor.canUseActivityOptionsLaunchBounds(
                     options, options.getLaunchStackId())) {
