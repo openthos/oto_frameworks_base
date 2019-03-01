@@ -3458,6 +3458,10 @@ public class StatusBar extends SystemUI implements DemoMode,
                 if (buttonView.containTask(mPrevTaskId)) {
                     buttonView.setFocusInApplications(false);
                 }
+                if (buttonView.containTask(taskId)) {
+                    buttonView.setFocusInApplications(true);
+                    return;
+                }
             }
         }
 
