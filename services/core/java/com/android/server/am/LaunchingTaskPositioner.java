@@ -209,6 +209,11 @@ class LaunchingTaskPositioner {
 
     private void position(TaskRecord task, ArrayList<TaskRecord> tasks, Rect proposal,
             boolean allowRestart, int shiftPolicy) {
+        Rect memoryBounds = task.getTaskMemoryBounds();
+        if (memoryBounds != null) {
+            task.updateOverrideConfiguration(memoryBounds);
+            return;
+        }
         mTmpOriginal.set(proposal);
         boolean restarted = false;
         while (boundsConflict(proposal, tasks) && !task.isHomeTask()) {

@@ -55,7 +55,7 @@ public class LaunchAppUtil {
      * @param componentName
      */
     public static void launchApp(Context context, ComponentName componentName) {
-        launchApp(context, componentName, DESKTOP_MODE);
+        launchApp(context, componentName, STANDARD_MODE);
     }
 
     /**

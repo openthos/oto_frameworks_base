@@ -173,6 +173,10 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     static final int INVALID_TASK_ID = -1;
     private static final int INVALID_MIN_SIZE = -1;
 
+    // Display standard size
+    private static final int STANDARD_DISPLAY_WIDTH = 1920;
+    private static final int STANDARD_DISPLAY_HEIGHT = 1080;
+
     /**
      * The modes to control how the stack is moved to the front when calling
      * {@link TaskRecord#reparent}.
@@ -458,6 +462,27 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
                 getStack().getWindowContainerController(), userId, bounds, overrideConfig,
                 mResizeMode, mSupportsPictureInPicture, isHomeTask(), onTop, showForAllUsers,
                 lastTaskDescription));
+    }
+
+    Rect getTaskMemoryBounds() {
+        Rect bounds = null;
+        if (mService.mRecentTasks != null && mService.mRecentTasks.size() > 0) {
+            for (int taskNdx = mService.mRecentTasks.size() - 1; taskNdx >= 0; --taskNdx) {
+                final TaskRecord tk = mService.mRecentTasks.get(taskNdx);
+                if (affinity.equals(tk.affinity)) {
+                    if (tk.mBounds != null)
+                    bounds = new Rect(tk.mBounds);
+                    break;
+                }
+            }
+        }
+
+        if (bounds == null) {
+            Rect rect = Settings.Global.getRect(
+                            mService.mContext.getContentResolver(), affinity, null);
+            bounds = formatTaskBounds(rect, false);
+        }
+        return bounds;
     }
 
     /**
@@ -1486,6 +1511,8 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     void removeTaskActivitiesLocked(boolean pauseImmediately) {
+        // Store the task bounds.
+        storeTaskBounds();
         // Just remove the entire task.
         performClearTaskAtIndexLocked(0, pauseImmediately);
     }
@@ -1739,6 +1766,33 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         final int effectiveRootIndex = findEffectiveRootIndex();
         final ActivityRecord r = mActivities.get(effectiveRootIndex);
         setIntent(r);
+    }
+
+    void storeTaskBounds() {
+        if (!isHomeTask() && mBounds != null && StackId.persistTaskBounds(mStack.mStackId)) {
+            Settings.Global.putRect(mService.mContext.getContentResolver(),
+                    affinity, formatTaskBounds(mBounds, true));
+        }
+    }
+
+    private Rect formatTaskBounds(Rect bounds, boolean isStored) {
+        Rect storeBounds = null;
+        Rect restoreBounds = null;
+        if (bounds != null) {
+            final Point displaySize = new Point();
+            mStack.getDisplaySize(displaySize);
+            int displayWidth = displaySize.x;
+            int displayHeight = displaySize.y;
+            storeBounds = new Rect(bounds.left * STANDARD_DISPLAY_WIDTH / displayWidth,
+                    bounds.top * STANDARD_DISPLAY_HEIGHT / displayHeight,
+                    bounds.right * STANDARD_DISPLAY_WIDTH / displayWidth,
+                    bounds.bottom * STANDARD_DISPLAY_HEIGHT / displayHeight);
+            restoreBounds = new Rect(bounds.left * displayWidth / STANDARD_DISPLAY_WIDTH,
+                    bounds.top * displayHeight / STANDARD_DISPLAY_HEIGHT,
+                    bounds.right * displayWidth / STANDARD_DISPLAY_WIDTH,
+                    bounds.bottom * displayHeight / STANDARD_DISPLAY_HEIGHT);
+        }
+        return isStored ? storeBounds : restoreBounds;
     }
 
     void saveToXml(XmlSerializer out) throws IOException, XmlPullParserException {
