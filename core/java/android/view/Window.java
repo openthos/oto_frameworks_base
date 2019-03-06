@@ -623,7 +623,7 @@ public abstract class Window {
          */
         void enterPictureInPictureModeIfPossible();
 
-        /** Returns the current stack Id for the window. */
+        /** Returns whether the window belongs to the home task. */
         boolean getIsHome();
 
         /** Returns the current stack Id for the window. */
@@ -637,6 +637,9 @@ public abstract class Window {
 
         /** Switch the activity between FULLSCREEN and FREEFORM*/
         void switchWindowFreeformAndFullscreen() throws RemoteException;
+
+        /** Resize task to maximize it */
+        void moveWindowMaximize() throws RemoteException;
 
         /** Move task back to minimize it*/
         void moveTaskBack();

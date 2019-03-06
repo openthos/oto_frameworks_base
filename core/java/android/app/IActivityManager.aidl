@@ -491,6 +491,7 @@ interface IActivityManager {
     boolean getIsHome(in IBinder token);
     void exitFreeformMode(in IBinder token);
     void switchTaskFreeformAndFullscreen(in IBinder token);
+    void moveTaskMaximize(in IBinder token);
     void changeTaskOrientation(in IBinder token);
     void reportSizeConfigurations(in IBinder token, in int[] horizontalSizeConfiguration,
             in int[] verticalSizeConfigurations, in int[] smallestWidthConfigurations);

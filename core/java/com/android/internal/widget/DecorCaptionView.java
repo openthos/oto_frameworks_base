@@ -442,7 +442,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
         if (callback != null) {
             try {
-                callback.switchWindowFreeformAndFullscreen();
+                callback.moveWindowMaximize();
             } catch (RemoteException ex) {
                 Log.e(TAG, "Cannot change task workspace.");
             }

@@ -10570,6 +10570,23 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public void moveTaskMaximize(IBinder token) {
+        synchronized (this) {
+            long ident = Binder.clearCallingIdentity();
+            try {
+                final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+                if (r == null) {
+                    throw new IllegalArgumentException(
+                            "moveTaskMaximize: No activity record matching token=" + token);
+                }
+                r.getTask().toggleTaskMaximize();
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+    }
+
+    @Override
     public void moveTaskBackwards(int task) {
         //enforceCallingPermission(android.Manifest.permission.REORDER_TASKS,
         //        "moveTaskBackwards()");

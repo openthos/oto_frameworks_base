@@ -313,6 +313,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     private final Rect mTmpStableBounds = new Rect();
     private final Rect mTmpNonDecorBounds = new Rect();
     private final Rect mTmpRect = new Rect();
+    private final Rect mTmpNonMaximizeBounds = new Rect();
 
     // Last non-fullscreen bounds the task was launched in or resized to.
     // The information is persisted and used to determine the appropriate stack to launch the
@@ -321,6 +322,8 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     Rect mLastPcRect = new Rect();
     Rect mLastPhoneRect = new Rect();
+    Rect mMaximizeBounds = new Rect();
+    Rect mDefaultBounds = new Rect();
     // Minimal width and height of this task when it's resizeable. -1 means it should use the
     // default minimal width/height.
     int mMinWidth;
@@ -2323,6 +2326,35 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             return mStack.mBounds;
         }
         return mLastNonFullscreenBounds;
+    }
+
+    void toggleTaskMaximize() {
+        getMaximizeTaskBounds();
+        if (Objects.equals(mMaximizeBounds, mBounds)) {
+            mTmpNonMaximizeBounds.set(mTmpNonMaximizeBounds.isEmpty()
+                    ? mDefaultBounds : mTmpNonMaximizeBounds);
+            resize(mTmpNonMaximizeBounds, RESIZE_MODE_FORCED, true, true);
+        } else {
+            mTmpNonMaximizeBounds.set(mBounds);
+            resize(mMaximizeBounds, RESIZE_MODE_FORCED, true, true);
+        }
+    }
+
+    void getMaximizeTaskBounds() {
+        if (mMaximizeBounds.isEmpty()) {
+            // Maximize tasks
+            final Point displaySize = new Point();
+            mStack.getDisplaySize(displaySize);
+            int displayWidth = displaySize.x;
+            int displayHeight = displaySize.y;
+            int defStartX = displayWidth / 4;
+            int defStartY = displayHeight / 4;
+            int defWidth = displayWidth / 2;
+            int defHeight = defWidth / 16 * 9;
+            mMaximizeBounds.set(new Rect(0, 0, displayWidth, displayHeight));
+            mDefaultBounds.set(new Rect(defStartX, defStartY,
+                    defStartX + defWidth, defStartY + defHeight));
+        }
     }
 
     void changeTaskOrientation(int taskId, Rect taskBounds) {

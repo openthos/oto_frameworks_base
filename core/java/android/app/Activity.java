@@ -5914,6 +5914,14 @@ public class Activity extends ContextThemeWrapper
     }
 
     /**
+     * Resize the activity between maximize and non maximize.
+     */
+    @Override
+    public void moveWindowMaximize() throws RemoteException {
+        ActivityManager.getService().moveTaskMaximize(mToken);
+    }
+
+    /**
      * Returns class name for this activity with the package prefix removed.
      * This is the default name used to read and write settings.
      *
