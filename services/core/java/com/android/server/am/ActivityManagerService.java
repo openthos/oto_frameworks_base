@@ -3120,7 +3120,7 @@ public class ActivityManagerService extends IActivityManager.Stub
             StatusBarManagerInternal statusBarManager =
                                    LocalServices.getService(StatusBarManagerInternal.class);
             if (statusBarManager != null) {
-                statusBarManager.changeStatusBarIcon(r.getTask().taskId, r.realActivity, true);
+                statusBarManager.changeStatusBarIcon(task.taskId, task.realActivity, true);
             }
         } else {
             r.appTimeTracker = null;
