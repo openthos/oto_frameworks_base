@@ -147,6 +147,8 @@ public class StackWindowController
 
         synchronized(mWindowMap) {
             final Task childTask = child.mContainer;
+            if (childTask.isHomeTask())
+                return;
             if (childTask == null) {
                 Slog.e(TAG_WM, "positionChildAtTop: task=" + child + " not found");
                 return;

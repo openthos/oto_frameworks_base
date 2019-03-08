@@ -3117,9 +3117,7 @@ public class ActivityStackSupervisor extends ConfigurationContainer implements D
      * type.
      */
     private boolean checkActivityBelongsInStack(ActivityRecord r, ActivityStack stack) {
-        if (r.isHomeActivity()) {
-            return stack.isHomeStack();
-        } else if (r.isRecentsActivity()) {
+        if (r.isRecentsActivity()) {
             return stack.isRecentsStack();
         } else if (r.isAssistantActivity()) {
             return stack.isAssistantStack();

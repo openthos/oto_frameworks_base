@@ -2820,10 +2820,8 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
         final int position = getAdjustedPositionForTask(task, mTaskHistory.size(), starting);
         mTaskHistory.add(position, task);
         updateTaskMovement(task, true);
-        if (!task.isHomeTask()) {
-            mWindowContainerController.positionChildAtTop(task.getWindowContainerController(),
-                    true /* includingParents */);
-        }
+        mWindowContainerController.positionChildAtTop(task.getWindowContainerController(),
+                true /* includingParents */);
     }
 
     /**
