@@ -2712,6 +2712,15 @@ public class ActivityStackSupervisor extends ConfigurationContainer implements D
         return false;
     }
 
+    boolean isHomeTaskByIdLocked(int taskId) {
+        TaskRecord tr = anyTaskForIdLocked(taskId,
+                MATCH_TASK_IN_STACKS_OR_RECENT_TASKS, INVALID_STACK_ID);
+        if (tr != null && tr.isHomeTask()) {
+            return true;
+        }
+        return false;
+    }
+
     void cleanUpRemovedTaskLocked(TaskRecord tr, boolean killProcess, boolean removeFromRecents) {
         if (removeFromRecents) {
             mRecentTasks.remove(tr);

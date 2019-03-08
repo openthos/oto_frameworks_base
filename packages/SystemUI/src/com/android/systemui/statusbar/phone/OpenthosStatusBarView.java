@@ -130,12 +130,12 @@ public class OpenthosStatusBarView extends PanelBar {
         mEmptyStatusBar.setOnTouchListener(mTouchListener);
 //        mLlScrollContents.setOnClickListener(mOpenthosStatusbarListener);
 
-	mInputView.setOnHoverListener(mHoverListener);
-	mBatteryView.setOnHoverListener(mHoverListener);
-	mWifiView.setOnHoverListener(mHoverListener);
-	mVolumeView.setOnHoverListener(mHoverListener);
-	mNotificationView.setOnHoverListener(mHoverListener);
-	mCalendarView.setOnHoverListener(mHoverListener);
+        mInputView.setOnHoverListener(mHoverListener);
+        mBatteryView.setOnHoverListener(mHoverListener);
+        mWifiView.setOnHoverListener(mHoverListener);
+        mVolumeView.setOnHoverListener(mHoverListener);
+        mNotificationView.setOnHoverListener(mHoverListener);
+        mCalendarView.setOnHoverListener(mHoverListener);
     }
 
     private View.OnHoverListener mHoverListener = (View v, MotionEvent event) -> {

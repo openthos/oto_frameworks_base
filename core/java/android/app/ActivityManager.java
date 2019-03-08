@@ -2150,6 +2150,14 @@ public class ActivityManager {
         }
     }
 
+    public boolean isHomeTask(int taskId) {
+        try {
+            return getService().isHomeTask(taskId);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
     /**
      * Metadata related to the {@link TaskThumbnail}.
      *

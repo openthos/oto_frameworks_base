@@ -3,12 +3,11 @@
     android:orientation="vertical"
     android:layout_width="@dimen/start_row_item_width"
     android:layout_height="wrap_content">
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/recents_freeform_layout_task_padding"
-        android:padding="@dimen/padding_five"
+        android:padding="@dimen/pip_action_padding"
         android:layout_gravity="center_horizontal|top"
         android:background="@drawable/taskview_item_bg_normal"
         android:id="@+id/linearLayoutItem">
@@ -17,9 +16,16 @@
             android:layout_width="@dimen/size_fiftyfive"
             android:layout_height="@dimen/size_fiftyfive"
             android:id="@+id/imageView"
-            android:scaleType="fitXY"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+            android:layout_margin="@dimen/padding_fifteen"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/remove"
+	        android:layout_width="@dimen/padding_thirty"
+	        android:layout_height="@dimen/padding_thirty"
+	        android:layout_alignParentRight="true"
+	        android:src="@drawable/mw_btn_close_default" />
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,8 +35,8 @@
         android:textAlignment="center">
 
         <TextView
-            android:layout_width="@dimen/size_fiftyfive"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:id="@+id/title"
             android:layout_gravity="center_horizontal"

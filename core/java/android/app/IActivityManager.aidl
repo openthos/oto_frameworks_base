@@ -291,6 +291,7 @@ interface IActivityManager {
     boolean switchUser(int userid);
     void setFocusedTask(int taskId);
     boolean removeTask(int taskId);
+    boolean isHomeTask(int taskId);
     void registerProcessObserver(in IProcessObserver observer);
     void unregisterProcessObserver(in IProcessObserver observer);
     boolean isIntentSenderTargetedToPackage(in IIntentSender sender);

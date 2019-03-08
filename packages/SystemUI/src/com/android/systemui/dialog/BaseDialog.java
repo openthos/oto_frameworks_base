@@ -67,6 +67,7 @@ public class BaseDialog extends Dialog {
         Window dialogWindow = getWindow();
         dialogWindow.setType(WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG);
         dialogWindow.setWindowAnimations(R.style.ShowDialog);
+        dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.format = PixelFormat.TRANSPARENT;
         lp.dimAmount = 0;

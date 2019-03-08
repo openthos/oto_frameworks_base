@@ -10471,11 +10471,16 @@ public class ActivityManagerService extends IActivityManager.Stub
         synchronized (this) {
             final long ident = Binder.clearCallingIdentity();
             try {
-                return mStackSupervisor.removeTaskByIdLocked(taskId, true, REMOVE_FROM_RECENTS);
+                return mStackSupervisor.removeTaskByIdLocked(taskId, true, !REMOVE_FROM_RECENTS);
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
         }
+    }
+
+    @Override
+    public boolean isHomeTask(int taskId) {
+        return mStackSupervisor.isHomeTaskByIdLocked(taskId);
     }
 
     /**
