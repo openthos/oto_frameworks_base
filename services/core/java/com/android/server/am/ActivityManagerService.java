@@ -10670,8 +10670,7 @@ public class ActivityManagerService extends IActivityManager.Stub
                     throw new IllegalArgumentException(
                             "changeWindowOrientation: No activity record matching token=" + token);
                 }
-                Rect taskBounds = getTaskBounds(r.getTask().taskId);
-                r.getTask().changeTaskOrientation(r.getTask().taskId, taskBounds);
+                r.getTask().changeTaskOrientation();
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -10729,11 +10728,11 @@ public class ActivityManagerService extends IActivityManager.Stub
                 StatusBarManagerInternal statusBarManager =
                                        LocalServices.getService(StatusBarManagerInternal.class);
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "switchTaskFreeformAndFullscreen: " + r);
-                r.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 if (stack.mStackId == FREEFORM_WORKSPACE_STACK_ID) {
                     if (statusBarManager != null) {
                         statusBarManager.setStatusBarVisibility(View.GONE);
                     }
+                    r.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     r.getTask().reparent(FULLSCREEN_WORKSPACE_STACK_ID, ON_TOP,
                             REPARENT_KEEP_STACK_AT_FRONT, ANIMATE, !DEFER_RESUME, "exitFreeformMode");
                 } else if (stack.mStackId == FULLSCREEN_WORKSPACE_STACK_ID) {

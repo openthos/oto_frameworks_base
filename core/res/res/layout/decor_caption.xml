@@ -63,6 +63,17 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
         <ImageButton
+                android:id="@+id/fullscreen_window"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:padding="4dp"
+                android:background="@null"
+                android:layout_gravity="center_vertical|end"
+                android:contentDescription="@string/fullscreen_button_text"
+                android:src="@drawable/mw_btn_maximize" />
+        <ImageButton
                 android:id="@+id/rotate_window"
                 android:layout_width="32dp"
                 android:layout_height="32dp"

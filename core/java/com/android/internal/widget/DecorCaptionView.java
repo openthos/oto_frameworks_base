@@ -104,6 +104,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private View mCaption;
     private View mContent;
     private View mBack;
+    private View mFullscreen;
     private View mRotate;
     private View mMinimize;
     private View mMaximize;
@@ -121,6 +122,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     // with existing click detection.
     private GestureDetector mGestureDetector;
     private final Rect mBackRect = new Rect();
+    private final Rect mFullscreenRect = new Rect();
     private final Rect mRotateRect = new Rect();
     private final Rect mMinimizeRect = new Rect();
     private final Rect mMaximizeRect = new Rect();
@@ -167,6 +169,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         // background without removing the shadow.
         mOwner.getDecorView().setOutlineProvider(ViewOutlineProvider.BOUNDS);
         mBack = findViewById(R.id.back_window);
+        mFullscreen = findViewById(R.id.fullscreen_window);
         mRotate = findViewById(R.id.rotate_window);
         mMinimize = findViewById(R.id.minimize_window);
         mMaximize = findViewById(R.id.maximize_window);
@@ -196,6 +199,9 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             final int y = (int) ev.getY();
             if (mBackRect.contains(x, y)) {
                 mClickTarget = mBack;
+            }
+            if (mFullscreenRect.contains(x, y)) {
+                mClickTarget = mFullscreen;
             }
             if (mRotateRect.contains(x, y)) {
                 mClickTarget = mRotate;
@@ -354,6 +360,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             mCaption.layout(0, 0, mCaption.getMeasuredWidth(), mCaption.getMeasuredHeight());
             captionHeight = mCaption.getBottom() - mCaption.getTop();
             mBack.getHitRect(mBackRect);
+            mFullscreen.getHitRect(mFullscreenRect);
             mRotate.getHitRect(mRotateRect);
             mMinimize.getHitRect(mMinimizeRect);
             mMaximize.getHitRect(mMaximizeRect);
@@ -408,6 +415,20 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
         if (callback != null) {
             callback.pressKeyBack();
+        }
+    }
+
+    /**
+     *  Move window to the fullscreen workspace stack.
+     */
+    private void fullscreenWindow() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            try {
+                callback.switchWindowFreeformAndFullscreen();
+            } catch (RemoteException ex) {
+                Log.e(TAG, "Cannot change window workspace.");
+            }
         }
     }
 
@@ -552,6 +573,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     public boolean onSingleTapUp(MotionEvent e) {
         if (mClickTarget == mBack) {
             keyBackWindow();
+        } else if (mClickTarget == mFullscreen) {
+            fullscreenWindow();
         } else if (mClickTarget == mRotate) {
             rotateWindow();
         } else if (mClickTarget == mMinimize) {

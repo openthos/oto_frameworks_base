@@ -314,16 +314,16 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     private final Rect mTmpNonDecorBounds = new Rect();
     private final Rect mTmpRect = new Rect();
     private final Rect mTmpNonMaximizeBounds = new Rect();
+    private final Rect mTmpLastPcRect = new Rect();
+    private final Rect mTmpLastPhoneRect = new Rect();
 
     // Last non-fullscreen bounds the task was launched in or resized to.
     // The information is persisted and used to determine the appropriate stack to launch the
     // task into on restore.
     Rect mLastNonFullscreenBounds = null;
 
-    Rect mLastPcRect = new Rect();
-    Rect mLastPhoneRect = new Rect();
     Rect mMaximizeBounds = new Rect();
-    Rect mDefaultBounds = new Rect();
+    Rect mDefaultPcBounds = new Rect();
     // Minimal width and height of this task when it's resizeable. -1 means it should use the
     // default minimal width/height.
     int mMinWidth;
@@ -469,7 +469,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     Rect getTaskMemoryBounds() {
         Rect bounds = null;
-        if (mService.mRecentTasks != null && mService.mRecentTasks.size() > 0) {
+        if (affinity != null && mService.mRecentTasks != null && mService.mRecentTasks.size() > 0) {
             for (int taskNdx = mService.mRecentTasks.size() - 1; taskNdx >= 0; --taskNdx) {
                 final TaskRecord tk = mService.mRecentTasks.get(taskNdx);
                 if (affinity.equals(tk.affinity)) {
@@ -482,7 +482,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
         if (bounds == null) {
             Rect rect = Settings.Global.getRect(
-                            mService.mContext.getContentResolver(), affinity, null);
+                    mService.mContext.getContentResolver(), realActivity.getPackageName(), null);
             bounds = formatTaskBounds(rect, false);
         }
         return bounds;
@@ -1774,7 +1774,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     void storeTaskBounds() {
         if (!isHomeTask() && mBounds != null && StackId.persistTaskBounds(mStack.mStackId)) {
             Settings.Global.putRect(mService.mContext.getContentResolver(),
-                    affinity, formatTaskBounds(mBounds, true));
+                    realActivity.getPackageName(), formatTaskBounds(mBounds, true));
         }
     }
 
@@ -2329,18 +2329,18 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     void toggleTaskMaximize() {
-        getMaximizeTaskBounds();
+        getUniqueTaskBounds();
         if (Objects.equals(mMaximizeBounds, mBounds)) {
             mTmpNonMaximizeBounds.set(mTmpNonMaximizeBounds.isEmpty()
-                    ? mDefaultBounds : mTmpNonMaximizeBounds);
+                    ? mDefaultPcBounds : mTmpNonMaximizeBounds);
             resize(mTmpNonMaximizeBounds, RESIZE_MODE_FORCED, true, true);
         } else {
-            mTmpNonMaximizeBounds.set(mBounds);
+            mTmpNonMaximizeBounds.set(mBounds == null ? mDefaultPcBounds : mBounds);
             resize(mMaximizeBounds, RESIZE_MODE_FORCED, true, true);
         }
     }
 
-    void getMaximizeTaskBounds() {
+    void getUniqueTaskBounds() {
         if (mMaximizeBounds.isEmpty()) {
             // Maximize tasks
             final Point displaySize = new Point();
@@ -2352,42 +2352,45 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             int defWidth = displayWidth / 2;
             int defHeight = defWidth / 16 * 9;
             mMaximizeBounds.set(new Rect(0, 0, displayWidth, displayHeight));
-            mDefaultBounds.set(new Rect(defStartX, defStartY,
+            mDefaultPcBounds.set(new Rect(defStartX, defStartY,
                     defStartX + defWidth, defStartY + defHeight));
         }
     }
 
-    void changeTaskOrientation(int taskId, Rect taskBounds) {
-        if (taskBounds.width() > taskBounds.height()) {
-            mLastPcRect.set(taskBounds);
-            prepareLastPhoneRect(taskBounds);
-            mService.resizeTask(taskId, mLastPhoneRect, RESIZE_MODE_USER_FORCED);
-        } else {
-            mLastPhoneRect.set(taskBounds);
-            prepareLastPcRect(taskBounds);
-            mService.resizeTask(taskId, mLastPcRect, RESIZE_MODE_USER_FORCED);
+    void changeTaskOrientation() {
+        if (mBounds != null) {
+            getUniqueTaskBounds();
+            if (mBounds.width() > mBounds.height()) {
+                mTmpLastPcRect.set(mBounds);
+                prepareLastPhoneRect(mBounds);
+                resize(mTmpLastPhoneRect, RESIZE_MODE_FORCED, true, true);
+            } else {
+                mTmpLastPhoneRect.set(mBounds);
+                prepareLastPcRect(mBounds);
+                resize(mTmpLastPcRect, RESIZE_MODE_FORCED, true, true);
+            }
         }
     }
 
-    void prepareLastPhoneRect(Rect frame) {
-        Rect rect = frame;
-        Rect defaultPhoneFrame = new Rect(0, 0, 420, 640);
-        rect.left = rect.left <= 0 ? 0 : rect.left;
-        rect.right = rect.left + (mLastPhoneRect.width() == 0 ?
-                               defaultPhoneFrame.width() : mLastPhoneRect.width());
-        rect.bottom = rect.top + (mLastPhoneRect.width() == 0 ?
-                               defaultPhoneFrame.height() : mLastPhoneRect.height());
-        mLastPhoneRect.set(rect);
+    void prepareLastPhoneRect(Rect bounds) {
+        int defPhoneHeight = mMaximizeBounds.height() / 3 * 2;
+        int defPhoneWidth = defPhoneHeight / 16 * 9;
+        bounds.left = bounds.left <= 0 ? 0 : bounds.left;
+        bounds.right = bounds.left + (mTmpLastPhoneRect.width() == 0
+                ? defPhoneWidth : mTmpLastPhoneRect.width());
+        bounds.bottom = bounds.top + (mTmpLastPhoneRect.width() == 0
+                ? defPhoneHeight : mTmpLastPhoneRect.height());
+        mTmpLastPhoneRect.set(bounds);
     }
 
-    void prepareLastPcRect(Rect frame) {
-        Rect rect = frame;
-        Rect defaultPcFrame = new Rect(0, 0, 960, 540);
-        rect.right = rect.left + (mLastPcRect.width() == 0 ?
-                               defaultPcFrame.width() : mLastPcRect.width());
-        rect.bottom = rect.top + (mLastPcRect.width() == 0 ?
-                               defaultPcFrame.height() : mLastPcRect.height());
-        mLastPcRect.set(rect);
+    void prepareLastPcRect(Rect bounds) {
+        int defPcWidth = mMaximizeBounds.width() / 2;
+        int defPcHeight = defPcWidth / 16 * 9;
+        bounds.right = bounds.left + (mTmpLastPcRect.width() == 0
+                ? defPcWidth : mTmpLastPcRect.width());
+        bounds.bottom = bounds.top + (mTmpLastPcRect.width() == 0
+                ? defPcHeight : mTmpLastPcRect.height());
+        mTmpLastPcRect.set(bounds);
     }
 
     void addStartingWindowsForVisibleActivities(boolean taskSwitch) {

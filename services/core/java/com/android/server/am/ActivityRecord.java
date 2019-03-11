@@ -2206,8 +2206,7 @@ final class ActivityRecord extends ConfigurationContainer implements AppWindowCo
     void setRequestedOrientation(int requestedOrientation) {
         if (task.getStackId() == FREEFORM_WORKSPACE_STACK_ID
                 && orientationNeedChange(requestedOrientation)) {
-            Rect taskBounds = service.getTaskBounds(task.taskId);
-            task.changeTaskOrientation(task.taskId, taskBounds);
+            task.changeTaskOrientation();
             return;
         }
         final int displayId = getDisplayId();

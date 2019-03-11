@@ -2107,6 +2107,7 @@
   <java-symbol type="bool" name="config_built_in_sip_phone" />
   <java-symbol type="id" name="icon_window" />
   <java-symbol type="id" name="title_window" />
+  <java-symbol type="id" name="fullscreen_window" />
   <java-symbol type="id" name="rotate_window" />
   <java-symbol type="id" name="minimize_window" />
   <java-symbol type="id" name="maximize_window" />
