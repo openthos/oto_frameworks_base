@@ -347,12 +347,13 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
         if (mDockedTmpRect.equals(mMaxTmpRect)) {
             width = mMaxTmpRect.width() / 2;
             height = width / 16 * 9;
+            mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
         } else if (mDockedTmpRect.equals(mLeftDockedTmpRect)
                     || mDockedTmpRect.equals(mRightDockedTmpRect)) {
             height = mMaxTmpRect.height() / 3 * 2;
             width = height / 16 * 9;
+            mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
         }
-        mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
     }
 
     private void setUniqueBounds() {
