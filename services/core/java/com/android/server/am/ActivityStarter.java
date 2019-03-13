@@ -1798,6 +1798,11 @@ class ActivityStarter {
             addOrReparentStartingActivity(task, "setTaskFromReuseOrCreateNewTask - mReuseTask");
             if (mOptions != null && mOptions.getFreeformBounds() != null)
                 task.resize(mOptions.getFreeformBounds(), ActivityManager.RESIZE_MODE_FORCED, true, true);
+            if (!mStartActivity.fullscreen) {
+                Rect bounds = new Rect();
+                mTargetStack.getDisplay().mDisplay.getRectSize(bounds);
+                task.resize(bounds, ActivityManager.RESIZE_MODE_FORCED, true, true);
+            }
             if (mLaunchBounds != null) {
                 final int stackId = mTargetStack.mStackId;
                 if (StackId.resizeStackWithLaunchBounds(stackId)) {

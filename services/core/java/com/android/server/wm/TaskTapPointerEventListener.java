@@ -112,7 +112,7 @@ public class TaskTapPointerEventListener implements PointerEventListener {
 
     void setTouchExcludeRegion(Region newRegion) {
         synchronized (this) {
-           mTouchExcludeRegion.set(newRegion);
+            mTouchExcludeRegion.set(newRegion);
         }
     }
 

@@ -517,6 +517,9 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
             if (win == null) {
                 continue;
             }
+            if (win.mVisibleFrame.height() == 0 && win.mVisibleFrame.width() == 0) {
+                continue;
+            }
             if (!foundTop) {
                 out.set(win.mVisibleFrame);
                 foundTop = true;
