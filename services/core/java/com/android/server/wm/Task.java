@@ -84,6 +84,15 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
     // For handling display rotations.
     private Rect mTmpRect2 = new Rect();
 
+    // Maximize bounds in Freeform workspace.
+    private Rect mMaxTmpRect = new Rect();
+
+    // Left docked bounds in Freeform workspace.
+    private Rect mLeftDockedTmpRect = new Rect();
+
+    // Right docked bounds in Freeform workspace.
+    private Rect mRightDockedTmpRect = new Rect();
+
     // Resize mode of the task. See {@link ActivityInfo#resizeMode}
     private int mResizeMode;
 
@@ -321,7 +330,44 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
             displayContent.mDimLayerController.updateDimLayer(this);
         }
         onOverrideConfigurationChanged(mFillsParent ? Configuration.EMPTY : overrideConfig);
+        setUniqueBounds();
+        if (mBounds.equals(mMaxTmpRect) || mBounds.equals(mLeftDockedTmpRect)
+                    || mBounds.equals(mRightDockedTmpRect)) {
+            mIsDocked = true;
+            validateDockedTmpRect();
+        }
         return boundsChange;
+    }
+
+    private void validateDockedTmpRect() {
+        getDimBounds(mDockedTmpRect);
+        int startX, startY, width, height;
+        startX = mMaxTmpRect.width() / 4;
+        startY = mMaxTmpRect.height() / 4;
+        if (mDockedTmpRect.equals(mMaxTmpRect)) {
+            width = mMaxTmpRect.width() / 2;
+            height = width / 16 * 9;
+        } else if (mDockedTmpRect.equals(mLeftDockedTmpRect)
+                    || mDockedTmpRect.equals(mRightDockedTmpRect)) {
+            height = mMaxTmpRect.height() / 3 * 2;
+            width = height / 16 * 9;
+        }
+        mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
+    }
+
+    private void setUniqueBounds() {
+        DisplayContent content = getDisplayContent();
+        if (content != null) {
+            if (mMaxTmpRect.isEmpty()) {
+                content.getLogicalDisplayRect(mMaxTmpRect);
+                int width = mMaxTmpRect.width();
+                int height = mMaxTmpRect.height();
+                mLeftDockedTmpRect = new Rect(mMaxTmpRect.left, mMaxTmpRect.top,
+                        mMaxTmpRect.right / 2, mMaxTmpRect.bottom);
+                mRightDockedTmpRect = new Rect(mMaxTmpRect.left + width / 2, mMaxTmpRect.top,
+                        mMaxTmpRect.right, mMaxTmpRect.bottom);
+            }
+        }
     }
 
     /**
