@@ -1603,7 +1603,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     private boolean isResizeable(boolean checkSupportsPip) {
-        return getStackId() == FREEFORM_WORKSPACE_STACK_ID;
+        return getStackId() == FREEFORM_WORKSPACE_STACK_ID || checkSupportsPip;
         //return (mService.mForceResizableActivities || ActivityInfo.isResizeableMode(mResizeMode)
         //        || (checkSupportsPip && mSupportsPictureInPicture)) && !mTemporarilyUnresizable;
     }

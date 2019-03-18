@@ -3319,9 +3319,6 @@ public class ActivityStackSupervisor extends ConfigurationContainer implements D
             mService.updateUsageStats(r, true);
         }
         if (allResumedActivitiesComplete()) {
-            if (r.isHomeActivity()) {
-                return true;
-            }
             ensureActivitiesVisibleLocked(null, 0, !PRESERVE_WINDOWS);
             mWindowManager.executeAppTransition();
             return true;
