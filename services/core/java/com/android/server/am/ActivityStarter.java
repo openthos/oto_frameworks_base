@@ -30,6 +30,7 @@ import static android.app.ActivityManager.StackId;
 import static android.app.ActivityManager.StackId.ASSISTANT_STACK_ID;
 import static android.app.ActivityManager.StackId.DOCKED_STACK_ID;
 import static android.app.ActivityManager.StackId.FREEFORM_WORKSPACE_STACK_ID;
+import static android.app.ActivityManager.StackId.BACKGROUND_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
 import static android.app.ActivityManager.StackId.HOME_STACK_ID;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
@@ -1657,6 +1658,12 @@ class ActivityStarter {
         if (!mMovedToFront && mDoResume) {
             if (DEBUG_TASKS) Slog.d(TAG_TASKS, "Bring to front target: " + mTargetStack
                     + " from " + intentActivity);
+            if (mTargetStack.mStackId == BACKGROUND_STACK_ID) {
+                int targetId = intentActivity.getTask().mBounds == null
+                        ? FULLSCREEN_WORKSPACE_STACK_ID : FREEFORM_WORKSPACE_STACK_ID;
+                intentActivity.getTask().reparent(targetId, ON_TOP, REPARENT_MOVE_STACK_TO_FRONT,
+                        ANIMATE, DEFER_RESUME, "reuseBackgroundTask");
+            }
             mTargetStack.moveToFront("intentActivityFound");
         }
 
