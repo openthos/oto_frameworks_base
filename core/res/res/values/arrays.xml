@@ -455,6 +455,7 @@
         <item>"com.android.gallery3d"</item>
         <item>"com.android.music"</item>
         <item>"com.android.providers.downloads.ui"</item>
+        <item>"com.android.calendar"</item>
     </string-array>
     <string-array name="desktop_style_window">
         <item>"com.kingsoft.email"</item>
