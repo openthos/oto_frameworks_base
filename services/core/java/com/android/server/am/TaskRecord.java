@@ -2357,6 +2357,11 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         }
     }
 
+    boolean isTaskMaximize() {
+        getUniqueTaskBounds();
+        return Objects.equals(mMaximizeBounds, mBounds);
+    }
+
     void changeTaskOrientation() {
         if (mBounds != null) {
             getUniqueTaskBounds();

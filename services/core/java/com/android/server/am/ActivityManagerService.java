@@ -10650,6 +10650,14 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public boolean isTaskMaximize(IBinder token) throws RemoteException {
+        synchronized (this) {
+            final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+            return r != null ? r.getTask().isTaskMaximize() : false;
+        }
+    }
+
+    @Override
     public int getActivityStackId(IBinder token) throws RemoteException {
         synchronized (this) {
             ActivityStack stack = ActivityRecord.getStackLocked(token);

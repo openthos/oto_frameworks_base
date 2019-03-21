@@ -3262,6 +3262,15 @@ public class Activity extends ContextThemeWrapper
         }
     }
 
+    @Override
+    public boolean isWindowMaximize() {
+        try {
+            return ActivityManager.getService().isTaskMaximize(mToken);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /**
      * Puts the activity in picture-in-picture mode if the activity supports.
      * @see android.R.attr#supportsPictureInPicture

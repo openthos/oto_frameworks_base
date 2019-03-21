@@ -232,7 +232,5 @@ interface IWindowSession {
      */
     boolean startMovingTask(IWindow window, float startX, float startY);
 
-    boolean isTaskDocked(IWindow window);
-
     void updatePointerIcon(IWindow window);
 }

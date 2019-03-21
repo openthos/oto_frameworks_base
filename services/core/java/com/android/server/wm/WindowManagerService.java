@@ -4559,15 +4559,6 @@ public class WindowManagerService extends IWindowManager.Stub
         return true;
     }
 
-    boolean isTaskDocked(IWindow window) {
-        WindowState win = null;
-        synchronized (mWindowMap) {
-            win = windowForClientLocked(null, window, false);
-            if (win == null) return false;
-        }
-        return win.getTask().mIsDocked;
-    }
-
     private void handleTapOutsideTask(DisplayContent displayContent, int x, int y) {
         int taskId = -1;
         synchronized (mWindowMap) {

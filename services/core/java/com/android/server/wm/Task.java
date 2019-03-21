@@ -331,6 +331,7 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
         }
         onOverrideConfigurationChanged(mFillsParent ? Configuration.EMPTY : overrideConfig);
         setUniqueBounds();
+        mIsDocked = false;
         if (mBounds.equals(mMaxTmpRect) || mBounds.equals(mLeftDockedTmpRect)
                     || mBounds.equals(mRightDockedTmpRect)) {
             mIsDocked = true;

@@ -1899,34 +1899,31 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        int workspaceId = getStackId();
-        if (mStackId != workspaceId) {
-            mStackId = workspaceId;
-            if (mDecorCaptionView == null && StackId.hasWindowDecor(mStackId)) {
-                // Configuration now requires a caption.
-                final LayoutInflater inflater = mWindow.getLayoutInflater();
-                mDecorCaptionView = createDecorCaptionView(inflater);
-                if (mDecorCaptionView != null) {
-                    if (mDecorCaptionView.getParent() == null) {
-                        addView(mDecorCaptionView, 0,
-                                new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-                    }
-                    removeView(mContentRoot);
-                    mDecorCaptionView.addView(mContentRoot,
-                            new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
+        mStackId = getStackId();
+        if (mDecorCaptionView == null && StackId.hasWindowDecor(mStackId)) {
+            // Configuration now requires a caption.
+            final LayoutInflater inflater = mWindow.getLayoutInflater();
+            mDecorCaptionView = createDecorCaptionView(inflater);
+            if (mDecorCaptionView != null) {
+                if (mDecorCaptionView.getParent() == null) {
+                    addView(mDecorCaptionView, 0,
+                            new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
                 }
-            } else if (mDecorCaptionView != null) {
-                // We might have to change the kind of surface before we do anything else.
-                mDecorCaptionView.onConfigurationChanged(StackId.hasWindowDecor(mStackId));
-                enableCaption(StackId.hasWindowDecor(workspaceId));
+                removeView(mContentRoot);
+                mDecorCaptionView.addView(mContentRoot,
+                        new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
             }
+        } else if (mDecorCaptionView != null) {
+            // We might have to change the kind of surface before we do anything else.
+            mDecorCaptionView.onConfigurationChanged(mDecorCaptionView.hasCaption());
+            enableCaption(mDecorCaptionView.hasCaption());
         }
         updateAvailableWidth();
         initializeElevation();
     }
 
     boolean processCaptionEvent(MotionEvent event) {
-        if (!isFullscreen()) {
+        if (mDecorCaptionView == null || mDecorCaptionView.hasCaption()) {
             return false;
         }
         int y = (int) event.getRawY();
@@ -1940,9 +1937,6 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     }
 
     void setCaptionVisiblity(boolean visible) {
-        if (mDecorCaptionView == null) {
-            return;
-        }
         mDecorCaptionView.onConfigurationChanged(visible);
         enableCaption(visible);
 
@@ -1970,9 +1964,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             }
             mDecorCaptionView.addView(root,
                     new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
-            if (!StackId.hasWindowDecor(mStackId)) {
-                setCaptionVisiblity(false);
-            }
+            setCaptionVisiblity(mDecorCaptionView.hasCaption());
         } else {
 
             // Put it below the color views.
@@ -2361,18 +2353,6 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     int getCaptionHeight() {
         return isShowingCaption() ? mDecorCaptionView.getCaptionHeight() : 0;
-    }
-
-    boolean isFullscreen() {
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Point point = new Point();
-        wm.getDefaultDisplay().getSize(point);
-        Rect winframe = new Rect();
-        if (getViewRootImpl() != null) {
-            winframe = getViewRootImpl().getWinFrame();
-        }
-        Rect fullscreen = new Rect(0, 0, point.x, point.y);
-        return winframe.equals(fullscreen) || getStackId() == 1;
     }
 
     /**

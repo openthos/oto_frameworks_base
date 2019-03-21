@@ -158,12 +158,6 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     public void setPhoneWindow(PhoneWindow owner, boolean show) {
         mOwner = owner;
         mShow = show;
-        mOverlayWithAppContent = owner.isOverlayWithDecorCaptionEnabled();
-        if (mOverlayWithAppContent) {
-            // The caption is covering the content, so we make its background transparent to make
-            // the content visible.
-            mCaption.setBackgroundColor(Color.TRANSPARENT);
-        }
         updateCaptionVisibility();
         // By changing the outline provider to BOUNDS, the window can remove its
         // background without removing the shadow.
@@ -216,7 +210,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 mClickTarget = mClose;
             }
         }
-        return mClickTarget != null;
+        return mClickTarget != null || (mShow && !hasCaption());
     }
 
     @Override
@@ -229,7 +223,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             }
             return true;
         }
-        return false;
+        return onTouch(mCaption, event);
     }
 
     @Override
@@ -404,6 +398,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         // Don't show the caption if the window has e.g. entered full screen.
         //boolean invisible = isFillingScreen() || !mShow;
         boolean invisible = !mShow;
+        mOverlayWithAppContent = !hasCaption();
+        mOwner.setOverlayWithDecorCaptionEnabled(mOverlayWithAppContent);
         mCaption.setVisibility(invisible ? GONE : VISIBLE);
         mCaption.setOnTouchListener(this);
     }
@@ -470,6 +466,14 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         }
     }
 
+    public boolean hasCaption() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            return !callback.isWindowMaximize() && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+        }
+        return false;
+    }
+
     /**
      * Check that the requested orientation can resize.
      *
@@ -534,8 +538,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     private boolean updateRotateState() {
-        return !isTaskDocked() && canResizeOrientation()
-                    && getStackId() == FREEFORM_WORKSPACE_STACK_ID;
+        return hasCaption() && canResizeOrientation();
     }
 
     @Override

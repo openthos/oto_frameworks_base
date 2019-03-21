@@ -626,6 +626,9 @@ public abstract class Window {
         /** Returns whether the window belongs to the home task. */
         boolean getIsHome();
 
+        /** Returns whether the window is maximize*/
+        boolean isWindowMaximize();
+
         /** Returns the current stack Id for the window. */
         int getWindowStackId() throws RemoteException;
 
