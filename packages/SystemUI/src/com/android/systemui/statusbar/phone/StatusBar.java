@@ -3553,14 +3553,21 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     private void updateLockedList() {
-        LinkedList<AppInfo> dockedList = new LinkedList<>();
-        for (int i = 0; i < mActivityLayout.getChildCount(); i++) {
-            TaskBarIcon button = (TaskBarIcon) mActivityLayout.getChildAt(i);
-            AppInfo info = button.getAppInfo();
-            if (info.isLocked())
-                dockedList.add(info);
-        }
-        saveObject(serialize(dockedList));
+        new Thread () {
+            @Override
+            public void run() {
+                synchronized (mActivityLayout) {
+                    LinkedList<AppInfo> dockedList = new LinkedList<>();
+                    for (int i = 0; i < mActivityLayout.getChildCount(); i++) {
+                        TaskBarIcon button = (TaskBarIcon) mActivityLayout.getChildAt(i);
+                        AppInfo info = button.getAppInfo();
+                        if (info.isLocked())
+                            dockedList.add(info);
+                    }
+                    saveObject(serialize(dockedList));
+                }
+            }
+        }.start();
     }
 
     public void addToTaskbar(int taskId, AppInfo appInfo) {

@@ -70,6 +70,8 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
         mIconView = (ImageView) findViewById(R.id.icon_view);
         mFocuseView = findViewById(R.id.focuse_view);
         mRunView = findViewById(R.id.run_view);
+        setFocusable(false);
+        setDefaultFocusHighlightEnabled(false);
     }
 
     private void initData() {
@@ -107,7 +109,8 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
 
     @Override
     public void onClick(View v) {
-        startRun();
+        if (!mMenuDialog.isShowing())
+            startRun();
     }
 
     @Override

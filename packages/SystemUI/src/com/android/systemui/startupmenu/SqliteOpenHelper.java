@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static android.content.pm.PackageManager.MATCH_DIRECT_BOOT_AWARE;
+import static android.content.pm.PackageManager.MATCH_DIRECT_BOOT_UNAWARE;
+
 public class SqliteOpenHelper extends SQLiteOpenHelper {
     private static final int SQL_VERSION_CODE = 1;
     private static final String SQL_NAME = "startupMenu_database.db";
@@ -195,7 +198,8 @@ public class SqliteOpenHelper extends SQLiteOpenHelper {
                 PackageManager pm = mContext.getPackageManager();
                 Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
                 mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, 0);
+                int queryFlags = MATCH_DIRECT_BOOT_AWARE | MATCH_DIRECT_BOOT_UNAWARE;
+                List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, queryFlags);
                 for (ResolveInfo reInfo : resolveInfos) {
                     String packageName = reInfo.activityInfo.packageName;
                     appInfo = new AppInfo();

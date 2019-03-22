@@ -96,6 +96,8 @@ public class OpenthosStatusBarView extends PanelBar {
         mHomeView = (ImageView) findViewById(R.id.iv_home_status_bar);
         mEmptyStatusBar = (View) findViewById(R.id.empty_statusbar);
         mLlScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
+        findViewById(R.id.ll_scroll_icon_container).setFocusable(false);
+        findViewById(R.id.ll_scroll_icon_container).setDefaultFocusHighlightEnabled(false);
     }
 
     private void initData() {
