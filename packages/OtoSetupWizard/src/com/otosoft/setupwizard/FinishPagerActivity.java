@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.io.File;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -38,44 +39,44 @@ public class FinishPagerActivity extends BaseActivity {
         this.mButtonStart.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 openDesktop();
-                try {
-                    ISeafileService iSeafileService
-                            = ((SetupWizardApplication) getApplication()).mISeafileService;
-                    String userName = iSeafileService.getUserName();
-                    //if (!TextUtils.isEmpty(userName)) {
-                    //    AlertDialog.Builder builder
-                    //            = new AlertDialog.Builder(FinishPagerActivity.this);
-                    //    builder.setTitle(getString(R.string.title_open_recoverui));
-                    //    builder.setPositiveButton(getString(R.string.warning_dialog_ok),
-                    //            new DialogInterface.OnClickListener() {
-                    //        @Override
-                    //        public void onClick(DialogInterface dialog, int which) {
-                    //            dialog.dismiss();
-                    //            openDesktop();
-                    //            Intent intent = new Intent();
-                    //            intent.setComponent(new ComponentName("org.openthos.seafile",
-                    //                    "org.openthos.seafile.RecoveryActivity"));
-                    //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //            startActivity(intent);
-                    //        }
-                    //    });
+                //try {
+                //    ISeafileService iSeafileService
+                //            = ((SetupWizardApplication) getApplication()).mISeafileService;
+                //    String userName = iSeafileService.getUserName();
+                //    //if (!TextUtils.isEmpty(userName)) {
+                //    //    AlertDialog.Builder builder
+                //    //            = new AlertDialog.Builder(FinishPagerActivity.this);
+                //    //    builder.setTitle(getString(R.string.title_open_recoverui));
+                //    //    builder.setPositiveButton(getString(R.string.warning_dialog_ok),
+                //    //            new DialogInterface.OnClickListener() {
+                //    //        @Override
+                //    //        public void onClick(DialogInterface dialog, int which) {
+                //    //            dialog.dismiss();
+                //    //            openDesktop();
+                //    //            Intent intent = new Intent();
+                //    //            intent.setComponent(new ComponentName("org.openthos.seafile",
+                //    //                    "org.openthos.seafile.RecoveryActivity"));
+                //    //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                //    //            startActivity(intent);
+                //    //        }
+                //    //    });
 
-                    //    builder.setNegativeButton(getString(R.string.warning_dialog_cancel),
-                    //            new DialogInterface.OnClickListener() {
-                    //        @Override
-                    //        public void onClick(DialogInterface dialog, int which) {
-                    //            dialog.dismiss();
-                    //            openDesktop();
-                    //        }
-                    //    });
-                    //    builder.setCancelable(false);
-                    //    builder.create().show();
-                    //} else {
-                    //    openDesktop();
-                    //}
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                //    //    builder.setNegativeButton(getString(R.string.warning_dialog_cancel),
+                //    //            new DialogInterface.OnClickListener() {
+                //    //        @Override
+                //    //        public void onClick(DialogInterface dialog, int which) {
+                //    //            dialog.dismiss();
+                //    //            openDesktop();
+                //    //        }
+                //    //    });
+                //    //    builder.setCancelable(false);
+                //    //    builder.create().show();
+                //    //} else {
+                //    //    openDesktop();
+                //    //}
+                //} catch (RemoteException e) {
+                //    e.printStackTrace();
+                //}
             }
         });
     }

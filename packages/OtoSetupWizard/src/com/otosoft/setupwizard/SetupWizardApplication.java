@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.io.IOException;
 import com.android.internal.app.LocalePicker;
 import org.openthos.seafile.ISeafileService;
+import java.io.File;
 
 public class SetupWizardApplication extends Application {
     private final ArrayList<Runnable> mFinishRunnables = new ArrayList();
@@ -52,6 +53,14 @@ public class SetupWizardApplication extends Application {
             public void onServiceDisconnected(ComponentName name) {
             }
         }, BIND_AUTO_CREATE);
+        File doc=new File("/data");
+        File file1 =new File(doc, "rec_reset");
+        File file2 =new File(doc, "setupwizard");
+        try {
+            file1.createNewFile();
+            file2.createNewFile();
+        } catch (IOException e) {
+        }
     }
 
     public void onSetupFinishedReally() {
