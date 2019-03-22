@@ -6704,8 +6704,22 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      */
     @RemotableViewMethod
     public void setVisibility(@Visibility int visibility) {
+        if (mContext.getApplicationInfo().packageName.equals("com.tencent.mm")
+                && visibility == GONE && blacklistIdForMM()) {
+            return;
+        }
         setFlags(visibility, VISIBILITY_MASK);
         if (mBackground != null) mBackground.setVisible(visibility == VISIBLE, false);
+    }
+
+    private boolean blacklistIdForMM() {
+        int id = getId();
+        if ((id == NO_ID) || (mResources == null) || !Resources.resourceHasPackage(id)
+            || ((id & 0xff000000) != 0x7f000000)) {
+            return false;
+        }
+        return (this instanceof FrameLayout)
+               && (mResources.getResourceEntryName(id).compareTo("bp") == 0);
     }
 
     /**
