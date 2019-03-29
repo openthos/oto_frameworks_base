@@ -291,7 +291,7 @@ interface IActivityManager {
     boolean switchUser(int userid);
     void setFocusedTask(int taskId);
     boolean removeTask(int taskId);
-    boolean isHomeTask(int taskId);
+    boolean removeTaskRecents(int taskId, boolean remove);
     void registerProcessObserver(in IProcessObserver observer);
     void unregisterProcessObserver(in IProcessObserver observer);
     boolean isIntentSenderTargetedToPackage(in IIntentSender sender);
@@ -489,8 +489,9 @@ interface IActivityManager {
      */
     void positionTaskInStack(int taskId, int stackId, int position);
     int getActivityStackId(in IBinder token);
-    boolean getIsHome(in IBinder token);
+    boolean getIsHome(in int taskId);
     boolean isTaskMaximize(in IBinder token);
+    void returnToDesktop();
     void exitFreeformMode(in IBinder token);
     void switchTaskFreeformAndFullscreen(in IBinder token);
     void moveTaskMaximize(in IBinder token);

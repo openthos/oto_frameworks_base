@@ -4172,6 +4172,7 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
             if (lastActivity) {
                 removeTask(task, reason, REMOVE_TASK_MODE_DESTROYING);
                 mService.removeTaskIcon(task.taskId, task.realActivity);
+                mService.clearBackTasks();
             }
         }
         cleanUpActivityServicesLocked(r);
@@ -5241,6 +5242,7 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
             task.updateOverrideConfiguration(mBounds);
         }
         task.createWindowContainer(toTop, (info.flags & FLAG_SHOW_FOR_ALL_USERS) != 0);
+        mService.clearBackTasks();
         return task;
     }
 

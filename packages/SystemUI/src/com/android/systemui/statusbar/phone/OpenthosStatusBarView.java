@@ -1,9 +1,11 @@
 package com.android.systemui.statusbar.phone;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -180,9 +182,7 @@ public class OpenthosStatusBarView extends PanelBar {
                     showDialog(mCalendarView, mCalendarDialog);
                     break;
                 case R.id.iv_home_status_bar:
-                    Intent home = new Intent(Intent.ACTION_MAIN);
-                    home.addCategory(Intent.CATEGORY_HOME);
-                    getContext().startActivity(home);
+                    handleHomeButton();
                     break;
                 case R.id.ll_scroll_icon_contents:
                     //Handle events
@@ -199,6 +199,14 @@ public class OpenthosStatusBarView extends PanelBar {
         }
         return false;
     };
+
+    private void handleHomeButton() {
+        try {
+            ActivityManager.getService().returnToDesktop();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
         if (charging || pluggedIn || level == 0) {

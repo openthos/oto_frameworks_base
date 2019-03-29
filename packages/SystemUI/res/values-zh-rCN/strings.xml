@@ -343,6 +343,7 @@
     <string name="recents_accessibility_split_screen_top" msgid="9056056469282256287">"将屏幕分隔线移到上方"</string>
     <string name="recents_accessibility_split_screen_left" msgid="8987144699630620019">"将屏幕分隔线移到左侧"</string>
     <string name="recents_accessibility_split_screen_right" msgid="275069779299592867">"将屏幕分隔线移到右侧"</string>
+    <string name="switch_fail">无法打开此应用程序</string>
     <string-array name="recents_blacklist_array">
     </string-array>
     <string name="expanded_header_battery_charged" msgid="5945855970267657951">"已充满"</string>

@@ -2,6 +2,7 @@ package com.android.systemui.recents.taskview;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RecentTaskInfo;
+import android.app.ActivityManagerNative;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -78,7 +80,7 @@ public class TaskViewDialog extends Dialog {
         mTaskContainer = (GridView) findViewById(R.id.gridView);
         mClearAll = (TextView) findViewById(R.id.recent_clear_all);
         gridViewReloadTask();
-        setCanceledOnTouchOutside(true);
+        setCanceledOnTouchOutside(false);
         mClickListener = new ClickListener();
         mClearAll.setOnClickListener(mClickListener);
 
@@ -104,18 +106,6 @@ public class TaskViewDialog extends Dialog {
                     break;
             }
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_TAB:
-                if (event.getRepeatCount() <= 0) {
-                    showOrTabTaskView();
-                }
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     private void gridViewReloadTask() {
@@ -222,8 +212,6 @@ public class TaskViewDialog extends Dialog {
         private Drawable mDrawable;
         private ActivityManager.TaskSnapshot mSnapshot = null;
         private float mImageSize;
-        private static final int DISPLAY_TASKS = 100;
-        private static final int MAX_TASKS = DISPLAY_TASKS + 1;
 
         class TaskInfo {
             public RecentTaskInfo info;
@@ -249,7 +237,8 @@ public class TaskViewDialog extends Dialog {
         public void reloadTask() {
             ArrayList<RecentTaskInfo> recentTasks = new ArrayList();
             try {
-                recentTasks = (ArrayList) mActivityManager.getRecentTasks(MAX_TASKS,
+                recentTasks = (ArrayList) mActivityManager.getRecentTasks(
+                        ActivityManager.getMaxRecentTasksStatic(),
                         ActivityManager.RECENT_WITH_EXCLUDED);
             } catch(Exception e) {
                 e.printStackTrace();
@@ -263,7 +252,12 @@ public class TaskViewDialog extends Dialog {
                 }
                 Intent intent = new Intent(ri.baseIntent);
                 intent.setComponent(ri.realActivity);
-                boolean isHome = mActivityManager.isHomeTask(ri.id);
+                boolean isHome = false;
+                try {
+                    isHome = ActivityManager.getService().getIsHome(ri.id);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 int stackId = ri.stackId;
                 if (stackId != 0 || mTasks.isEmpty()) {
                     mTasks.add(new TaskInfo(ri, intent, isHome));
@@ -292,17 +286,22 @@ public class TaskViewDialog extends Dialog {
             if (mTasks != null && position >= 0 && position < mTasks.size()) {
                 mCurrentPosition = position;
                 TaskInfo taskInfo = mTasks.get(mCurrentPosition);
-                if (taskInfo.info.id >= 0) {
-                    mActivityManager.moveTaskToFront(mTasks.get(mCurrentPosition).info.id, 0, null);
-                } else if (taskInfo.intent != null) {
-                    taskInfo.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    try {
+                try {
+                    if (taskInfo.info.id >= 0) {
+                        if (taskInfo.isHome) {
+                            ActivityManager.getService().returnToDesktop();
+                        } else {
+                            ActivityManager.getService()
+                                    .setFocusedTask(mTasks.get(mCurrentPosition).info.id);
+                        }
+                    } else if (taskInfo.intent != null) {
+                        taskInfo.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         mContext.startActivity(taskInfo.intent);
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        Log.w("TaskSwitchAdapter", "switchTask e:   " + e );
                     }
+                } catch(Exception e) {
+                    Toast.makeText(mContext,
+                            mContext.getString(R.string.switch_fail), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -419,14 +418,14 @@ public class TaskViewDialog extends Dialog {
         }
 
         public void removeSingleRecent() {
-            mActivityManager.removeTask(mTasks.get(mCurrentPosition).info.id);
+            mActivityManager.removeTaskRecents(mTasks.get(mCurrentPosition).info.id, false);
             reloadTask();
         }
 
         public void clearAllRecents() {
             for (TaskInfo task : mTasks) {
                 if (!task.isHome) {
-                    mActivityManager.removeTask(task.info.id);
+                    mActivityManager.removeTaskRecents(task.info.id, false);
                 }
             }
             reloadTask();

@@ -2150,9 +2150,9 @@ public class ActivityManager {
         }
     }
 
-    public boolean isHomeTask(int taskId) {
+    public boolean removeTaskRecents(int taskId, boolean remove) throws SecurityException {
         try {
-            return getService().isHomeTask(taskId);
+            return getService().removeTaskRecents(taskId, remove);
         } catch (RemoteException e) {
             throw e.rethrowFromSystemServer();
         }

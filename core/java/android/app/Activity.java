@@ -3256,7 +3256,7 @@ public class Activity extends ContextThemeWrapper
     @Override
     public boolean getIsHome() {
         try {
-            return ActivityManager.getService().getIsHome(mToken);
+            return ActivityManager.getService().getIsHome(getTaskId());
         } catch (Exception e) {
             return false;
         }

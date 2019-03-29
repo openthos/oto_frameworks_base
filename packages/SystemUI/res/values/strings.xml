@@ -809,6 +809,7 @@
     <string name="recents_accessibility_split_screen_left">Split screen to the left</string>
     <!-- Recents: Accessibility split to the right -->
     <string name="recents_accessibility_split_screen_right">Split screen to the right</string>
+    <string name="switch_fail">Unable to open this application</string>
 
     <!-- Fully qualified activity class names to be blacklisted in Recents, add package names into overlay as needed -->
     <string-array name="recents_blacklist_array">

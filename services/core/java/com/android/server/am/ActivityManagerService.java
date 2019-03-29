@@ -200,6 +200,7 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.ActivityManager.StackId;
 import android.app.ActivityManager.StackInfo;
+import android.app.ActivityManager.RecentTaskInfo;
 import android.app.ActivityManager.TaskSnapshot;
 import android.app.ActivityManager.TaskThumbnailInfo;
 import android.app.ActivityManagerInternal;
@@ -1737,6 +1738,9 @@ public class ActivityManagerService extends IActivityManager.Stub
 
     private static String sTheRealBuildSerial = Build.UNKNOWN;
 
+    // The list of applications which are moved to background stack by home button.
+    private ArrayList<RecentTaskInfo> mBackTasks = new ArrayList();
+
     /**
      * Current global configuration information. Contains general settings for the entire system,
      * also corresponds to the merged configuration of the default display.
@@ -3195,6 +3199,10 @@ public class ActivityManagerService extends IActivityManager.Stub
 
     @Override
     public void setFocusedTask(int taskId) {
+        setFocusedTask(taskId, true);
+    }
+
+    public void setFocusedTask(int taskId, boolean clear) {
         enforceCallingPermission(MANAGE_ACTIVITY_STACKS, "setFocusedTask()");
         if (DEBUG_FOCUS) Slog.d(TAG_FOCUS, "setFocusedTask: taskId=" + taskId);
         final long callingId = Binder.clearCallingIdentity();
@@ -3220,6 +3228,9 @@ public class ActivityManagerService extends IActivityManager.Stub
                 final ActivityRecord r = task.topRunningActivityLocked();
                 if (mStackSupervisor.moveFocusableActivityStackToFrontLocked(r, "setFocusedTask")) {
                     mStackSupervisor.resumeFocusedStackTopActivityLocked();
+                }
+                if (!getIsHome(taskId) && clear) {
+                    clearBackTasks();
                 }
             }
         } finally {
@@ -10471,7 +10482,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         synchronized (this) {
             final long ident = Binder.clearCallingIdentity();
             try {
-                return mStackSupervisor.removeTaskByIdLocked(taskId, true, !REMOVE_FROM_RECENTS);
+                return mStackSupervisor.removeTaskByIdLocked(taskId, true, REMOVE_FROM_RECENTS);
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -10479,8 +10490,16 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
-    public boolean isHomeTask(int taskId) {
-        return mStackSupervisor.isHomeTaskByIdLocked(taskId);
+    public boolean removeTaskRecents(int taskId, boolean remove) {
+        enforceCallingPermission(android.Manifest.permission.REMOVE_TASKS, "removeTask()");
+        synchronized (this) {
+            final long ident = Binder.clearCallingIdentity();
+            try {
+                return mStackSupervisor.removeTaskByIdLocked(taskId, true, remove);
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
     }
 
     /**
@@ -10642,11 +10661,8 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
-    public boolean getIsHome(IBinder token) throws RemoteException {
-        synchronized (this) {
-            final ActivityRecord r = ActivityRecord.forTokenLocked(token);
-            return r != null ? r.isHomeActivity() : false;
-        }
+    public boolean getIsHome(int taskId) {
+        return mStackSupervisor.isHomeTaskByIdLocked(taskId);
     }
 
     @Override
@@ -10654,6 +10670,38 @@ public class ActivityManagerService extends IActivityManager.Stub
         synchronized (this) {
             final ActivityRecord r = ActivityRecord.forTokenLocked(token);
             return r != null ? r.getTask().isTaskMaximize() : false;
+        }
+    }
+
+    @Override
+    public void returnToDesktop() {
+        if (mBackTasks.size() == 0) {
+            ArrayList<RecentTaskInfo> recentTasks = (ArrayList) getRecentTasks(
+                    ActivityManager.getMaxRecentTasksStatic(),
+                    ActivityManager.RECENT_WITH_EXCLUDED, UserHandle.myUserId()).getList();
+            for (RecentTaskInfo task : recentTasks) {
+                if (!isBackgroundStack(task.id) && !getIsHome(task.id)) {
+                    moveTaskBackwards(task.id);
+                    mBackTasks.add(task);
+                }
+            }
+            Collections.reverse(mBackTasks);
+        } else {
+            for (RecentTaskInfo task : mBackTasks) {
+                setFocusedTask(task.id, false);
+            }
+            mBackTasks.clear();
+        }
+    }
+
+    public boolean isBackgroundStack(int taskId) {
+        TaskRecord target = mStackSupervisor.anyTaskForIdLocked(taskId);
+        return target != null && target.getStack().mStackId == BACKGROUND_STACK_ID;
+    }
+
+    public void clearBackTasks() {
+        if (!mBackTasks.isEmpty()) {
+            mBackTasks.clear();
         }
     }
 
