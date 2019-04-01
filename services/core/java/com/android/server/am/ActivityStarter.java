@@ -58,6 +58,7 @@ import static android.content.pm.ActivityInfo.LAUNCH_SINGLE_TASK;
 import static android.content.pm.ActivityInfo.LAUNCH_SINGLE_TOP;
 import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.Display.INVALID_DISPLAY;
+import static android.view.Display.STANDARD_MODE;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_CONFIGURATION;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_FOCUS;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_PERMISSIONS_REVIEW;
@@ -1803,8 +1804,12 @@ class ActivityStarter {
                     mNewTaskIntent != null ? mNewTaskIntent : mIntent, mVoiceSession,
                     mVoiceInteractor, !mLaunchTaskBehind /* toTop */, mStartActivity.mActivityType);
             addOrReparentStartingActivity(task, "setTaskFromReuseOrCreateNewTask - mReuseTask");
-            if (mOptions != null && mOptions.getFreeformBounds() != null)
-                task.resize(mOptions.getFreeformBounds(), ActivityManager.RESIZE_MODE_FORCED, true, true);
+            if (mOptions != null && mOptions.getFreeformBoundsMode() != STANDARD_MODE) {
+                Rect bounds = new Rect();
+                mTargetStack.getDisplay().mDisplay.getDefaultFreeformSize(
+                        bounds, mOptions.getFreeformBoundsMode());
+                task.resize(bounds, ActivityManager.RESIZE_MODE_FORCED, true, true);
+            }
             if (!mStartActivity.fullscreen) {
                 Rect bounds = new Rect();
                 mTargetStack.getDisplay().mDisplay.getRectSize(bounds);

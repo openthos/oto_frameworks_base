@@ -88,6 +88,7 @@ import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ContextThemeWrapper;
+import android.view.Display;
 import android.view.DragAndDropPermissions;
 import android.view.DragEvent;
 import android.view.KeyEvent;
@@ -3263,11 +3264,11 @@ public class Activity extends ContextThemeWrapper
     }
 
     @Override
-    public boolean isWindowMaximize() {
+    public int getWindowSizeMode() {
         try {
-            return ActivityManager.getService().isTaskMaximize(mToken);
+            return ActivityManager.getService().getTaskBoundsMode(mToken);
         } catch (Exception e) {
-            return false;
+            return Display.STANDARD_MODE;
         }
     }
 

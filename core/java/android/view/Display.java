@@ -362,6 +362,13 @@ public final class Display {
      */
     public static final int REMOVE_MODE_DESTROY_CONTENT = 1;
 
+    public static final int STANDARD_MODE = 0;
+    public static final int LEFT_DOCKED_MODE = 1;
+    public static final int RIGHT_DOCKED_MODE = 2;
+    public static final int TOP_DOCKED_MODE = 4;
+    public static final int DESKTOP_MODE = 5;
+    public static final int PHONE_MODE = 6;
+
     /**
      * Internal method to create a display.
      * The display created with this method will have a static {@link DisplayAdjustments} applied.
@@ -615,6 +622,40 @@ public final class Display {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(mTempMetrics, getDisplayAdjustments());
             outSize.set(0, 0, mTempMetrics.widthPixels, mTempMetrics.heightPixels);
+        }
+    }
+
+    public void getDefaultFreeformSize(Rect outSize, int windowMode) {
+        synchronized (this) {
+            updateDisplayInfoLocked();
+            mDisplayInfo.getAppMetrics(mTempMetrics, getDisplayAdjustments());
+            int startX = mTempMetrics.widthPixels / 4;
+            int startY = mTempMetrics.heightPixels / 4;
+            int width = mTempMetrics.widthPixels;
+            int height = mTempMetrics.heightPixels;
+            if (windowMode == DESKTOP_MODE) {
+                width = width / 2;
+                height = width / 16 * 9;
+            } else if (windowMode == PHONE_MODE) {
+                height = height / 3 * 2;
+                width = height / 16 * 9;
+            }
+            outSize.set(new Rect(startX, startY, startX + width, startY + height));
+        }
+    }
+
+    public void getDockedSize(Rect outSize, int dockedMode) {
+        synchronized (this) {
+            updateDisplayInfoLocked();
+            mDisplayInfo.getAppMetrics(mTempMetrics, getDisplayAdjustments());
+            int left = 0;
+            int right = mTempMetrics.widthPixels;
+            if (dockedMode == LEFT_DOCKED_MODE) {
+                right = right / 2;
+            } else if (dockedMode == RIGHT_DOCKED_MODE) {
+                left = right / 2;
+            }
+            outSize.set(new Rect(left , 0, right, mTempMetrics.heightPixels));
         }
     }
 

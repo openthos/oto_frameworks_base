@@ -37,6 +37,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.EventLog;
 import android.util.Slog;
+import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.Surface;
 
@@ -330,46 +331,7 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
             displayContent.mDimLayerController.updateDimLayer(this);
         }
         onOverrideConfigurationChanged(mFillsParent ? Configuration.EMPTY : overrideConfig);
-        setUniqueBounds();
-        mIsDocked = false;
-        if (mBounds.equals(mMaxTmpRect) || mBounds.equals(mLeftDockedTmpRect)
-                    || mBounds.equals(mRightDockedTmpRect)) {
-            mIsDocked = true;
-            validateDockedTmpRect();
-        }
         return boundsChange;
-    }
-
-    private void validateDockedTmpRect() {
-        getDimBounds(mDockedTmpRect);
-        int startX, startY, width, height;
-        startX = mMaxTmpRect.width() / 4;
-        startY = mMaxTmpRect.height() / 4;
-        if (mDockedTmpRect.equals(mMaxTmpRect)) {
-            width = mMaxTmpRect.width() / 2;
-            height = width / 16 * 9;
-            mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
-        } else if (mDockedTmpRect.equals(mLeftDockedTmpRect)
-                    || mDockedTmpRect.equals(mRightDockedTmpRect)) {
-            height = mMaxTmpRect.height() / 3 * 2;
-            width = height / 16 * 9;
-            mDockedTmpRect.set(new Rect(startX, startY, startX + width, startY + height));
-        }
-    }
-
-    private void setUniqueBounds() {
-        DisplayContent content = getDisplayContent();
-        if (content != null) {
-            if (mMaxTmpRect.isEmpty()) {
-                content.getLogicalDisplayRect(mMaxTmpRect);
-                int width = mMaxTmpRect.width();
-                int height = mMaxTmpRect.height();
-                mLeftDockedTmpRect = new Rect(mMaxTmpRect.left, mMaxTmpRect.top,
-                        mMaxTmpRect.right / 2, mMaxTmpRect.bottom);
-                mRightDockedTmpRect = new Rect(mMaxTmpRect.left + width / 2, mMaxTmpRect.top,
-                        mMaxTmpRect.right, mMaxTmpRect.bottom);
-            }
-        }
     }
 
     /**
@@ -394,6 +356,11 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
 
     void setResizeable(int resizeMode) {
         mResizeMode = resizeMode;
+    }
+
+    void setTaskBoundsMode(Rect bounds, int taskBoundsMode) {
+        mIsDocked = taskBoundsMode != Display.STANDARD_MODE;
+        mDockedTmpRect.set(bounds);
     }
 
     boolean isResizeable() {

@@ -150,6 +150,14 @@ public class TaskWindowContainerController
         }
     }
 
+    public void setTaskBoundsMode(Rect bounds, int taskBoundsMode) {
+        synchronized (mWindowMap) {
+            if (mContainer != null) {
+                mContainer.setTaskBoundsMode(bounds, taskBoundsMode);
+            }
+        }
+    }
+
     public void resize(Rect bounds, Configuration overrideConfig, boolean relayout,
             boolean forced) {
         synchronized (mWindowMap) {

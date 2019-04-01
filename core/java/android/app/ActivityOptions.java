@@ -84,7 +84,7 @@ public class ActivityOptions {
      */
     public static final String KEY_LAUNCH_BOUNDS = "android:activity.launchBounds";
 
-    public static final String KEY_FREEFORM_BOUNDS = "android:activity.freeformBounds";
+    public static final String KEY_FREEFORM_BOUNDS_MODE = "android:activity.freeformBoundsMode";
 
     /**
      * Type of animation that arguments specify.
@@ -255,7 +255,7 @@ public class ActivityOptions {
 
     private String mPackageName;
     private Rect mLaunchBounds;
-    private Rect mFreeformBounds;
+    private int mFreeformBoundsMode;
     private int mAnimationType = ANIM_NONE;
     private int mCustomEnterResId;
     private int mCustomExitResId;
@@ -815,7 +815,7 @@ public class ActivityOptions {
             Slog.w(TAG, e);
         }
         mLaunchBounds = opts.getParcelable(KEY_LAUNCH_BOUNDS);
-        mFreeformBounds = opts.getParcelable(KEY_FREEFORM_BOUNDS);
+        mFreeformBoundsMode = opts.getInt(KEY_FREEFORM_BOUNDS_MODE);
         mAnimationType = opts.getInt(KEY_ANIM_TYPE);
         switch (mAnimationType) {
             case ANIM_CUSTOM:
@@ -905,8 +905,8 @@ public class ActivityOptions {
         return this;
     }
 
-    public ActivityOptions setFreeformBounds(@Nullable Rect screenSpacePixelRect) {
-        mFreeformBounds = screenSpacePixelRect != null ? new Rect(screenSpacePixelRect) : null;
+    public ActivityOptions setFreeformBoundsMode(int freeformBoundsMode) {
+        mFreeformBoundsMode = freeformBoundsMode;
         return this;
     }
 
@@ -925,8 +925,8 @@ public class ActivityOptions {
         return mLaunchBounds;
     }
 
-    public Rect getFreeformBounds() {
-        return mFreeformBounds;
+    public int getFreeformBoundsMode() {
+        return mFreeformBoundsMode;
     }
 
     /** @hide */
@@ -1247,9 +1247,6 @@ public class ActivityOptions {
         if (mPackageName != null) {
             b.putString(KEY_PACKAGE_NAME, mPackageName);
         }
-        if (mFreeformBounds != null) {
-            b.putParcelable(KEY_FREEFORM_BOUNDS, mFreeformBounds);
-        }
         if (mLaunchBounds != null) {
             b.putParcelable(KEY_LAUNCH_BOUNDS, mLaunchBounds);
         }
@@ -1257,6 +1254,7 @@ public class ActivityOptions {
         if (mUsageTimeReport != null) {
             b.putParcelable(KEY_USAGE_TIME_REPORT, mUsageTimeReport);
         }
+        b.putInt(KEY_FREEFORM_BOUNDS_MODE, mFreeformBoundsMode);
         switch (mAnimationType) {
             case ANIM_CUSTOM:
                 b.putInt(KEY_ANIM_ENTER_RES_ID, mCustomEnterResId);

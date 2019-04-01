@@ -101,6 +101,7 @@ import static android.service.voice.VoiceInteractionSession.SHOW_SOURCE_APPLICAT
 import static android.text.format.DateUtils.DAY_IN_MILLIS;
 import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.Display.INVALID_DISPLAY;
+import static android.view.Display.STANDARD_MODE;
 import static com.android.internal.util.XmlUtils.readBooleanAttribute;
 import static com.android.internal.util.XmlUtils.readIntAttribute;
 import static com.android.internal.util.XmlUtils.readLongAttribute;
@@ -10233,6 +10234,17 @@ public class ActivityManagerService extends IActivityManager.Stub
         }
     }
 
+    public void setTaskBoundsMode(int taskId, Rect bounds, int taskBoundsMode) {
+        synchronized (this) {
+            TaskRecord task = mStackSupervisor.anyTaskForIdLocked(taskId);
+            if (task == null) {
+                Slog.w(TAG, "setTaskBoundsMode: taskId=" + taskId + " not found");
+                return;
+            }
+            task.setTaskBoundsMode(bounds, taskBoundsMode);
+        }
+    }
+
     @Override
     public int getDefaultMinSizeOfResizeableTask() {
         if (mStackSupervisor != null) {
@@ -10666,10 +10678,10 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
-    public boolean isTaskMaximize(IBinder token) throws RemoteException {
+    public int getTaskBoundsMode(IBinder token) throws RemoteException {
         synchronized (this) {
             final ActivityRecord r = ActivityRecord.forTokenLocked(token);
-            return r != null ? r.getTask().isTaskMaximize() : false;
+            return r != null ? r.getTask().getTaskBoundsMode() : STANDARD_MODE;
         }
     }
 

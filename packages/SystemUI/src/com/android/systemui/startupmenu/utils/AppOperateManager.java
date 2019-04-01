@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.Display;
 
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.dialog.StartupMenuDialog;
@@ -74,13 +75,13 @@ public class AppOperateManager {
     }
 
     public void runPhoneMode(ComponentName componentName) {
-        LaunchAppUtil.launchApp(mContext, componentName, LaunchAppUtil.PHONE_MODE);
+        LaunchAppUtil.launchApp(mContext, componentName, Display.PHONE_MODE);
         updateClick(componentName.getPackageName());
         dismissStartupMenuDialog();
     }
 
     public void runDesktopMode(ComponentName componentName) {
-        LaunchAppUtil.launchApp(mContext, componentName, LaunchAppUtil.DESKTOP_MODE);
+        LaunchAppUtil.launchApp(mContext, componentName, Display.DESKTOP_MODE);
         updateClick(componentName.getPackageName());
         dismissStartupMenuDialog();
     }

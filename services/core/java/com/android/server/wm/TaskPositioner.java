@@ -181,6 +181,8 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                                     "wm.TaskPositioner.resizeTask");
                             if (!mResizing) {
                                 try {
+                                    mService.mActivityManager.setTaskBoundsMode(
+                                            mTask.mTaskId, mWindowDragBounds, mCurrentDimSide);
                                     mService.mActivityManager.resizeTask(
                                             mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
                                 } catch (RemoteException e) {
@@ -222,6 +224,8 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                         if (wasResizing && !mTmpRect.equals(mWindowDragBounds)) {
                             // We were using fullscreen surface during resizing. Request
                             // resizeTask() one last time to restore surface to window size.
+                            mService.mActivityManager.setTaskBoundsMode(
+                                    mTask.mTaskId, mWindowDragBounds, mCurrentDimSide);
                             mService.mActivityManager.resizeTask(
                                     mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER_FORCED);
                         }
@@ -239,6 +243,8 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                             } else if (mCurrentDimSide == CTRL_RIGHT) {
                                 mTmpRect.left = mTmpRect.centerX();
                             }
+                            mService.mActivityManager.setTaskBoundsMode(
+                                    mTask.mTaskId, mTask.mDockedTmpRect, mCurrentDimSide);
                             mService.mActivityManager.resizeTask(
                                     mTask.mTaskId, mTmpRect, RESIZE_MODE_USER_FORCED);
                             //mService.mActivityManager.moveTaskToDockedStack(

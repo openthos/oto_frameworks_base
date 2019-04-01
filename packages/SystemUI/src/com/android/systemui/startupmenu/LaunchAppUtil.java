@@ -24,9 +24,6 @@ public class LaunchAppUtil {
     private static final int FULLSCREEN_WORKSPACE_STACK_ID = 1;
     private static final int FREEFORM_WORKSPACE_STACK_ID = 2;
 
-    public static final int STANDARD_MODE = 0;
-    public static final int DESKTOP_MODE = 1;
-    public static final int PHONE_MODE = 2;
     private static SharedPreferences pref;
 
     /**
@@ -55,7 +52,7 @@ public class LaunchAppUtil {
      * @param componentName
      */
     public static void launchApp(Context context, ComponentName componentName) {
-        launchApp(context, componentName, STANDARD_MODE);
+        launchApp(context, componentName, Display.STANDARD_MODE);
     }
 
     /**
@@ -64,8 +61,8 @@ public class LaunchAppUtil {
      * @param packageName
      */
     public static void launchApp(Context context, String packageName) {
-        launchApp(context,
-                context.getPackageManager().getLaunchIntentForPackage(packageName), DESKTOP_MODE);
+        launchApp(context, context.getPackageManager().
+                getLaunchIntentForPackage(packageName), Display.DESKTOP_MODE);
     }
 
     /**
@@ -86,7 +83,7 @@ public class LaunchAppUtil {
      * @param intent
      */
     public static void launchApp(Context context, Intent intent) {
-        launchApp(context, intent, DESKTOP_MODE);
+        launchApp(context, intent, Display.DESKTOP_MODE);
     }
 
     /**
@@ -114,26 +111,15 @@ public class LaunchAppUtil {
             ActivityOptions options = ActivityOptions.makeBasic();
             try {
                 options.setLaunchStackId(FREEFORM_WORKSPACE_STACK_ID);
-                DisplayMetrics metrics = getRealDisplayMetrics(context);
-                int startX, startY, width, height;
                 switch (startMode) {
-                    case STANDARD_MODE:
+                    case Display.STANDARD_MODE:
+                        options.setFreeformBoundsMode(Display.STANDARD_MODE);
                         break;
-                    case DESKTOP_MODE:
-                        startX = metrics.widthPixels / 4;
-                        startY = metrics.heightPixels / 4;
-                        width = metrics.widthPixels / 2;
-                        height = width / 16 * 9;
-                        options.setFreeformBounds(new Rect(startX, startY,
-                                                      startX + width, startY + height));
+                    case Display.DESKTOP_MODE:
+                        options.setFreeformBoundsMode(Display.DESKTOP_MODE);
                         break;
-                    case PHONE_MODE:
-                        startX = metrics.widthPixels / 4;
-                        startY = metrics.heightPixels / 4;
-                        height = metrics.heightPixels / 3 * 2;
-                        width = height / 16 * 9;
-                        options.setFreeformBounds(new Rect(startX, startY,
-                                                      startX + width, startY + height));
+                    case Display.PHONE_MODE:
+                        options.setFreeformBoundsMode(Display.PHONE_MODE);
                         break;
                 }
                 return options.toBundle();
@@ -143,27 +129,5 @@ public class LaunchAppUtil {
         } else {
             return null;
         }
-    }
-
-    /**
-     * get display metrics
-     * @param context
-     * @return
-     */
-    public static DisplayMetrics getRealDisplayMetrics(Context context) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display disp = wm.getDefaultDisplay();
-
-        if (isChromeOs(context))
-            disp.getRealMetrics(metrics);
-        else
-            disp.getMetrics(metrics);
-
-        return metrics;
-    }
-
-    public static boolean isChromeOs(Context context) {
-        return context.getPackageManager().hasSystemFeature("org.chromium.arc");
     }
 }

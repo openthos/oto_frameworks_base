@@ -443,6 +443,8 @@ interface IActivityManager {
     void notifyCleartextNetwork(int uid, in byte[] firstPacket);
     int createStackOnDisplay(int displayId);
     int getFocusedStackId();
+    int getTaskBoundsMode(in IBinder token);
+    void setTaskBoundsMode(int taskId, in Rect bounds, int taskMode);
     void setTaskResizeable(int taskId, int resizeableMode);
     boolean requestAssistContextExtras(int requestType, in IResultReceiver receiver,
             in Bundle receiverExtras, in IBinder activityToken,
@@ -490,7 +492,6 @@ interface IActivityManager {
     void positionTaskInStack(int taskId, int stackId, int position);
     int getActivityStackId(in IBinder token);
     boolean getIsHome(in int taskId);
-    boolean isTaskMaximize(in IBinder token);
     void returnToDesktop();
     void exitFreeformMode(in IBinder token);
     void switchTaskFreeformAndFullscreen(in IBinder token);

@@ -23,6 +23,7 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -467,11 +468,16 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     public boolean hasCaption() {
+        return getWindowSizeMode() != Display.TOP_DOCKED_MODE
+                && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+    }
+
+    private int getWindowSizeMode() {
         Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
         if (callback != null) {
-            return !callback.isWindowMaximize() && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+            return callback.getWindowSizeMode();
         }
-        return false;
+        return Display.STANDARD_MODE;
     }
 
     /**
@@ -538,7 +544,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     private boolean updateRotateState() {
-        return hasCaption() && canResizeOrientation();
+        return getWindowSizeMode() == Display.STANDARD_MODE && canResizeOrientation()
+                && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
     }
 
     @Override

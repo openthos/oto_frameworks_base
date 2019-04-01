@@ -627,7 +627,7 @@ public abstract class Window {
         boolean getIsHome();
 
         /** Returns whether the window is maximize*/
-        boolean isWindowMaximize();
+        int getWindowSizeMode();
 
         /** Returns the current stack Id for the window. */
         int getWindowStackId() throws RemoteException;
