@@ -1563,6 +1563,10 @@ public final class MotionEvent extends InputEvent implements Parcelable {
     @CriticalNative
     private static native void nativeTransform(long nativePtr, long matrix);
 
+    public boolean mmOffSet = false;  //mmOffSet : Wechat
+    public float offSetX = 0.0f;
+    public float offSetY = 0.0f;
+
     private MotionEvent() {
     }
 
@@ -2450,7 +2454,7 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #AXIS_X
      */
     public final float getRawX() {
-        return nativeGetRawAxisValue(mNativePtr, AXIS_X, 0, HISTORY_CURRENT);
+        return nativeGetRawAxisValue(mNativePtr, AXIS_X, 0, HISTORY_CURRENT) - (mmOffSet ? offSetX : 0);
     }
 
     /**
@@ -2463,7 +2467,7 @@ public final class MotionEvent extends InputEvent implements Parcelable {
      * @see #AXIS_Y
      */
     public final float getRawY() {
-        return nativeGetRawAxisValue(mNativePtr, AXIS_Y, 0, HISTORY_CURRENT);
+        return nativeGetRawAxisValue(mNativePtr, AXIS_Y, 0, HISTORY_CURRENT) - (mmOffSet ? offSetY : 0);
     }
 
     /**

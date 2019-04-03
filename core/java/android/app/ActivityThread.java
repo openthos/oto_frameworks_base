@@ -3594,8 +3594,8 @@ public final class ActivityThread {
         }
         if (r.mPendingRemoveWindow != null) {
             r.mPendingRemoveWindowManager.removeViewImmediate(
-                    r.mPendingRemoveWindow.getDecorView());
-            IBinder wtoken = r.mPendingRemoveWindow.getDecorView().getWindowToken();
+                    r.mPendingRemoveWindow.getSpecialDecorView());
+            IBinder wtoken = r.mPendingRemoveWindow.getSpecialDecorView().getWindowToken();
             if (wtoken != null) {
                 WindowManagerGlobal.getInstance().closeAll(wtoken,
                         r.activity.getClass().getName(), "Activity");
@@ -3645,7 +3645,7 @@ public final class ActivityThread {
             }
             if (r.window == null && !a.mFinished && willBeVisible) {
                 r.window = r.activity.getWindow();
-                View decor = r.window.getDecorView();
+                View decor = r.window.getSpecialDecorView();
                 decor.setVisibility(View.INVISIBLE);
                 ViewManager wm = a.getWindowManager();
                 WindowManager.LayoutParams l = r.window.getAttributes();
@@ -3710,7 +3710,7 @@ public final class ActivityThread {
                             | forwardBit;
                     if (r.activity.mVisibleFromClient) {
                         ViewManager wm = a.getWindowManager();
-                        View decor = r.window.getDecorView();
+                        View decor = r.window.getSpecialDecorView();
                         wm.updateViewLayout(decor, l);
                     }
                 }

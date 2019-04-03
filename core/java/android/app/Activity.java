@@ -126,6 +126,7 @@ import com.android.internal.app.ToolbarActionBar;
 import com.android.internal.app.WindowDecorActionBar;
 import com.android.internal.policy.DecorView;
 import com.android.internal.policy.PhoneWindow;
+import com.android.internal.policy.NewPhoneWindow;
 
 import org.android_x86.analytics.AnalyticsHelper;
 
@@ -7020,6 +7021,13 @@ public class Activity extends ContextThemeWrapper
         mParent = parent;
     }
 
+    final Window getPhoneWindow(Context context, Window window,
+            ActivityConfigCallback activityConfigCallback) {
+        if (("com.tencent.mm").equals(getPackageName()))
+            return new NewPhoneWindow(this, context, window, activityConfigCallback);
+        return new PhoneWindow(this, window, activityConfigCallback);
+    }
+
     final void attach(Context context, ActivityThread aThread,
             Instrumentation instr, IBinder token, int ident,
             Application application, Intent intent, ActivityInfo info,
@@ -7031,7 +7039,7 @@ public class Activity extends ContextThemeWrapper
 
         mFragments.attachHost(null /*parent*/);
 
-        mWindow = new PhoneWindow(this, window, activityConfigCallback);
+        mWindow = getPhoneWindow(context, window, activityConfigCallback);
         mWindow.setWindowControllerCallback(this);
         mWindow.setCallback(this);
         mWindow.setOnWindowDismissedCallback(this);

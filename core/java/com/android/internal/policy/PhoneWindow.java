@@ -283,11 +283,11 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     private Boolean mSharedElementsUseOverlay;
 
     private boolean mIsStartingWindow;
-    private int mTheme = -1;
+    protected int mTheme = -1;
 
     private int mDecorCaptionShade = DECOR_CAPTION_SHADE_AUTO;
 
-    private boolean mUseDecorContext = false;
+    protected boolean mUseDecorContext = false;
 
     /** @see ViewRootImpl#mActivityConfigCallback */
     private ActivityConfigCallback mActivityConfigCallback;
@@ -2062,7 +2062,15 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     }
 
     @Override
-    public final View getDecorView() {
+    public final View getSpecialDecorView() {
+        if (mDecor == null || mForceDecorInstall) {
+            installDecor();
+        }
+        return mDecor;
+    }
+
+    @Override
+    public View getDecorView() {
         if (mDecor == null || mForceDecorInstall) {
             installDecor();
         }

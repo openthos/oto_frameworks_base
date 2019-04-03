@@ -667,6 +667,11 @@ public class StatusBarWindowView extends FrameLayout {
         }
 
         @Override
+        public View getSpecialDecorView() {
+            return StatusBarWindowView.this;
+        }
+
+        @Override
         public View peekDecorView() {
             return null;
         }

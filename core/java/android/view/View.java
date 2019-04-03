@@ -4462,6 +4462,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @hide
      */
     public boolean mCachingFailed;
+    public boolean mIsFakeDecor;
     private Bitmap mDrawingCache;
     private Bitmap mUnscaledDrawingCache;
 
@@ -21315,6 +21316,16 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         return parent;
     }
 
+    public View getRootViewWithoutAttachInfo() {
+        View parent = this;
+
+        while (parent.mParent != null && parent.mParent instanceof View && !parent.mIsFakeDecor) {
+            parent = (View) parent.mParent;
+        }
+
+        return parent;
+    }
+
     /**
      * Transforms a motion event from view-local coordinates to on-screen
      * coordinates.
@@ -21432,6 +21443,14 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     public void getLocationOnScreen(@Size(2) int[] outLocation) {
         getLocationInWindow(outLocation);
 
+        View root = getRootViewWithoutAttachInfo();
+        if (this != root) {
+            int [] rootOut = root.getLocationOnScreen();
+            outLocation[0] += rootOut[0];
+            outLocation[1] += rootOut[1];
+            return;
+        }
+
         final AttachInfo info = mAttachInfo;
         if (info != null) {
             outLocation[0] += info.mWindowLeft;
@@ -21455,6 +21474,18 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         outLocation[1] = 0;
 
         transformFromViewToWindowSpace(outLocation);
+    }
+
+    public void transformParent(@Size(2) float[] position) {
+        position[0] -= mScrollX;
+        position[1] -= mScrollY;
+
+        if (!hasIdentityMatrix()) {
+            getMatrix().mapPoints(position);
+        }
+
+        position[0] += mLeft;
+        position[1] += mTop;
     }
 
     /** @hide */
@@ -21483,17 +21514,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         ViewParent viewParent = mParent;
         while (viewParent instanceof View) {
             final View view = (View) viewParent;
-
-            position[0] -= view.mScrollX;
-            position[1] -= view.mScrollY;
-
-            if (!view.hasIdentityMatrix()) {
-                view.getMatrix().mapPoints(position);
-            }
-
-            position[0] += view.mLeft;
-            position[1] += view.mTop;
-
+            view.transformParent(position);
             viewParent = view.mParent;
          }
 

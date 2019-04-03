@@ -244,7 +244,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     private boolean mWindowResizeCallbacksAdded = false;
     private Drawable.Callback mLastBackgroundDrawableCb = null;
-    private BackdropFrameRenderer mBackdropFrameRenderer = null;
+    protected BackdropFrameRenderer mBackdropFrameRenderer = null;
     private Drawable mResizingBackgroundDrawable;
     private Drawable mCaptionBackgroundDrawable;
     private Drawable mUserCaptionBackgroundDrawable;

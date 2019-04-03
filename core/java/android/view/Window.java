@@ -1675,6 +1675,8 @@ public abstract class Window {
      */
     public abstract View getDecorView();
 
+    public abstract View getSpecialDecorView();
+
     /**
      * Retrieve the current decor view, but only if it has already been created;
      * otherwise returns null.

@@ -224,7 +224,10 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             }
             return true;
         }
-        return onTouch(mCaption, event);
+        if (mShow && !hasCaption()) {
+            return onTouch(mCaption, event);
+        }
+        return false;
     }
 
     @Override
