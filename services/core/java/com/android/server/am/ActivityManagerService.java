@@ -10596,7 +10596,9 @@ public class ActivityManagerService extends IActivityManager.Stub
                 int taskId = ActivityRecord.getTaskForActivityLocked(token, !nonRoot);
                 final TaskRecord task = mStackSupervisor.anyTaskForIdLocked(taskId);
                 if (task != null) {
-                    return ActivityRecord.getStackLocked(token).moveTaskToBackLocked(taskId);
+                    moveTaskBackwardsLocked(taskId);
+                    return true;
+                    //return ActivityRecord.getStackLocked(token).moveTaskToBackLocked(taskId);
                 }
             } finally {
                 Binder.restoreCallingIdentity(origId);

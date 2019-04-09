@@ -60,6 +60,8 @@ public class StackWindowController
     private final Rect mTmpNonDecorInsets = new Rect();
     private final Rect mTmpDisplayBounds = new Rect();
 
+    private Task mHomeTask;
+
     public StackWindowController(int stackId, StackWindowListener listener,
             int displayId, boolean onTop, Rect outBounds) {
         this(stackId, listener, displayId, onTop, outBounds, WindowManagerService.getInstance());
@@ -147,8 +149,10 @@ public class StackWindowController
 
         synchronized(mWindowMap) {
             final Task childTask = child.mContainer;
-            if (childTask.isHomeTask())
+            if (childTask.isHomeTask()) {
+                mHomeTask = childTask;
                 return;
+            }
             if (childTask == null) {
                 Slog.e(TAG_WM, "positionChildAtTop: task=" + child + " not found");
                 return;
@@ -175,6 +179,8 @@ public class StackWindowController
                 return;
             }
             mContainer.positionChildAt(POSITION_BOTTOM, childTask, false /* includingParents */);
+            if (mHomeTask != null)
+                mContainer.positionChildAt(POSITION_BOTTOM, mHomeTask, false);
 
             if (mService.mAppTransition.isTransitionSet()) {
                 childTask.setSendingToBottom(true);

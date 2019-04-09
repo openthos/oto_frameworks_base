@@ -111,7 +111,6 @@ public class NewPhoneWindow extends PhoneWindow {
                         if (v1 != null && v1.getLayoutParams() != null &&
                                 v1.getLayoutParams().height > v.getMeasuredHeight()) {
                             v1.getLayoutParams().height = v.getMeasuredHeight();
-                            v1.getLayoutParams().width = v.getMeasuredWidth();
                             v1.requestLayout();
                         }
                     }
