@@ -4262,6 +4262,23 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         updateRowStates();
         mScreenPinningRequest.onConfigurationChanged();
+        updateStatusHeight();
+    }
+
+    private void updateStatusHeight() {
+        mNaturalBarHeight = mContext.getResources().
+                getDimensionPixelSize(R.dimen.navigation_bar_size);
+        ViewGroup.LayoutParams openthosLp = mOpenthosStatusBarView.getLayoutParams();
+        ViewGroup.LayoutParams statusLp = mStatusBarWindow.getLayoutParams();
+        if (openthosLp.height != mNaturalBarHeight) {
+            openthosLp.height = mNaturalBarHeight;
+            mOpenthosStatusBarView.setLayoutParams(openthosLp);
+            mWindowManager.updateViewLayout(mOpenthosStatusBarView, openthosLp);
+            statusLp.height = mNaturalBarHeight;
+            mStatusBarWindow.setLayoutParams(statusLp);
+            mWindowManager.updateViewLayout(mStatusBarWindow, statusLp);
+            mStatusBarWindowManager.setBarHeight(mNaturalBarHeight);
+        }
     }
 
     public void userSwitched(int newUserId) {
