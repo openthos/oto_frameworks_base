@@ -182,7 +182,7 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
                             if (!mResizing) {
                                 try {
                                     mService.mActivityManager.setTaskBoundsMode(
-                                            mTask.mTaskId, mWindowDragBounds, mCurrentDimSide);
+                                            mTask.mTaskId, mWindowDragBounds, CTRL_NONE);
                                     mService.mActivityManager.resizeTask(
                                             mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
                                 } catch (RemoteException e) {

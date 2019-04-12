@@ -2236,7 +2236,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             mService.mStackSupervisor.scheduleUpdateMultiWindowMode(this);
         }
 
-        if(mWindowContainerController != null && mTaskBoundsMode != Display.STANDARD_MODE) {
+        if(mWindowContainerController != null) {
             mWindowContainerController.setTaskBoundsMode(mTmpNonMaximizeBounds, mTaskBoundsMode);
         }
 
@@ -2367,7 +2367,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     void toggleTaskMaximize() {
-        if (Objects.equals(mMaximizeBounds, mBounds)) {
+        if (mTaskBoundsMode == Display.TOP_DOCKED_MODE) {
             mTmpNonMaximizeBounds.set(mTmpNonMaximizeBounds.isEmpty()
                     ? mDefaultPcBounds : mTmpNonMaximizeBounds);
             mTaskBoundsMode = Display.STANDARD_MODE;
@@ -2397,6 +2397,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     void changeTaskOrientation() {
         if (mBounds != null) {
+            mTaskBoundsMode = Display.STANDARD_MODE;
             if (mBounds.width() > mBounds.height()) {
                 mTmpLastPcRect.set(mBounds);
                 prepareLastPhoneRect(mBounds);
@@ -2410,24 +2411,26 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     void prepareLastPhoneRect(Rect bounds) {
+        Rect phoneRect = new Rect(bounds);
         int defPhoneHeight = mMaximizeBounds.height() / 3 * 2;
         int defPhoneWidth = defPhoneHeight / 16 * 9;
-        bounds.left = bounds.left <= 0 ? 0 : bounds.left;
-        bounds.right = bounds.left + (mTmpLastPhoneRect.width() == 0
+        phoneRect.left = phoneRect.left <= 0 ? 0 : phoneRect.left;
+        phoneRect.right = phoneRect.left + (mTmpLastPhoneRect.width() == 0
                 ? defPhoneWidth : mTmpLastPhoneRect.width());
-        bounds.bottom = bounds.top + (mTmpLastPhoneRect.width() == 0
+        phoneRect.bottom = phoneRect.top + (mTmpLastPhoneRect.width() == 0
                 ? defPhoneHeight : mTmpLastPhoneRect.height());
-        mTmpLastPhoneRect.set(bounds);
+        mTmpLastPhoneRect.set(phoneRect);
     }
 
     void prepareLastPcRect(Rect bounds) {
+        Rect pcRect = new Rect(bounds);
         int defPcWidth = mMaximizeBounds.width() / 2;
         int defPcHeight = defPcWidth / 16 * 9;
-        bounds.right = bounds.left + (mTmpLastPcRect.width() == 0
+        pcRect.right = pcRect.left + (mTmpLastPcRect.width() == 0
                 ? defPcWidth : mTmpLastPcRect.width());
-        bounds.bottom = bounds.top + (mTmpLastPcRect.width() == 0
+        pcRect.bottom = pcRect.top + (mTmpLastPcRect.width() == 0
                 ? defPcHeight : mTmpLastPcRect.height());
-        mTmpLastPcRect.set(bounds);
+        mTmpLastPcRect.set(pcRect);
     }
 
     void addStartingWindowsForVisibleActivities(boolean taskSwitch) {

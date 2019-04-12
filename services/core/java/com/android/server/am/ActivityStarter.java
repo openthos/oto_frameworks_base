@@ -1808,6 +1808,7 @@ class ActivityStarter {
                 Rect bounds = new Rect();
                 mTargetStack.getDisplay().mDisplay.getDefaultFreeformSize(
                         bounds, mOptions.getFreeformBoundsMode());
+                task.setTaskBoundsMode(bounds, mOptions.getFreeformBoundsMode());
                 task.resize(bounds, ActivityManager.RESIZE_MODE_FORCED, true, true);
             }
             if (!mStartActivity.fullscreen) {
