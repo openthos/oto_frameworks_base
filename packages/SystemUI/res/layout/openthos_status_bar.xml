@@ -21,15 +21,6 @@
             android:background="@mipmap/statusbar_sysbar_menu"
             app:scapeSize="1" />
 
-        <View
-            android:layout_width="@dimen/padding_one"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/padding_ten"
-            android:layout_marginLeft="@dimen/padding_three"
-            android:layout_marginRight="@dimen/padding_three"
-            android:layout_marginTop="@dimen/padding_ten"
-            android:background="@color/white" />
-
         <HorizontalScrollView
             android:id="@+id/ll_scroll_icon_container"
             android:layout_width="1dp"
