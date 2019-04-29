@@ -47,7 +47,7 @@ public class SystemGesturesPointerEventListener implements PointerEventListener 
 
     private final Context mContext;
     private final int mSwipeStartThreshold;
-    private final int mSwipeDistanceThreshold;
+    private final int mSwipeDistanceThreshold = 0;
     private final Callbacks mCallbacks;
     private final int[] mDownPointerId = new int[MAX_TRACKED_POINTERS];
     private final float[] mDownX = new float[MAX_TRACKED_POINTERS];
@@ -70,7 +70,6 @@ public class SystemGesturesPointerEventListener implements PointerEventListener 
         mCallbacks = checkNull("callbacks", callbacks);
         mSwipeStartThreshold = checkNull("context", context).getResources()
                 .getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-        mSwipeDistanceThreshold = mSwipeStartThreshold;
         if (DEBUG) Slog.d(TAG,  "mSwipeStartThreshold=" + mSwipeStartThreshold
                 + " mSwipeDistanceThreshold=" + mSwipeDistanceThreshold);
     }

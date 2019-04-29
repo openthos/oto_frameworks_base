@@ -448,7 +448,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     boolean mSafeMode;
     WindowState mStatusBar = null;
-    int mStatusBarHeight;
+    int mStatusBarHeight = 0;
     WindowState mNavigationBar = null;
     boolean mHasNavigationBar = false;
     boolean mNavigationBarCanMove = false; // can the navigation bar ever move to the side?
@@ -2687,9 +2687,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // TODO(multi-display): Define policy for secondary displays.
         Context uiContext = ActivityThread.currentActivityThread().getSystemUiContext();
         final Resources res = uiContext.getResources();
-
-        mStatusBarHeight =
-                res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
 
         // Height of the navigation bar when presented horizontally at bottom
         mNavigationBarHeightForRotationDefault[mPortraitRotation] =
