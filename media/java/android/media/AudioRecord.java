@@ -36,6 +36,7 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.os.SystemProperties;
 
 import com.android.internal.annotations.GuardedBy;
 
@@ -977,6 +978,9 @@ public class AudioRecord implements AudioRouting
             throw new IllegalStateException("startRecording() called on an "
                     + "uninitialized AudioRecord.");
         }
+        SystemProperties.set("audio.use_fake",
+                SystemProperties.get(ActivityThread.currentPackageName()
+                + ".permission.record_audio", "phy_audio"));
 
         // start recording
         synchronized(mRecordingStateLock) {

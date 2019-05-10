@@ -550,6 +550,12 @@ public class PackageManagerService extends IPackageManager.Stub
     /** Permission grant: grant as runtime a permission that was granted as an install time one. */
     private static final int GRANT_UPGRADE = 4;
 
+
+    /** Use for virtual audio */
+    private static final String REC_AUDIO =  ".permission.record_audio";
+    private static final String PHY_AUDIO =  "phy_audio";
+    private static final String VIR_AUDIO =  "vir_audio";
+
     /** Canonical intent used to identify what counts as a "web browser" app */
     private static final Intent sBrowserIntent;
     static {
@@ -3856,6 +3862,10 @@ public class PackageManagerService extends IPackageManager.Stub
                 && ps.isSystem()) {
             flags |= MATCH_ANY_USER;
         }
+        if (!permissions.isEmpty()
+                && SystemProperties.get(p.packageName + REC_AUDIO, PHY_AUDIO).equals(VIR_AUDIO)) {
+            permissions.remove(Manifest.permission.RECORD_AUDIO);
+        }
 
         PackageInfo packageInfo = PackageParser.generatePackageInfo(p, gids, flags,
                 ps.firstInstallTime, ps.lastUpdateTime, permissions, state, userId);
@@ -5667,6 +5677,10 @@ public class PackageManagerService extends IPackageManager.Stub
                 throw new IllegalArgumentException("Unknown package: " + packageName);
             }
 
+            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
+                SystemProperties.set(packageName + REC_AUDIO, PHY_AUDIO);
+            }
+
             enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(pkg, bp);
 
             // If a permission review is required for legacy apps we represent
@@ -5786,6 +5800,11 @@ public class PackageManagerService extends IPackageManager.Stub
             if (pkg == null) {
                 throw new IllegalArgumentException("Unknown package: " + packageName);
             }
+            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
+                SystemProperties.set(packageName + REC_AUDIO, PHY_AUDIO);
+                return;
+            }
+
             final PackageSetting ps = (PackageSetting) pkg.mExtras;
             if (ps == null
                     || filterAppAccessLPr(ps, Binder.getCallingUid(), userId)) {
@@ -6076,6 +6095,11 @@ public class PackageManagerService extends IPackageManager.Stub
             if (pkg == null) {
                 throw new IllegalArgumentException("Unknown package: " + packageName);
             }
+            if (name.contains(Manifest.permission.RECORD_AUDIO)
+                && SystemProperties.get(p.packageName + REC_AUDIO, PHY_AUDIO).equals(VIR_AUDIO)) {
+                return;
+            }
+
             final PackageSetting ps = (PackageSetting) pkg.mExtras;
             if (ps == null
                     || filterAppAccessLPr(ps, callingUid, userId)) {

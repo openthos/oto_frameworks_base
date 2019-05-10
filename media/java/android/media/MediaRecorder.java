@@ -33,6 +33,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
+import android.os.SystemProperties;
 
 /**
  * Used to record audio and video. The recording control is based on a
@@ -960,7 +961,9 @@ public class MediaRecorder
         } else {
             throw new IOException("No valid output file");
         }
-
+        SystemProperties.set("audio.use_fake",
+                SystemProperties.get(ActivityThread.currentPackageName()
+                + ".permission.record_audio", "phy_audio"));
         _prepare();
     }
 
