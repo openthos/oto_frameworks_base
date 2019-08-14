@@ -42,12 +42,16 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.app.Activity;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import android.os.SystemProperties;
 
 /**
  * The Camera class is used to set image capture settings, start/stop preview,
@@ -155,6 +159,13 @@ public class Camera {
     private static final int CAMERA_MSG_RAW_IMAGE_NOTIFY = 0x200;
     private static final int CAMERA_MSG_PREVIEW_METADATA = 0x400;
     private static final int CAMERA_MSG_FOCUS_MOVE       = 0x800;
+
+    private static final String PHY_CAMERA = "phy_camera";
+    private static final String VIR_CAMERA = "vir_camera";
+    private static final String CAMERA_USE_FAKE = "persist.camera.use_fake";
+
+    private PackageManager mPackageManager;
+    private static int camera_id = 1;
 
     private long mNativeContext; // accessed by native methods
     private EventHandler mEventHandler;
@@ -513,7 +524,18 @@ public class Camera {
 
     /** used by Camera#open, Camera#open(int) */
     Camera(int cameraId) {
+
+        camera_id = cameraId;
         int err = cameraInitNormal(cameraId);
+
+        mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
+        if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+                    + ".permission.camera", Manifest.permission.CAMERA)) {
+            SystemProperties.set(CAMERA_USE_FAKE, VIR_CAMERA);
+        } else {
+            SystemProperties.set(CAMERA_USE_FAKE, PHY_CAMERA);
+        }
+
         if (checkInitErrors(err)) {
             if (err == -EACCES) {
                 throw new RuntimeException("Fail to connect to camera service");
@@ -1580,7 +1602,38 @@ public class Camera {
      *    release() has been called on this Camera instance.
      * @see #setPreviewDisplay(SurfaceHolder)
      */
-    public native final void setDisplayOrientation(int degrees);
+
+    public void setDisplayOrientation(int d) {
+        int rotation = SystemProperties.getInt("ro.sf.hwrotation", 0);
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+        int result = 0;
+        CameraInfo cameraInfo = new CameraInfo();
+        getCameraInfo(camera_id, cameraInfo);
+        if (cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK) {
+            result = (cameraInfo.orientation - degrees + 360) % 360;
+        } else if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (cameraInfo.orientation + degrees) % 360;
+            result = (360 - result) % 360;
+        }
+        _setDisplayOrientation(result);
+    }
+
+
+    public native final void _setDisplayOrientation(int degrees);
 
     /**
      * <p>Enable or disable the default shutter sound when taking a picture.</p>

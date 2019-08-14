@@ -621,6 +621,15 @@ public class ApplicationPackageManager extends PackageManager {
     }
 
     @Override
+    public boolean hasVirtualPermission(String permission, String name) {
+        try {
+            return mPM.hasVirtualPermission(permission, name);
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
+    @Override
     public void grantRuntimePermission(String packageName, String permissionName,
             UserHandle user) {
         try {

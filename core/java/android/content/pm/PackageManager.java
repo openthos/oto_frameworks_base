@@ -3410,6 +3410,10 @@ public abstract class PackageManager {
      */
     public abstract void removePermission(String name);
 
+    public boolean hasVirtualPermission(String permission, String name) {
+        return false;
+    };
+
     /**
      * Permission flags set when granting or revoking a permission.
      *

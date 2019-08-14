@@ -158,6 +158,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
+import android.Manifest;
 
 final class RemoteServiceException extends AndroidRuntimeException {
     public RemoteServiceException(String msg) {
@@ -227,6 +228,7 @@ public final class ActivityThread {
     private ContextImpl mSystemContext;
     private ContextImpl mSystemUiContext;
 
+    private PackageManager mPackageManager;
     static volatile IPackageManager sPackageManager;
 
     final ApplicationThread mAppThread = new ApplicationThread();
@@ -1917,6 +1919,11 @@ public final class ActivityThread {
         ActivityThread am = currentActivityThread();
         return (am != null && am.mBoundApplication != null)
             ? am.mBoundApplication.appInfo.packageName : null;
+    }
+
+    public static Context currentContext() {
+        ActivityThread am = currentActivityThread();
+        return am.getApplication();
     }
 
     public static String currentProcessName() {

@@ -39,6 +39,12 @@ import android.os.ServiceSpecificException;
 import android.os.SystemProperties;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.provider.Settings;
+import android.content.ContentResolver;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.Manifest;
+import android.app.ActivityThread;
 
 import java.util.ArrayList;
 
@@ -55,6 +61,11 @@ public final class CameraManager {
 
     private static final String TAG = "CameraManager";
     private final boolean DEBUG = false;
+    /** Use for virtual camera */
+    private static final String CAMERA = ".permission.camera";
+    private static final String PHY_CAMERA = "phy_camera";
+    private static final String VIR_CAMERA = "vir_camera";
+    private static final String CAMERA_USE_FAKE = "persist.camera.use_fake";
 
     private static final int USE_CALLING_UID = -1;
 
@@ -68,6 +79,7 @@ public final class CameraManager {
     private ArrayList<String> mDeviceIdList;
 
     private final Context mContext;
+    private PackageManager mPackageManager;
     private final Object mLock = new Object();
 
     /**
@@ -294,6 +306,14 @@ public final class CameraManager {
                         mContext.getApplicationInfo().targetSdkVersion);
 
             ICameraDeviceCallbacks callbacks = deviceImpl.getCallbacks();
+
+            mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
+            if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+                        + ".permission.camera", Manifest.permission.CAMERA)) {
+                SystemProperties.set(CAMERA_USE_FAKE, VIR_CAMERA);
+            } else {
+                SystemProperties.set(CAMERA_USE_FAKE, PHY_CAMERA);
+            }
 
             try {
                 if (supportsCamera2ApiLocked(cameraId)) {

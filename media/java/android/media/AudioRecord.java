@@ -36,6 +36,14 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.Manifest;
+import android.content.pm.PackageManager;
+
+import android.content.Context;
+import android.content.ContentResolver;
+import android.provider.Settings;
+import android.os.SystemProperties;
+import android.os.Binder;
 
 import com.android.internal.annotations.GuardedBy;
 
@@ -121,6 +129,11 @@ public class AudioRecord implements AudioRouting
 
     private final static String TAG = "android.media.AudioRecord";
 
+    private final static String AUDIO_USE_FAKE = "persist.audio.use_fake";
+    private final static String VIR_AUDIO = "vir_audio";
+    private final static String PHY_AUDIO = "phy_audio";
+
+    private PackageManager mPackageManager;
     /** @hide */
     public final static String SUBMIX_FIXED_VOLUME = "fixedVolume";
 
@@ -976,6 +989,14 @@ public class AudioRecord implements AudioRouting
         if (mState != STATE_INITIALIZED) {
             throw new IllegalStateException("startRecording() called on an "
                     + "uninitialized AudioRecord.");
+        }
+
+        mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
+        if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+                    + ".permission.audio", Manifest.permission.RECORD_AUDIO)) {
+            SystemProperties.set(AUDIO_USE_FAKE, VIR_AUDIO);
+        } else {
+            SystemProperties.set(AUDIO_USE_FAKE, PHY_AUDIO);
         }
 
         // start recording

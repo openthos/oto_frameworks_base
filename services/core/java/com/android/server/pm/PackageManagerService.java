@@ -248,6 +248,7 @@ import android.util.Xml;
 import android.util.jar.StrictJarFile;
 import android.util.proto.ProtoOutputStream;
 import android.view.Display;
+import android.provider.Settings.Global;
 
 import com.android.internal.R;
 import com.android.internal.annotations.GuardedBy;
@@ -549,6 +550,23 @@ public class PackageManagerService extends IPackageManager.Stub
 
     /** Permission grant: grant as runtime a permission that was granted as an install time one. */
     private static final int GRANT_UPGRADE = 4;
+
+    private static final String[] PHY = {"phy_camera", "phy_audio"};
+    private static final String[] VIR = {"vir_camera", "vir_audio"};
+    private static final String[] PERMISSION = {".permission.camera", ".permission.audio"};
+    private static final List<Map<String,String>> PERMISSION_LIST = new ArrayList<Map<String,String>>();
+
+    static {
+        for(int i = 0; i < PHY.length; i++) {
+            Map<String,String> PERMISSION_MAP = new HashMap<String, String>();
+
+            PERMISSION_MAP.put("phy", PHY[i]);
+            PERMISSION_MAP.put("vir", VIR[i]);
+            PERMISSION_MAP.put("permission", PERMISSION[i]);
+
+            PERMISSION_LIST.add(PERMISSION_MAP);
+        }
+    }
 
     /** Canonical intent used to identify what counts as a "web browser" app */
     private static final Intent sBrowserIntent;
@@ -1325,6 +1343,8 @@ public class PackageManagerService extends IPackageManager.Stub
     static final int INTENT_FILTER_VERIFIED = 18;
     static final int WRITE_PACKAGE_LIST = 19;
     static final int INSTANT_APP_RESOLUTION_PHASE_TWO = 20;
+    static final int ACCESS_MANAGE_CAMERA = 21;
+    static final int ACCESS_MANAGE_AUDIO = 22;
 
     static final int WRITE_SETTINGS_DELAY = 10*1000;  // 10 seconds
 
@@ -1452,6 +1472,7 @@ public class PackageManagerService extends IPackageManager.Stub
         }
 
         void doHandleMessage(Message msg) {
+            Bundle bundle = msg.getData();
             switch (msg.what) {
                 case INIT_COPY: {
                     HandlerParams params = (HandlerParams) msg.obj;
@@ -1898,6 +1919,12 @@ public class PackageManagerService extends IPackageManager.Stub
                                 + " was not said to be complete");
                     }
 
+                    break;
+                }
+                case ACCESS_MANAGE_CAMERA:
+                case ACCESS_MANAGE_AUDIO:{
+                    Global.putString(mContext.getContentResolver(),
+                            bundle.getString("permission"), bundle.getString("msg"));
                     break;
                 }
                 case INSTANT_APP_RESOLUTION_PHASE_TWO: {
@@ -3866,6 +3893,20 @@ public class PackageManagerService extends IPackageManager.Stub
 
         packageInfo.packageName = packageInfo.applicationInfo.packageName =
                 resolveExternalPackageNameLPr(p);
+        ContentResolver resolver = mContext.getContentResolver();
+        if (userId != 0 ) {
+            if (!permissions.isEmpty()
+                    && PERMISSION_LIST.get(0).get("vir").equals(Global.getString(resolver,
+                            packageInfo.packageName + PERMISSION_LIST.get(0).get("permission")))) {
+                permissions.remove(Manifest.permission.CAMERA);
+            }
+
+            if (!permissions.isEmpty()
+                    && PERMISSION_LIST.get(1).get("vir").equals(Global.getString(resolver,
+                            packageInfo.packageName + PERMISSION_LIST.get(1).get("permission")))) {
+                permissions.remove(Manifest.permission.RECORD_AUDIO);
+            }
+        }
 
         return packageInfo;
     }
@@ -5615,6 +5656,23 @@ public class PackageManagerService extends IPackageManager.Stub
         }
     }
 
+    private void handlerPermissionOfPhyOrVir(String permission, String message, final int type) {
+        Bundle data = new Bundle();
+        data.putString("permission", permission);
+        data.putString("msg", message);
+        Message msg = null;
+        switch (type) {
+            case 0:
+                msg = mHandler.obtainMessage(ACCESS_MANAGE_CAMERA);
+                break;
+            case 1:
+                msg = mHandler.obtainMessage(ACCESS_MANAGE_AUDIO);
+                break;
+        }
+        msg.setData(data);
+        mHandler.sendMessage(msg);
+    }
+
     private static void enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(
             PackageParser.Package pkg, BasePermission bp) {
         int index = pkg.requestedPermissions.indexOf(bp.name);
@@ -5631,6 +5689,21 @@ public class PackageManagerService extends IPackageManager.Stub
     @Override
     public void grantRuntimePermission(String packageName, String name, final int userId) {
         grantRuntimePermission(packageName, name, userId, false /* Only if not fixed by policy */);
+    }
+
+    @Override
+    public boolean hasVirtualPermission(String permission, String name) {
+        ContentResolver resolver = mContext.getContentResolver();
+        String result = Global.getString(resolver, permission);
+        if ((name.contains(Manifest.permission.CAMERA)
+                    && PERMISSION_LIST.get(0).get("vir").equals(result))
+                || (name.contains(Manifest.permission.RECORD_AUDIO)
+                    && PERMISSION_LIST.get(1).get("vir").equals(result))
+                ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void grantRuntimePermission(String packageName, String name, final int userId,
@@ -5665,6 +5738,15 @@ public class PackageManagerService extends IPackageManager.Stub
             if (ps == null
                     || filterAppAccessLPr(ps, callingUid, userId)) {
                 throw new IllegalArgumentException("Unknown package: " + packageName);
+            }
+
+            if (name.contains(Manifest.permission.CAMERA)) {
+                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(0).get("permission"),
+                        PERMISSION_LIST.get(0).get("phy"), 0);
+            }
+            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
+                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(1).get("permission"),
+                        PERMISSION_LIST.get(1).get("phy"), 1);
             }
 
             enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(pkg, bp);
@@ -5794,6 +5876,17 @@ public class PackageManagerService extends IPackageManager.Stub
             final BasePermission bp = mSettings.mPermissions.get(name);
             if (bp == null) {
                 throw new IllegalArgumentException("Unknown permission: " + name);
+            }
+
+            if (name.contains(Manifest.permission.CAMERA)) {
+                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(0).get("permission"),
+                        PERMISSION_LIST.get(0).get("vir"), 0);
+                return;
+            }
+            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
+                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(1).get("permission"),
+                        PERMISSION_LIST.get(1).get("vir"), 1);
+                return;
             }
 
             enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(pkg, bp);
@@ -6085,6 +6178,19 @@ public class PackageManagerService extends IPackageManager.Stub
             final BasePermission bp = mSettings.mPermissions.get(name);
             if (bp == null) {
                 throw new IllegalArgumentException("Unknown permission: " + name);
+            }
+
+            ContentResolver resolver =  mContext.getContentResolver();
+            if (name.contains(Manifest.permission.CAMERA)
+                    && PERMISSION_LIST.get(0).get("vir").equals(Global.getString(resolver,
+                            packageName + PERMISSION_LIST.get(0).get("permission")))) {
+                return;
+            }
+
+            if (name.contains(Manifest.permission.RECORD_AUDIO)
+                    && PERMISSION_LIST.get(1).get("vir").equals(Global.getString(resolver,
+                            packageName + PERMISSION_LIST.get(1).get("permission")))) {
+                return;
             }
 
             PermissionsState permissionsState = ps.getPermissionsState();

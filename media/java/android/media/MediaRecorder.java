@@ -28,6 +28,13 @@ import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Surface;
 
+import android.content.Context;
+import android.content.ContentResolver;
+import android.provider.Settings;
+import android.os.SystemProperties;
+import android.Manifest;
+import android.content.pm.PackageManager;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -83,7 +90,11 @@ public class MediaRecorder
         native_init();
     }
     private final static String TAG = "MediaRecorder";
+    private final static String AUDIO_USE_FAKE = "persist.audio.use_fake";
+    private final static String VIR_AUDIO = "vir_audio";
+    private final static String PHY_AUDIO = "phy_audio";
 
+    private PackageManager mPackageManager;
     // The two fields below are accessed by native methods
     @SuppressWarnings("unused")
     private long mNativeContext;
@@ -959,6 +970,14 @@ public class MediaRecorder
             }
         } else {
             throw new IOException("No valid output file");
+        }
+
+        mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
+        if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+                    + ".permission.audio", Manifest.permission.RECORD_AUDIO)) {
+            SystemProperties.set(AUDIO_USE_FAKE, VIR_AUDIO);
+        } else {
+            SystemProperties.set(AUDIO_USE_FAKE, PHY_AUDIO);
         }
 
         _prepare();

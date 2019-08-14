@@ -1087,7 +1087,7 @@ static const JNINativeMethod camMethods[] = {
   { "stopSmoothZoom",
     "()V",
     (void *)android_hardware_Camera_stopSmoothZoom },
-  { "setDisplayOrientation",
+  { "_setDisplayOrientation",
     "(I)V",
     (void *)android_hardware_Camera_setDisplayOrientation },
   { "_enableShutterSound",
