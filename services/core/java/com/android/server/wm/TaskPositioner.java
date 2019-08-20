@@ -715,7 +715,7 @@ class TaskPositioner implements DimLayer.DimLayerUser, ResizingFrame.ResizingFra
     private void updateDimLayerVisibility(int x, int y) {
         @CtrlType
         int dimSide = getDimSide(x, y);
-        if (dimSide == mCurrentDimSide) {
+        if (mTask.mIsCompatibleRunMode || dimSide == mCurrentDimSide) {
             return;
         }
 

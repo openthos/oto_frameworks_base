@@ -160,31 +160,31 @@ class ContextImpl extends Context {
 
     final @NonNull ActivityThread mMainThread;
     final @NonNull LoadedApk mPackageInfo;
-    private @Nullable ClassLoader mClassLoader;
+    protected @Nullable ClassLoader mClassLoader;
 
-    private final @Nullable IBinder mActivityToken;
+    protected final @Nullable IBinder mActivityToken;
 
-    private final @Nullable UserHandle mUser;
+    protected final @Nullable UserHandle mUser;
 
     private final ApplicationContentResolver mContentResolver;
 
     private final String mBasePackageName;
     private final String mOpPackageName;
 
-    private final @NonNull ResourcesManager mResourcesManager;
-    private @NonNull Resources mResources;
-    private @Nullable Display mDisplay; // may be null if default display
+    protected final @NonNull ResourcesManager mResourcesManager;
+    protected @NonNull Resources mResources;
+    protected @Nullable Display mDisplay; // may be null if default display
 
-    private final int mFlags;
+    protected final int mFlags;
 
     private Context mOuterContext;
     private int mThemeResource = 0;
     private Resources.Theme mTheme = null;
-    private PackageManager mPackageManager;
+    protected PackageManager mPackageManager;
     private Context mReceiverRestrictedContext = null;
 
     // The name of the split this Context is representing. May be null.
-    private @Nullable String mSplitName = null;
+    protected @Nullable String mSplitName = null;
 
     private AutofillClient mAutofillClient = null;
 
@@ -2222,6 +2222,11 @@ class ContextImpl extends Context {
         return file;
     }
 
+    @Override
+    public boolean isCompatContext() {
+        return false;
+    }
+
     /** {@hide} */
     @Override
     public int getUserId() {
@@ -2320,7 +2325,7 @@ class ContextImpl extends Context {
         return context;
     }
 
-    private ContextImpl(@Nullable ContextImpl container, @NonNull ActivityThread mainThread,
+    protected ContextImpl(@Nullable ContextImpl container, @NonNull ActivityThread mainThread,
             @NonNull LoadedApk packageInfo, @Nullable String splitName,
             @Nullable IBinder activityToken, @Nullable UserHandle user, int flags,
             @Nullable ClassLoader classLoader) {

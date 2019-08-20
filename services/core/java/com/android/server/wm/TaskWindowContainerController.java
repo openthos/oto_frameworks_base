@@ -158,6 +158,14 @@ public class TaskWindowContainerController
         }
     }
 
+    public void setTaskRunMode(int taskRunMode) {
+        synchronized (mWindowMap) {
+            if (mContainer != null) {
+                mContainer.setTaskRunMode(taskRunMode);
+            }
+        }
+    }
+
     public void resize(Rect bounds, Configuration overrideConfig, boolean relayout,
             boolean forced) {
         synchronized (mWindowMap) {

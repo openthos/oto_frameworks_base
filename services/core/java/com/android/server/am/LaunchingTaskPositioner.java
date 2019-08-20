@@ -118,7 +118,9 @@ class LaunchingTaskPositioner {
             return;
         }
         if (windowLayout == null) {
-            positionCenter(task, tasks, mDefaultFreeformWidth, mDefaultFreeformHeight);
+            int width = task.isSystemTask() ? mDefaultFreeformWidth : 440;
+            int height = task.isSystemTask() ? mDefaultFreeformHeight : 740;
+            positionCenter(task, tasks, width, height);
             return;
         }
         int width = getFinalWidth(windowLayout);

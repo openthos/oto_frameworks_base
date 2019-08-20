@@ -258,7 +258,16 @@ public class Resources {
             return;
         }
 
+        DisplayMetrics dm = null;
+        if (mResourcesImpl != null) {
+            dm = mResourcesImpl.getDisplayMetrics();
+        }
+
         mResourcesImpl = impl;
+        if (dm != null && dm.compatDisplayMetricsFlag == DisplayMetrics.COMPAT_METRICS_FLAG
+                    && mResourcesImpl != null && mResourcesImpl.getDisplayMetrics() != null) {
+            mResourcesImpl.getDisplayMetrics().setTo(dm);
+        }
 
         // Create new ThemeImpls that are identical to the ones we have.
         synchronized (mThemeRefs) {

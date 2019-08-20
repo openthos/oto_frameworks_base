@@ -803,6 +803,8 @@ public abstract class Context {
      */
     public abstract boolean moveSharedPreferencesFrom(Context sourceContext, String name);
 
+    public abstract boolean isCompatContext();
+
     /**
      * Delete an existing shared preferences file.
      *

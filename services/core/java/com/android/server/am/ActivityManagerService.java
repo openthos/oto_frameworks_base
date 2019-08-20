@@ -422,6 +422,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -429,6 +431,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -448,6 +452,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -974,6 +979,8 @@ public class ActivityManagerService extends IActivityManager.Stub
      * Hash keys are the receiver IBinder, hash value is a ReceiverList.
      */
     final HashMap<IBinder, ReceiverList> mRegisteredReceivers = new HashMap<>();
+
+    final HashMap<String, Integer> mCompatMode = new HashMap<>();
 
     /**
      * Resolver for broadcast intents to registered receivers.
@@ -1696,6 +1703,7 @@ public class ActivityManagerService extends IActivityManager.Stub
     static final int DISPATCH_OOM_ADJ_OBSERVER_MSG = 70;
     static final int START_USER_SWITCH_FG_MSG = 712;
     static final int NOTIFY_VR_KEYGUARD_MSG = 74;
+    static final int PERSIST_COMPAT_MODE_MSG = 75;
 
     static final int FIRST_ACTIVITY_STACK_MSG = 100;
     static final int FIRST_BROADCAST_QUEUE_MSG = 200;
@@ -2175,6 +2183,13 @@ public class ActivityManagerService extends IActivityManager.Stub
             }
             case PERSIST_URI_GRANTS_MSG: {
                 writeGrantedUriPermissions();
+                break;
+            }
+            case PERSIST_COMPAT_MODE_MSG: {
+                Settings.Global.putString(mContext.getContentResolver(),
+                        "compat_mode", serialize(mCompatMode));
+                TaskRecord task = (TaskRecord) msg.obj;
+                forceStopPackage(task.realActivity.getPackageName(), task.userId);
                 break;
             }
             case REQUEST_ALL_PSS_MSG: {
@@ -9491,6 +9506,12 @@ public class ActivityManagerService extends IActivityManager.Stub
         }
     }
 
+    private void schedulePackagesCompatMode(TaskRecord task) {
+        if (!mHandler.hasMessages(PERSIST_COMPAT_MODE_MSG)) {
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(PERSIST_COMPAT_MODE_MSG, task), 0);
+        }
+    }
+
     private void writeGrantedUriPermissions() {
         if (DEBUG_URI_PERMISSION) Slog.v(TAG_URI_PERMISSION, "writeGrantedUriPermissions()");
 
@@ -10253,6 +10274,83 @@ public class ActivityManagerService extends IActivityManager.Stub
         }
     }
 
+    public void setTaskRunMode(int taskId, int taskRunMode) {
+        synchronized (this) {
+            TaskRecord task = mStackSupervisor.anyTaskForIdLocked(taskId);
+            if (task == null) {
+                Slog.w(TAG, "setTaskRunMode: taskId=" + taskId + " not found");
+                return;
+            }
+            mCompatMode.put(task.realActivity.getPackageName(), taskRunMode);
+            schedulePackagesCompatMode(task);
+        }
+    }
+
+    private String serialize(HashMap<String, Integer> compatModes) {
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        String serStr = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(compatModes);
+            serStr = byteArrayOutputStream.toString("ISO-8859-1");
+            serStr = java.net.URLEncoder.encode(serStr, "UTF-8");
+            objectOutputStream.close();
+            byteArrayOutputStream.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Error during serialize", e);
+        } finally {
+            if (objectOutputStream != null) {
+                try {
+                    objectOutputStream.close();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during serialize", e);
+                }
+            }
+            if (byteArrayOutputStream != null) {
+                try {
+                    byteArrayOutputStream.close();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during serialize", e);
+                }
+            }
+            return serStr;
+        }
+    }
+
+    private HashMap<String, Integer> deSerialization(String str) {
+        ByteArrayInputStream byteArrayInputStream = null;
+        ObjectInputStream objectInputStream = null;
+        HashMap<String, Integer> compatModes= null;
+        try {
+            String redStr = java.net.URLDecoder.decode(str, "UTF-8");
+            byteArrayInputStream = new ByteArrayInputStream(redStr.getBytes("ISO-8859-1"));
+            objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            compatModes = (HashMap<String, Integer>) objectInputStream.readObject();
+            objectInputStream.close();
+            byteArrayInputStream.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Error during serialize", e);
+        } finally {
+            if (objectInputStream != null) {
+                try {
+                    objectInputStream.close();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during serialize", e);
+                }
+            }
+            if (byteArrayInputStream != null) {
+                try {
+                    byteArrayInputStream.close();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error during serialize", e);
+                }
+            }
+            return compatModes;
+        }
+    }
+
     @Override
     public int getDefaultMinSizeOfResizeableTask() {
         if (mStackSupervisor != null) {
@@ -10688,10 +10786,23 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
-    public int getTaskBoundsMode(IBinder token) throws RemoteException {
+    public int getTaskRunMode(int taskId, String packageName) throws RemoteException {
         synchronized (this) {
-            final ActivityRecord r = ActivityRecord.forTokenLocked(token);
-            return r != null ? r.getTask().getTaskBoundsMode() : STANDARD_MODE;
+            TaskRecord task = mStackSupervisor.anyTaskForIdLocked(taskId);
+            if (task == null) {
+                Slog.w(TAG, "getTaskRunMode: taskId=" + taskId + " not found");
+                return getTaskRunModeForPackageName(packageName);
+
+            }
+            return task.getTaskRunMode();
+        }
+    }
+
+    @Override
+    public int getTaskRunModeForPackageName(String packageName) throws RemoteException {
+        synchronized (this) {
+            return mCompatMode.get(packageName) == null ?
+                    STANDARD_MODE : mCompatMode.get(packageName);
         }
     }
 
@@ -14392,6 +14503,12 @@ public class ActivityManagerService extends IActivityManager.Stub
                     ServiceManager.getService(Context.DEVICE_IDENTIFIERS_SERVICE))
                     .getSerial();
         } catch (RemoteException e) {}
+
+        HashMap map = deSerialization(
+                Settings.Global.getString(mContext.getContentResolver(), "compat_mode"));
+        if (map != null) {
+            mCompatMode.putAll(map);
+        }
 
         ArrayList<ProcessRecord> procsToKill = null;
         synchronized(mPidsSelfLocked) {

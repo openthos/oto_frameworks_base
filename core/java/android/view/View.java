@@ -17394,7 +17394,11 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
      * @return The logical display, or null if the view is not currently attached to a window.
      */
     public Display getDisplay() {
-        return mAttachInfo != null ? mAttachInfo.mDisplay : null;
+        Display dp = mAttachInfo != null ? mAttachInfo.mDisplay : null;
+        if (dp != null && mContext.isCompatContext()) {
+            dp.setCompatDisplayInfo(true);
+        }
+        return dp;
     }
 
     /**

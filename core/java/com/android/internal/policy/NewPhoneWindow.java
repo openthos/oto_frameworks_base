@@ -79,17 +79,17 @@ public class NewPhoneWindow extends PhoneWindow {
                                 newDecor.mDecorCaptionView.getCaption().getMeasuredHeight() : 0;
         }
 
-        @Override
-        public void transformParent(float[] position) {
-        }
+        //@Override
+        //public void transformParent(float[] position) {
+        //}
 
         @Override
         public void getWindowVisibleDisplayFrame(Rect outRect) {
             super.getWindowVisibleDisplayFrame(outRect);
-            DisplayMetrics dp = getContext().getResources().getDisplayMetrics();
             int width = outRect.width();
             int height = outRect.height();
             outRect.left = 0;
+            outRect.top = 0;
             outRect.right = width;
             outRect.bottom = height;
         }
@@ -156,9 +156,14 @@ public class NewPhoneWindow extends PhoneWindow {
         protected void onConfigurationChanged(Configuration newConfig) {
             setRootToFakeDecorIfHasCaption();
             mContext.getResources().getConfiguration().setTo(newConfig);
-            Rect out = new Rect();
-            mFakeDecor.getWindowVisibleDisplayFrame(out);
             super.onConfigurationChanged(newConfig);
+            if (mContext.isCompatContext()) {
+                Configuration appConfig = mAppContext.getResources().getConfiguration();
+                DisplayMetrics dp = mAppContext.getResources().getDisplayMetrics();
+                appConfig.densityDpi = 160;
+                appConfig.setLocales(null);
+                mContext.getResources().updateConfiguration(appConfig, dp);
+            }
             WindowManager windowManager = (WindowManager) mContext.getSystemService("window");
             windowManager.getDefaultDisplay().setUseFake(true);
             mFakeWidth = newConfig.appBounds.width();
@@ -176,12 +181,14 @@ public class NewPhoneWindow extends PhoneWindow {
 
         public View getSpecialDecor() {
             if (mDecorCaptionView != null) {
-                DisplayMetrics dp = mAppContext.getResources().getDisplayMetrics();
-                Rect out = new Rect();
-                mFakeDecor.getWindowVisibleDisplayFrame(out);
-                dp.widthPixels = out.width();
-                dp.heightPixels = out.height();
-                mContext.getResources().getDisplayMetrics().setTo(dp);
+                if (!mContext.isCompatContext()) {
+                    DisplayMetrics dp = mAppContext.getResources().getDisplayMetrics();
+                    Rect out = new Rect();
+                    mFakeDecor.getWindowVisibleDisplayFrame(out);
+                    dp.widthPixels = out.width();
+                    dp.heightPixels = out.height();
+                    mContext.getResources().getDisplayMetrics().setTo(dp);
+                }
                 return mFakeDecor;
             }
             return this;

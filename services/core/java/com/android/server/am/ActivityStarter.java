@@ -59,6 +59,7 @@ import static android.content.pm.ActivityInfo.LAUNCH_SINGLE_TOP;
 import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.Display.INVALID_DISPLAY;
 import static android.view.Display.STANDARD_MODE;
+import static android.view.Display.FULLSCREEN_MODE;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_CONFIGURATION;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_FOCUS;
 import static com.android.server.am.ActivityManagerDebugConfig.DEBUG_PERMISSIONS_REVIEW;
@@ -1036,6 +1037,7 @@ class ActivityStarter {
                 (mOptions != null) ? mOptions.getLaunchStackId() :
                 (sourceRecord != null ? sourceRecord.getTask().getStackId() :
                                           FREEFORM_WORKSPACE_STACK_ID);
+
         final int preferredLaunchDisplayId =
                 (mOptions != null) ? mOptions.getLaunchDisplayId() : DEFAULT_DISPLAY;
 
@@ -1280,6 +1282,12 @@ class ActivityStarter {
         mLaunchTaskBehind = r.mLaunchTaskBehind
                 && !mLaunchSingleTask && !mLaunchSingleInstance
                 && (mLaunchFlags & FLAG_ACTIVITY_NEW_DOCUMENT) != 0;
+        int launchRunMode = mService.mCompatMode.get(r.info.packageName) == null ?
+                STANDARD_MODE : mService.mCompatMode.get(r.info.packageName);
+        if (mOptions == null)
+            mOptions = ActivityOptions.makeBasic();
+        mOptions.setLaunchStackId(launchRunMode == FULLSCREEN_MODE ?
+                FULLSCREEN_WORKSPACE_STACK_ID : FREEFORM_WORKSPACE_STACK_ID);
 
         sendNewTaskResultRequestIfNeeded();
 
@@ -1804,13 +1812,6 @@ class ActivityStarter {
                     mNewTaskIntent != null ? mNewTaskIntent : mIntent, mVoiceSession,
                     mVoiceInteractor, !mLaunchTaskBehind /* toTop */, mStartActivity.mActivityType);
             addOrReparentStartingActivity(task, "setTaskFromReuseOrCreateNewTask - mReuseTask");
-            if (mOptions != null && mOptions.getFreeformBoundsMode() != STANDARD_MODE) {
-                Rect bounds = new Rect();
-                mTargetStack.getDisplay().mDisplay.getDefaultFreeformSize(
-                        bounds, mOptions.getFreeformBoundsMode());
-                task.setTaskBoundsMode(bounds, mOptions.getFreeformBoundsMode());
-                task.resize(bounds, ActivityManager.RESIZE_MODE_FORCED, true, true);
-            }
             if (!mStartActivity.fullscreen) {
                 Rect bounds = new Rect();
                 mTargetStack.getDisplay().mDisplay.getRectSize(bounds);

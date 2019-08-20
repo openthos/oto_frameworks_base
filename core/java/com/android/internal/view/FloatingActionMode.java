@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -209,8 +210,9 @@ public final class FloatingActionMode extends ActionMode {
     }
 
     private boolean isContentRectWithinBounds() {
-        mContext.getSystemService(WindowManager.class)
-            .getDefaultDisplay().getRealSize(mDisplaySize);
+        Display dp = mContext.getSystemService(WindowManager.class).getDefaultDisplay();
+        dp.setCompatDisplayInfo(false);
+        dp.getRealSize(mDisplaySize);
         mScreenRect.set(0, 0, mDisplaySize.x, mDisplaySize.y);
 
         return intersectsClosed(mContentRectOnScreen, mScreenRect)

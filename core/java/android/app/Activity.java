@@ -3265,9 +3265,9 @@ public class Activity extends ContextThemeWrapper
     }
 
     @Override
-    public int getWindowSizeMode() {
+    public int getWindowRunMode() {
         try {
-            return ActivityManager.getService().getTaskBoundsMode(mToken);
+            return ActivityManager.getService().getTaskRunMode(getTaskId(), getPackageName());
         } catch (Exception e) {
             return Display.STANDARD_MODE;
         }
@@ -5930,6 +5930,16 @@ public class Activity extends ContextThemeWrapper
     @Override
     public void moveWindowMaximize() throws RemoteException {
         ActivityManager.getService().moveTaskMaximize(mToken);
+    }
+
+    /** Update the task of current Activity run mode */
+    public void setWindowRunMode(int windowRunMode) {
+        try {
+            finish(FINISH_TASK_WITH_ACTIVITY);
+            ActivityManager.getService().setTaskRunMode(getTaskId(), windowRunMode);
+        } catch (RemoteException e) {
+            // Empty
+        }
     }
 
     /**

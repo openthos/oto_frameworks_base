@@ -308,7 +308,11 @@ public final class DisplayManager {
      */
     public Display getDisplay(int displayId) {
         synchronized (mLock) {
-            return getOrCreateDisplayLocked(displayId, false /*assumeValid*/);
+            Display dp = getOrCreateDisplayLocked(displayId, false /*assumeValid*/);
+            if (mContext != null && mContext.isCompatContext()) {
+                dp.setCompatDisplayInfo(true);
+            }
+            return dp;
         }
     }
 

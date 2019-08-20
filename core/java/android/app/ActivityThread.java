@@ -2815,8 +2815,15 @@ public final class ActivityThread {
             throw e.rethrowFromSystemServer();
         }
 
-        ContextImpl appContext = ContextImpl.createActivityContext(
+        ContextImpl appContext = null;
+        if ((getActivityRunMode(r.token, r.packageInfo.mPackageName)
+                & (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+            appContext = CompatContextImpl.createActivityContext(
                 this, r.packageInfo, r.activityInfo, r.token, displayId, r.overrideConfig);
+        } else {
+            appContext = ContextImpl.createActivityContext(
+                this, r.packageInfo, r.activityInfo, r.token, displayId, r.overrideConfig);
+        }
 
         final DisplayManagerGlobal dm = DisplayManagerGlobal.getInstance();
         // For debugging purposes, if the activity's package name contains the value of
@@ -3263,7 +3270,13 @@ public final class ActivityThread {
                     agent = (BackupAgent) cl.loadClass(classname).newInstance();
 
                     // set up the agent's context
-                    ContextImpl context = ContextImpl.createAppContext(this, packageInfo);
+                    ContextImpl context = null;
+                    if ((getServiceRunMode(packageName)
+                            & (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+                        context = CompatContextImpl.createAppContext(this, packageInfo);
+                    } else {
+                        context = ContextImpl.createAppContext(this, packageInfo);
+                    }
                     context.setOuterContext(agent);
                     agent.attach(context);
 
@@ -3337,7 +3350,13 @@ public final class ActivityThread {
         try {
             if (localLOGV) Slog.v(TAG, "Creating service " + data.info.name);
 
-            ContextImpl context = ContextImpl.createAppContext(this, packageInfo);
+            ContextImpl context = null;
+            if ((getServiceRunMode(packageInfo.mPackageName)
+                    & (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+                context = CompatContextImpl.createAppContext(this, packageInfo);
+            } else {
+                context = ContextImpl.createAppContext(this, packageInfo);
+            }
             context.setOuterContext(service);
 
             Application app = packageInfo.makeApplication(false, mInstrumentation);
@@ -3358,6 +3377,25 @@ public final class ActivityThread {
                     + ": " + e.toString(), e);
             }
         }
+    }
+
+    private int getActivityRunMode(IBinder token, String packageName) {
+        try {
+            return ActivityManager.getService().getTaskRunMode(
+                    ActivityManager.getService().getTaskForActivity(token, false), packageName);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during getActivityRunMode", e);
+        }
+        return Display.STANDARD_MODE;
+    }
+
+    private int getServiceRunMode(String packageName) {
+        try {
+            return ActivityManager.getService().getTaskRunModeForPackageName(packageName);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during getServiceRunMode", e);
+        }
+        return Display.STANDARD_MODE;
     }
 
     private void handleBindService(BindServiceData data) {
@@ -5643,7 +5681,13 @@ public final class ActivityThread {
             ii = null;
         }
 
-        final ContextImpl appContext = ContextImpl.createAppContext(this, data.info);
+        ContextImpl appContext = null;
+        if ((getServiceRunMode(data.info.mPackageName) &
+                    (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+            appContext = CompatContextImpl.createAppContext(this, data.info);
+        } else {
+            appContext = ContextImpl.createAppContext(this, data.info);
+        }
         updateLocaleListFromAppContext(appContext,
                 mResourcesManager.getConfiguration().getLocales());
 
@@ -5675,7 +5719,13 @@ public final class ActivityThread {
             instrApp.initForUser(UserHandle.myUserId());
             final LoadedApk pi = getPackageInfo(instrApp, data.compatInfo,
                     appContext.getClassLoader(), false, true, false);
-            final ContextImpl instrContext = ContextImpl.createAppContext(this, pi);
+            ContextImpl instrContext = null;
+            if ((getServiceRunMode(pi.mPackageName) &
+                        (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+                instrContext = CompatContextImpl.createAppContext(this, pi);
+            } else {
+                instrContext = ContextImpl.createAppContext(this, pi);
+            }
 
             try {
                 final ClassLoader cl = instrContext.getClassLoader();
@@ -6367,8 +6417,14 @@ public final class ActivityThread {
                     UserHandle.myUserId());
             try {
                 mInstrumentation = new Instrumentation();
-                ContextImpl context = ContextImpl.createAppContext(
-                        this, getSystemContext().mPackageInfo);
+                ContextImpl context = null;
+                if ((getServiceRunMode(getSystemContext().mPackageInfo.mPackageName) &
+                            (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+                    context = CompatContextImpl.createAppContext(this,
+                            getSystemContext().mPackageInfo);
+                } else {
+                    context = ContextImpl.createAppContext(this, getSystemContext().mPackageInfo);
+                }
                 mInitialApplication = context.mPackageInfo.makeApplication(true, null);
                 mInitialApplication.onCreate();
             } catch (Exception e) {

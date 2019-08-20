@@ -180,6 +180,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         // By changing the outline provider to BOUNDS, the window can remove its
         // background without removing the shadow.
         mOwner.getDecorView().setOutlineProvider(ViewOutlineProvider.BOUNDS);
+        mWindowRunMode = getWindowRunMode();
         mBack = findViewById(R.id.back_window);
         mSetting = findViewById(R.id.setting_window);
         mMinimize = findViewById(R.id.minimize_window);
@@ -301,6 +302,9 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                     mTouchDownX = x;
                     mTouchDownY = y;
                 }
+                if (getWindowRunMode() == Display.STANDARD_MODE) {
+                    doubleClick();
+                }
                 setSettingPopupItemSelect(v);
                 break;
 
@@ -342,7 +346,11 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 mWindowRunMode = Display.DESKTOP_MODE;
                 break;
             default:
+                mWindowRunMode = getWindowRunMode();
                 break;
+        }
+        if (mWindowRunMode == getWindowRunMode()) {
+            return;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext(),
                 R.style.CaptionAlertDialogStyle);
@@ -353,6 +361,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
                 mPopWindow.dismiss();
+                setWindowRunMode(mWindowRunMode);
             }
         });
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -559,6 +568,13 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         }
     }
 
+    private void setWindowRunMode(int windowRunMode) {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            callback.setWindowRunMode(windowRunMode);
+        }
+    }
+
     private int[] calculatePopWindowPos(final View anchorView, final View popContentView) {
         final int popPos[] = new int[2];
         final int anchorLoc[] = new int[2];
@@ -575,6 +591,14 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
 
     public boolean hasCaption() {
         return getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+    }
+
+    public int getWindowRunMode() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            return callback.getWindowRunMode();
+        }
+        return Display.STANDARD_MODE;
     }
 
     /**

@@ -1404,9 +1404,10 @@ public class TaskStack extends WindowContainer<Task> implements DimLayer.DimLaye
             // the task is put to top-left quadrant, the actual visible area would not start at
             // (0,0) after it's adjusted for the status bar.
             task.getDimBounds(mTmpRect);
-            mTmpRect.inset(-delta, -delta);
+            int compatibleDelta = task.mIsCompatibleRunMode ? 0 : delta;
+            mTmpRect.inset(-compatibleDelta, -compatibleDelta);
             if (mTmpRect.contains(x, y)) {
-                mTmpRect.inset(delta, delta);
+                mTmpRect.inset(compatibleDelta, compatibleDelta);
 
                 results.searchDone = true;
 

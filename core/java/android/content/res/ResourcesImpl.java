@@ -413,6 +413,11 @@ public class ResourcesImpl {
                 mMetrics.scaledDensity = mMetrics.density *
                         (mConfiguration.fontScale != 0 ? mConfiguration.fontScale : 1.0f);
 
+                if (mMetrics != null && mMetrics.compatDisplayMetricsFlag
+                        == DisplayMetrics.COMPAT_METRICS_FLAG) {
+                    mMetrics.setCompatMetrics();
+                }
+
                 final int width, height;
                 if (mMetrics.widthPixels >= mMetrics.heightPixels) {
                     width = mMetrics.widthPixels;

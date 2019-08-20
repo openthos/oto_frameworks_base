@@ -62,6 +62,7 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
     final int mUserId;
     private boolean mDeferRemoval = false;
     boolean mIsDocked = false;
+    boolean mIsCompatibleRunMode = false;
     int mDockedDimSide = -1;
     final Rect mDockedTmpRect = new Rect();
     final WindowManagerService mService;
@@ -361,6 +362,10 @@ class Task extends WindowContainer<AppWindowToken> implements DimLayer.DimLayerU
     void setTaskBoundsMode(Rect bounds, int taskBoundsMode) {
         mIsDocked = taskBoundsMode != Display.STANDARD_MODE;
         mDockedTmpRect.set(bounds);
+    }
+
+    void setTaskRunMode(int taskRunMode) {
+        mIsCompatibleRunMode = (taskRunMode & (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0;
     }
 
     boolean isResizeable() {

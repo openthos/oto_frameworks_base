@@ -176,6 +176,11 @@ public class DisplayMetrics {
     public static final int DENSITY_DEVICE_STABLE = getDeviceDensity();
 
     /**
+     * The compat metrics flag to obtain the compat DisplayMetrics for specific window.
+     */
+    public static final int COMPAT_METRICS_FLAG = 1;
+
+    /**
      * The absolute width of the available display size in pixels.
      */
     public int widthPixels;
@@ -264,6 +269,12 @@ public class DisplayMetrics {
      */
     public float noncompatYdpi;
 
+    /**
+     * The reported metrics flag to any compatibility mode being applied.
+     * @hide
+     */
+    public int compatDisplayMetricsFlag;
+
     public DisplayMetrics() {
     }
     
@@ -286,6 +297,10 @@ public class DisplayMetrics {
         noncompatScaledDensity = o.noncompatScaledDensity;
         noncompatXdpi = o.noncompatXdpi;
         noncompatYdpi = o.noncompatYdpi;
+        if (compatDisplayMetricsFlag == COMPAT_METRICS_FLAG
+                || o.compatDisplayMetricsFlag == COMPAT_METRICS_FLAG) {
+            setCompatMetrics();
+        }
     }
     
     public void setToDefaults() {
@@ -303,6 +318,16 @@ public class DisplayMetrics {
         noncompatScaledDensity = scaledDensity;
         noncompatXdpi = xdpi;
         noncompatYdpi = ydpi;
+        compatDisplayMetricsFlag = 0;
+    }
+
+    public void setCompatMetrics() {
+        density = 1.0f;
+        scaledDensity = 1.0f;
+        densityDpi = 160;
+        heightPixels = noncompatHeightPixels =  740;
+        widthPixels = noncompatWidthPixels = 440;
+        compatDisplayMetricsFlag = COMPAT_METRICS_FLAG;
     }
 
     @Override
@@ -356,7 +381,8 @@ public class DisplayMetrics {
     public String toString() {
         return "DisplayMetrics{density=" + density + ", width=" + widthPixels +
             ", height=" + heightPixels + ", scaledDensity=" + scaledDensity +
-            ", xdpi=" + xdpi + ", ydpi=" + ydpi + "}";
+            ", xdpi=" + xdpi + ", ydpi=" + ydpi +
+            ", compatDisplayMetricsFlag=" + compatDisplayMetricsFlag + "}";
     }
 
     private static int getDeviceDensity() {

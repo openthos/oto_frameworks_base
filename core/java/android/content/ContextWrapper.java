@@ -80,6 +80,11 @@ public class ContextWrapper extends Context {
     }
 
     @Override
+    public boolean isCompatContext() {
+        return mBase.isCompatContext();
+    }
+
+    @Override
     public AssetManager getAssets() {
         return mBase.getAssets();
     }

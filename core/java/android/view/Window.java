@@ -626,8 +626,8 @@ public abstract class Window {
         /** Returns whether the window belongs to the home task. */
         boolean getIsHome();
 
-        /** Returns current window size mode. */
-        int getWindowSizeMode();
+        /** Returns current window run mode. */
+        int getWindowRunMode();
 
         /** Returns the current stack Id for the window. */
         int getWindowStackId() throws RemoteException;
@@ -652,6 +652,9 @@ public abstract class Window {
 
         /** Returns the Activity ComponentName. */
         ComponentName getActivityComponentName();
+
+        /** Update current window run mode. */
+        void setWindowRunMode(int windowRunMode);
     }
 
     /**

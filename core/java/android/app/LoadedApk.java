@@ -979,7 +979,16 @@ public final class LoadedApk {
                 initializeJavaContextClassLoader();
                 Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
             }
-            ContextImpl appContext = ContextImpl.createAppContext(mActivityThread, this);
+            ContextImpl appContext = null;
+            int runMode = Display.STANDARD_MODE;
+            if (ActivityManager.getService() != null) {
+                runMode = ActivityManager.getService().getTaskRunModeForPackageName(mPackageName);
+            }
+            if ((runMode & (Display.PHONE_MODE | Display.DESKTOP_MODE)) != 0) {
+                appContext = CompatContextImpl.createAppContext(mActivityThread, this);
+            } else {
+                appContext = ContextImpl.createAppContext(mActivityThread, this);
+            }
             app = mActivityThread.mInstrumentation.newApplication(
                     cl, appClass, appContext);
             appContext.setOuterContext(app);

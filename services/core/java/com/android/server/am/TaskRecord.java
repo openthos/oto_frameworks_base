@@ -230,6 +230,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     int mResizeMode;        // The resize mode of this task and its activities.
                             // Based on the {@link ActivityInfo#resizeMode} of the root activity.
     int mTaskBoundsMode;    // Task bounds mode.
+    int mTaskRunMode;       // Task run mode.
     private boolean mSupportsPictureInPicture;  // Whether or not this task and its activities
             // support PiP. Based on the {@link ActivityInfo#FLAG_SUPPORTS_PICTURE_IN_PICTURE} flag
             // of the root activity.
@@ -307,6 +308,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     String mCallingPackage;
 
     final ActivityManagerService mService;
+    private ApplicationInfo mApplicationInfo;
 
     // Whether or not this task covers the entire screen; by default tasks are fullscreen.
     boolean mFullscreen = true;
@@ -326,7 +328,8 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     Rect mLastNonFullscreenBounds = null;
 
     Rect mMaximizeBounds = new Rect();
-    Rect mDefaultPcBounds = new Rect();
+    Rect mDefaultDesktopBounds = new Rect();
+    Rect mDefaultPhoneBounds = new Rect();
     // Minimal width and height of this task when it's resizeable. -1 means it should use the
     // default minimal width/height.
     int mMinWidth;
@@ -357,6 +360,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         mActivities = new ArrayList<>();
         mCallingUid = info.applicationInfo.uid;
         mCallingPackage = info.packageName;
+        mApplicationInfo = info.applicationInfo;
         taskType = type;
         setIntent(_intent, info);
         setMinDimensions(info);
@@ -380,6 +384,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         mActivities = new ArrayList<>();
         mCallingUid = info.applicationInfo.uid;
         mCallingPackage = info.packageName;
+        mApplicationInfo = info.applicationInfo;
         setIntent(_intent, info);
         setMinDimensions(info);
 
@@ -469,6 +474,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
                 mResizeMode, mSupportsPictureInPicture, isHomeTask(), onTop, showForAllUsers,
                 lastTaskDescription));
         mWindowContainerController.setTaskBoundsMode(mTmpNonMaximizeBounds, mTaskBoundsMode);
+        mWindowContainerController.setTaskRunMode(mTaskRunMode);
     }
 
     Rect getTaskMemoryBounds() {
@@ -479,12 +485,11 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
                 final TaskRecord tk = mService.mRecentTasks.get(taskNdx);
                 if (affinity.equals(tk.affinity)) {
                     if (tk.mBounds != null)
-                    bounds.set(new Rect(tk.mBounds));
+                        bounds.set(new Rect(tk.mBounds));
                     break;
                 }
             }
         }
-
         if (mStack != null && bounds.isEmpty()) {
             switch (mTaskBoundsMode) {
                 case Display.LEFT_DOCKED_MODE:
@@ -500,6 +505,22 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
                     bounds.set(mTmpNonMaximizeBounds);
                     break;
             }
+        }
+        switch (mTaskRunMode) {
+            case Display.PHONE_MODE:
+                mTmpNonMaximizeBounds.set(new Rect(mTmpNonMaximizeBounds.left,
+                    mTmpNonMaximizeBounds.top,
+                    mTmpNonMaximizeBounds.left + 440,
+                    mTmpNonMaximizeBounds.top + 740));
+                bounds.set(mTmpNonMaximizeBounds);
+                break;
+            case Display.DESKTOP_MODE:
+                mTmpNonMaximizeBounds.set(new Rect(mTmpNonMaximizeBounds.left,
+                    mTmpNonMaximizeBounds.top,
+                    mTmpNonMaximizeBounds.left + mDefaultDesktopBounds.width(),
+                    mTmpNonMaximizeBounds.top + mDefaultDesktopBounds.height()));
+                bounds.set(mTmpNonMaximizeBounds);
+                break;
         }
         return bounds.isEmpty() ? null : bounds;
     }
@@ -933,6 +954,10 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         mLockTaskMode = info.lockTaskLaunchMode;
         mPrivileged = (info.applicationInfo.privateFlags & PRIVATE_FLAG_PRIVILEGED) != 0;
         setLockTaskAuth();
+        mTaskRunMode = mService.mCompatMode.get(realActivity.getPackageName()) == null ?
+                Display.STANDARD_MODE : mService.mCompatMode.get(realActivity.getPackageName());
+        mTaskBoundsMode = Settings.Global.getInt(mService.mContext.getContentResolver(),
+                realActivity.getPackageName() + ATTR_BOUNDS_MODE, Display.STANDARD_MODE);
     }
 
     /** Sets the original minimal width and height. */
@@ -1603,6 +1628,10 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
         return taskType == HOME_ACTIVITY_TYPE;
     }
 
+    boolean isSystemTask() {
+        return mApplicationInfo.isSystemApp();
+    }
+
     boolean isRecentsTask() {
         return taskType == RECENTS_ACTIVITY_TYPE;
     }
@@ -1793,18 +1822,23 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     }
 
     void storeTaskBounds() {
-        if (mStack != null && !isHomeTask() && StackId.persistTaskBounds(mStack.mStackId)) {
-            Settings.Global.putInt(mService.mContext.getContentResolver(),
-                    realActivity.getPackageName() + ATTR_BOUNDS_MODE, mTaskBoundsMode);
-            Settings.Global.putRect(mService.mContext.getContentResolver(),
-                    realActivity.getPackageName(), formatTaskBounds(mTmpNonMaximizeBounds, true));
+        if (mStack != null && !isHomeTask()) {
+            if (StackId.persistTaskBounds(mStack.mStackId)) {
+                if ((mTaskRunMode & (Display.PHONE_MODE|Display.DESKTOP_MODE)) != 0) {
+                    mTaskBoundsMode = Display.STANDARD_MODE;
+                }
+                Settings.Global.putInt(mService.mContext.getContentResolver(),
+                        realActivity.getPackageName() + ATTR_BOUNDS_MODE, mTaskBoundsMode);
+                Settings.Global.putRect(mService.mContext.getContentResolver(),
+                        realActivity.getPackageName(), formatTaskBounds(mTmpNonMaximizeBounds, true));
+            }
         }
     }
 
     private Rect formatTaskBounds(Rect bounds, boolean isStored) {
         Rect storeBounds = null;
         Rect restoreBounds = null;
-        if (!bounds.isEmpty()) {
+        if (mStack != null && !bounds.isEmpty()) {
             final Point displaySize = new Point();
             mStack.getDisplaySize(displaySize);
             int displayWidth = displaySize.x;
@@ -2117,7 +2151,7 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
                     || mTaskBoundsMode == Display.TOP_DOCKED_MODE
                     || mTaskBoundsMode == Display.LEFT_DOCKED_MODE
                     || mTaskBoundsMode == Display.RIGHT_DOCKED_MODE);
-            mTmpNonMaximizeBounds.set(taskLaunchMode ? mDefaultPcBounds : bounds);
+            mTmpNonMaximizeBounds.set(taskLaunchMode ? mDefaultDesktopBounds : bounds);
         }
     }
 
@@ -2369,30 +2403,32 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     void toggleTaskMaximize() {
         if (mTaskBoundsMode == Display.TOP_DOCKED_MODE) {
             mTmpNonMaximizeBounds.set(mTmpNonMaximizeBounds.isEmpty()
-                    ? mDefaultPcBounds : mTmpNonMaximizeBounds);
+                    ? mDefaultDesktopBounds : mTmpNonMaximizeBounds);
             mTaskBoundsMode = Display.STANDARD_MODE;
             resize(mTmpNonMaximizeBounds, RESIZE_MODE_FORCED, true, true);
         } else {
-            mTmpNonMaximizeBounds.set(mBounds == null ? mDefaultPcBounds : mBounds);
+            mTmpNonMaximizeBounds.set(mBounds == null ? mDefaultDesktopBounds : mBounds);
             mTaskBoundsMode = Display.TOP_DOCKED_MODE;
             resize(mMaximizeBounds, RESIZE_MODE_FORCED, true, true);
         }
     }
 
     void setUniqueTaskBounds() {
-        mStack.getDisplay().mDisplay.getRectSize(mMaximizeBounds);
-        mStack.getDisplay().mDisplay.getDefaultFreeformSize(
-                mDefaultPcBounds, Display.DESKTOP_MODE);
-        mTaskBoundsMode = Settings.Global.getInt(mService.mContext.getContentResolver(),
-                realActivity.getPackageName() + ATTR_BOUNDS_MODE, Display.STANDARD_MODE);
-        Rect bounds = Settings.Global.getRect(mService.mContext.getContentResolver(),
-                realActivity.getPackageName(), null);
-        if (bounds != null)
-        mTmpNonMaximizeBounds.set(formatTaskBounds(bounds, false));
+        if (mStack != null && !isHomeTask()) {
+            mStack.getDisplay().mDisplay.getRectSize(mMaximizeBounds);
+            mStack.getDisplay().mDisplay.getDefaultFreeformSize(
+                    mDefaultDesktopBounds, Display.DESKTOP_MODE);
+            mStack.getDisplay().mDisplay.getDefaultFreeformSize(
+                    mDefaultPhoneBounds, Display.PHONE_MODE);
+            Rect bounds = Settings.Global.getRect(mService.mContext.getContentResolver(),
+                    realActivity.getPackageName(), null);
+            if (bounds != null)
+                mTmpNonMaximizeBounds.set(formatTaskBounds(bounds, false));
+        }
     }
 
-    int getTaskBoundsMode() {
-        return mTaskBoundsMode;
+    int getTaskRunMode() {
+        return mTaskRunMode;
     }
 
     void changeTaskOrientation() {

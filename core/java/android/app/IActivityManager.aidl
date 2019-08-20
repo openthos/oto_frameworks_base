@@ -443,8 +443,10 @@ interface IActivityManager {
     void notifyCleartextNetwork(int uid, in byte[] firstPacket);
     int createStackOnDisplay(int displayId);
     int getFocusedStackId();
-    int getTaskBoundsMode(in IBinder token);
-    void setTaskBoundsMode(int taskId, in Rect bounds, int taskMode);
+    int getTaskRunMode(int taskId, String packageName);
+    int getTaskRunModeForPackageName(String packageName);
+    void setTaskBoundsMode(int taskId, in Rect bounds, int taskBoundsMode);
+    void setTaskRunMode(int taskId, int taskRunMode);
     void setTaskResizeable(int taskId, int resizeableMode);
     boolean requestAssistContextExtras(int requestType, in IResultReceiver receiver,
             in Bundle receiverExtras, in IBinder activityToken,

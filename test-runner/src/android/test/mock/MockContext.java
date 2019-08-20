@@ -82,6 +82,11 @@ public class MockContext extends Context {
     }
 
     @Override
+    public boolean isCompatContext() {
+       return false;
+    }
+
+    @Override
     public Looper getMainLooper() {
         throw new UnsupportedOperationException();
     }

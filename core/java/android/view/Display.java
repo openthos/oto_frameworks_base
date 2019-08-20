@@ -374,6 +374,8 @@ public final class Display {
     public static final int DESKTOP_MODE = 16;
     public static final int FULLSCREEN_MODE = 32;
 
+    private boolean mIsCompatDisplayInfo = false;
+
     /**
      * Internal method to create a display.
      * The display created with this method will have a static {@link DisplayAdjustments} applied.
@@ -462,6 +464,10 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             outDisplayInfo.copyFrom(mDisplayInfo);
+            if (mIsCompatDisplayInfo) {
+                outDisplayInfo.logicalWidth = getWidth();
+                outDisplayInfo.logicalHeight = getHeight();
+            }
             return mIsValid;
         }
     }
@@ -615,6 +621,10 @@ public final class Display {
             //outSize.y = mTempMetrics.heightPixels;
             outSize.x = mUseFakeDisplaySize ? mFakeWidth : mTempMetrics.widthPixels;
             outSize.y = mUseFakeDisplaySize ? mFakeHeight : mTempMetrics.heightPixels;
+            if (mIsCompatDisplayInfo) {
+                outSize.x = getWidth();
+                outSize.y = getHeight();
+            }
         }
     }
 
@@ -636,6 +646,10 @@ public final class Display {
         }
     }
 
+    public void setCompatDisplayInfo(boolean isCompatDisplayInfo) {
+        mIsCompatDisplayInfo = isCompatDisplayInfo;
+    }
+
     /**
      * Gets the size of the display as a rectangle, in pixels.
      *
@@ -646,6 +660,9 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(mTempMetrics, getDisplayAdjustments());
+            if (mIsCompatDisplayInfo) {
+                mTempMetrics.setCompatMetrics();
+            }
             outSize.set(0, 0, mTempMetrics.widthPixels, mTempMetrics.heightPixels);
         }
     }
@@ -743,6 +760,9 @@ public final class Display {
     public int getWidth() {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
+            if (mIsCompatDisplayInfo) {
+                return mCachedAppWidthCompat < mCachedAppHeightCompat ? 440 : 960;
+            }
             return mCachedAppWidthCompat;
         }
     }
@@ -754,6 +774,9 @@ public final class Display {
     public int getHeight() {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
+            if (mIsCompatDisplayInfo) {
+                return mCachedAppWidthCompat < mCachedAppHeightCompat ? 740 : 540;
+            }
             return mCachedAppHeightCompat;
         }
     }
@@ -1015,6 +1038,9 @@ public final class Display {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(outMetrics, getDisplayAdjustments());
             adjustFakeSize(outMetrics);
+            if (mIsCompatDisplayInfo) {
+                outMetrics.setCompatMetrics();
+            }
         }
     }
 
@@ -1033,10 +1059,14 @@ public final class Display {
     public void getRealSize(Point outSize) {
         synchronized (this) {
             updateDisplayInfoLocked();
-            //outSize.x = mDisplayInfo.logicalWidth;
-            //outSize.y = mDisplayInfo.logicalHeight;
-            outSize.x = mUseFakeDisplaySize ? mFakeWidth : mDisplayInfo.logicalWidth;
-            outSize.y = mUseFakeDisplaySize ? mFakeHeight : mDisplayInfo.logicalHeight;
+            outSize.x = mDisplayInfo.logicalWidth;
+            outSize.y = mDisplayInfo.logicalHeight;
+            //outSize.x = mUseFakeDisplaySize ? mFakeWidth : mDisplayInfo.logicalWidth;
+            //outSize.y = mUseFakeDisplaySize ? mFakeHeight : mDisplayInfo.logicalHeight;
+            if (mIsCompatDisplayInfo) {
+                outSize.x = getWidth();
+                outSize.y = getHeight();
+            }
         }
     }
 
@@ -1056,6 +1086,9 @@ public final class Display {
             updateDisplayInfoLocked();
             mDisplayInfo.getLogicalMetrics(outMetrics,
                     CompatibilityInfo.DEFAULT_COMPATIBILITY_INFO, null);
+            if (mIsCompatDisplayInfo) {
+                outMetrics.setCompatMetrics();
+            }
         }
     }
 
