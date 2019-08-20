@@ -126,7 +126,7 @@ import com.android.internal.app.ToolbarActionBar;
 import com.android.internal.app.WindowDecorActionBar;
 import com.android.internal.policy.DecorView;
 import com.android.internal.policy.PhoneWindow;
-import com.android.internal.policy.NewPhoneWindow;
+import com.android.internal.policy.CompatPhoneWindow;
 
 import org.android_x86.analytics.AnalyticsHelper;
 
@@ -7034,7 +7034,7 @@ public class Activity extends ContextThemeWrapper
     final Window getPhoneWindow(Context context, Window window,
             ActivityConfigCallback activityConfigCallback) {
         if (("com.tencent.mm").equals(getPackageName()))
-            return new NewPhoneWindow(this, context, window, activityConfigCallback);
+            return new CompatPhoneWindow(this, context, window, activityConfigCallback);
         return new PhoneWindow(this, window, activityConfigCallback);
     }
 

@@ -66,10 +66,6 @@ public final class Display {
     private static final String TAG = "Display";
     private static final boolean DEBUG = false;
 
-    private static boolean mUseFakeDisplaySize;
-    private static int mFakeWidth;
-    private static int mFakeHeight;
-
     private final DisplayManagerGlobal mGlobal;
     private final int mDisplayId;
     private final int mLayerStack;
@@ -617,32 +613,12 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(mTempMetrics, getDisplayAdjustments());
-            //outSize.x = mTempMetrics.widthPixels;
-            //outSize.y = mTempMetrics.heightPixels;
-            outSize.x = mUseFakeDisplaySize ? mFakeWidth : mTempMetrics.widthPixels;
-            outSize.y = mUseFakeDisplaySize ? mFakeHeight : mTempMetrics.heightPixels;
+            outSize.x = mTempMetrics.widthPixels;
+            outSize.y = mTempMetrics.heightPixels;
             if (mIsCompatDisplayInfo) {
                 outSize.x = getWidth();
                 outSize.y = getHeight();
             }
-        }
-    }
-
-    public void setUseFake(boolean use) {
-        mUseFakeDisplaySize = use;
-    }
-
-    public boolean setFakeSize(int width, int height) {
-        boolean re = (width != mFakeWidth || height != mFakeHeight);
-        mFakeWidth = width;
-        mFakeHeight = height;
-        return re;
-    }
-
-    public void adjustFakeSize(DisplayMetrics outMetrics) {
-        if (mUseFakeDisplaySize) {
-            outMetrics.widthPixels = mFakeWidth;
-            outMetrics.heightPixels = mFakeHeight;
         }
     }
 
@@ -1037,7 +1013,6 @@ public final class Display {
         synchronized (this) {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(outMetrics, getDisplayAdjustments());
-            adjustFakeSize(outMetrics);
             if (mIsCompatDisplayInfo) {
                 outMetrics.setCompatMetrics();
             }
@@ -1061,8 +1036,6 @@ public final class Display {
             updateDisplayInfoLocked();
             outSize.x = mDisplayInfo.logicalWidth;
             outSize.y = mDisplayInfo.logicalHeight;
-            //outSize.x = mUseFakeDisplaySize ? mFakeWidth : mDisplayInfo.logicalWidth;
-            //outSize.y = mUseFakeDisplaySize ? mFakeHeight : mDisplayInfo.logicalHeight;
             if (mIsCompatDisplayInfo) {
                 outSize.x = getWidth();
                 outSize.y = getHeight();
