@@ -16,6 +16,7 @@
 
 package com.android.internal.widget;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -25,15 +26,23 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.ViewTreeObserver;
+import android.content.DialogInterface;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import static android.app.ActivityManager.StackId.INVALID_STACK_ID;
 import static android.app.ActivityManager.StackId.FULLSCREEN_WORKSPACE_STACK_ID;
@@ -86,10 +95,11 @@ import java.util.ArrayList;
  * </ul>
  */
 public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
-        GestureDetector.OnGestureListener {
+        GestureDetector.OnGestureListener, View.OnHoverListener {
     private final static String TAG = "DecorCaptionView";
     private PhoneWindow mOwner = null;
     private PackageManager mPm;
+    private ApplicationInfo mApplicationInfo;
     private boolean mShow = false;
 
     // True if the window is being dragged.
@@ -105,11 +115,18 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private View mCaption;
     private View mContent;
     private View mBack;
-    private View mFullscreen;
-    private View mRotate;
+    private View mSetting;
     private View mMinimize;
     private View mMaximize;
     private View mClose;
+
+    private View mPopContentView;
+    private PopupWindow mPopWindow;
+    private FrameLayout mNormalMode;
+    private FrameLayout mFullscreenMode;
+    private FrameLayout mPhonePortraitMode;
+    private FrameLayout mPhoneLandMode;
+    private int mWindowRunMode;
 
     // Fields for detecting drag events.
     private int mTouchDownX;
@@ -124,7 +141,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private GestureDetector mGestureDetector;
     private final Rect mBackRect = new Rect();
     private final Rect mFullscreenRect = new Rect();
-    private final Rect mRotateRect = new Rect();
+    private final Rect mSettingRect = new Rect();
     private final Rect mMinimizeRect = new Rect();
     private final Rect mMaximizeRect = new Rect();
     private final Rect mCloseRect = new Rect();
@@ -164,25 +181,60 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         // background without removing the shadow.
         mOwner.getDecorView().setOutlineProvider(ViewOutlineProvider.BOUNDS);
         mBack = findViewById(R.id.back_window);
-        mFullscreen = findViewById(R.id.fullscreen_window);
-        mRotate = findViewById(R.id.rotate_window);
+        mSetting = findViewById(R.id.setting_window);
         mMinimize = findViewById(R.id.minimize_window);
         mMaximize = findViewById(R.id.maximize_window);
+        mMaximize.setVisibility(mWindowRunMode == Display.STANDARD_MODE ? View.VISIBLE : View.GONE);
         mClose = findViewById(R.id.close_window);
         TextView appName = (TextView) findViewById(R.id.title_window);
         ImageView appIcon = (ImageView) findViewById(R.id.icon_window);
 
         mPm = getContext().getPackageManager();
-        appName.setText(mPm.getApplicationLabel(getContext().getApplicationInfo()));
-        appIcon.setImageDrawable(mPm.getApplicationIcon(getContext().getApplicationInfo()));
+        mApplicationInfo = getContext().getApplicationInfo();
+        appName.setText(mPm.getApplicationLabel(mApplicationInfo));
+        appIcon.setImageDrawable(mPm.getApplicationIcon(mApplicationInfo));
 
-        mRotate.getViewTreeObserver().addOnGlobalLayoutListener(
-                         new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mRotate.setVisibility(updateRotateState() ? VISIBLE : GONE );
-            }
-        });
+        initPopupWindow();
+    }
+
+    private void initPopupWindow() {
+        mPopContentView = LayoutInflater.from(getContext())
+                .inflate(R.layout.decor_caption_popupwindow, null);
+        mPopWindow = new PopupWindow(mPopContentView,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        mNormalMode = (FrameLayout) mPopContentView.findViewById(R.id.item_normal);
+        mFullscreenMode = (FrameLayout) mPopContentView.findViewById(R.id.item_fullscreen);
+        mPhonePortraitMode = (FrameLayout) mPopContentView.findViewById(R.id.item_phone_portrait);
+        mPhoneLandMode = (FrameLayout) mPopContentView.findViewById(R.id.item_phone_landscape);
+        mPopContentView.findViewById(R.id.layout_phone_portrait).
+                setVisibility(mApplicationInfo.isSystemApp() ? View.GONE : View.VISIBLE);
+        mPopContentView.findViewById(R.id.layout_phone_landscape).
+                setVisibility(mApplicationInfo.isSystemApp() ? View.GONE : View.VISIBLE);
+        switch(mWindowRunMode) {
+            case Display.STANDARD_MODE:
+                mNormalMode.setBackgroundResource(R.color.caption_setting_dark);
+                break;
+            case Display.FULLSCREEN_MODE:
+                mFullscreenMode.setBackgroundResource(R.color.caption_setting_dark);
+                break;
+            case Display.PHONE_MODE:
+                mPhonePortraitMode.setBackgroundResource(R.color.caption_setting_dark);
+                break;
+            case Display.DESKTOP_MODE:
+                mPhoneLandMode.setBackgroundResource(R.color.caption_setting_dark);
+                break;
+        }
+
+        mNormalMode.setOnTouchListener(this);
+        mFullscreenMode.setOnTouchListener(this);
+        mPhonePortraitMode.setOnTouchListener(this);
+        mPhoneLandMode.setOnTouchListener(this);
+
+        mNormalMode.setOnHoverListener(this);
+        mFullscreenMode.setOnHoverListener(this);
+        mPhonePortraitMode.setOnHoverListener(this);
+        mPhoneLandMode.setOnHoverListener(this);
     }
 
     @Override
@@ -195,11 +247,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             if (mBackRect.contains(x, y)) {
                 mClickTarget = mBack;
             }
-            if (mFullscreenRect.contains(x, y)) {
-                mClickTarget = mFullscreen;
-            }
-            if (mRotateRect.contains(x, y)) {
-                mClickTarget = mRotate;
+            if (mSettingRect.contains(x, y)) {
+                mClickTarget = mSetting;
             }
             if (mMinimizeRect.contains(x, y)) {
                 mClickTarget = mMinimize;
@@ -245,11 +294,6 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                     // When there is no caption we should not react to anything.
                     return false;
                 }
-                System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
-                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
-                if (mHits[mHits.length - 1] - mHits[0] < interval) {
-                    maximizeWindow();
-                }
                 // Checking for a drag action is started if we aren't dragging already and the
                 // starting event is either a left mouse button or any other input device.
                 if (!fromMouse || primaryButton) {
@@ -257,6 +301,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                     mTouchDownX = x;
                     mTouchDownY = y;
                 }
+                setSettingPopupItemSelect(v);
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -280,6 +325,71 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 return !mCheckForDragging;
         }
         return mDragging || mCheckForDragging;
+    }
+
+    private void setSettingPopupItemSelect(View view) {
+        switch(view.getId()) {
+            case R.id.item_normal:
+                mWindowRunMode = Display.STANDARD_MODE;
+                break;
+            case R.id.item_fullscreen:
+                mWindowRunMode = Display.FULLSCREEN_MODE;
+                break;
+            case R.id.item_phone_portrait:
+                mWindowRunMode = Display.PHONE_MODE;
+                break;
+            case R.id.item_phone_landscape:
+                mWindowRunMode = Display.DESKTOP_MODE;
+                break;
+            default:
+                break;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext(),
+                R.style.CaptionAlertDialogStyle);
+        builder.setMessage(getContext().getString(R.string.caption_setting_msg));
+        builder.setTitle(getContext().getString(R.string.caption_setting_title));
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                mPopWindow.dismiss();
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(null);
+        dialog.show();
+        WindowManager.LayoutParams p = dialog.getWindow().getAttributes();
+        p.width = 400;
+        dialog.getWindow().setAttributes(p);
+    }
+
+    private void doubleClick() {
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+        if (mHits[mHits.length - 1] - mHits[0] < interval) {
+            maximizeWindow();
+        }
+    }
+
+    @Override
+    public boolean onHover(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+                v.setHovered(true);
+                v.setSelected(true);
+                break;
+            case MotionEvent.ACTION_HOVER_EXIT:
+                v.setHovered(false);
+                v.setSelected(false);
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -309,7 +419,6 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
      */
     public void onConfigurationChanged(boolean show) {
         mShow = show;
-        mRotate.setVisibility(updateRotateState() ? VISIBLE : GONE );
         updateCaptionVisibility();
     }
 
@@ -358,15 +467,14 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             mCaption.layout(0, 0, mCaption.getMeasuredWidth(), mCaption.getMeasuredHeight());
             captionHeight = mCaption.getBottom() - mCaption.getTop();
             mBack.getHitRect(mBackRect);
-            mFullscreen.getHitRect(mFullscreenRect);
-            mRotate.getHitRect(mRotateRect);
+            mSetting.getHitRect(mSettingRect);
             mMinimize.getHitRect(mMinimizeRect);
             mMaximize.getHitRect(mMaximizeRect);
             mClose.getHitRect(mCloseRect);
         } else {
             captionHeight = 0;
             mBackRect.setEmpty();
-            mRotateRect.setEmpty();
+            mSettingRect.setEmpty();
             mMinimizeRect.setEmpty();
             mMaximizeRect.setEmpty();
             mCloseRect.setEmpty();
@@ -419,31 +527,12 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     /**
-     *  Move window to the fullscreen workspace stack.
+     * Set the window run model.
      */
-    private void fullscreenWindow() {
-        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
-        if (callback != null) {
-            try {
-                callback.switchWindowFreeformAndFullscreen();
-            } catch (RemoteException ex) {
-                Log.e(TAG, "Cannot change window workspace.");
-            }
-        }
-    }
-
-    /**
-     *Change the window orientation between landscape and portrait
-     */
-    private void rotateWindow() {
-        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
-        if (callback != null) {
-            try {
-                callback.changeWindowOrientation();
-            } catch (RemoteException ex) {
-                Log.e(TAG, "Cannot change window orientation.");
-            }
-        }
+    private void showSettingPopupWindow(View view) {
+        int[] popWindowPos = calculatePopWindowPos(view, mPopContentView);
+        mPopWindow.showAtLocation(view, Gravity.TOP | Gravity.START,
+                popWindowPos[0], popWindowPos[1]);
     }
 
     /**
@@ -470,17 +559,22 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         }
     }
 
-    public boolean hasCaption() {
-        return getWindowSizeMode() != Display.TOP_DOCKED_MODE
-                && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+    private int[] calculatePopWindowPos(final View anchorView, final View popContentView) {
+        final int popPos[] = new int[2];
+        final int anchorLoc[] = new int[2];
+        final int captionLoc[] = new int[2];
+        anchorView.getLocationOnScreen(anchorLoc);
+        mCaption.getLocationOnScreen(captionLoc);
+        final int captionHeight = mCaption.getHeight();
+        popContentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        final int popWidth = popContentView.getMeasuredWidth();
+        popPos[0] = (int) (anchorLoc[0] - popWidth * 0.5 - captionLoc[0]);
+        popPos[1] = captionHeight + 3;
+        return popPos;
     }
 
-    private int getWindowSizeMode() {
-        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
-        if (callback != null) {
-            return callback.getWindowSizeMode();
-        }
-        return Display.STANDARD_MODE;
+    public boolean hasCaption() {
+        return getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
     }
 
     /**
@@ -546,11 +640,6 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         return mCaption;
     }
 
-    private boolean updateRotateState() {
-        return getWindowSizeMode() == Display.STANDARD_MODE && canResizeOrientation()
-                && getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
-    }
-
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
@@ -586,10 +675,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     public boolean onSingleTapUp(MotionEvent e) {
         if (mClickTarget == mBack) {
             keyBackWindow();
-        } else if (mClickTarget == mFullscreen) {
-            fullscreenWindow();
-        } else if (mClickTarget == mRotate) {
-            rotateWindow();
+        } else if (mClickTarget == mSetting) {
+            showSettingPopupWindow(mSetting);
         } else if (mClickTarget == mMinimize) {
             minimizeWindow();
         } else if (mClickTarget == mMaximize) {

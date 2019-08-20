@@ -2072,8 +2072,8 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     private void setLightDecorCaptionShade(DecorCaptionView view) {
         view.findViewById(R.id.back_window).setBackgroundResource(
                 R.drawable.decor_back_button_light);
-        view.findViewById(R.id.rotate_window).setBackgroundResource(
-                R.drawable.decor_rotate_button_light);
+        view.findViewById(R.id.setting_window).setBackgroundResource(
+                R.drawable.decor_setting_button_light);
         view.findViewById(R.id.minimize_window).setBackgroundResource(
                 R.drawable.decor_minimize_button_light);
         view.findViewById(R.id.maximize_window).setBackgroundResource(
@@ -2085,8 +2085,8 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     private void setDarkDecorCaptionShade(DecorCaptionView view) {
         view.findViewById(R.id.back_window).setBackgroundResource(
                 R.drawable.decor_back_button_dark);
-        view.findViewById(R.id.rotate_window).setBackgroundResource(
-                R.drawable.decor_rotate_button_dark);
+        view.findViewById(R.id.setting_window).setBackgroundResource(
+                R.drawable.decor_setting_button_dark);
         view.findViewById(R.id.minimize_window).setBackgroundResource(
                 R.drawable.decor_minimize_button_dark);
         view.findViewById(R.id.maximize_window).setBackgroundResource(

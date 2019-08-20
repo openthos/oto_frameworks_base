@@ -889,5 +889,4 @@ please see themes_device_defaults.xml.
         <item name="windowContentTransitions">false</item>
         <item name="windowActivityTransitions">false</item>
     </style>
-
 </resources>

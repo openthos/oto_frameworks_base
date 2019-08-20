@@ -4457,13 +4457,21 @@
     <!-- Accessibility text for the fullscreen window button -->
     <string name="fullscreen_button_text">Fullscreen</string>
     <!-- Accessibility text for the rotate window button -->
-    <string name="rotate_button_text">Rotate</string>
+    <string name="setting_button_text">Setting</string>
     <!-- Accessibility text for the minimize window button -->
     <string name="minimize_button_text">Minimize</string>
     <!-- Accessibility text for the maximize window button -->
     <string name="maximize_button_text">Maximize</string>
     <!-- Accessibility text for the close window button -->
     <string name="close_button_text">Close</string>
+
+    <!-- Caption setting PopupWindow strings -->
+    <string name="normal_model">Normal</string>
+    <string name="fullscreen_model">Fullscreen</string>
+    <string name="phone_portrait_model">Portrait</string>
+    <string name="phone_landscape_model">Landscape</string>
+    <string name="caption_setting_msg">If you switch app compatible run mode, the app will force stop.</string>
+    <string name="caption_setting_title">Switch compatible mode?</string>
 
     <!-- Ellipsis character to appear in notification templates, e.g.
          notification_template_material_inbox.xml.

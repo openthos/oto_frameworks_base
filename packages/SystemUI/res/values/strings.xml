@@ -2071,8 +2071,6 @@
     <string name="default_sort">Default</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <string name="phone_mode">Phone mode</string>
-    <string name="desktop_mode">Desktop mode</string>
     <string name="lock_to_task_bar">Lock to task bar</string>
     <string name="unlock_from_task_bar">Unlock from task bar</string>
     <string name="uninstall">Uninstall</string>

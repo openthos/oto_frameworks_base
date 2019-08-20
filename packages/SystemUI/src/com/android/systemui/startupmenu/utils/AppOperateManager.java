@@ -74,18 +74,6 @@ public class AppOperateManager {
         dismissStartupMenuDialog();
     }
 
-    public void runPhoneMode(ComponentName componentName) {
-        LaunchAppUtil.launchApp(mContext, componentName, Display.PHONE_MODE);
-        updateClick(componentName.getPackageName());
-        dismissStartupMenuDialog();
-    }
-
-    public void runDesktopMode(ComponentName componentName) {
-        LaunchAppUtil.launchApp(mContext, componentName, Display.DESKTOP_MODE);
-        updateClick(componentName.getPackageName());
-        dismissStartupMenuDialog();
-    }
-
     public void addToTaskbar(int taskId, ComponentName componentName) {
         mStatusBar.addToTaskbar(taskId, componentName);
     }

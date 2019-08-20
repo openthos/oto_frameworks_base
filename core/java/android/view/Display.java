@@ -370,8 +370,9 @@ public final class Display {
     public static final int LEFT_DOCKED_MODE = 1;
     public static final int RIGHT_DOCKED_MODE = 2;
     public static final int TOP_DOCKED_MODE = 4;
-    public static final int DESKTOP_MODE = 5;
-    public static final int PHONE_MODE = 6;
+    public static final int PHONE_MODE = 8;
+    public static final int DESKTOP_MODE = 16;
+    public static final int FULLSCREEN_MODE = 32;
 
     /**
      * Internal method to create a display.

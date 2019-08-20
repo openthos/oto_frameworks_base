@@ -24,7 +24,7 @@
 	        android:layout_width="@dimen/padding_thirty"
 	        android:layout_height="@dimen/padding_thirty"
 	        android:layout_alignParentRight="true"
-	        android:src="@drawable/mw_btn_close_default" />
+	        android:src="@drawable/mw_btn_close" />
     </RelativeLayout>
 
     <LinearLayout

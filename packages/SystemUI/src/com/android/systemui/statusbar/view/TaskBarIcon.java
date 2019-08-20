@@ -156,10 +156,6 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu, int taskId) {
         if (menu.equals(getContext().getString(R.string.open))) {
             mOperateManager.openApplication(appInfo.getComponentName());
-        } else if (menu.equals(getContext().getString(R.string.phone_mode))) {
-            mOperateManager.runPhoneMode(appInfo.getComponentName());
-        } else if (menu.equals(getContext().getString(R.string.desktop_mode))) {
-            mOperateManager.runDesktopMode(appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {
             mOperateManager.addToTaskbar(taskId, appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.unlock_from_task_bar))) {

@@ -202,4 +202,9 @@
     <!-- FloatingToolbar -->
     <color name="floating_popup_divider_dark">#2F2F2F</color>
     <color name="floating_popup_divider_light">#E9E9E9</color>
+
+    <!-- DecorCaption -->
+    <color name="caption_setting_dark">#18000000</color>
+    <color name="caption_setting_light">#4DFFFFFF</color>
+    <color name="colorBackground">#FFFFFF</color>
 </resources>
