@@ -145,6 +145,8 @@ public:
 // android/graphics/Canvas draw operations
 // ----------------------------------------------------------------------------
     virtual void drawColor(int color, SkBlendMode mode) override;
+    virtual void drawColorRect(int color, SkBlendMode mode,
+                                    int left, int top, int right, int bottom) override;
     virtual void drawPaint(const SkPaint& paint) override;
 
     // Geometry

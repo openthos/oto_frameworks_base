@@ -212,6 +212,8 @@ public:
 // Canvas draw operations
 // ----------------------------------------------------------------------------
     virtual void drawColor(int color, SkBlendMode mode) = 0;
+    virtual void drawColorRect(int color, SkBlendMode mode,
+                                    int left, int top, int right, int bottom) = 0;
     virtual void drawPaint(const SkPaint& paint) = 0;
 
     // Geometry

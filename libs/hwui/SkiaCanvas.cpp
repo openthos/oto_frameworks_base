@@ -435,6 +435,11 @@ SkCanvasState* SkiaCanvas::captureCanvasState() const {
 // Canvas draw operations
 // ----------------------------------------------------------------------------
 
+void SkiaCanvas::drawColorRect(int color, SkBlendMode mode,
+                                    int left, int top, int right, int bottom) {
+    mCanvas->drawColor(color, mode);
+}
+
 void SkiaCanvas::drawColor(int color, SkBlendMode mode) {
     mCanvas->drawColor(color, mode);
 }

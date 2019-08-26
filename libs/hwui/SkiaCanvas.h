@@ -105,6 +105,8 @@ public:
     virtual SkCanvasState* captureCanvasState() const override;
 
     virtual void drawColor(int color, SkBlendMode mode) override;
+    virtual void drawColorRect(int color, SkBlendMode mode,
+                                    int left, int top, int right, int bottom) override;
     virtual void drawPaint(const SkPaint& paint) override;
 
     virtual void drawPoint(float x, float y, const SkPaint& paint) override;

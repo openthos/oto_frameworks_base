@@ -566,6 +566,9 @@ public abstract class BaseCanvas {
 
     private static native void nDrawColor(long nativeCanvas, int color, int mode);
 
+    private static native void nDrawColorRect(long nativeCanvas, int color, int mode,
+                                                int left, int top, int right, int bottom);
+
     private static native void nDrawPaint(long nativeCanvas, long nativePaint);
 
     private static native void nDrawPoint(long canvasHandle, float x, float y, long paintHandle);

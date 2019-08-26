@@ -251,6 +251,16 @@ void RecordingCanvas::drawColor(int color, SkBlendMode mode) {
             mode));
 }
 
+void RecordingCanvas::drawColorRect(int color, SkBlendMode mode,
+                                        int left, int top, int right, int bottom) {
+    ClipBase* cb = new ClipBase(getRecordedClip()->rect);
+    cb->rect.set(left, top, right ,bottom);
+    addOp(alloc().create_trivial<ColorOp>(
+            cb,
+            color,
+            mode));
+}
+
 void RecordingCanvas::drawPaint(const SkPaint& paint) {
     SkRect bounds;
     if (getClipBounds(&bounds)) {

@@ -209,7 +209,12 @@ public class RecordingCanvas extends Canvas {
 
     @Override
     public final void drawColor(@ColorInt int color) {
-        nDrawColor(mNativeCanvasWrapper, color, PorterDuff.Mode.SRC_OVER.nativeInt);
+        //nDrawColor(mNativeCanvasWrapper, color, PorterDuff.Mode.SRC_OVER.nativeInt);
+        if (getWidth() > 0 && getHeight() > 0)
+            nDrawColorRect(mNativeCanvasWrapper, color, PorterDuff.Mode.SRC_OVER.nativeInt,
+                                0, 0, getWidth(), getHeight());
+        else
+            nDrawColor(mNativeCanvasWrapper, color, PorterDuff.Mode.SRC_OVER.nativeInt);
     }
 
     @Override
@@ -548,6 +553,10 @@ public class RecordingCanvas extends Canvas {
 
     @FastNative
     private static native void nDrawColor(long nativeCanvas, int color, int mode);
+
+    @FastNative
+    private static native void nDrawColorRect(long nativeCanvas, int color, int mode,
+                                                    int left, int top, int right, int bottom);
 
     @FastNative
     private static native void nDrawPaint(long nativeCanvas, long nativePaint);

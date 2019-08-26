@@ -216,6 +216,12 @@ static void drawColor(JNIEnv* env, jobject, jlong canvasHandle, jint color, jint
     get_canvas(canvasHandle)->drawColor(color, mode);
 }
 
+static void drawColorRect(JNIEnv* env, jobject, jlong canvasHandle, jint color, jint modeHandle,
+                                jint left, jint top, jint right, jint bottom) {
+    SkBlendMode mode = static_cast<SkBlendMode>(modeHandle);
+    get_canvas(canvasHandle)->drawColorRect(color, mode, left, top, right ,bottom);
+}
+
 static void drawPaint(JNIEnv* env, jobject, jlong canvasHandle, jlong paintHandle) {
     Paint* paint = reinterpret_cast<Paint*>(paintHandle);
     get_canvas(canvasHandle)->drawPaint(*paint);
@@ -615,6 +621,7 @@ static const JNINativeMethod gMethods[] = {
 // If called from DisplayListCanvas they are @FastNative
 static const JNINativeMethod gDrawMethods[] = {
     {"nDrawColor","(JII)V", (void*) CanvasJNI::drawColor},
+    {"nDrawColorRect","(JIIIIII)V", (void*) CanvasJNI::drawColorRect},
     {"nDrawPaint","(JJ)V", (void*) CanvasJNI::drawPaint},
     {"nDrawPoint", "(JFFJ)V", (void*) CanvasJNI::drawPoint},
     {"nDrawPoints", "(J[FIIJ)V", (void*) CanvasJNI::drawPoints},
