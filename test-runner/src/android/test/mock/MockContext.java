@@ -87,6 +87,10 @@ public class MockContext extends Context {
     }
 
     @Override
+    public void updateRunMode(int orientation) {
+    }
+
+    @Override
     public Looper getMainLooper() {
         throw new UnsupportedOperationException();
     }

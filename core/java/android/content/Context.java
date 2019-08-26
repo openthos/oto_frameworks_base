@@ -805,6 +805,8 @@ public abstract class Context {
 
     public abstract boolean isCompatContext();
 
+    public abstract void updateRunMode(int orientation);
+
     /**
      * Delete an existing shared preferences file.
      *

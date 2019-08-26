@@ -85,6 +85,11 @@ public class ContextWrapper extends Context {
     }
 
     @Override
+    public void updateRunMode(int orientation) {
+        mBase.updateRunMode(orientation);
+    }
+
+    @Override
     public AssetManager getAssets() {
         return mBase.getAssets();
     }

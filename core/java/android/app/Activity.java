@@ -5828,6 +5828,7 @@ public class Activity extends ContextThemeWrapper
      * {@link ActivityInfo#screenOrientation ActivityInfo.screenOrientation}.
      */
     public void setRequestedOrientation(@ActivityInfo.ScreenOrientation int requestedOrientation) {
+        updateRunMode(requestedOrientation);
         if (mParent == null) {
             try {
                 ActivityManager.getService().setRequestedOrientation(

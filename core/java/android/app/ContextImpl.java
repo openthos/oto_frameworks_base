@@ -2223,6 +2223,10 @@ class ContextImpl extends Context {
     }
 
     @Override
+    public void updateRunMode(int orientation) {
+    }
+
+    @Override
     public boolean isCompatContext() {
         return false;
     }

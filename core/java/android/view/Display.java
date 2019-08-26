@@ -372,6 +372,8 @@ public final class Display {
 
     private boolean mIsCompatDisplayInfo = false;
 
+    private int mRunMode = STANDARD_MODE;
+
     /**
      * Internal method to create a display.
      * The display created with this method will have a static {@link DisplayAdjustments} applied.
@@ -626,6 +628,10 @@ public final class Display {
         mIsCompatDisplayInfo = isCompatDisplayInfo;
     }
 
+    public void setRunMode(int runMode) {
+        mRunMode = runMode;
+    }
+
     /**
      * Gets the size of the display as a rectangle, in pixels.
      *
@@ -737,7 +743,7 @@ public final class Display {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
             if (mIsCompatDisplayInfo) {
-                return mCachedAppWidthCompat < mCachedAppHeightCompat ? 440 : 960;
+                return mRunMode == PHONE_MODE ? 440 : 960;
             }
             return mCachedAppWidthCompat;
         }
@@ -751,7 +757,7 @@ public final class Display {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
             if (mIsCompatDisplayInfo) {
-                return mCachedAppWidthCompat < mCachedAppHeightCompat ? 740 : 540;
+                return mRunMode == PHONE_MODE ? 740 : 540;
             }
             return mCachedAppHeightCompat;
         }

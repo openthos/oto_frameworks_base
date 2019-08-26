@@ -62,6 +62,8 @@ class CompatContextImpl extends ContextImpl {
     private static final String XATTR_INODE_CACHE = "user.inode_cache";
     private static final String XATTR_INODE_CODE_CACHE = "user.inode_code_cache";
 
+    private int mRunMode = Display.STANDARD_MODE;
+
     final @NonNull LoadedApk mPackageInfo;
     /**
      * Map from package name, to preference name, to cached preferences.
@@ -177,6 +179,15 @@ class CompatContextImpl extends ContextImpl {
                 classLoader);
     }
 
+    private void setRunMode(String packageName) {
+        try {
+            mRunMode = ActivityManager.getService().
+                            getTaskRunModeForPackageName(packageName);
+        } catch (Exception e) {
+            Log.e(TAG, "Error during getServiceRunMode", e);
+        }
+    }
+
     static ContextImpl createSystemContext(ActivityThread mainThread) {
         LoadedApk packageInfo = new LoadedApk(mainThread);
         ContextImpl context = new CompatContextImpl(null, mainThread, packageInfo, null, null, null, 0,
@@ -284,6 +295,7 @@ class CompatContextImpl extends ContextImpl {
             @Nullable IBinder activityToken, @Nullable UserHandle user, int flags,
             @Nullable ClassLoader classLoader) {
         super(container, mainThread, packageInfo, splitName, activityToken, user, flags, classLoader);
+        setRunMode(packageInfo.mPackageName);
         mPackageInfo = packageInfo;
     }
 
@@ -432,15 +444,29 @@ class CompatContextImpl extends ContextImpl {
             Display display = mResourcesManager.
                     getAdjustedDisplay(Display.DEFAULT_DISPLAY, mResources);
             display.setCompatDisplayInfo(true);
+            display.setRunMode(mRunMode);
             return display;
         }
         mDisplay.setCompatDisplayInfo(true);
+        mDisplay.setRunMode(mRunMode);
         return mDisplay;
     }
 
     @Override
     public boolean isCompatContext() {
         return true;
+    }
+
+    @Override
+    public void updateRunMode(int orientation) {
+        if (ActivityInfo.isFixedOrientationLandscape(orientation)) {
+            mRunMode = Display.DESKTOP_MODE;
+        } else if (ActivityInfo.isFixedOrientationPortrait(orientation)) {
+            mRunMode = Display.PHONE_MODE;
+        }
+        if (mDisplay != null) {
+            mDisplay.setRunMode(mRunMode);
+        }
     }
 
     static void setCompatDisplayMetrics(Resources res) {
