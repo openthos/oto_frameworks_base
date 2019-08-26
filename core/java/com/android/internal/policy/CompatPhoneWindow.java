@@ -37,10 +37,11 @@ public class CompatPhoneWindow extends PhoneWindow {
 
     @Override
     public View getDecorView() {
+        View superDecor = super.getDecorView();
         if (compatDecor != null) {
             return compatDecor.getSpecialDecor();
         }
-        return super.getDecorView();
+        return superDecor;
     }
 
     @Override

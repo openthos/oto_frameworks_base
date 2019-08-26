@@ -7036,6 +7036,8 @@ public class Activity extends ContextThemeWrapper
             ActivityConfigCallback activityConfigCallback) {
         if (("com.tencent.mm").equals(getPackageName()))
             return new CompatPhoneWindow(this, context, window, activityConfigCallback);
+        if (("com.jingdong.app.mall").equals(getPackageName()))
+            return new CompatPhoneWindow(this, context, window, activityConfigCallback);
         return new PhoneWindow(this, window, activityConfigCallback);
     }
 
