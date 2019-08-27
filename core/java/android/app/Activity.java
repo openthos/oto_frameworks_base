@@ -2021,6 +2021,9 @@ public class Activity extends ContextThemeWrapper
      * @return True if the activity is in multi-window mode.
      */
     public boolean isInMultiWindowMode() {
+        if (isCompatContext()) {
+            return false;
+        }
         try {
             return ActivityManager.getService().isInMultiWindowMode(mToken);
         } catch (RemoteException e) {

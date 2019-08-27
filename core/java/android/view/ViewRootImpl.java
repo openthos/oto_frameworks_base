@@ -4540,7 +4540,8 @@ public final class ViewRootImpl implements ViewParent,
             // exit otherwise.
             final int action = event.getAction();
             if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_SCROLL) {
-                ensureTouchMode(event.isFromSource(InputDevice.SOURCE_TOUCHSCREEN));
+                ensureTouchMode(event.isFromSource(InputDevice.SOURCE_TOUCHSCREEN) ||
+                        event.isFromSource(InputDevice.SOURCE_MOUSE));
             }
 
             if (action == MotionEvent.ACTION_DOWN && mAttachInfo.mTooltipHost != null) {
