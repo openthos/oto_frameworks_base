@@ -640,6 +640,16 @@ public class ApplicationPackageManager extends PackageManager {
     }
 
     @Override
+    public void grantRuntimeVirPermission(String packageName, String permissionName,
+            UserHandle user) {
+        try {
+            mPM.grantRuntimeVirPermission(packageName, permissionName, user.getIdentifier());
+        } catch (RemoteException e) {
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
+    @Override
     public void revokeRuntimePermission(String packageName, String permissionName,
             UserHandle user) {
         try {

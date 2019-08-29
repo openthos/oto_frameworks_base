@@ -105,6 +105,8 @@ interface IPackageManager {
 
     void grantRuntimePermission(String packageName, String permissionName, int userId);
 
+    void grantRuntimeVirPermission(String packageName, String permissionName, int userId);
+
     void revokeRuntimePermission(String packageName, String permissionName, int userId);
 
     void resetRuntimePermissions();

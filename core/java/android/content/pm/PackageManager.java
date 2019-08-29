@@ -3456,6 +3456,11 @@ public abstract class PackageManager {
     public abstract void grantRuntimePermission(@NonNull String packageName,
             @NonNull String permissionName, @NonNull UserHandle user);
 
+    @SystemApi
+    @RequiresPermission(android.Manifest.permission.GRANT_RUNTIME_PERMISSIONS)
+    public abstract void grantRuntimeVirPermission(@NonNull String packageName,
+            @NonNull String permissionName, @NonNull UserHandle user);
+
     /**
      * Revoke a runtime permission that was previously granted by {@link
      * #grantRuntimePermission(String, String, android.os.UserHandle)}. The

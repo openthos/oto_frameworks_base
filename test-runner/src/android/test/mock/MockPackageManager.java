@@ -265,6 +265,13 @@ public class MockPackageManager extends PackageManager {
 
     /** @hide */
     @Override
+    public void grantRuntimeVirPermission(String packageName, String permissionName,
+            UserHandle user) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** @hide */
+    @Override
     public void revokeRuntimePermission(String packageName, String permissionName,
             UserHandle user) {
         throw new UnsupportedOperationException();

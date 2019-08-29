@@ -433,7 +433,7 @@ public class PackageManagerService extends IPackageManager.Stub
 
     private static final int MESSAGE_TYPE_AUDIO = 0;
     private static final int MESSAGE_TYPE_CAMERA = 1;
-    private static final int MESSAGE_TYPE_LOCATION =2;
+    private static final int MESSAGE_TYPE_LOCATION = 2;
 
     // Suffix used during package installation when copying/moving
     // package apks to install directory.
@@ -5702,7 +5702,8 @@ public class PackageManagerService extends IPackageManager.Stub
 
     @Override
     public void grantRuntimePermission(String packageName, String name, final int userId) {
-        grantRuntimePermission(packageName, name, userId, false /* Only if not fixed by policy */);
+        grantRuntimePermission(packageName, name, userId,
+                false /* Only if not fixed by policy */, false);
     }
 
     @Override
@@ -5723,7 +5724,7 @@ public class PackageManagerService extends IPackageManager.Stub
     }
 
     private void grantRuntimePermission(String packageName, String name, final int userId,
-            boolean overridePolicy) {
+            boolean overridePolicy, boolean isVirPermission) {
         if (!sUserManager.exists(userId)) {
             Log.e(TAG, "No such user:" + userId);
             return;
@@ -5755,17 +5756,28 @@ public class PackageManagerService extends IPackageManager.Stub
                     || filterAppAccessLPr(ps, callingUid, userId)) {
                 throw new IllegalArgumentException("Unknown package: " + packageName);
             }
+
+            int permIndex = -1, msgType = -1;
+            String permType;
             if (name.contains(Manifest.permission.CAMERA)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(0).get("permission"),
-                        PERMISSION_LIST.get(0).get("phy"), MESSAGE_TYPE_CAMERA);
+                permIndex = 0;
+                msgType = MESSAGE_TYPE_CAMERA;
+            } else if (name.contains(Manifest.permission.RECORD_AUDIO)) {
+                permIndex = 1;
+                msgType = MESSAGE_TYPE_AUDIO;
+            } else if (name.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                permIndex = 2;
+                msgType = MESSAGE_TYPE_LOCATION;
             }
-            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(1).get("permission"),
-                        PERMISSION_LIST.get(1).get("phy"), MESSAGE_TYPE_AUDIO);
+            if (isVirPermission) {
+                permType = "vir";
+            } else {
+                permType = "phy";
             }
-            if (name.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(2).get("permission"),
-                        PERMISSION_LIST.get(2).get("phy"), MESSAGE_TYPE_LOCATION);
+            if (permIndex != -1) {
+                handlerPermissionOfPhyOrVir(packageName
+                        + PERMISSION_LIST.get(permIndex).get("permission"),
+                        PERMISSION_LIST.get(permIndex).get(permType), msgType);
             }
 
             enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(pkg, bp);
@@ -5861,6 +5873,12 @@ public class PackageManagerService extends IPackageManager.Stub
     }
 
     @Override
+    public void grantRuntimeVirPermission(String packageName, String name, int userId) {
+        grantRuntimePermission(packageName, name, userId,
+                false /* Only if not fixed by policy */, true);
+    }
+
+    @Override
     public void revokeRuntimePermission(String packageName, String name, int userId) {
         revokeRuntimePermission(packageName, name, userId, false /* Only if not fixed by policy */);
     }
@@ -5895,22 +5913,6 @@ public class PackageManagerService extends IPackageManager.Stub
             final BasePermission bp = mSettings.mPermissions.get(name);
             if (bp == null) {
                 throw new IllegalArgumentException("Unknown permission: " + name);
-            }
-
-            if (name.contains(Manifest.permission.CAMERA)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(0).get("permission"),
-                        PERMISSION_LIST.get(0).get("vir"), MESSAGE_TYPE_CAMERA);
-                return;
-            }
-            if (name.contains(Manifest.permission.RECORD_AUDIO)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(1).get("permission"),
-                        PERMISSION_LIST.get(1).get("vir"), MESSAGE_TYPE_AUDIO);
-                return;
-            }
-            if (name.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                handlerPermissionOfPhyOrVir(packageName + PERMISSION_LIST.get(2).get("permission"),
-                        PERMISSION_LIST.get(2).get("vir"), MESSAGE_TYPE_LOCATION);
-                return;
             }
 
             enforceDeclaredAsUsedAndRuntimeOrDevelopmentPermission(pkg, bp);
@@ -25653,7 +25655,7 @@ Slog.v(TAG, ":: stepped forward, applying functor at tag " + parser.getName());
         public void grantRuntimePermission(String packageName, String name, int userId,
                 boolean overridePolicy) {
             PackageManagerService.this.grantRuntimePermission(packageName, name, userId,
-                    overridePolicy);
+                    overridePolicy, false);
         }
 
         @Override
