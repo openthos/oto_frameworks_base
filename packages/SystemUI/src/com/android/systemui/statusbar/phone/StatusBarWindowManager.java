@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.LinearLayout;
 
 import com.android.keyguard.R;
 import com.android.systemui.Dumpable;
@@ -172,6 +173,37 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         mLpChanged.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
     }
 
+    private void setHeight(boolean partExpand) {
+        int barColor = partExpand ? 0 : mContext.getColor(R.color.system_bar_background_opaque);
+        int partVisibility = partExpand ? View.GONE : View.VISIBLE;
+        int notifyHeight = (int) (92.0f * mContext.getResources().getDisplayMetrics().density);
+        mLpChanged.height = partExpand ? notifyHeight : ViewGroup.LayoutParams.MATCH_PARENT;
+
+        mStatusBarView.setBackgroundColor(barColor);
+        mStatusBarView.findViewById(R.id.notification_container_parent).
+                                                setBackgroundColor(barColor);
+        mStatusBarView.findViewById(R.id.heads_up_scrim).setBackgroundColor(barColor);
+
+        View notificationSubPanel = mStatusBarView.findViewById(R.id.notification_sub_panel);
+        View panelHead = mStatusBarView.findViewById(R.id.panel_head);
+        View printPanel = mStatusBarView.findViewById(R.id.print_panel);
+        View qsPanel = mStatusBarView.findViewById(R.id.qs_panel_layout);
+
+        panelHead.setVisibility(partVisibility);
+        printPanel.setVisibility(partVisibility);
+        qsPanel.setVisibility(partVisibility);
+
+        LinearLayout.LayoutParams lp = null; 
+        lp = (LinearLayout.LayoutParams) notificationSubPanel.getLayoutParams();
+        lp.weight = partExpand ? 3.0f : 1.6f;
+        lp = (LinearLayout.LayoutParams) panelHead.getLayoutParams();
+        lp.weight = partExpand ? 0 : 0.2f;
+        lp = (LinearLayout.LayoutParams) printPanel.getLayoutParams();
+        lp.weight = partExpand ? 0 : 1.0f;
+        lp = (LinearLayout.LayoutParams) qsPanel.getLayoutParams();
+        lp.weight = partExpand ? 0 : 0.2f;
+    }
+
     private void applyHeight(State state) {
         boolean expanded = isExpanded(state);
         if (state.forcePluginOpen) {
@@ -179,10 +211,17 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
             expanded = true;
         }
         if (expanded) {
-            mLpChanged.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            int expandedHeight = mStatusBarView.getMeasuredHeightAndState();
+            int displayHeight = mContext.getDisplay().getHeight();
+            setHeight(state.addEntry && expandedHeight != displayHeight);
         } else {
             mLpChanged.height = mBarHeight;
+            mStatusBarView.setBackgroundColor(0);
+            mStatusBarView.findViewById(R.id.notification_container_parent).setBackgroundColor(0);
+            mStatusBarView.findViewById(R.id.heads_up_scrim).setBackgroundColor(0);
         }
+        mLpChanged.width = mContext.getResources().
+                                getDimensionPixelSize(R.dimen.notification_panel_width);
     }
 
     private boolean isExpanded(State state) {
@@ -283,6 +322,11 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         } else {
             mLpChanged.privateFlags &= ~LayoutParams.PRIVATE_FLAG_ACQUIRES_SLEEP_TOKEN;
         }
+    }
+
+    public void setAddEntry(boolean addEntry) {
+        mCurrentState.addEntry = addEntry;
+        apply(mCurrentState);
     }
 
     public void setKeyguardShowing(boolean showing) {
@@ -433,6 +477,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         boolean forceDozeBrightness;
         boolean forceUserActivity;
         boolean backdropShowing;
+        boolean addEntry;
 
         /**
          * The {@link StatusBar} state from the status bar.

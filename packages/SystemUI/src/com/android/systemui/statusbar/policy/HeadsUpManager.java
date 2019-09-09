@@ -296,6 +296,13 @@ public class HeadsUpManager implements ViewTreeObserver.OnComputeInternalInsetsL
         }
     }
 
+    public void removeTopNotification() {
+        HeadsUpEntry top = getTopEntry();
+        if (top != null) {
+            removeHeadsUpEntry(top.entry);
+        }
+    }
+
     private boolean wasShownLongEnough(String key) {
         HeadsUpEntry headsUpEntry = getHeadsUpEntry(key);
         HeadsUpEntry topEntry = getTopEntry();

@@ -12,6 +12,7 @@
     android:weightSum="3">
 
     <RelativeLayout
+        android:id="@+id/panel_head"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.2"
@@ -48,6 +49,7 @@
 
     <!-- start of notification panel -->
     <LinearLayout
+        android:id="@+id/notification_sub_panel"
         android:layout_width="@dimen/notification_panel_width"
         android:layout_height="0dp"
         android:layout_weight="1.6"
@@ -69,6 +71,7 @@
 
     <!-- start of print panel -->
     <LinearLayout
+        android:id="@+id/print_panel"
         android:layout_width="@dimen/notification_panel_width"
         android:layout_height="0dp"
         android:layout_weight="1"
