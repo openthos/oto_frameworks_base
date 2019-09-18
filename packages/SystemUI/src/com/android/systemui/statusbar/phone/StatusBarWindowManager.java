@@ -213,7 +213,7 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         if (expanded) {
             int expandedHeight = mStatusBarView.getMeasuredHeightAndState();
             int displayHeight = mContext.getDisplay().getHeight();
-            setHeight(state.addEntry && expandedHeight != displayHeight);
+            setHeight(state.headsUpShowing);
         } else {
             mLpChanged.height = mBarHeight;
             mStatusBarView.setBackgroundColor(0);
@@ -322,11 +322,6 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         } else {
             mLpChanged.privateFlags &= ~LayoutParams.PRIVATE_FLAG_ACQUIRES_SLEEP_TOKEN;
         }
-    }
-
-    public void setAddEntry(boolean addEntry) {
-        mCurrentState.addEntry = addEntry;
-        apply(mCurrentState);
     }
 
     public void setKeyguardShowing(boolean showing) {
@@ -477,7 +472,6 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         boolean forceDozeBrightness;
         boolean forceUserActivity;
         boolean backdropShowing;
-        boolean addEntry;
 
         /**
          * The {@link StatusBar} state from the status bar.

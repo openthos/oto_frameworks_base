@@ -298,8 +298,9 @@ public class HeadsUpManager implements ViewTreeObserver.OnComputeInternalInsetsL
 
     public void removeTopNotification() {
         HeadsUpEntry top = getTopEntry();
-        if (top != null) {
+        while (top != null) {
             removeHeadsUpEntry(top.entry);
+            top = getTopEntry();
         }
     }
 
@@ -427,7 +428,8 @@ public class HeadsUpManager implements ViewTreeObserver.OnComputeInternalInsetsL
             int maxX = mTmpTwoArray[0] + topEntry.getWidth();
             int maxY = topEntry.getIntrinsicHeight();
 
-            info.setTouchableInsets(ViewTreeObserver.InternalInsetsInfo.TOUCHABLE_INSETS_REGION);
+            //info.setTouchableInsets(ViewTreeObserver.InternalInsetsInfo.TOUCHABLE_INSETS_REGION);
+            info.setTouchableInsets(ViewTreeObserver.InternalInsetsInfo.TOUCHABLE_INSETS_VISIBLE);
             info.touchableRegion.set(minX, 0, maxX, maxY);
         } else if (mHeadsUpGoingAway || mWaitingOnCollapseWhenGoingAway) {
             info.setTouchableInsets(ViewTreeObserver.InternalInsetsInfo.TOUCHABLE_INSETS_REGION);

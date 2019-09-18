@@ -1826,7 +1826,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         addNotificationViews(shadeEntry);
         // Recalculate the position of the sliding windows and the titles.
         setAreThereNotifications();
-        mStatusBarWindowManager.setAddEntry(true);
     }
 
     @Override
@@ -3283,7 +3282,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     // show notification panel view.
     public void showCustomNotificationPanel() {
-        mStatusBarWindowManager.setAddEntry(false);
         mHeadsUpManager.removeTopNotification();
         if (mNotificationPanel.isFullyCollapsed()) {
             mNotificationPanel.expand(true);
