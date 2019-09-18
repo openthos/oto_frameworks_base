@@ -1033,10 +1033,11 @@ class ActivityStarter {
 
         //final int preferredLaunchStackId =
         //        (mOptions != null) ? mOptions.getLaunchStackId() : INVALID_STACK_ID;
-        final int preferredLaunchStackId =
-                (mOptions != null) ? mOptions.getLaunchStackId() :
-                (sourceRecord != null ? sourceRecord.getTask().getStackId() :
-                                          FREEFORM_WORKSPACE_STACK_ID);
+        int sourceStackId = sourceRecord != null ?
+                sourceRecord.getTask().getStackId() : FREEFORM_WORKSPACE_STACK_ID;
+        boolean isMiniTask = sourceRecord != null && sourceStackId == BACKGROUND_STACK_ID;
+        final int preferredLaunchStackId = isMiniTask ? sourceStackId :
+                (mOptions != null ? mOptions.getLaunchStackId() : sourceStackId);
 
         final int preferredLaunchDisplayId =
                 (mOptions != null) ? mOptions.getLaunchDisplayId() : DEFAULT_DISPLAY;

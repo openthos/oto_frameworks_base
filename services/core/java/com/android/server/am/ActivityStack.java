@@ -2303,6 +2303,10 @@ class ActivityStack<T extends StackWindowController> extends ConfigurationContai
             return false;
         }
 
+        if (hasRunningActivity && next.getStackId() == BACKGROUND_STACK_ID) {
+            return false;
+        }
+
         mStackSupervisor.cancelInitializingActivities();
 
         // Remember how we'll process this pause/resume situation, and ensure
