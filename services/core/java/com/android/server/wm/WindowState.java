@@ -841,7 +841,7 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
             layoutContainingFrame = !mInsetFrame.isEmpty() ? mInsetFrame : mContainingFrame;
             mTmpRect.set(0, 0, dc.getDisplayInfo().logicalWidth, dc.getDisplayInfo().logicalHeight);
             subtractInsets(mDisplayFrame, layoutContainingFrame, displayFrame, mTmpRect);
-            if (!layoutInParentFrame()) {
+            if (!layoutInParentFrame() && getStackId() != FREEFORM_WORKSPACE_STACK_ID) {
                 subtractInsets(mContainingFrame, layoutContainingFrame, parentFrame, mTmpRect);
                 subtractInsets(mInsetFrame, layoutContainingFrame, parentFrame, mTmpRect);
             }
