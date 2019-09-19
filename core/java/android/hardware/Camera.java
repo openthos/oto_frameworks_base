@@ -529,7 +529,7 @@ public class Camera {
         int err = cameraInitNormal(cameraId);
 
         mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
-        if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+        if (mPackageManager.hasVirtualPermission(ActivityThread.getRealPackageName()
                     + ".permission.camera", Manifest.permission.CAMERA)) {
             SystemProperties.set(CAMERA_USE_FAKE, VIR_CAMERA);
         } else {

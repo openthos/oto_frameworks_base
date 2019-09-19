@@ -973,7 +973,7 @@ public class MediaRecorder
         }
 
         mPackageManager = (PackageManager) ActivityThread.currentContext().getPackageManager();
-        if (mPackageManager.hasVirtualPermission(ActivityThread.currentPackageName()
+        if (mPackageManager.hasVirtualPermission(ActivityThread.getRealPackageName()
                     + ".permission.audio", Manifest.permission.RECORD_AUDIO)) {
             SystemProperties.set(AUDIO_USE_FAKE, VIR_AUDIO);
         } else {

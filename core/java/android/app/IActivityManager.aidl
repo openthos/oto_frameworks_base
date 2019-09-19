@@ -114,6 +114,7 @@ interface IActivityManager {
     oneway void activityStopped(in IBinder token, in Bundle state,
             in PersistableBundle persistentState, in CharSequence description);
     String getCallingPackage(in IBinder token);
+    String getRealPackageName();
     ComponentName getCallingActivity(in IBinder token);
     List<ActivityManager.RunningTaskInfo> getTasks(int maxNum, int flags);
     void moveTaskToFront(int task, int flags, in Bundle options);

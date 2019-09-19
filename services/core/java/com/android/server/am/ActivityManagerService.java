@@ -4570,6 +4570,14 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     @Override
+    public final String getRealPackageName() {
+        if (!mRecentTasks.isEmpty()){
+            return mRecentTasks.get(0).mActivities.get(0).packageName;
+        }
+        return ActivityThread.currentPackageName();
+    }
+
+    @Override
     public final int startActivityAsUser(IApplicationThread caller, String callingPackage,
             Intent intent, String resolvedType, IBinder resultTo, String resultWho, int requestCode,
             int startFlags, ProfilerInfo profilerInfo, Bundle bOptions, int userId) {

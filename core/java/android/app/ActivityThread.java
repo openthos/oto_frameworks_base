@@ -1915,6 +1915,14 @@ public final class ActivityThread {
                 ? am.getApplication().getOpPackageName() : null;
     }
 
+    public static String getRealPackageName(){
+        try {
+            return ActivityManager.getService().getRealPackageName();
+        } catch (RemoteException e){
+            throw e.rethrowFromSystemServer();
+        }
+    }
+
     public static String currentPackageName() {
         ActivityThread am = currentActivityThread();
         return (am != null && am.mBoundApplication != null)
