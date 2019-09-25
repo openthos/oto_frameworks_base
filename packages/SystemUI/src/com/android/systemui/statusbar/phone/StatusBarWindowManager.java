@@ -211,17 +211,16 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
             expanded = true;
         }
         if (expanded) {
-            int expandedHeight = mStatusBarView.getMeasuredHeightAndState();
-            int displayHeight = mContext.getDisplay().getHeight();
+            mLpChanged.width = mContext.getResources().
+                    getDimensionPixelSize(R.dimen.notification_panel_width);
             setHeight(state.headsUpShowing);
         } else {
             mLpChanged.height = mBarHeight;
+            mLpChanged.width = 0;
             mStatusBarView.setBackgroundColor(0);
             mStatusBarView.findViewById(R.id.notification_container_parent).setBackgroundColor(0);
             mStatusBarView.findViewById(R.id.heads_up_scrim).setBackgroundColor(0);
         }
-        mLpChanged.width = mContext.getResources().
-                                getDimensionPixelSize(R.dimen.notification_panel_width);
     }
 
     private boolean isExpanded(State state) {
