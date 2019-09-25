@@ -36,6 +36,7 @@ import static android.os.UserHandle.USER_NULL;
 import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.Display.INVALID_DISPLAY;
 import static android.view.WindowManager.DOCKED_INVALID;
+import static android.view.WindowManager.LayoutParams.FIRST_SYSTEM_WINDOW;
 import static android.view.WindowManager.LayoutParams.FIRST_APPLICATION_WINDOW;
 import static android.view.WindowManager.LayoutParams.FIRST_SUB_WINDOW;
 import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
@@ -5969,12 +5970,13 @@ public class WindowManagerService extends IWindowManager.Stub
 
     // TODO: Move to DisplayContent
     boolean updateFocusedWindowLocked(int mode, boolean updateInputWindows) {
-        WindowState newFocus;
+        WindowState newFocus = mRoot.computeFocusedWindow();
+        boolean isSysmteWindow = newFocus != null
+                && newFocus.getAttrs() != null
+                && newFocus.getAttrs().type >= FIRST_SYSTEM_WINDOW;
         if (mFocusedApp != null && mFocusedApp.getTask() != null
-                                && mFocusedApp.getTask().isHomeTask()) {
+                && !isSysmteWindow && mFocusedApp.getTask().isHomeTask()) {
             newFocus = mFocusedApp.findMainWindow();
-        } else {
-            newFocus = mRoot.computeFocusedWindow();
         }
         if (mCurrentFocus != newFocus) {
             Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER, "wmUpdateFocus");
