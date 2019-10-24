@@ -674,6 +674,14 @@ public final class Display {
         }
     }
 
+    public void getCompatDisplaySize(Point outSize) {
+        synchronized (this) {
+            updateDisplayInfoLocked();
+            outSize.y = mDisplayInfo.logicalHeight / 4 * 3;
+            outSize.x = outSize.y / 16 * 9;
+        }
+    }
+
     public void getDockedSize(Rect outSize, int dockedMode) {
         synchronized (this) {
             updateDisplayInfoLocked();
@@ -749,7 +757,9 @@ public final class Display {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
             if (mIsCompatDisplayInfo) {
-                return mRunMode == PHONE_MODE ? 440 : 960;
+                Point size = new Point();
+                getCompatDisplaySize(size);
+                return mRunMode == PHONE_MODE ? size.x : size.y;
             }
             return mCachedAppWidthCompat;
         }
@@ -763,7 +773,9 @@ public final class Display {
         synchronized (this) {
             updateCachedAppSizeIfNeededLocked();
             if (mIsCompatDisplayInfo) {
-                return mRunMode == PHONE_MODE ? 740 : 540;
+                Point size = new Point();
+                getCompatDisplaySize(size);
+                return mRunMode == PHONE_MODE ? size.y : size.x;
             }
             return mCachedAppHeightCompat;
         }

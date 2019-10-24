@@ -47,7 +47,7 @@ class LaunchingTaskPositioner {
     private static final int WINDOW_SIZE_DENOMINATOR = 2;
 
     // Task will receive margins based on available dimensions divided by this.
-    private static final int MARGIN_SIZE_DENOMINATOR = 4;
+    private static final int MARGIN_SIZE_DENOMINATOR = 6;
 
     // If task bounds collide with some other, we will step and try again until we find a good
     // position. The step will be determined by using dimensions and dividing it by this.
@@ -77,12 +77,17 @@ class LaunchingTaskPositioner {
     private int mDefaultFreeformStepVertical;
     private int mDisplayWidth;
     private int mDisplayHeight;
+    private int mCompatWidth;
+    private int mCompatHeight;
 
     void setDisplay(Display display) {
         Point size = new Point();
         display.getSize(size);
         mDisplayWidth = size.x;
         mDisplayHeight = size.y;
+        display.getCompatDisplaySize(size);
+        mCompatWidth = size.x;
+        mCompatHeight = size.y;
     }
 
     void configure(Rect stackBounds) {
@@ -118,8 +123,8 @@ class LaunchingTaskPositioner {
             return;
         }
         if (windowLayout == null) {
-            int width = task.isSystemTask() ? mDefaultFreeformWidth : 440;
-            int height = task.isSystemTask() ? mDefaultFreeformHeight : 740;
+            int width = task.isSystemTask() ? mCompatHeight : mCompatWidth;
+            int height = task.isSystemTask() ? mCompatWidth : mCompatHeight;
             positionCenter(task, tasks, width, height);
             return;
         }

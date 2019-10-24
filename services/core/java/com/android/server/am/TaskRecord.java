@@ -335,6 +335,9 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
     int mMinWidth;
     int mMinHeight;
 
+    int mCompatWidth;
+    int mCompatHeight;
+
     // Ranking (from top) of this task among all visible tasks. (-1 means it's not visible)
     // This number will be assigned when we evaluate OOM scores for all visible tasks.
     int mLayerRank = -1;
@@ -510,15 +513,15 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
             case Display.PHONE_MODE:
                 mTmpNonMaximizeBounds.set(new Rect(mTmpNonMaximizeBounds.left,
                     mTmpNonMaximizeBounds.top,
-                    mTmpNonMaximizeBounds.left + 440,
-                    mTmpNonMaximizeBounds.top + 740));
+                    mTmpNonMaximizeBounds.left + mCompatWidth,
+                    mTmpNonMaximizeBounds.top + mCompatHeight));
                 bounds.set(mTmpNonMaximizeBounds);
                 break;
             case Display.DESKTOP_MODE:
                 mTmpNonMaximizeBounds.set(new Rect(mTmpNonMaximizeBounds.left,
                     mTmpNonMaximizeBounds.top,
-                    mTmpNonMaximizeBounds.left + mDefaultDesktopBounds.width(),
-                    mTmpNonMaximizeBounds.top + mDefaultDesktopBounds.height()));
+                    mTmpNonMaximizeBounds.left + mCompatHeight,
+                    mTmpNonMaximizeBounds.top + mCompatWidth));
                 bounds.set(mTmpNonMaximizeBounds);
                 break;
         }
@@ -2415,6 +2418,10 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     void setUniqueTaskBounds() {
         if (mStack != null && !isHomeTask()) {
+            Point size = new Point();
+            mStack.getDisplay().mDisplay.getCompatDisplaySize(size);
+            mCompatWidth = size.x;
+            mCompatHeight = size.y;
             mStack.getDisplay().mDisplay.getRectSize(mMaximizeBounds);
             mStack.getDisplay().mDisplay.getDefaultFreeformSize(
                     mDefaultDesktopBounds, Display.DESKTOP_MODE);
@@ -2448,8 +2455,8 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     void prepareLastPhoneRect(Rect bounds) {
         Rect phoneRect = new Rect(bounds);
-        int defPhoneHeight = mMaximizeBounds.height() / 3 * 2;
-        int defPhoneWidth = defPhoneHeight / 16 * 9;
+        int defPhoneHeight = mCompatHeight;
+        int defPhoneWidth = mCompatWidth;
         phoneRect.left = phoneRect.left <= 0 ? 0 : phoneRect.left;
         phoneRect.right = phoneRect.left + (mTmpLastPhoneRect.width() == 0
                 ? defPhoneWidth : mTmpLastPhoneRect.width());
@@ -2460,8 +2467,8 @@ final class TaskRecord extends ConfigurationContainer implements TaskWindowConta
 
     void prepareLastPcRect(Rect bounds) {
         Rect pcRect = new Rect(bounds);
-        int defPcWidth = mMaximizeBounds.width() / 2;
-        int defPcHeight = defPcWidth / 16 * 9;
+        int defPcWidth = mCompatHeight;
+        int defPcHeight = mCompatWidth;
         pcRect.right = pcRect.left + (mTmpLastPcRect.width() == 0
                 ? defPcWidth : mTmpLastPcRect.width());
         pcRect.bottom = pcRect.top + (mTmpLastPcRect.width() == 0

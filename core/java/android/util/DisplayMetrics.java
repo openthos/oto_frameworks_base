@@ -325,8 +325,8 @@ public class DisplayMetrics {
         density = 1.0f;
         scaledDensity = 1.0f;
         densityDpi = 160;
-        heightPixels = noncompatHeightPixels =  740;
-        widthPixels = noncompatWidthPixels = 440;
+        heightPixels = noncompatHeightPixels = 810;
+        widthPixels = noncompatWidthPixels = 450;
         compatDisplayMetricsFlag = COMPAT_METRICS_FLAG;
     }
 
