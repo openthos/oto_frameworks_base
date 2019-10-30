@@ -506,8 +506,10 @@ public abstract class ConfigurationContainer<E extends ConfigurationContainer> {
      * if {@param windowingMode} matches the containers windowing mode.
      */
     public boolean isCompatible(int windowingMode, int activityType) {
+        android.util.Slog.e("LADEHUNTER-COMPAT", "judge: " + windowingMode + ", " + activityType);
         final int thisActivityType = getActivityType();
         final int thisWindowingMode = getWindowingMode();
+        android.util.Slog.e("LADEHUNTER-COMPAT", "this: " + thisWindowingMode + ", " + thisActivityType);
         final boolean sameActivityType = thisActivityType == activityType;
         final boolean sameWindowingMode = thisWindowingMode == windowingMode;
 

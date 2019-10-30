@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.statusbar.phone.OpenthosStatusBarView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/openthos_status_bar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/system_bar_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_startupmenu_status_bar"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:src="@mipmap/statusbar_sysbar_menu"/>
+
+        <!--  icon scroll layout-->
+        <HorizontalScrollView
+            android:id="@+id/sroll_status_bar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/ll_scroll_icon_contents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+    </LinearLayout>
+
+</com.android.systemui.statusbar.phone.OpenthosStatusBarView>

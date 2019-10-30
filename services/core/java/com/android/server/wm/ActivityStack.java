@@ -524,6 +524,7 @@ class ActivityStack extends ConfigurationContainer {
                 false /* enteringSplitScreenMode */, false /* deferEnsuringVisibility */,
                 true /* creating */);
         display.addChild(this, onTop ? POSITION_TOP : POSITION_BOTTOM);
+        android.util.Slog.e("LADEHUNTER-NEWSTACK", "how to ", new Exception());
     }
 
     void createTaskStack(int displayId, boolean onTop, Rect outBounds) {
@@ -667,6 +668,7 @@ class ActivityStack extends ConfigurationContainer {
 
     @Override
     public void setWindowingMode(int windowingMode) {
+        android.util.Slog.e("LADEHUNTER-SWM", "how to change " + getWindowingMode() + " to " + windowingMode, new Exception());
         setWindowingMode(windowingMode, false /* animate */, false /* showRecents */,
                 false /* enteringSplitScreenMode */, false /* deferEnsuringVisibility */,
                 false /* creating */);
@@ -870,6 +872,7 @@ class ActivityStack extends ConfigurationContainer {
 
     @Override
     public boolean isCompatible(int windowingMode, int activityType) {
+        android.util.Slog.e("LADEHUNTER-COMPAT", "judge " + this + " by " + windowingMode + " " + activityType);
         // TODO: Should we just move this to ConfigurationContainer?
         if (activityType == ACTIVITY_TYPE_UNDEFINED) {
             // Undefined activity types end up in a standard stack once the stack is created on a

@@ -354,6 +354,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     private final Point mCurrentDisplaySize = new Point();
 
     protected StatusBarWindowView mStatusBarWindow;
+    protected OpenthosStatusBarView mOpenthosStatusBarView;
     protected PhoneStatusBarView mStatusBarView;
     private int mStatusBarWindowState = WINDOW_STATE_SHOWING;
     protected StatusBarWindowController mStatusBarWindowController;
@@ -1280,6 +1281,12 @@ public class StatusBar extends SystemUI implements DemoMode,
     protected void inflateStatusBarWindow(Context context) {
         mStatusBarWindow = (StatusBarWindowView) mInjectionInflater.injectable(
                 LayoutInflater.from(context)).inflate(R.layout.super_status_bar, null);
+        mOpenthosStatusBarView = (OpenthosStatusBarView) View.inflate(
+                context, R.layout.openthos_status_bar, null);
+    }
+
+    public StartupMenuDialog getStartupMenuDialog() {
+       return mOpenthosStatusBarView.getStartupMenuDialog();
     }
 
     protected void startKeyguard() {

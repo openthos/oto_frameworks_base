@@ -81,6 +81,7 @@ class LaunchParamsController {
         if (task != null || activity != null) {
             mPersister.getLaunchParams(task, activity, result);
         }
+        android.util.Slog.e("LADEHUNTER-CLT", "after persister " + task + " " + activity + " bounds: " + result.mBounds + " DisplayId: " + result.mPreferredDisplayId + " WindowingMode: " + result.mWindowingMode, new Exception());
 
         // We start at the last registered {@link LaunchParamsModifier} as this represents
         // The modifier closest to the product level. Moving back through the list moves closer to
@@ -93,13 +94,16 @@ class LaunchParamsController {
             switch(modifier.onCalculate(task, layout, activity, source, options, phase, mTmpCurrent,
                     mTmpResult)) {
                 case RESULT_SKIP:
+                    android.util.Slog.e("LADEHUNTER-CLT", "after modifier skip " + i + " " + task + " " + activity + " bounds: " + result.mBounds + " DisplayId: " + result.mPreferredDisplayId + " WindowingMode: " + result.mWindowingMode, new Exception());
                     // Do not apply any results when we are told to skip
                     continue;
                 case RESULT_DONE:
+                    android.util.Slog.e("LADEHUNTER-CLT", "after modifier done " + i + " " + task + " " + activity + " bounds: " + result.mBounds + " DisplayId: " + result.mPreferredDisplayId + " WindowingMode: " + result.mWindowingMode, new Exception());
                     // Set result and return immediately.
                     result.set(mTmpResult);
                     return;
                 case RESULT_CONTINUE:
+                    android.util.Slog.e("LADEHUNTER-CLT", "after modifier continue " + i + " " + task + " " + activity + " bounds: " + result.mBounds + " DisplayId: " + result.mPreferredDisplayId + " WindowingMode: " + result.mWindowingMode, new Exception());
                     // Set result and continue
                     result.set(mTmpResult);
                     break;
@@ -127,6 +131,7 @@ class LaunchParamsController {
     boolean layoutTask(TaskRecord task, WindowLayout layout, ActivityRecord activity,
             ActivityRecord source, ActivityOptions options) {
         calculate(task, layout, activity, source, options, PHASE_BOUNDS, mTmpParams);
+        android.util.Slog.e("LADEHUNTER-LT", activity + " bounds: " + mTmpParams.mBounds + " DisplayId: " + mTmpParams.mPreferredDisplayId + " WindowingMode: " + mTmpParams.mWindowingMode);
 
         // No changes, return.
         if (mTmpParams.isEmpty()) {
