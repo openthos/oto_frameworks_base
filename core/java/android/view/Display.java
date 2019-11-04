@@ -371,6 +371,7 @@ public final class Display {
     public static final int FULLSCREEN_MODE = 32;
 
     private boolean mIsCompatDisplayInfo = false;
+    private boolean mIsAutoCorrectDensity = false;
 
     private int mRunMode = STANDARD_MODE;
 
@@ -622,6 +623,11 @@ public final class Display {
                 outSize.y = getHeight();
             }
         }
+    }
+
+    public void setCompatDisplayInfo(boolean isCompatDisplayInfo, boolean isAutoCorrectDensity) {
+        mIsCompatDisplayInfo = isCompatDisplayInfo;
+        mIsAutoCorrectDensity = isAutoCorrectDensity;
     }
 
     public void setCompatDisplayInfo(boolean isCompatDisplayInfo) {
@@ -1020,7 +1026,11 @@ public final class Display {
             updateDisplayInfoLocked();
             mDisplayInfo.getAppMetrics(outMetrics, getDisplayAdjustments());
             if (mIsCompatDisplayInfo) {
+                int odensity = outMetrics.densityDpi;
                 outMetrics.setCompatMetrics();
+                if (mIsAutoCorrectDensity) {
+                    outMetrics.densityDpi = odensity;
+                }
             }
         }
     }

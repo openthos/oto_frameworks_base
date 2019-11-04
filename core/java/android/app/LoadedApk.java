@@ -985,7 +985,11 @@ public final class LoadedApk {
                 runMode = ActivityManager.getService().getTaskRunModeForPackageName(mPackageName);
             }
             if ((runMode & (Display.PHONE_MODE | Display.DESKTOP_MODE)) != 0) {
-                appContext = CompatContextImpl.createAppContext(mActivityThread, this);
+                if (("com.tencent.mm").equals(mPackageName)) {
+                    appContext = CompatContextImpl.createAppContext(mActivityThread, this, true);
+                } else {
+                    appContext = CompatContextImpl.createAppContext(mActivityThread, this);
+                }
             } else {
                 appContext = ContextImpl.createAppContext(mActivityThread, this);
             }

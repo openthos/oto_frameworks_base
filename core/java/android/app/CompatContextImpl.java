@@ -64,6 +64,8 @@ class CompatContextImpl extends ContextImpl {
 
     private int mRunMode = Display.STANDARD_MODE;
 
+    private boolean mIsAutoCorrectDensity = false;
+
     final @NonNull LoadedApk mPackageInfo;
     /**
      * Map from package name, to preference name, to cached preferences.
@@ -208,6 +210,17 @@ class CompatContextImpl extends ContextImpl {
                 null, null, 0, null);
         context.setResources(createResources(null, packageInfo, null, Display.DEFAULT_DISPLAY, null,
                 packageInfo.getCompatibilityInfo()));
+        return context;
+    }
+
+    private void setAutoCorrectDensity(boolean isAutoCorrectDensity) {
+        mIsAutoCorrectDensity = isAutoCorrectDensity;
+    }
+
+    static ContextImpl createAppContext(ActivityThread mainThread,
+                                            LoadedApk packageInfo, boolean autoCorrectDensity) {
+        CompatContextImpl context = (CompatContextImpl) createAppContext(mainThread, packageInfo);
+        context.setAutoCorrectDensity(autoCorrectDensity);
         return context;
     }
 
@@ -443,11 +456,11 @@ class CompatContextImpl extends ContextImpl {
         if (mDisplay == null) {
             Display display = mResourcesManager.
                     getAdjustedDisplay(Display.DEFAULT_DISPLAY, mResources);
-            display.setCompatDisplayInfo(true);
+            display.setCompatDisplayInfo(true, mIsAutoCorrectDensity);
             display.setRunMode(mRunMode);
             return display;
         }
-        mDisplay.setCompatDisplayInfo(true);
+        mDisplay.setCompatDisplayInfo(true, mIsAutoCorrectDensity);
         mDisplay.setRunMode(mRunMode);
         return mDisplay;
     }
