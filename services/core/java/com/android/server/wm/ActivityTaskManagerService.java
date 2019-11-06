@@ -251,6 +251,7 @@ import com.android.internal.util.function.pooled.PooledLambda;
 import com.android.server.AttributeCache;
 import com.android.server.DeviceIdleController;
 import com.android.server.LocalServices;
+import com.android.server.statusbar.StatusBarManagerInternal;
 import com.android.server.SystemService;
 import com.android.server.SystemServiceManager;
 import com.android.server.UiThread;
@@ -5504,6 +5505,14 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
         return mSleeping;
     }
 
+    public void removeTaskIcon(int taskId, ComponentName cp) {
+        StatusBarManagerInternal statusBarManager =
+                           LocalServices.getService(StatusBarManagerInternal.class);
+        if (statusBarManager != null) {
+            statusBarManager.changeStatusBarIcon(taskId, cp, false);
+        }
+    }
+
     /** Update AMS states when an activity is resumed. */
     void setResumedActivityUncheckLocked(ActivityRecord r, String reason) {
         final TaskRecord task = r.getTaskRecord();
@@ -5523,6 +5532,11 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
                 }
             } else {
                 startTimeTrackingFocusedActivityLocked();
+            }
+            StatusBarManagerInternal statusBarManager =
+                    LocalServices.getService(StatusBarManagerInternal.class);
+            if (statusBarManager != null) {
+                statusBarManager.changeStatusBarIcon(task.taskId, task.realActivity, true);
             }
         } else {
             r.appTimeTracker = null;

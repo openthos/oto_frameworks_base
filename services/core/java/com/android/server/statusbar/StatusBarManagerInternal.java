@@ -16,6 +16,7 @@
 
 package com.android.server.statusbar;
 
+import android.content.ComponentName;
 import android.graphics.Rect;
 import android.os.Bundle;
 
@@ -45,6 +46,8 @@ public interface StatusBarManagerInternal {
     void showPictureInPictureMenu();
 
     void setWindowState(int displayId, int window, int state);
+
+    void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep);
 
     /**
      * Notifies the status bar that an app transition is pending to delay applying some flags with

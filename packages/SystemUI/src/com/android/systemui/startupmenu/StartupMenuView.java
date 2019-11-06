@@ -186,27 +186,22 @@ public class StartupMenuView extends FrameLayout
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.file_manager:
-                mOperateManager.openApplication(new ComponentName(
-                        "org.openthos.filemanager",
-                        "org.openthos.filemanager.MainActivity"));
-                break;
-            case R.id.system_setting:
-                mOperateManager.openApplication(new ComponentName(
-                        "com.android.settings", "com.android.settings.Settings"));
-                break;
-            case R.id.power_off:
-                //getContext().startActivity(new Intent(getContext(), PowerSourceActivity.class));
-                dismiss();
-                break;
-            case R.id.sort_click_view:
-                mType = mType * -1;
-                sortOrder();
-                break;
-            case R.id.arrow_show:
-                mMenuDialog.showSort(mArrowShow);
-                break;
+        //switch (v.getId()) {
+        if (v.getId() == R.id.file_manager) {
+            mOperateManager.openApplication(new ComponentName(
+                    "org.openthos.filemanager",
+                    "org.openthos.filemanager.MainActivity"));
+        } else if (v.getId() == R.id.system_setting) {
+            mOperateManager.openApplication(new ComponentName(
+                    "com.android.settings", "com.android.settings.Settings"));
+        } else if (v.getId() == R.id.power_off) {
+            //getContext().startActivity(new Intent(getContext(), PowerSourceActivity.class));
+            dismiss();
+        } else if (v.getId() == R.id.sort_click_view) {
+            mType = mType * -1;
+            sortOrder();
+        } else if (v.getId() == R.id.arrow_show) {
+            mMenuDialog.showSort(mArrowShow);
         }
     }
 
@@ -451,10 +446,9 @@ public class StartupMenuView extends FrameLayout
             if (menu.equals(getContext().getString(R.string.open))) {
                 mOperateManager.openApplication(appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {
-                //mOperateManager.addToTaskbar(-1, appInfo.getComponentName());
+               mOperateManager.addToTaskbar(-1, appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.unlock_from_task_bar))) {
-                //mOperateManager.removeFromTaskbar(appInfo.getComponentName());
-                appInfo.setLocked(false);
+                mOperateManager.removeFromTaskbar(appInfo.getComponentName());
             } else if (menu.equals(getContext().getString(R.string.remove_from_list))) {
                 removeApplicaton(appInfo);
             } else if (menu.equals(getContext().getString(R.string.uninstall))) {

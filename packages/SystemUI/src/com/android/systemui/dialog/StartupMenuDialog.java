@@ -39,7 +39,7 @@ public class StartupMenuDialog extends BaseDialog {
         if (!mCanDismiss) {
             mCanDismiss = true;
         } else if (!hasFocus) {
-            dismiss();
+            //dismiss();
         }
         super.onWindowFocusChanged(hasFocus);
     }

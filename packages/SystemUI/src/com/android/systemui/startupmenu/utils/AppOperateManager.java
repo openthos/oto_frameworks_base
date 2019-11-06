@@ -74,21 +74,21 @@ public class AppOperateManager {
         dismissStartupMenuDialog();
     }
 
-    //public void addToTaskbar(int taskId, ComponentName componentName) {
-    //    mStatusBar.addToTaskbar(taskId, componentName);
-    //}
+    public void addToTaskbar(int taskId, ComponentName componentName) {
+        mStatusBar.addToTaskbar(taskId, componentName);
+    }
 
-    //public void removeFromTaskbar(ComponentName componentName) {
-    //    mStatusBar.removeFromTaskbar(componentName);
-    //}
+    public void removeFromTaskbar(ComponentName componentName) {
+        mStatusBar.removeFromTaskbar(componentName);
+    }
 
     //public void removeFromTaskbar(String packageName) {
     //    mStatusBar.removeFromTaskbar(packageName);
     //}
 
-    //public void closeApp(int taskId, String packageName) {
-    //    mStatusBar.closeApp(taskId, packageName);
-    //}
+    public void closeApp(int taskId, String packageName) {
+        mStatusBar.closeApp(taskId, packageName);
+    }
 
     public void uninstallApp(String packageName) {
         dismissStartupMenuDialog();

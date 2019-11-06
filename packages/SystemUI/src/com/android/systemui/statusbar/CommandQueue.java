@@ -116,6 +116,7 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
     private static final int MSG_SHOW_PINNING_TOAST_ENTER_EXIT = 45 << MSG_SHIFT;
     private static final int MSG_SHOW_PINNING_TOAST_ESCAPE     = 46 << MSG_SHIFT;
     private static final int MSG_RECENTS_ANIMATION_STATE_CHANGED = 47 << MSG_SHIFT;
+    private static final int MSG_CHANGE_STATUS_BAR_ICON = 48 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -292,6 +293,7 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
          * @see IStatusBar#onRecentsAnimationStateChanged(boolean)
          */
         default void onRecentsAnimationStateChanged(boolean running) { }
+        default void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) { }
     }
 
     @VisibleForTesting
@@ -563,6 +565,14 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
         synchronized (mLock) {
             mHandler.removeMessages(MSG_SHOW_PICTURE_IN_PICTURE_MENU);
             mHandler.obtainMessage(MSG_SHOW_PICTURE_IN_PICTURE_MENU).sendToTarget();
+        }
+    }
+
+    @Override
+    public void changeStatusBarIcon(int taskId, ComponentName cmp, boolean keep) {
+        synchronized (mLock) {
+            mHandler.obtainMessage(MSG_CHANGE_STATUS_BAR_ICON, taskId, keep ? 1 : 0 , cmp).
+                    sendToTarget();
         }
     }
 
@@ -978,6 +988,12 @@ public class CommandQueue extends IStatusBar.Stub implements CallbackController<
                 case MSG_SHOW_PICTURE_IN_PICTURE_MENU:
                     for (int i = 0; i < mCallbacks.size(); i++) {
                         mCallbacks.get(i).showPictureInPictureMenu();
+                    }
+                    break;
+                case MSG_CHANGE_STATUS_BAR_ICON:
+                    for (int i = 0; i < mCallbacks.size(); i++) {
+                        mCallbacks.get(i).changeStatusBarIcon(
+                                    msg.arg1, (ComponentName) msg.obj, msg.arg2 != 0);
                     }
                     break;
                 case MSG_ADD_QS_TILE:

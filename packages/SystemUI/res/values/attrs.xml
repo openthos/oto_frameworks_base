@@ -120,6 +120,10 @@
         <attr name="viewType" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="ScapeImageView">
+        <attr name="scapeSize" format="float"/>
+    </declare-styleable>
+
     <attr name="lightIconTheme" format="reference" />
     <attr name="darkIconTheme" format="reference" />
     <attr name="wallpaperTextColor" format="reference|color" />
