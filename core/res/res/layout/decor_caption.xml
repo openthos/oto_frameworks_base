@@ -25,28 +25,61 @@
     <LinearLayout
             android:id="@+id/caption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/caption_height"
             android:gravity="end"
-            android:background="@drawable/decor_caption_title"
+            android:background="#d1d1f1"
             android:focusable="false"
             android:descendantFocusability="blocksDescendants" >
-        <Button
+        <ImageButton
+                android:id="@+id/back_window"
+                style="@style/caption_style"
+                android:layout_marginLeft="@dimen/caption_margin_left"
+                android:contentDescription="@string/back_button_text"
+                android:src="@drawable/mw_btn_back" />
+        <ImageView
+                android:id="@+id/icon_window"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/caption_margin_left"/>
+        <TextView
+                android:id="@+id/title_window"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/caption_text_size"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/caption_margin_left"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:textColor="#4D000000" />
+        <View
+                android:id="@+id/blank_window"
+	        android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        <ImageButton
+                android:id="@+id/setting_window"
+                style="@style/caption_style"
+                android:layout_marginRight="@dimen/caption_setting_margin_right"
+                android:contentDescription="@string/setting_button_text"
+                android:src="@drawable/mw_setting" />
+        <ImageButton
+                android:id="@+id/minimize_window"
+                style="@style/caption_style"
+                android:layout_marginRight="@dimen/caption_margin_right"
+                android:contentDescription="@string/minimize_button_text"
+                android:src="@drawable/mw_btn_minimize" />
+        <ImageButton
                 android:id="@+id/maximize_window"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_margin="5dp"
-                android:padding="4dp"
-                android:layout_gravity="center_vertical|end"
+                style="@style/caption_style"
+                android:layout_marginRight="@dimen/caption_margin_right"
                 android:contentDescription="@string/maximize_button_text"
-                android:background="@drawable/decor_maximize_button_dark" />
-        <Button
+                android:src="@drawable/mw_btn_maximize" />
+        <ImageButton
                 android:id="@+id/close_window"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_margin="5dp"
-                android:padding="4dp"
-                android:layout_gravity="center_vertical|end"
+                style="@style/caption_style"
+                android:layout_marginRight="@dimen/caption_close_margin_right"
                 android:contentDescription="@string/close_button_text"
-                android:background="@drawable/decor_close_button_dark" />
+                android:src="@drawable/mw_btn_close" />
     </LinearLayout>
 </com.android.internal.widget.DecorCaptionView>
