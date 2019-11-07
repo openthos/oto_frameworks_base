@@ -636,6 +636,15 @@ public abstract class Window {
 
         /** Returns whether the window belongs to the task root. */
         boolean isTaskRoot();
+
+        /** Move task back to minimize it*/
+        void moveTaskMinimize();
+
+        /** Resize task to maximize it */
+        void moveTaskMaximize();
+
+        /** Press the back button of window header */
+        void pressKeyBack();
     }
 
     /**

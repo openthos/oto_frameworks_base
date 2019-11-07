@@ -3924,6 +3924,14 @@ public class Activity extends ContextThemeWrapper
         }
     }
 
+    /**
+     *Press the back button of window header
+     *@hide
+     */
+    @Override
+    public void pressKeyBack() {
+        onBackPressed();
+    }
 
     /**
      * Moves the activity between {@link WindowConfiguration#WINDOWING_MODE_FREEFORM} windowing mode
@@ -6580,6 +6588,24 @@ public class Activity extends ContextThemeWrapper
             // Empty
         }
         return false;
+    }
+
+    @Override
+    public void moveTaskMaximize() {
+        //try {
+        //    ActivityManagerNative.getDefault().moveTaskMaximize(getTaskId());
+        //} catch (RemoteException e) {
+        //    // Empty
+        //}
+    }
+
+    @Override
+    public void moveTaskMinimize() {
+        //try {
+        //    //ActivityManagerNative.getDefault().moveTaskBackwards(getTaskId());
+        //} catch (RemoteException e) {
+        //    // Empty
+        //}
     }
 
     /**

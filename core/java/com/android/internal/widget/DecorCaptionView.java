@@ -17,6 +17,8 @@
 package com.android.internal.widget;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.RemoteException;
@@ -29,6 +31,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.internal.R;
 import com.android.internal.policy.PhoneWindow;
@@ -77,6 +81,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         GestureDetector.OnGestureListener {
     private final static String TAG = "DecorCaptionView";
     private PhoneWindow mOwner = null;
+    private PackageManager mPm;
+    private ApplicationInfo mApplicationInfo;
     private boolean mShow = false;
 
     // True if the window is being dragged.
@@ -86,6 +92,9 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
 
     private View mCaption;
     private View mContent;
+    private View mBack;
+    private View mSetting;
+    private View mMinimize;
     private View mMaximize;
     private View mClose;
 
@@ -100,6 +109,9 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     // We use the gesture detector to detect clicks on close/maximize buttons and to be consistent
     // with existing click detection.
     private GestureDetector mGestureDetector;
+    private final Rect mBackRect = new Rect();
+    private final Rect mSettingRect = new Rect();
+    private final Rect mMinimizeRect = new Rect();
     private final Rect mCloseRect = new Rect();
     private final Rect mMaximizeRect = new Rect();
     private View mClickTarget;
@@ -144,8 +156,19 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         // By changing the outline provider to BOUNDS, the window can remove its
         // background without removing the shadow.
         mOwner.getDecorView().setOutlineProvider(ViewOutlineProvider.BOUNDS);
+        mBack = findViewById(R.id.back_window);
+        mSetting = findViewById(R.id.setting_window);
+        mMinimize = findViewById(R.id.minimize_window);
         mMaximize = findViewById(R.id.maximize_window);
         mClose = findViewById(R.id.close_window);
+
+        TextView appName = (TextView) findViewById(R.id.title_window);
+        ImageView appIcon = (ImageView) findViewById(R.id.icon_window);
+
+        mPm = getContext().getPackageManager();
+        mApplicationInfo = getContext().getApplicationInfo();
+        appName.setText(mPm.getApplicationLabel(mApplicationInfo));
+        appIcon.setImageDrawable(mPm.getApplicationIcon(mApplicationInfo));
     }
 
     @Override
@@ -156,6 +179,15 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
             final int x = (int) ev.getX();
             final int y = (int) ev.getY();
             // Only offset y for containment tests because the actual views are already translated.
+            if (mBackRect.contains(x, y)) {
+                mClickTarget = mBack;
+            }
+            if (mSettingRect.contains(x, y)) {
+                mClickTarget = mSetting;
+            }
+            if (mMinimizeRect.contains(x, y)) {
+                mClickTarget = mMinimize;
+            }
             if (mMaximizeRect.contains(x, y - mRootScrollY)) {
                 mClickTarget = mMaximize;
             }
@@ -307,6 +339,9 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         if (mCaption.getVisibility() != View.GONE) {
             mCaption.layout(0, 0, mCaption.getMeasuredWidth(), mCaption.getMeasuredHeight());
             captionHeight = mCaption.getBottom() - mCaption.getTop();
+            mBack.getHitRect(mBackRect);
+            mSetting.getHitRect(mSettingRect);
+            mMinimize.getHitRect(mMinimizeRect);
             mMaximize.getHitRect(mMaximizeRect);
             mClose.getHitRect(mCloseRect);
         } else {
@@ -335,6 +370,35 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private void updateCaptionVisibility() {
         mCaption.setVisibility(mShow ? VISIBLE : GONE);
         mCaption.setOnTouchListener(this);
+    }
+
+    /**
+     *Press the back button of window header to call Activity'onBackPressed().
+     */
+    private void keyBackWindow() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            callback.pressKeyBack();
+        }
+    }
+
+    /**
+     * Set the window run model.
+     */
+    private void showSettingPopupWindow(View view) {
+        //int[] popWindowPos = calculatePopWindowPos(view, mPopContentView);
+        //mPopWindow.showAtLocation(view, Gravity.TOP | Gravity.START,
+        //        popWindowPos[0], popWindowPos[1]);
+    }
+
+    /**
+     * Minimize the window by move task back.
+     **/
+    private void minimizeWindow() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            callback.moveTaskMinimize();
+        }
     }
 
     /**
@@ -403,7 +467,13 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        if (mClickTarget == mMaximize) {
+        if (mClickTarget == mBack) {
+            keyBackWindow();
+        } else if (mClickTarget == mSetting) {
+            showSettingPopupWindow(mSetting);
+        } else if (mClickTarget == mMinimize) {
+            minimizeWindow();
+        } else if (mClickTarget == mMaximize) {
             toggleFreeformWindowingMode();
         } else if (mClickTarget == mClose) {
             mOwner.dispatchOnWindowDismissed(
