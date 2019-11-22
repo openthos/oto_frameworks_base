@@ -137,6 +137,7 @@ import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.DemoMode;
 import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
+import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.EventLogTags;
 import com.android.systemui.ForegroundServiceController;
 import com.android.systemui.InitController;

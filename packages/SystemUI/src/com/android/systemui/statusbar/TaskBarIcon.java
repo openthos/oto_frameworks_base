@@ -1,8 +1,8 @@
 package com.android.systemui.statusbar;
 
-import android.app.ActivityManager;
+import android.app.ActivityTaskManager;
 import android.app.Dialog;
-import android.app.IActivityManager;
+import android.app.IActivityTaskManager;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.res.Configuration;
@@ -168,7 +168,7 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
         }
         if (taskId == -2) {
             try {
-                IActivityManager am = ActivityManager.getService();
+                IActivityTaskManager am = ActivityTaskManager.getService();
                 am.setFocusedTask(Integer.parseInt(menu));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -209,7 +209,7 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
 
     private void startRun() {
         try {
-            IActivityManager am = ActivityManager.getService();
+            IActivityTaskManager am = ActivityTaskManager.getService();
             if (isRun()) {
                 if (mTasks.size() > 1) {
                     mTaskDialog.show(DialogType.SELECT_TASK, getAppInfo(), this, mTasks);

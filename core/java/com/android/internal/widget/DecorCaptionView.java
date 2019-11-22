@@ -147,11 +147,11 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         mOwner = owner;
         mShow = show;
         mOverlayWithAppContent = owner.isOverlayWithDecorCaptionEnabled();
-        if (mOverlayWithAppContent) {
-            // The caption is covering the content, so we make its background transparent to make
-            // the content visible.
-            mCaption.setBackgroundColor(Color.TRANSPARENT);
-        }
+        //if (mOverlayWithAppContent) {
+        //    // The caption is covering the content, so we make its background transparent to make
+        //    // the content visible.
+        //    mCaption.setBackgroundColor(Color.TRANSPARENT);
+        //}
         updateCaptionVisibility();
         // By changing the outline provider to BOUNDS, the window can remove its
         // background without removing the shadow.

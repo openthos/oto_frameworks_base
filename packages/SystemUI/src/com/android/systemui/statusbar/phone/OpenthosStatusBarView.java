@@ -215,9 +215,10 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private boolean canAdd(String packageName) {
         try {
+            AppInfo appInfo = AppOperateManager.getInstance(mContext).getAppInfo(packageName);
             PackageManager pm = mContext.getPackageManager();
             Drawable icon = pm.getApplicationIcon(packageName);
-            return icon != null;
+            return appInfo != null && icon != null;
         } catch (Exception e) {
             return false;
         }
@@ -225,14 +226,15 @@ public class OpenthosStatusBarView extends PanelBar {
 
     public void bindIcon(int taskId, ComponentName componentName) {
         String packageName = componentName.getPackageName();
-        if (!canAdd(componentName.getPackageName())) {
-            return;
-        }
         if (mPrevPackageName != null) {
             TaskBarIcon prevButtonView = mRunIcons.get(mPrevPackageName);
             if (prevButtonView != null) {
                 prevButtonView.setFocusInApplications(false);
             }
+        }
+
+        if (!canAdd(componentName.getPackageName())) {
+            return;
         }
 
         mPrevPackageName = packageName;

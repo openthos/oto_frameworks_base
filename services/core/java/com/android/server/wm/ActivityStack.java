@@ -674,6 +674,11 @@ class ActivityStack extends ConfigurationContainer {
                 false /* creating */);
     }
 
+    public void forceHiddenStack() {
+        mForceHidden = true;
+        mWindowManager.inSurfaceTransaction(() -> forceHiddenStackInSurfaceTransaction());
+    }
+
     /**
      * A transient windowing mode is one which activities enter into temporarily. Examples of this
      * are Split window modes and pip. Non-transient modes are modes that displays can adopt.
@@ -706,6 +711,25 @@ class ActivityStack extends ConfigurationContainer {
         mWindowManager.inSurfaceTransaction(() -> setWindowingModeInSurfaceTransaction(
                 preferredWindowingMode, animate, showRecents, enteringSplitScreenMode,
                 deferEnsuringVisibility, creating));
+    }
+
+    private void forceHiddenStackInSurfaceTransaction() {
+        final WindowManagerService wm = mService.mWindowManager;
+        final ActivityRecord topActivity = getTopActivity();
+
+        wm.deferSurfaceLayout();
+        try {
+            mStackSupervisor.mNoAnimActivities.add(topActivity);
+        } finally {
+            wm.continueSurfaceLayout();
+        }
+        mRootActivityContainer.ensureActivitiesVisible(null, 0, PRESERVE_WINDOWS);
+        ActivityStack next = adjustFocusToNextFocusableStack("forceHidden");
+        if (next != null) {
+            ActivityRecord nextTop = next.getTopActivity();
+            if (nextTop != null)
+                mService.focusTaskIcon(nextTop.getTaskRecord().taskId, nextTop.mActivityComponent);
+        }
     }
 
     private void setWindowingModeInSurfaceTransaction(int preferredWindowingMode, boolean animate,
@@ -2589,6 +2613,8 @@ class ActivityStack extends ConfigurationContainer {
             final ActivityRecord next = topRunningActivityLocked(true /* focusableOnly */);
             if (next == null || !next.canTurnScreenOn()) {
                 checkReadyForSleep();
+            } else {
+                mService.setResumedActivityUncheckLocked(next, "resume");
             }
         } finally {
             mInResumeTopActivity = false;
@@ -4480,6 +4506,7 @@ class ActivityStack extends ConfigurationContainer {
             // statement will only execute once since overlays are also considered activities.
             if (lastActivity) {
                 removeTask(task, reason, REMOVE_TASK_MODE_DESTROYING);
+                mService.removeTaskIcon(task.taskId, task.realActivity);
             }
         }
         cleanUpActivityServicesLocked(r);
@@ -5618,6 +5645,10 @@ class ActivityStack extends ConfigurationContainer {
             } catch (RemoteException e) {
             }
         }
+    }
+
+    public void setForceHidden(boolean hidden) {
+        mForceHidden = hidden;
     }
 
     public void setAlwaysOnTop(boolean alwaysOnTop) {

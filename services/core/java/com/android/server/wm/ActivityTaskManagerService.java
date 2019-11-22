@@ -2086,6 +2086,10 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
                 if (task == null) {
                     return;
                 }
+                ActivityStack stack = task.getStack();
+                if (stack != null) {
+                    stack.setForceHidden(false);
+                }
                 final ActivityRecord r = task.topRunningActivityLocked();
                 if (r != null && r.moveFocusableActivityToTop("setFocusedTask")) {
                     mRootActivityContainer.resumeFocusedStacksTopActivities();
@@ -3424,6 +3428,47 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
                 if (DEBUG_STACK) Slog.d(TAG_STACK, "moveStackToDisplay: moving stackId=" + stackId
                         + " to displayId=" + displayId);
                 mRootActivityContainer.moveStackToDisplay(stackId, displayId, ON_TOP);
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+    }
+
+    @Override
+    public void toggleForceHidden(IBinder token) {
+        synchronized (mGlobalLock) {
+            long ident = Binder.clearCallingIdentity();
+            try {
+                final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+                if (r == null) {
+                    throw new IllegalArgumentException(
+                            "toggleFreeformWindowingMode: No activity record matching token="
+                                    + token);
+                }
+
+                final ActivityStack stack = r.getActivityStack();
+                if (stack == null) {
+                    throw new IllegalStateException("toggleFreeformWindowingMode: the activity "
+                            + "doesn't have a stack");
+                }
+
+                if (!stack.inFreeformWindowingMode()
+                        && stack.getWindowingMode() != WINDOWING_MODE_FULLSCREEN) {
+                    throw new IllegalStateException("toggleFreeformWindowingMode: You can only "
+                            + "toggle between fullscreen and freeform.");
+                }
+                stack.forceHiddenStack();
+
+                //if (stack.inFreeformWindowingMode()) {
+                //    stack.setWindowingMode(WINDOWING_MODE_FULLSCREEN);
+                //} else if (stack.getParent().inFreeformWindowingMode()) {
+                //    // If the window is on a freeform display, set it to undefined. It will be
+                //    // resolved to freeform and it can adjust windowing mode when the display mode
+                //    // changes in runtime.
+                //    stack.setWindowingMode(WINDOWING_MODE_UNDEFINED);
+                //} else {
+                //    stack.setWindowingMode(WINDOWING_MODE_FREEFORM);
+                //}
             } finally {
                 Binder.restoreCallingIdentity(ident);
             }
@@ -5503,6 +5548,14 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
 
     boolean isSleepingLocked() {
         return mSleeping;
+    }
+
+    public void focusTaskIcon(int taskId, ComponentName cp) {
+        StatusBarManagerInternal statusBarManager =
+                           LocalServices.getService(StatusBarManagerInternal.class);
+        if (statusBarManager != null) {
+            statusBarManager.changeStatusBarIcon(taskId, cp, true);
+        }
     }
 
     public void removeTaskIcon(int taskId, ComponentName cp) {

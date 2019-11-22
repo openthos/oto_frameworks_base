@@ -644,7 +644,9 @@ public class WindowConfiguration implements Parcelable, Comparable<WindowConfigu
      */
     public boolean hasWindowDecorCaption() {
         return mActivityType == ACTIVITY_TYPE_STANDARD && (mWindowingMode == WINDOWING_MODE_FREEFORM
-                || mDisplayWindowingMode == WINDOWING_MODE_FREEFORM);
+                || mDisplayWindowingMode == WINDOWING_MODE_FREEFORM
+                || mWindowingMode == WINDOWING_MODE_FULLSCREEN
+                || mDisplayWindowingMode == WINDOWING_MODE_FULLSCREEN);
     }
 
     /**

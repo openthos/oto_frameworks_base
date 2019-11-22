@@ -66,6 +66,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -416,8 +417,29 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         return false;
     }
 
+    void setCaptionVisiblity(boolean visible) {
+        mDecorCaptionView.onConfigurationChanged(visible);
+        enableCaption(visible);
+
+        updateAvailableWidth();
+        initializeElevation();
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        int windowingMode = getResources().getConfiguration().
+                                windowConfiguration.getWindowingMode();
+        if (windowingMode == WindowConfiguration.WINDOWING_MODE_FULLSCREEN
+                && mDecorCaptionView != null
+                && !mDecorCaptionView.isCaptionShowing()
+                && ev.getRawY() < 10) {
+            setCaptionVisiblity(true);
+            Handler hd = new Handler();
+            hd.postDelayed(() -> setCaptionVisiblity(getResources().getConfiguration().
+                            windowConfiguration.getWindowingMode() ==
+                            WindowConfiguration.WINDOWING_MODE_FREEFORM), 3000);
+            return true;
+        }
         final Window.Callback cb = mWindow.getCallback();
         return cb != null && !mWindow.isDestroyed() && mFeatureId < 0
                 ? cb.dispatchTouchEvent(ev) : super.dispatchTouchEvent(ev);
@@ -2053,6 +2075,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     private void updateDecorCaptionStatus(Configuration config) {
         final boolean displayWindowDecor = config.windowConfiguration.hasWindowDecorCaption()
                 && !isFillingScreen(config);
+        final int windowingMode = config.windowConfiguration.getWindowingMode();
         if (mDecorCaptionView == null && displayWindowDecor) {
             // Configuration now requires a caption.
             final LayoutInflater inflater = mWindow.getLayoutInflater();
@@ -2068,8 +2091,10 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             }
         } else if (mDecorCaptionView != null) {
             // We might have to change the kind of surface before we do anything else.
-            mDecorCaptionView.onConfigurationChanged(displayWindowDecor);
-            enableCaption(displayWindowDecor);
+            boolean captionVisible = displayWindowDecor &&
+                            windowingMode == WindowConfiguration.WINDOWING_MODE_FREEFORM;
+            mDecorCaptionView.onConfigurationChanged(captionVisible);
+            enableCaption(captionVisible);
         }
     }
 
@@ -2136,6 +2161,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         final boolean isApplication = attrs.type == TYPE_BASE_APPLICATION ||
                 attrs.type == TYPE_APPLICATION || attrs.type == TYPE_DRAWN_APPLICATION;
         final WindowConfiguration winConfig = getResources().getConfiguration().windowConfiguration;
+        final int windowingMode = winConfig.getWindowingMode();
         // Only a non floating application window on one of the allowed workspaces can get a caption
         if (!mWindow.isFloating() && isApplication && winConfig.hasWindowDecorCaption()) {
             // Dependent on the brightness of the used title we either use the
@@ -2143,13 +2169,16 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
             if (decorCaptionView == null) {
                 decorCaptionView = inflateDecorCaptionView(inflater);
             }
+            mWindow.setOverlayWithDecorCaptionEnabled(windowingMode
+                            == WindowConfiguration.WINDOWING_MODE_FULLSCREEN);
             decorCaptionView.setPhoneWindow(mWindow, true /*showDecor*/);
         } else {
             decorCaptionView = null;
         }
 
         // Tell the decor if it has a visible caption.
-        enableCaption(decorCaptionView != null);
+        enableCaption(decorCaptionView != null &&
+                    windowingMode == WindowConfiguration.WINDOWING_MODE_FREEFORM);
         return decorCaptionView;
     }
 
