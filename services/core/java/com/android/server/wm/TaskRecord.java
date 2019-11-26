@@ -24,6 +24,8 @@ import static android.app.WindowConfiguration.ACTIVITY_TYPE_STANDARD;
 import static android.app.WindowConfiguration.ACTIVITY_TYPE_UNDEFINED;
 import static android.app.WindowConfiguration.ROTATION_UNDEFINED;
 import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM;
+import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM_STANDARD;
+import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM_TOP_DOCKED;
 import static android.app.WindowConfiguration.WINDOWING_MODE_FULLSCREEN;
 import static android.app.WindowConfiguration.WINDOWING_MODE_PINNED;
 import static android.app.WindowConfiguration.WINDOWING_MODE_SPLIT_SCREEN_PRIMARY;
@@ -315,6 +317,8 @@ class TaskRecord extends ConfigurationContainer {
     // The information is persisted and used to determine the appropriate stack to launch the
     // task into on restore.
     Rect mLastNonFullscreenBounds = null;
+
+    Rect mLastNonMaximizeBounds = new Rect();
     // Minimal width and height of this task when it's resizeable. -1 means it should use the
     // default minimal width/height.
     int mMinWidth;
@@ -616,6 +620,17 @@ class TaskRecord extends ConfigurationContainer {
             return kept;
         } finally {
             mService.mWindowManager.continueSurfaceLayout();
+        }
+    }
+
+    void toggleTaskMaximize() {
+        if (getWindowingFreeformMode() == WINDOWING_MODE_FREEFORM_TOP_DOCKED) {
+            setWindowingFreeformMode(WINDOWING_MODE_FREEFORM_STANDARD);
+            resize(mLastNonMaximizeBounds, RESIZE_MODE_FORCED, true, true);
+        } else {
+            setWindowingFreeformMode(WINDOWING_MODE_FREEFORM_TOP_DOCKED);
+            mLastNonMaximizeBounds.set(getRequestedOverrideBounds());
+            resize(null, RESIZE_MODE_FORCED, true, true);
         }
     }
 

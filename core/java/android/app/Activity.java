@@ -6591,12 +6591,12 @@ public class Activity extends ContextThemeWrapper
     }
 
     @Override
-    public void moveTaskMaximize() {
-        //try {
-        //    ActivityManagerNative.getDefault().moveTaskMaximize(getTaskId());
-        //} catch (RemoteException e) {
-        //    // Empty
-        //}
+    public void toggleTaskMaximize() {
+        try {
+            ActivityTaskManager.getService().toggleTaskMaximize(mToken);
+        } catch (RemoteException e) {
+            // Empty
+        }
     }
 
     @Override

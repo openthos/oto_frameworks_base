@@ -220,6 +220,7 @@ interface IActivityTaskManager {
     void setTaskResizeable(int taskId, int resizeableMode);
     void toggleFreeformWindowingMode(in IBinder token);
     void toggleForceHidden(in IBinder token);
+    void toggleTaskMaximize(in IBinder token);
     void resizeTask(int taskId, in Rect bounds, int resizeMode);
     void moveStackToDisplay(int stackId, int displayId);
     void removeStack(int stackId);

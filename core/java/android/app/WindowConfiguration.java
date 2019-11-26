@@ -75,6 +75,8 @@ public class WindowConfiguration implements Parcelable, Comparable<WindowConfigu
 
     /** The current windowing mode of the configuration. */
     private @WindowingMode int mWindowingMode;
+    /** The current windowing freeform mode of the configuration. */
+    private int mWindowingFreeformMode = WINDOWING_MODE_FREEFORM_STANDARD;
 
     /** The display windowing mode of the configuration */
     private @WindowingMode int mDisplayWindowingMode;
@@ -107,6 +109,13 @@ public class WindowConfiguration implements Parcelable, Comparable<WindowConfigu
             WINDOWING_MODE_SPLIT_SCREEN_SECONDARY;
     /** Can be freely resized within its parent container. */
     public static final int WINDOWING_MODE_FREEFORM = 5;
+
+    public static final int WINDOWING_MODE_FREEFORM_STANDARD = 0;
+    public static final int WINDOWING_MODE_FREEFORM_LEFT_DOCKED = 1;
+    public static final int WINDOWING_MODE_FREEFORM_RIGHT_DOCKED = 2;
+    public static final int WINDOWING_MODE_FREEFORM_TOP_DOCKED = 4;
+    public static final int WINDOWING_MODE_FREEFORM_PORTRAIT_MODE = 8;
+    public static final int WINDOWING_MODE_FREEFORM_LANDSCAPE_MODE = 16;
 
     /** @hide */
     @IntDef(prefix = { "WINDOWING_MODE_" }, value = {
@@ -338,6 +347,13 @@ public class WindowConfiguration implements Parcelable, Comparable<WindowConfigu
         mDisplayWindowingMode = windowingMode;
     }
 
+    public void setWindowingFreeformMode(int windowingFreeformMode) {
+        mWindowingFreeformMode = windowingFreeformMode;
+    }
+
+    public int getWindowingFreeformMode() {
+        return mWindowingFreeformMode;
+    }
 
     public void setActivityType(@ActivityType int activityType) {
         if (mActivityType == activityType) {

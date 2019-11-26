@@ -384,6 +384,21 @@ public abstract class ConfigurationContainer<E extends ConfigurationContainer> {
         onRequestedOverrideConfigurationChanged(mTmpConfig);
     }
 
+    /** Returns the windowing freeform mode the configuration container is currently in. */
+    public int getWindowingFreeformMode() {
+        return mFullConfiguration.windowConfiguration.getWindowingFreeformMode();
+    }
+
+    /** Sets the windowing mode for the configuration container. */
+    public void setWindowingFreeformMode(
+            /*@WindowConfiguration.WindowingFreeformMode*/ int windowingFreeformMode) {
+        mFullConfiguration.windowConfiguration.setWindowingFreeformMode(windowingFreeformMode);
+    }
+
+     /**
+      * Returns true if this container is currently in multi-window mode. I.e. sharing the screen
+      * with another activity.
+--
     /**
      * Returns true if this container is currently in multi-window mode. I.e. sharing the screen
      * with another activity.

@@ -415,6 +415,13 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         }
     }
 
+    private void toggleTaskMaximize() {
+        Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
+        if (callback != null) {
+            callback.toggleTaskMaximize();
+        }
+    }
+
     public boolean isCaptionShowing() {
         return mShow;
     }
@@ -474,7 +481,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         } else if (mClickTarget == mMinimize) {
             minimizeWindow();
         } else if (mClickTarget == mMaximize) {
-            toggleFreeformWindowingMode();
+            //toggleFreeformWindowingMode();
+            toggleTaskMaximize();
         } else if (mClickTarget == mClose) {
             mOwner.dispatchOnWindowDismissed(
                     true /*finishTask*/, false /*suppressWindowTransition*/);

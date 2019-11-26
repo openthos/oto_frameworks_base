@@ -3435,6 +3435,23 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
     }
 
     @Override
+    public void toggleTaskMaximize(IBinder token) {
+        synchronized (this) {
+            long ident = Binder.clearCallingIdentity();
+            try {
+                final ActivityRecord r = ActivityRecord.forTokenLocked(token);
+                if (r == null) {
+                    throw new IllegalArgumentException(
+                            "moveTaskMaximize: No activity record matching token=" + token);
+                }
+                r.getTaskRecord().toggleTaskMaximize();
+            } finally {
+                Binder.restoreCallingIdentity(ident);
+            }
+        }
+    }
+
+    @Override
     public void toggleForceHidden(IBinder token) {
         synchronized (mGlobalLock) {
             long ident = Binder.clearCallingIdentity();

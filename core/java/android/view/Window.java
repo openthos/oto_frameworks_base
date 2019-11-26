@@ -641,7 +641,8 @@ public abstract class Window {
         void moveTaskMinimize();
 
         /** Resize task to maximize it */
-        void moveTaskMaximize();
+        //void moveTaskMaximize();
+        void toggleTaskMaximize();
 
         /** Press the back button of window header */
         void pressKeyBack();
