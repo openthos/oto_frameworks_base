@@ -22,6 +22,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -38,6 +39,8 @@ import com.android.internal.R;
 import com.android.internal.policy.PhoneWindow;
 
 import java.util.ArrayList;
+
+import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM_STANDARD;
 
 /**
  * This class represents the special screen elements to control a window on freeform
@@ -89,6 +92,11 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private boolean mDragging = false;
 
     private boolean mOverlayWithAppContent = false;
+    private long[] mHits = new long[2];
+    /**
+     * 两次点击时间间隔，单位毫秒
+     */
+    private final int interval = 500;
 
     private View mCaption;
     private View mContent;
@@ -233,6 +241,10 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                     mCheckForDragging = true;
                     mTouchDownX = x;
                     mTouchDownY = y;
+                }
+                if (getResources().getConfiguration().windowConfiguration.
+                        getWindowingFreeformMode() == WINDOWING_MODE_FREEFORM_STANDARD) {
+                    doubleClick();
                 }
                 break;
 
@@ -419,6 +431,14 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         Window.WindowControllerCallback callback = mOwner.getWindowControllerCallback();
         if (callback != null) {
             callback.toggleTaskMaximize();
+        }
+    }
+
+    private void doubleClick() {
+        System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+        mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+        if (mHits[mHits.length - 1] - mHits[0] < interval) {
+            toggleTaskMaximize();
         }
     }
 
