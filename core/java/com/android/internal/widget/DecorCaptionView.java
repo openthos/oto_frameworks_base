@@ -497,7 +497,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
         if (mClickTarget == mBack) {
             keyBackWindow();
         } else if (mClickTarget == mSetting) {
-            showSettingPopupWindow(mSetting);
+            //showSettingPopupWindow(mSetting);
+            toggleFreeformWindowingMode();
         } else if (mClickTarget == mMinimize) {
             minimizeWindow();
         } else if (mClickTarget == mMaximize) {
