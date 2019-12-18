@@ -2512,6 +2512,23 @@ public class AudioManager {
             // some tests don't have a Context
             sdk = Build.VERSION.SDK_INT;
         }
+        Log.d(TAG, "requestAudioFocus: audio content type: " + afr.getAudioAttributes().getContentType());
+        switch (afr.getAudioAttributes().getContentType()) {
+        case AudioAttributes.CONTENT_TYPE_MUSIC:
+        case AudioAttributes.CONTENT_TYPE_MOVIE:
+            int fg = afr.getFocusGain();
+            if (fg != AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {
+                afr = new AudioFocusRequest.Builder(afr)
+                        .setFocusGain(AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+                        .build();
+                Log.i(TAG, "requestAudioFocus: " + fg + ", force AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+            } else {
+                Log.i(TAG, "requestAudioFocus: AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+            }
+            break;
+        default:
+            break;
+        }
         try {
             status = service.requestAudioFocus(afr.getAudioAttributes(),
                     afr.getFocusGain(), mICallBack,
