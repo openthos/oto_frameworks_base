@@ -145,10 +145,10 @@ public class OpenthosStatusBarView extends PanelBar {
     private View.OnHoverListener mHoverListener = (View v, MotionEvent event) -> {
         switch (event.getAction()) {
             case MotionEvent.ACTION_HOVER_ENTER:
-                v.setBackground(getResources().getDrawable(R.color.common_hover_bg));
+                v.setBackground(getResources().getDrawable(R.color.openthos_view_hover_move_color));
                 break;
             case MotionEvent.ACTION_HOVER_EXIT:
-                v.setBackground(getResources().getDrawable(R.drawable.system_bar_background));
+                v.setBackground(null);
                 break;
         }
         return false;
@@ -277,7 +277,7 @@ public class OpenthosStatusBarView extends PanelBar {
         for (InputMethodInfo im : inputMethodList) {
             if (im.getId().equals(currentInputMethodId)) {
                 if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {//os input
-                    mInputView.setImageResource(R.drawable.statusbar_switch_input_method);
+                    mInputView.setImageResource(R.mipmap.statusbar_switch_input_method);
                     return;
                 } // other input methods;
                 mInputView.setImageDrawable(im.loadIcon(getContext().getPackageManager()));

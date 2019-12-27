@@ -5,8 +5,7 @@
     android:id="@+id/taskbar_button_layout"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/padding_one"
-    android:background="@drawable/system_bar_background">
+    android:layout_margin="@dimen/padding_one" >
 
     <com.android.systemui.statusbar.view.ScapeImageView
         android:id="@+id/icon_view"
@@ -22,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/padding_one"
-        android:background="@drawable/ic_background_activity_run"
+        android:background="@mipmap/status_bar_view_run_bg"
         android:visibility="gone" />
 
     <View
@@ -30,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/padding_one"
-        android:background="@drawable/ic_background_mouse_click"
+        android:background="@mipmap/status_bar_view_hover_selected_bg"
         android:visibility="gone" />
 
 </com.android.systemui.statusbar.view.SquareFrameLayout>

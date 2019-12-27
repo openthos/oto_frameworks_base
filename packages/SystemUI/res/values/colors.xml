@@ -167,4 +167,14 @@
 
     <color name="zen_introduction">#ffffffff</color>
 
+    <!-- android-8.1 systemui status bar colors -->
+    <drawable name="openthos_status_bar_background">@color/openthos_status_bar_color</drawable>
+    <drawable name="openthos_system_bar_background">@color/openthos_view_hover_enter_color</drawable>
+
+    <color name="openthos_status_bar_color">#F2F2F2CC</color>
+    <color name="openthos_view_hover_move_color">#0A000000</color>
+    <color name="openthos_view_hover_enter_color">#1A000000</color>
+    <color name="systemui_date_color">#FF202020</color>
+
+
 </resources>
