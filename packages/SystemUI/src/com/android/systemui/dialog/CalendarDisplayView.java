@@ -254,24 +254,20 @@ public class CalendarDisplayView extends TextView implements DemoMode {
         if (!DateFormat.is24HourFormat(getContext(), ActivityManager.getCurrentUser())) {
             if (mCalendar.get(Calendar.AM_PM) == 0) {
                 if (language.endsWith("zh")) {
-                    setText(getContext().getString(R.string.morning) + " " +
-                                         getSmallTime() + "\n" + getClockYear());
+                    setText(getContext().getString(R.string.morning) + " " + getSmallTime());
                 } else {
-                    setText(getSmallTime() + " " + getContext().getString(R.string.morning)
-                                                        + "\n" + getClockYear());
+                    setText(getSmallTime() + " " + getContext().getString(R.string.morning));
                 }
                 return;
             } else {
                 if (language.endsWith("zh")) {
-                    setText(getContext().getString(R.string.afternoon) + " " +
-                                         getSmallTime() + "\n" + getClockYear());
+                    setText(getContext().getString(R.string.afternoon) + " " + getSmallTime());
                 } else {
-                    setText(getSmallTime()+ " " +getContext().getString(R.string.afternoon)
-                                                        + "\n" + getClockYear());
+                    setText(getSmallTime()+ " " +getContext().getString(R.string.afternoon));
                 }
                 return;
             }
         }
-        setText(getSmallTime() + "\n" + getClockYear());
+        setText(getSmallTime());
     }
 }

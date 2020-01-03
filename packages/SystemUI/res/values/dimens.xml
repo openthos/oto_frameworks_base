@@ -867,7 +867,7 @@
     <dimen name="systemui_size_calendar">296dp</dimen>
     <dimen name="systemui_width_calendarview">224dp</dimen>
     <dimen name="systemui_height_calendarview">154dp</dimen>
-    <dimen name="systemui_date_text_size">10sp</dimen>
+    <dimen name="systemui_date_text_size">17sp</dimen>
     <dimen name="calendar_date_height">24dp</dimen>
     <dimen name="calendar_icon_size">10dp</dimen>
 
@@ -902,4 +902,18 @@
     <dimen name="padding_thirty">30dp</dimen>
     <dimen name="padding_fifty">50dp</dimen>
     <dimen name="size_fiftyfive">55dp</dimen>
+
+    <!-- android-8.1 status bar view size -->
+    <dimen name="home_view_width_size">17dp</dimen>
+    <dimen name="view_divider_size">1dp</dimen>
+    <dimen name="startupmenu_marginleft_size">7dp</dimen>
+    <dimen name="input_icon_size">20dp</dimen>
+    <dimen name="task_bar_icon_size">22dp</dimen>
+    <dimen name="systemui_icon_size">30dp</dimen>
+    <dimen name="systemui_icon_layout_width">45dp</dimen>
+    <dimen name="systemui_icon_layout_height">38dp</dimen>
+    <dimen name="date_view_width">85dp</dimen>
+    <dimen name="date_view_height">38dp</dimen>
+    <dimen name="task_bar_view_width">45dp</dimen>
+    <dimen name="task_bar_view_height">38dp</dimen>
 </resources>

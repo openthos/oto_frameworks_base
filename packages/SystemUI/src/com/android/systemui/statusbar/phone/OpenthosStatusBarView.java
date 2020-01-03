@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.dialog.BaseDialog;
@@ -37,15 +38,12 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private InputMethodManager mInputMethodManager;
     private StatusBar mStatusBar;
-    private ImageView mStartupMenu;
     private OpenthosStatusBarView mOpenthosStatusBarView;
-    private ImageView mInputView;
-    private ImageView mBatteryView;
-    private ImageView mWifiView;
-    private ImageView mVolumeView;
-    private ImageView mNotificationView;
-    private CalendarDisplayView mCalendarView;
-    private ImageView mHomeView;
+    private CalendarDisplayView mCalendarText;
+    private ImageView mStartupMenuImageView, mInputImageView,
+            mBatteryImageView, mWifiImageView, mHomeImageView;
+    private RelativeLayout mStartupMenuView, mInputView, mBatteryView,
+            mWifiView, mVolumeView, mNotificationView, mCalendarView;
     private LinearLayout mLlScrollContents;
     private View mEmptyStatusBar;
     private BaseDialog mStartupMenuDialog;
@@ -88,14 +86,19 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initView() {
-        mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
-        mInputView = (ImageView) findViewById(R.id.iv_input_status_bar);
-        mBatteryView = (ImageView) findViewById(R.id.iv_battery_status_bar);
-        mWifiView = (ImageView) findViewById(R.id.iv_wifi_status_bar);
-        mVolumeView = (ImageView) findViewById(R.id.iv_volume_status_bar);
-        mNotificationView = (ImageView) findViewById(R.id.iv_notification_status_bar);
-        mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
-        mHomeView = (ImageView) findViewById(R.id.iv_home_status_bar);
+        mStartupMenuView = (RelativeLayout) findViewById(R.id.iv_startupmenu_status_bar_view);
+        mStartupMenuImageView = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
+        mInputView = (RelativeLayout) findViewById(R.id.iv_input_status_bar_view);
+        mInputImageView = (ImageView) findViewById(R.id.iv_input_status_bar);
+        mBatteryView = (RelativeLayout) findViewById(R.id.iv_battery_status_bar_view);
+        mBatteryImageView = (ImageView) findViewById(R.id.iv_battery_status_bar);
+        mWifiView = (RelativeLayout) findViewById(R.id.iv_wifi_status_bar_view);
+        mWifiImageView = (ImageView) findViewById(R.id.iv_wifi_status_bar);
+        mVolumeView = (RelativeLayout) findViewById(R.id.iv_volume_status_bar_view);
+        mNotificationView = (RelativeLayout) findViewById(R.id.iv_notification_status_bar_view);
+        mCalendarText = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
+        mCalendarView = (RelativeLayout) findViewById(R.id.iv_date_status_bar_view);
+        mHomeImageView = (ImageView) findViewById(R.id.iv_home_status_bar);
         mEmptyStatusBar = (View) findViewById(R.id.empty_statusbar);
         mLlScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
         findViewById(R.id.ll_scroll_icon_container).setFocusable(false);
@@ -123,17 +126,18 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initListener() {
-        mStartupMenu.setOnTouchListener(mTouchListener);
+        mStartupMenuView.setOnTouchListener(mTouchListener);
         mInputView.setOnTouchListener(mTouchListener);
         mBatteryView.setOnTouchListener(mTouchListener);
         mWifiView.setOnTouchListener(mTouchListener);
         mVolumeView.setOnTouchListener(mTouchListener);
         mNotificationView.setOnTouchListener(mTouchListener);
         mCalendarView.setOnTouchListener(mTouchListener);
-        mHomeView.setOnTouchListener(mTouchListener);
+        mHomeImageView.setOnTouchListener(mTouchListener);
         mEmptyStatusBar.setOnTouchListener(mTouchListener);
 //        mLlScrollContents.setOnClickListener(mOpenthosStatusbarListener);
 
+        mStartupMenuView.setOnHoverListener(mHoverListener);
         mInputView.setOnHoverListener(mHoverListener);
         mBatteryView.setOnHoverListener(mHoverListener);
         mWifiView.setOnHoverListener(mHoverListener);
@@ -157,28 +161,28 @@ public class OpenthosStatusBarView extends PanelBar {
     private View.OnTouchListener mTouchListener = (View v, MotionEvent event) -> {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             switch (v.getId()) {
-                case R.id.iv_startupmenu_status_bar:
-                    showDialog(mStartupMenu, mStartupMenuDialog);
+                case R.id.iv_startupmenu_status_bar_view:
+                    showDialog(mStartupMenuView, mStartupMenuDialog);
                     break;
-                case R.id.iv_input_status_bar:
+                case R.id.iv_input_status_bar_view:
                     showDialog(mInputView, mInputManagerDialog);
                     break;
-                case R.id.iv_battery_status_bar:
+                case R.id.iv_battery_status_bar_view:
                     showDialog(mBatteryView, mBatteryDialog);
                     break;
-                case R.id.iv_wifi_status_bar:
+                case R.id.iv_wifi_status_bar_view:
                     showDialog(mWifiView, mWifiDialog);
                     break;
-                case R.id.iv_volume_status_bar:
+                case R.id.iv_volume_status_bar_view:
                     showDialog(mVolumeView, mVolumeDialog);
                     break;
-                case R.id.iv_notification_status_bar:
+                case R.id.iv_notification_status_bar_view:
                     if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
                         mCurrentDialog.dismiss();
                     }
                     mStatusBar.showCustomNotificationPanel();
                     break;
-                case R.id.iv_date_status_bar:
+                case R.id.iv_date_status_bar_view:
                     showDialog(mCalendarView, mCalendarDialog);
                     break;
                 case R.id.iv_home_status_bar:
@@ -210,17 +214,17 @@ public class OpenthosStatusBarView extends PanelBar {
 
     public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
         if (charging || pluggedIn || level == 0) {
-            mBatteryView.setImageDrawable(getContext().getDrawable(
-                    R.mipmap.statusbar_battery));
+            mBatteryImageView.setImageDrawable(
+                    getContext().getDrawable(R.mipmap.statusbar_battery));
         } else if (level >= 75) {
-            mBatteryView.setImageDrawable(getContext().getDrawable(
-                    R.mipmap.statusbar_battery_high));
+            mBatteryImageView.setImageDrawable(
+                    getContext().getDrawable(R.mipmap.statusbar_battery_high));
         } else if (level >= 25 && level <= 75) {
-            mBatteryView.setImageDrawable(getContext().getDrawable(
-                    R.mipmap.ic_notice_battery_half));
+            mBatteryImageView.setImageDrawable(
+                    getContext().getDrawable(R.mipmap.ic_notice_battery_half));
         } else {
-            mBatteryView.setImageDrawable(getContext().getDrawable(
-                    R.mipmap.statusbar_battery_low));
+            mBatteryImageView.setImageDrawable(
+                    getContext().getDrawable(R.mipmap.statusbar_battery_low));
         }
     }
 
@@ -277,10 +281,11 @@ public class OpenthosStatusBarView extends PanelBar {
         for (InputMethodInfo im : inputMethodList) {
             if (im.getId().equals(currentInputMethodId)) {
                 if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {//os input
-                    mInputView.setImageResource(R.mipmap.statusbar_switch_input_method);
+                    mInputImageView.setImageDrawable(
+                            getContext().getDrawable(R.mipmap.statusbar_switch_input_method));
                     return;
                 } // other input methods;
-                mInputView.setImageDrawable(im.loadIcon(getContext().getPackageManager()));
+                mInputImageView.setImageDrawable(im.loadIcon(getContext().getPackageManager()));
             }
         }
     }

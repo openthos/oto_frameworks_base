@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.android.systemui.R;
 import com.android.systemui.dialog.DialogType;
@@ -33,10 +34,10 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     private static MenuDialog mTaskDialog;
     private AppOperateManager mOperateManager;
     private SqliteOpenHelper mOpenHelper;
-    private ImageView mIconView;
-    private View mFocuseView;
-    private View mRunView;
     private AppInfo mAppInfo;
+    private RelativeLayout mIconBackground;
+    private ImageView mIconView;
+
     private HashSet<Integer> mTasks = new HashSet<>();
 
     private String mPackageName;
@@ -67,9 +68,8 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     }
 
     private void initView() {
+        mIconBackground = (RelativeLayout) findViewById(R.id.taskbar_button_layout);
         mIconView = (ImageView) findViewById(R.id.icon_view);
-        mFocuseView = findViewById(R.id.focuse_view);
-        mRunView = findViewById(R.id.run_view);
         setFocusable(false);
         setDefaultFocusHighlightEnabled(false);
     }
@@ -91,6 +91,7 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
         setOnTouchListener(this);
         setOnClickListener(this);
         setOnHoverListener(this);
+        mIconBackground.setOnHoverListener(this);
     }
 
     private void initDialog() {
@@ -139,11 +140,13 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     public boolean onHover(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_HOVER_ENTER:
+                v.setBackground(getResources().getDrawable(R.color.openthos_view_hover_move_color));
                 if (!mMenuDialog.isShowing()) {
                     mHoverDialog.show(DialogType.NOTIFY_NAME, getAppInfo(), this);
                 }
                 break;
             case MotionEvent.ACTION_HOVER_EXIT:
+                v.setBackground(null);
                 ((View)getParent()).getBoundsOnScreen(mTmpRect);
                 if (!mTmpRect.contains((int) event.getRawX(), (int) event.getRawY()))
                     mHoverDialog.dismiss();
@@ -257,11 +260,11 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
         mIsFocusInApplications = isFocusInApplications;
         mIsRun = true;
         if (mIsFocusInApplications) {
-            mFocuseView.setVisibility(VISIBLE);
-            mRunView.setVisibility(GONE);
+            mIconBackground.setBackground(
+                    getResources().getDrawable(R.mipmap.status_bar_view_hover_selected_bg));
         } else {
-            mFocuseView.setVisibility(GONE);
-            mRunView.setVisibility(VISIBLE);
+            mIconBackground.setBackground(
+                    getResources().getDrawable(R.mipmap.status_bar_view_run_bg));
         }
     }
 
@@ -272,12 +275,11 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     public void setRun(boolean isRun) {
         mIsRun = isRun;
         if (mIsRun) {
-            mFocuseView.setVisibility(GONE);
-            mRunView.setVisibility(VISIBLE);
+            mIconBackground.setBackground(
+                    getResources().getDrawable(R.mipmap.status_bar_view_run_bg));
         } else {
             mTaskId = -1;
-            mFocuseView.setVisibility(GONE);
-            mRunView.setVisibility(GONE);
+            mIconBackground.setBackground(null);
         }
     }
 

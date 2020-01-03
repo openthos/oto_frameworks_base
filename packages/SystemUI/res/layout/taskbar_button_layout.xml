@@ -1,35 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android.systemui.statusbar.view.SquareFrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/taskbar_button_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/padding_one" >
+    android:layout_width="@dimen/task_bar_view_width"
+    android:layout_height="@dimen/task_bar_view_height"
+    android:layout_marginLeft="@dimen/view_divider_size"
+    android:layout_gravity="center"
+    android:gravity="center" >
 
-    <com.android.systemui.statusbar.view.ScapeImageView
+    <ImageView
         android:id="@+id/icon_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/padding_five"
-        android:scaleType="fitCenter"
-        app:scapeSize="1" />
-
-    <View
-        android:id="@+id/run_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/padding_one"
-        android:background="@mipmap/status_bar_view_run_bg"
-        android:visibility="gone" />
-
-    <View
-        android:id="@+id/focuse_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/padding_one"
-        android:background="@mipmap/status_bar_view_hover_selected_bg"
-        android:visibility="gone" />
-
-</com.android.systemui.statusbar.view.SquareFrameLayout>
+        android:layout_width="@dimen/task_bar_icon_size"
+        android:layout_height="@dimen/task_bar_icon_size"
+        android:scaleType="centerInside" />
+</RelativeLayout>
