@@ -2516,13 +2516,18 @@ public class WallpaperManagerService extends IWallpaperManager.Stub {
 
     private void ensureSaneWallpaperData(WallpaperData wallpaper) {
         // We always want to have some reasonable width hint.
-        int baseSize = getMaximumSizeDimension();
-        if (wallpaper.width < baseSize) {
-            wallpaper.width = baseSize;
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        Display d = wm.getDefaultDisplay();
+        Point small = new Point();
+        Point large = new Point();
+        d.getCurrentSizeRange(small, large);
+        if (wallpaper.width != Math.max(large.x, large.y)) {
+            wallpaper.width = Math.max(large.x, large.y);
         }
-        if (wallpaper.height < baseSize) {
-            wallpaper.height = baseSize;
-        }
+	if (wallpaper.height != Math.max(small.x, small.y)) {
+	    wallpaper.height = Math.max(small.x, small.y);
+	}
+
         // and crop, if not previously specified
         if (wallpaper.cropHint.width() <= 0
                 || wallpaper.cropHint.height() <= 0) {

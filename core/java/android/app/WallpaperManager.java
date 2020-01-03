@@ -475,15 +475,52 @@ public class WallpaperManager {
         }
 
         private Bitmap getDefaultWallpaper(Context context, @SetWallpaperFlags int which) {
-            InputStream is = openDefaultWallpaper(context, which);
-            if (is != null) {
+            int BUFFER_SIZE = 1024;
+            InputStream inputstream = new BufferedInputStream(openDefaultWallpaper(context, which));
+            if (inputstream != null) {
                 try {
+                    if (!inputstream.markSupported()) {
+                        inputstream = new BufferedInputStream(inputstream, BUFFER_SIZE);
+                    }
+                    inputstream.mark(BUFFER_SIZE);
                     BitmapFactory.Options options = new BitmapFactory.Options();
-                    return BitmapFactory.decodeStream(is, null, options);
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(
+                            new BufferedInputStream(inputstream), null, options);
+                    WallpaperManager wm = WallpaperManager.getInstance(context);
+                    int maxWidth = wm.getDesiredMinimumWidth();
+                    int maxHeight = wm.getDesiredMinimumHeight();
+                    int bmWidth = options.outWidth;
+                    int bmHeight = options.outHeight;
+                    int scale = 1;
+                    while (bmWidth > maxWidth || bmHeight > maxHeight) {
+                        scale <<= 1;
+                        bmWidth >>= 1;
+                        bmHeight >>= 1;
+                    }
+                    inputstream = new BufferedInputStream(openDefaultWallpaper(context, which));
+                    Bitmap crop = null;
+                    if (bmWidth == maxWidth && bmHeight == maxHeight) {
+                        options.inJustDecodeBounds = false;
+                        options.inSampleSize = scale;
+                        crop = BitmapFactory.decodeStream(inputstream, null, options);
+                    } else {
+                        bmWidth = options.outWidth;
+                        bmHeight = options.outHeight;
+                        Bitmap temp = BitmapFactory.decodeStream(inputstream);
+                        Matrix matrix = new Matrix();
+                        matrix.postScale((float) maxWidth / bmWidth, (float) maxHeight / bmHeight);
+                        crop = Bitmap.createBitmap(temp, 0, 0, bmWidth, bmHeight, matrix ,true);
+                    }
+                    return crop;
                 } catch (OutOfMemoryError e) {
                     Log.w(TAG, "Can't decode stream", e);
                 } finally {
-                    IoUtils.closeQuietly(is);
+                    try {
+                        inputstream.close();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
                 }
             }
             return null;
@@ -1788,7 +1825,8 @@ public class WallpaperManager {
      */
     @RequiresPermission(android.Manifest.permission.SET_WALLPAPER)
     public void clear() throws IOException {
-        setStream(openDefaultWallpaper(mContext, FLAG_SYSTEM), null, false);
+        //setStream(openDefaultWallpaper(mContext, FLAG_SYSTEM), null, false);
+        setBitmap(sGlobals.getDefaultWallpaper(mContext, FLAG_SYSTEM));
     }
 
     /**
