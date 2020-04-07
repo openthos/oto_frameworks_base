@@ -217,4 +217,5 @@
     <color name="input_bg">#cfcaca</color>
     <color name="inputmethodfocus">#5b41a2</color>
     <color name="gray_text">#939aa3</color>
+    <color name="startupmenu_textcolor">#FF202020</color>
 </resources>

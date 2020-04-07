@@ -2508,5 +2508,17 @@
     <string name="remove_application">Remove application:</string>
     <string name="status_bar_info_hide">Auto hide</string>
     <string name="status_bar_info_show">Always show</string>
+    <string name="startupmenu_all_apps">All Apps</string>
+    <string name="startupmenu_search_app">Search Application</string>
+    <string name="startupmenu_recent_apps">Recent Apps</string>
+    <string name="startupmenu_recent_document">Recent Documents</string>
+    <string name="startupmenu_document_null">Null Documents</string>
+    <string name="startupmenu_recent_null">Null Recent Apps</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="minutes_ago">mins ago</string>
+    <string name="now">Now</string>
+    <string name="year">-</string>
+    <string name="month">-</string>
+    <string name="day"></string>
 
 </resources>

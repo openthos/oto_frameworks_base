@@ -155,7 +155,7 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
     @Override
     public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu, int taskId) {
         if (menu.equals(getContext().getString(R.string.open))) {
-            mOperateManager.openApplication(appInfo.getComponentName());
+            mOperateManager.openApplication(appInfo);
         } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {
             mOperateManager.addToTaskbar(taskId, appInfo.getComponentName());
         } else if (menu.equals(getContext().getString(R.string.unlock_from_task_bar))) {
@@ -178,11 +178,6 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
             mOperateManager.closeApp(Integer.parseInt(menu), appInfo.getPackageName());
         }
         mHoverDialog.dismiss();
-        dialog.dismiss();
-    }
-
-    @Override
-    public void sortShow(View view, Dialog dialog, String menu) {
         dialog.dismiss();
     }
 
@@ -217,7 +212,7 @@ public class TaskBarIcon extends FrameLayout implements View.OnTouchListener, Se
                     am.setFocusedTask(mTasks.iterator().next());
                 }
             } else {
-                mOperateManager.openApplication(mComponentName/*getAppInfo().getComponentName()*/);
+                mOperateManager.openApplication(getAppInfo()/*getAppInfo().getComponentName()*/);
             }
             //setFocusInApplications(true);
         } catch (Exception e) {

@@ -1,87 +1,59 @@
-/* Copyright 2016 Braden Farmer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.android.systemui.startupmenu.bean;
 
 import android.content.ComponentName;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Process;
-import android.os.UserManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class AppInfo implements Serializable {
-    static final long serialVersionUID = -3982172488299272068L;
-
-    private String label;
+    private String firstLetter;
+    private String name;
     private String packageName;
     private String activityName;
-    private Long userId;
-    private Long installTime;
-    private Long lastTimeUsed;
-    private int useCounts;
-    private ArrayList<Integer> mTasks = new ArrayList<>();
-    private boolean isSystemApp;
+    private String pinYin;
+    private String matchPin = "";
+    private String namePinYin = "";
+    private String year;
+    private String month;
+    private String day;
+    private String path;
+    private long time;
+    private int useCount = 0;
+    private int matchType = 0;
+    private ArrayList<String> namePinyinList = new ArrayList<>();
+    private ArrayList<String> numberList = new ArrayList<>();
     private boolean isLocked;
-
-    public AppInfo() {
-    }
-
-    public AppInfo(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public AppInfo(String packageName, String activityName) {
-        this.packageName = packageName;
-        this.activityName = activityName;
-    }
-
-    public AppInfo(ComponentName componentName) {
-        this.packageName = componentName.getPackageName();
-        this.activityName = componentName.getClassName();
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     public String getPackageName() {
         return packageName;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+    public String getFirstLetter() {
+        return firstLetter;
     }
 
-    public String getActivityName() {
-        return activityName;
+    public void setFirstLetter(String firstLetter) {
+        this .firstLetter = firstLetter ;
     }
 
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
+    public String getLabel() {
+        return name;
+    }
+
+    public void setLabel(String name) {
+        this.name = name ;
+    }
+
+    public String getPinYin() {
+        return pinYin;
+    }
+
+    public void setPinYin(String pinYin) {
+        this.pinYin = pinYin;
     }
 
     public ComponentName getComponentName() {
-        ComponentName componentName = new ComponentName(packageName, activityName);
-        return componentName;
+        return new ComponentName(packageName, activityName);
     }
 
     public void setComponentName(ComponentName componentName) {
@@ -89,56 +61,52 @@ public class AppInfo implements Serializable {
         activityName = componentName.getClassName();
     }
 
-    public Long getUserId(Context context) {
-        if (userId == null) {
-            UserManager userManager = (UserManager) context.getSystemService(Context.USER_SERVICE);
-            return userManager.getSerialNumberForUser(Process.myUserHandle());
-        } else
-            return userId;
+    public int getUseCount() {
+        return useCount;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUseCount(int useCount) {
+        this.useCount = useCount;
     }
 
-    public Long getInstallTime() {
-        return installTime;
+    public int getMatchType() {
+        return matchType;
     }
 
-    public void setInstallTime(Long installTime) {
-        this.installTime = installTime;
+    public void setMatchType(int matchType) {
+        this.matchType = matchType;
     }
 
-    public Long getLastTimeUsed() {
-        return lastTimeUsed;
+    public ArrayList<String> getNumberList() {
+        return numberList;
     }
 
-    public void setLastTimeUsed(Long lastTimeUsed) {
-        this.lastTimeUsed = lastTimeUsed;
+    public void setNumberList(ArrayList<String> numberList) {
+        this.numberList = numberList;
     }
 
-    public int getUseCounts() {
-        return useCounts;
+    public String getMatchPin() {
+        return matchPin;
     }
 
-    public int getTaskCount() {
-        return mTasks.size();
+    public void setMatchPin(String matchPin) {
+        this.matchPin = matchPin;
     }
 
-    public void setUseCounts(int useCounts) {
-        this.useCounts = useCounts;
+    public ArrayList<String> getNamePinyinList() {
+        return namePinyinList;
     }
 
-
-    public void setIcon(Drawable icon) {
+    public void setNamePinyinList(ArrayList<String> namePinyinList) {
+        this.namePinyinList = namePinyinList;
     }
 
-    public boolean isSystemApp() {
-        return isSystemApp;
+    public String getNamePinYin() {
+        return namePinYin;
     }
 
-    public void setSystemApp(boolean systemApp) {
-        isSystemApp = systemApp;
+    public void setNamePinYin(String namePinYin) {
+        this.namePinYin = namePinYin;
     }
 
     public boolean isLocked() {
@@ -147,5 +115,45 @@ public class AppInfo implements Serializable {
 
     public void setLocked(boolean locked) {
         isLocked = locked;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
