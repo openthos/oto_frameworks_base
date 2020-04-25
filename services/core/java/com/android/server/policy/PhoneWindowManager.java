@@ -95,6 +95,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_SCREENSHOT;
 import static android.view.WindowManager.LayoutParams.TYPE_SEARCH_BAR;
 import static android.view.WindowManager.LayoutParams.TYPE_SECURE_SYSTEM_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR;
+import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_SUB_PANEL;
 import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -2568,6 +2569,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case TYPE_PRIORITY_PHONE:
             case TYPE_SEARCH_BAR:
             case TYPE_STATUS_BAR:
+            case TYPE_STATUS_BAR_DIALOG:
             case TYPE_STATUS_BAR_PANEL:
             case TYPE_STATUS_BAR_SUB_PANEL:
             case TYPE_SYSTEM_DIALOG:
@@ -3071,6 +3073,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 if (DEBUG_LAYOUT) Slog.i(TAG, "NAVIGATION BAR: " + mNavigationBar);
                 break;
             case TYPE_NAVIGATION_BAR_PANEL:
+            case TYPE_STATUS_BAR_DIALOG:
             case TYPE_STATUS_BAR_PANEL:
             case TYPE_STATUS_BAR_SUB_PANEL:
             case TYPE_VOICE_INTERACTION_STARTING:
@@ -4984,6 +4987,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     setAttachedWindowFrames(win, fl, adjust, attached, true, pf, df, of, cf, vf);
                 } else {
                     if (attrs.type == TYPE_STATUS_BAR_PANEL
+                            || attrs.type == TYPE_STATUS_BAR_DIALOG
                             || attrs.type == TYPE_STATUS_BAR_SUB_PANEL) {
                         // Status bar panels are the only windows who can go on top of
                         // the status bar.  They are protected by the STATUS_BAR_SERVICE
@@ -5097,6 +5101,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // A window that has requested to fill the entire screen just
                 // gets everything, period.
                 if (attrs.type == TYPE_STATUS_BAR_PANEL
+                        || attrs.type == TYPE_STATUS_BAR_DIALOG
                         || attrs.type == TYPE_STATUS_BAR_SUB_PANEL) {
                     pf.left = df.left = of.left = cf.left = hasNavBar
                             ? mDockLeft : mUnrestrictedScreenLeft;
@@ -5232,7 +5237,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         "): normal window");
                 // Otherwise, a normal window must be placed inside the content
                 // of all screen decorations.
-                if (attrs.type == TYPE_STATUS_BAR_PANEL || attrs.type == TYPE_VOLUME_OVERLAY) {
+                if (attrs.type == TYPE_STATUS_BAR_PANEL || attrs.type == TYPE_VOLUME_OVERLAY
+                        || attrs.type == TYPE_STATUS_BAR_DIALOG) {
                     // Status bar panels and the volume dialog are the only windows who can go on
                     // top of the status bar.  They are protected by the STATUS_BAR_SERVICE
                     // permission, so they have the same privileges as the status
@@ -8027,7 +8033,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         // prevent status bar interaction from clearing certain flags
         int type = win.getAttrs().type;
-        boolean statusBarHasFocus = type == TYPE_STATUS_BAR;
+        //boolean statusBarHasFocus = type == TYPE_STATUS_BAR;
+        boolean statusBarHasFocus = type == TYPE_STATUS_BAR || type == TYPE_STATUS_BAR_DIALOG;
         if (statusBarHasFocus && !isStatusBarKeyguard()) {
             int flags = View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION

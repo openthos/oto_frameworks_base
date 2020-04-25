@@ -317,6 +317,10 @@ interface IWindowManager
      */
     boolean clearWindowContentFrameStats(IBinder token);
 
+    void setWindowBlur(IBinder token, boolean blur, boolean allBlur);
+
+    void setStatusBarWindowBlur(IBinder token, boolean blur, boolean allBlur, in Rect blurRect);
+
     /**
      * Gets the content frame statistics for a given window.
      *

@@ -18,6 +18,7 @@ package com.android.internal.widget;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.RemoteException;
@@ -101,6 +102,7 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private PackageManager mPm;
     private ApplicationInfo mApplicationInfo;
     private boolean mShow = false;
+    private Drawable mCaptionBackground = null;
 
     // True if the window is being dragged.
     private boolean mDragging = false;
@@ -146,6 +148,8 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     private final Rect mMaximizeRect = new Rect();
     private final Rect mCloseRect = new Rect();
     private View mClickTarget;
+    private boolean mWindowFocused = false;
+    private boolean mAppBlur = false;
 
     public DecorCaptionView(Context context) {
         super(context);
@@ -171,6 +175,39 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     protected void onFinishInflate() {
         super.onFinishInflate();
         mCaption = getChildAt(0);
+    }
+
+    public void setWindowFocus(boolean focus) {
+        mWindowFocused = focus;
+    }
+
+    public void setCaptionAlpha(boolean focused, int alpha,
+                                    Drawable decorBackground, boolean blurAll) {
+        mAppBlur = blurAll;
+        if (mCaption != null && mCaption.getBackground() != null) {
+            if (mCaptionBackground == null) {
+                mCaptionBackground = mCaption.getBackground().mutate();
+            }
+            if (focused) {
+                mCaption.getBackground().setAlpha(alpha);
+            } else {
+                mCaption.getBackground().setAlpha(255);
+            }
+            if (mContent != null) {
+                if (mContent.getBackground() == null && decorBackground != null) {
+                    mContent.setBackground(decorBackground);
+                }
+                if (mContent.getBackground() != null) {
+                    int contentAlpha = (blurAll && focused) ? 0 : 255;
+                    boolean invalidate = (contentAlpha != mContent.getBackground().getAlpha());
+                    mContent.getBackground().setAlpha(contentAlpha);
+                    if (invalidate) {
+                        mContent.requestLayout();
+                        mContent.invalidate();
+                    }
+                }
+            }
+        }
     }
 
     public void setPhoneWindow(PhoneWindow owner, boolean show) {
@@ -496,11 +533,19 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
                 mContent.layout(0, captionHeight, mContent.getMeasuredWidth(),
                         captionHeight + mContent.getMeasuredHeight());
             }
+            if (mContent.getBackground() != null) {
+                mContent.getBackground().setAlpha(255);
+            }
         }
 
         // This assumes that the caption bar is at the top.
         mOwner.notifyRestrictedCaptionAreaCallback(mMaximize.getLeft(), mMaximize.getTop(),
                 mClose.getRight(), mClose.getBottom());
+        try {
+            PhoneWindow.WindowManagerHolder.sWindowManager.
+                            setWindowBlur(getWindowToken(), false, mAppBlur);
+        } catch (Exception e) {
+        }
     }
     /**
      * Determine if the workspace is entirely covered by the window.
@@ -590,6 +635,11 @@ public class DecorCaptionView extends ViewGroup implements View.OnTouchListener,
     }
 
     public boolean hasCaption() {
+        return getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
+    }
+
+    public boolean canHasAlpha() {
+        //TODO: Judge if the caption can has alpha due to boundsMode and windowType.
         return getStackId() != FULLSCREEN_WORKSPACE_STACK_ID;
     }
 

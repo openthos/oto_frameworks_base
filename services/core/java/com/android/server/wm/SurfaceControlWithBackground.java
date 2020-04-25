@@ -153,6 +153,11 @@ class SurfaceControlWithBackground extends SurfaceControl {
     }
 
     @Override
+    public void setBlurCrop(Rect crop) {
+        super.setBlurCrop(crop);
+    }
+
+    @Override
     public void setFinalCrop(Rect crop) {
         super.setFinalCrop(crop);
 
@@ -229,6 +234,12 @@ class SurfaceControlWithBackground extends SurfaceControl {
             return;
         }
         mBackgroundControl.setLayerStack(layerStack);
+    }
+
+    @Override
+    public void setBlur(boolean isBlur) {
+        super.setBlur(isBlur);
+        updateBackgroundVisibility();
     }
 
     @Override

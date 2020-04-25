@@ -393,6 +393,8 @@ public interface WindowManager extends ViewManager {
          */
         public static final int TYPE_DRAWN_APPLICATION = 4;
 
+        public static final int TYPE_BLUR_APPLICATION = 5;
+
         /**
          * End of types of application windows.
          */
@@ -1955,6 +1957,8 @@ public interface WindowManager extends ViewManager {
         @TestApi
         public CharSequence accessibilityTitle;
 
+        public boolean needWindowShadow = false;
+
         /**
          * Sets a timeout in milliseconds before which the window will be hidden
          * by the window manager. Useful for transient notifications like toasts
@@ -2034,12 +2038,19 @@ public interface WindowManager extends ViewManager {
             return mTitle != null ? mTitle : "";
         }
 
+        private boolean isSurfaceInsetsNeeded() {
+            return type == TYPE_BASE_APPLICATION || type == TYPE_STATUS_BAR_DIALOG
+                || type == TYPE_STATUS_BAR || type == TYPE_STATUS_BAR_PANEL;
+        }
+
         /**
          * Sets the surface insets based on the elevation (visual z position) of the input view.
          * @hide
          */
         public final void setSurfaceInsets(View view, boolean manual, boolean preservePrevious) {
-            final int surfaceInset = (int) Math.ceil(view.getZ() * 2);
+            //final int surfaceInset = type == TYPE_BASE_APPLICATION
+            final int surfaceInset = isSurfaceInsetsNeeded()
+                                        ? (int) Math.ceil(view.dipsToPixels(20) * 2) : 0;
             // Partial workaround for b/28318973. Every inset change causes a freeform window
             // to jump a little for a few frames. If we never allow surface insets to decrease,
             // they will stabilize quickly (often from the very beginning, as most windows start

@@ -6433,6 +6433,30 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     @Override
+    public void setStatusBarWindowBlur(IBinder token, boolean blur,
+                                        boolean allBlur, Rect blurRect) {
+        WindowState windowState = mWindowMap.get(token);
+        if (windowState != null) {
+            windowState.setBlurChangeForStatusBar(blur, blurRect);
+        }
+    }
+
+    @Override
+    public void setWindowBlur(IBinder token, boolean blur, boolean allBlur) {
+        synchronized (mWindowMap) {
+            WindowState windowState = mWindowMap.get(token);
+            if (windowState != null) {
+                windowState.blurAll = allBlur;
+                if (blur) {
+                    windowState.setBlurChangeByFocus();
+                } else {
+                    windowState.setBlurChange();
+                }
+            }
+        }
+    }
+
+    @Override
     public boolean clearWindowContentFrameStats(IBinder token) {
         if (!checkCallingPermission(Manifest.permission.FRAME_STATS,
                 "clearWindowContentFrameStats()")) {

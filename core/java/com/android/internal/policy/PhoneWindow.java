@@ -292,8 +292,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
     /** @see ViewRootImpl#mActivityConfigCallback */
     private ActivityConfigCallback mActivityConfigCallback;
 
-    static class WindowManagerHolder {
-        static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
+    public static class WindowManagerHolder {
+        public static final IWindowManager sWindowManager = IWindowManager.Stub.asInterface(
                 ServiceManager.getService("window"));
     }
 
@@ -314,7 +314,8 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
         // context that was given to them.
         mUseDecorContext = true;
         if (preservedWindow != null) {
-            mDecor = (DecorView) preservedWindow.getDecorView();
+            //mDecor = (DecorView) preservedWindow.getDecorView();
+            mDecor = (DecorView) preservedWindow.getSpecialDecorView();
             mElevation = preservedWindow.getElevation();
             mLoadElevation = false;
             mForceDecorInstall = true;

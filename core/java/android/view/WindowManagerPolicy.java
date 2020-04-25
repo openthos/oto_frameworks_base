@@ -50,6 +50,7 @@ import static android.view.WindowManager.LayoutParams.TYPE_SCREENSHOT;
 import static android.view.WindowManager.LayoutParams.TYPE_SEARCH_BAR;
 import static android.view.WindowManager.LayoutParams.TYPE_SECURE_SYSTEM_OVERLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR;
+import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL;
 import static android.view.WindowManager.LayoutParams.TYPE_STATUS_BAR_SUB_PANEL;
 import static android.view.WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -844,6 +845,7 @@ public interface WindowManagerPolicy {
             case TYPE_STATUS_BAR_SUB_PANEL:
                 return  17;
             case TYPE_STATUS_BAR:
+            case TYPE_STATUS_BAR_DIALOG:
                 return  18;
             case TYPE_STATUS_BAR_PANEL:
                 return  19;

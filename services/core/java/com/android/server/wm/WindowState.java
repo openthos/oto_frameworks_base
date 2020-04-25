@@ -112,6 +112,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Binder;
+import android.os.SystemProperties;
 import android.os.Debug;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -126,6 +127,7 @@ import android.util.DisplayMetrics;
 import android.util.Slog;
 import android.util.TimeUtils;
 import android.view.DisplayInfo;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.IApplicationToken;
 import android.view.IWindow;
@@ -142,6 +144,7 @@ import android.view.WindowManagerPolicy;
 
 import com.android.internal.util.ToBooleanFunction;
 import com.android.server.input.InputWindowHandle;
+import com.android.server.am.ActivityManagerService;
 
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
@@ -187,6 +190,7 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
     final WindowManager.LayoutParams mAttrs = new WindowManager.LayoutParams();
     final DeathRecipient mDeathRecipient;
     private boolean mIsChildWindow;
+    private boolean mIsBlur;
     final int mBaseLayer;
     final int mSubLayer;
     final boolean mLayoutAttached;
@@ -218,7 +222,9 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
     boolean mWallpaperVisible;  // for wallpaper, what was last vis report?
     private boolean mDragResizing;
     private boolean mDragResizingChangeReported = true;
+    private boolean mDragMovingChangeReported = true;
     private int mResizeMode;
+    private int mRunMode = Display.STANDARD_MODE;
 
     private RemoteCallbackList<IWindowFocusObserver> mFocusCallbacks;
 
@@ -235,6 +241,7 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
     boolean mHaveFrame;
     boolean mObscured;
     boolean mTurnOnScreen;
+    boolean blurAll;
 
     int mLayoutSeq = -1;
 
@@ -567,6 +574,8 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
      */
     boolean mSeamlesslyRotated = false;
 
+    private Rect mBlurRect = new Rect(0, 0, 0, 0);
+
     private static final Region sEmptyRegion = new Region();
 
     /**
@@ -622,6 +631,10 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
         DeathRecipient deathRecipient = new DeathRecipient();
         mSeq = seq;
         mEnforceSizeCompat = (mAttrs.privateFlags & PRIVATE_FLAG_COMPATIBLE_WINDOW) != 0;
+        if (mAttrs != null) {
+            mRunMode = ActivityManagerService.
+                               getTaskRunModeForPackageNameStatic(mAttrs.packageName);
+        }
         if (localLOGV) Slog.v(
             TAG, "Window " + this + " client=" + c.asBinder()
             + " token=" + token + " (" + mAttrs.token + ")" + " params=" + a);
@@ -3117,6 +3130,24 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
         }
     }
 
+    public boolean setBlurRect() {
+        DisplayMetrics dm = getDisplayContent().getDisplayMetrics();
+
+        if (mRunMode == Display.PHONE_MODE || mRunMode == Display.DESKTOP_MODE) {
+            dm.density = 1.0f;
+            dm.densityDpi = 160;
+        }
+
+        final int captionHeight = (int) (30.0f * dm.density);
+        int step = dm.densityDpi / 4;
+        if (mFrame.width() < dm.widthPixels || mFrame.height() < dm.heightPixels) {
+            mBlurRect.set(step, step, mFrame.width() + step, step
+                        + (blurAll ? mFrame.height() : captionHeight));
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Configuration getConfiguration() {
         if (mAppToken != null && mAppToken.mFrozenMergedConfig.size() > 0) {
@@ -3251,6 +3282,15 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
         }
     }
 
+    public boolean isTaskFocused() {
+        synchronized(mService.mWindowMap) {
+            if (mService.mCurrentFocus == null) {
+                return false;
+            }
+            return mService.mCurrentFocus.getTask() == getTask();
+        }
+    }
+
     public boolean isFocused() {
         synchronized(mService.mWindowMap) {
             return mService.mCurrentFocus == this;
@@ -3325,6 +3365,48 @@ class WindowState extends WindowContainer<WindowState> implements WindowManagerP
     void resetDragResizingChangeReported() {
         mDragResizingChangeReported = false;
         super.resetDragResizingChangeReported();
+    }
+
+    void setBlurChangeByFocus() {
+        boolean blurOn = !SystemProperties.get("android.os.use_blur").equals("off");
+        if (!blurOn) return;
+        if (mAttrs == null) return;
+        if (mAttrs != null && mAttrs.type != TYPE_BASE_APPLICATION) {
+            return;
+        }
+        if (mWinAnimator != null && mWinAnimator.mSurfaceController != null) {
+            if (!isTaskFocused()) {
+                //Do nothing during focuschange
+            } else if (setBlurRect()) {
+                mWinAnimator.mSurfaceController.setBlur(true, mBlurRect);
+                mIsBlur = true;
+            }
+        }
+    }
+
+    public void setBlurChange() {
+        boolean blurOn = !SystemProperties.get("android.os.use_blur").equals("off");
+        if (!blurOn) return;
+        if (mAttrs == null) return;
+        if (mAttrs != null && mAttrs.type != TYPE_BASE_APPLICATION) {
+            return;
+        }
+        if (mWinAnimator != null && mWinAnimator.mSurfaceController != null) {
+            if (!isTaskFocused()) {
+                mWinAnimator.mSurfaceController.setBlur(false, null);
+                mIsBlur = false;
+            } else if (setBlurRect()) {
+                mWinAnimator.mSurfaceController.setBlur(true, mBlurRect);
+                mIsBlur = true;
+            }
+        }
+    }
+
+    public void setBlurChangeForStatusBar(boolean blur, Rect rect) {
+        if (mWinAnimator != null && mWinAnimator.mSurfaceController != null) {
+            mWinAnimator.mSurfaceController.setBlur(blur, rect);
+            mIsBlur = blur;
+        }
     }
 
     /**

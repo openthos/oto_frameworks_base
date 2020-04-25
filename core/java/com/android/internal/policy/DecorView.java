@@ -47,9 +47,11 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.RadialGradient;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.Point;
@@ -61,6 +63,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.ContextThemeWrapper;
+import android.view.Display;
 import android.view.DisplayListCanvas;
 import android.view.Gravity;
 import android.view.InputQueue;
@@ -122,9 +125,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     private static final boolean SWEEP_OPEN_MENU = false;
 
     // The height of a window which has focus in DIP.
-    private final static int DECOR_SHADOW_FOCUSED_HEIGHT_IN_DIP = 20;
+    private final static int DECOR_SHADOW_FOCUSED_HEIGHT_IN_DIP = 0;
     // The height of a window which has not in DIP.
-    private final static int DECOR_SHADOW_UNFOCUSED_HEIGHT_IN_DIP = 5;
+    private final static int DECOR_SHADOW_UNFOCUSED_HEIGHT_IN_DIP = 0;
 
     public static final ColorViewAttributes STATUS_BAR_COLOR_VIEW_ATTRIBUTES =
             new ColorViewAttributes(SYSTEM_UI_FLAG_FULLSCREEN, FLAG_TRANSLUCENT_STATUS,
@@ -181,7 +184,11 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     private boolean mChanging;
 
+    private boolean mAppBlur = false;
+
     private Drawable mMenuBackground;
+    private Drawable mDecorBackground;
+    private Drawable mTitleDrawable = new ColorDrawable(Color.parseColor("#F2F2F2"));
     private boolean mWatchingForMenu;
     private int mDownY;
 
@@ -245,6 +252,7 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     private boolean mWindowResizeCallbacksAdded = false;
     private Drawable.Callback mLastBackgroundDrawableCb = null;
     protected BackdropFrameRenderer mBackdropFrameRenderer = null;
+    protected boolean mFloatingWithCaption = false;
     private Drawable mResizingBackgroundDrawable;
     private Drawable mCaptionBackgroundDrawable;
     private Drawable mUserCaptionBackgroundDrawable;
@@ -318,6 +326,8 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     @Override
     public void onDraw(Canvas c) {
         super.onDraw(c);
+        Rect outRect = new Rect();
+        getBoundsOnScreen(outRect);
 
         // When we are resizing, we need the fallback background to cover the area where we have our
         // system bar background views as the navigation bar will be hidden during resizing.
@@ -763,6 +773,48 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         }
     }
 
+    private void setBlur(boolean hasWindowFocus) {
+        if (mDecorCaptionView != null) {
+            Point initial = new Point();
+            try {
+                PhoneWindow.WindowManagerHolder.sWindowManager.
+                                getInitialDisplaySize(Display.DEFAULT_DISPLAY, initial);
+            } catch (Exception e) {
+            }
+            int screenWidth = initial.x;
+            int screenHeight = initial.y - getResources()
+                                    .getDimensionPixelSize(R.dimen.navigation_bar_height);
+            boolean hasAlpha = hasWindowFocus && (getWidth() < screenWidth
+                                              || getHeight() < screenHeight)
+                                              && mDecorCaptionView.canHasAlpha();
+            if (getBackground() != null) {
+                if (mDecorBackground == null) {
+                    final TypedValue outValue = new TypedValue();
+                    final Resources.Theme baseTheme = mContext.getTheme();
+                    baseTheme.resolveAttribute(R.attr.colorPrimary, outValue, true);
+                    int color = outValue.data;
+                    mDecorBackground = new ColorDrawable(color);
+                }
+                if (hasAlpha) {
+                    setBackground(mTitleDrawable);
+                    getBackground().mutate().setAlpha(0);
+                } else {
+                    setBackground(mDecorBackground);
+                    getBackground().mutate().setAlpha(255);
+                }
+            }
+            mDecorCaptionView.setCaptionAlpha(hasAlpha, hasAlpha ? 200 : 255,
+                    mDecorBackground, mAppBlur);
+            if (hasWindowFocus) {
+                try {
+                    PhoneWindow.WindowManagerHolder.sWindowManager.
+                                    setWindowBlur(getWindowToken(), true, mAppBlur);
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -782,10 +834,13 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
         // If the application changed its SystemUI metrics, we might also have to adapt
         // our shadow elevation.
+
+        setBlur(hasWindowFocus());
+
         updateElevation();
         mAllowUpdateElevation = true;
 
-        if (changed && mResizeMode == RESIZE_MODE_DOCKED_DIVIDER) {
+        if (changed) {
             getViewRootImpl().requestInvalidateRootRenderNode();
         }
     }
@@ -951,6 +1006,9 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
 
     public void setWindowBackground(Drawable drawable) {
         if (getBackground() != drawable) {
+            if (drawable instanceof ColorDrawable) {
+                mDecorBackground = new ColorDrawable(((ColorDrawable) drawable).getColor());
+            }
             setBackgroundDrawable(drawable);
             if (drawable != null) {
                 mResizingBackgroundDrawable = enforceNonTranslucentBackground(drawable,
@@ -984,6 +1042,15 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
     @Override
     public void onWindowSystemUiVisibilityChanged(int visible) {
         updateColorViews(null /* insets */, true /* animate */);
+    }
+
+    @Override
+    public void setAppBlur(boolean isBlur) {
+        mAppBlur = isBlur;
+    }
+
+    public boolean getAppBlur() {
+        return mAppBlur;
     }
 
     @Override
@@ -1584,6 +1651,12 @@ public class DecorView extends FrameLayout implements RootViewSurfaceTaker, Wind
         if (mFloatingActionMode != null) {
             mFloatingActionMode.onWindowFocusChanged(hasWindowFocus);
         }
+
+        if (mDecorCaptionView != null) {
+            mDecorCaptionView.setWindowFocus(hasWindowFocus);
+        }
+
+        setBlur(hasWindowFocus);
 
         updateElevation();
     }

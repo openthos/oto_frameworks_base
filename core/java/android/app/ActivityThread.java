@@ -3703,6 +3703,7 @@ public final class ActivityThread {
                 ViewManager wm = a.getWindowManager();
                 WindowManager.LayoutParams l = r.window.getAttributes();
                 a.mDecor = decor;
+                decor.setAppBlur(l.type == WindowManager.LayoutParams.TYPE_BLUR_APPLICATION);
                 l.type = WindowManager.LayoutParams.TYPE_BASE_APPLICATION;
                 l.softInputMode |= forwardBit;
                 if (r.mPreserveWindow) {

@@ -382,6 +382,24 @@ class WindowSurfaceController {
         }
     }
 
+    void setBlur(boolean isBlur, Rect blurCrop) {
+        if (SHOW_TRANSACTIONS) logSurface("isBlur=" + isBlur, null);
+        if (mSurfaceControl == null) {
+            return;
+        }
+        if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG, ">>> OPEN TRANSACTION setBlurLocked");
+        mService.openSurfaceTransaction();
+        try {
+            mSurfaceControl.setBlur(isBlur);
+            if (isBlur) {
+                mSurfaceControl.setBlurCrop(blurCrop);
+            }
+        } finally {
+            mService.closeSurfaceTransaction();
+            if (SHOW_LIGHT_TRANSACTIONS) Slog.i(TAG, "<<< CLOSE TRANSACTION setBlurLocked");
+        }
+    }
+
     void setOpaque(boolean isOpaque) {
         if (SHOW_TRANSACTIONS) logSurface("isOpaque=" + isOpaque,
                 null);

@@ -70,6 +70,7 @@ public class SurfaceControl {
     private static native void nativeSetFlags(long nativeObject, int flags, int mask);
     private static native void nativeSetWindowCrop(long nativeObject, int l, int t, int r, int b);
     private static native void nativeSetFinalCrop(long nativeObject, int l, int t, int r, int b);
+    private static native void nativeSetBlurCrop(long nativeObject, int l, int t, int r, int b);
     private static native void nativeSetLayerStack(long nativeObject, int layerStack);
 
     private static native boolean nativeClearContentFrameStats(long nativeObject);
@@ -229,6 +230,7 @@ public class SurfaceControl {
      * Updates the value set during Surface creation (see {@link #OPAQUE}).
      */
     private static final int SURFACE_OPAQUE = 0x02;
+    private static final int SURFACE_BLUR = 0x04;
 
 
     /* built-in physical display ids (keep in sync with ISurfaceComposer.h)
@@ -570,6 +572,16 @@ public class SurfaceControl {
         }
     }
 
+    public void setBlurCrop(Rect crop) {
+        checkNotReleased();
+        if (crop != null) {
+            nativeSetBlurCrop(mNativeObject,
+                crop.left, crop.top, crop.right, crop.bottom);
+        } else {
+            nativeSetBlurCrop(mNativeObject, 0, 0, 0, 0);
+        }
+    }
+
     public void setLayerStack(int layerStack) {
         checkNotReleased();
         nativeSetLayerStack(mNativeObject, layerStack);
@@ -585,6 +597,15 @@ public class SurfaceControl {
             nativeSetFlags(mNativeObject, SURFACE_OPAQUE, SURFACE_OPAQUE);
         } else {
             nativeSetFlags(mNativeObject, 0, SURFACE_OPAQUE);
+        }
+    }
+
+    public void setBlur(boolean isBlur) {
+        checkNotReleased();
+        if (isBlur) {
+            nativeSetFlags(mNativeObject, SURFACE_BLUR, SURFACE_BLUR);
+        } else {
+            nativeSetFlags(mNativeObject, 0, SURFACE_BLUR);
         }
     }
 

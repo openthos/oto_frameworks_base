@@ -392,6 +392,16 @@ static void nativeSetWindowCrop(JNIEnv* env, jclass clazz, jlong nativeObject,
     }
 }
 
+static void nativeSetBlurCrop(JNIEnv* env, jclass clazz, jlong nativeObject,
+        jint l, jint t, jint r, jint b) {
+    SurfaceControl* const ctrl = reinterpret_cast<SurfaceControl *>(nativeObject);
+    Rect crop(l, t, r, b);
+    status_t err = ctrl->setBlurCrop(crop);
+    if (err < 0 && err != NO_INIT) {
+        doThrowIAE(env);
+    }
+}
+
 static void nativeSetFinalCrop(JNIEnv* env, jclass clazz, jlong nativeObject,
         jint l, jint t, jint r, jint b) {
     SurfaceControl* const ctrl = reinterpret_cast<SurfaceControl *>(nativeObject);
@@ -813,6 +823,8 @@ static const JNINativeMethod sSurfaceControlMethods[] = {
             (void*)nativeSetWindowCrop },
     {"nativeSetFinalCrop", "(JIIII)V",
             (void*)nativeSetFinalCrop },
+    {"nativeSetBlurCrop", "(JIIII)V",
+            (void*)nativeSetBlurCrop },
     {"nativeSetLayerStack", "(JI)V",
             (void*)nativeSetLayerStack },
     {"nativeGetBuiltInDisplay", "(I)Landroid/os/IBinder;",

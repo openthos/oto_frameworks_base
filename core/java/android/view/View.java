@@ -5636,6 +5636,9 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
         mScrollCache.fadingEdgeLength = length;
     }
 
+    public void setAppBlur(boolean isBlur) {
+    }
+
     /**
      * Returns the size of the horizontal faded edges used to indicate that more
      * content in this view is visible.

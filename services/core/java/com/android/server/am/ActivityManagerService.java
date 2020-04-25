@@ -980,7 +980,7 @@ public class ActivityManagerService extends IActivityManager.Stub
      */
     final HashMap<IBinder, ReceiverList> mRegisteredReceivers = new HashMap<>();
 
-    final HashMap<String, Integer> mCompatMode = new HashMap<>();
+    static final HashMap<String, Integer> mCompatMode = new HashMap<>();
 
     /**
      * Resolver for broadcast intents to registered receivers.
@@ -10811,6 +10811,11 @@ public class ActivityManagerService extends IActivityManager.Stub
             }
             return task.getTaskRunMode();
         }
+    }
+
+    public static int getTaskRunModeForPackageNameStatic(String packageName) {
+        return mCompatMode.get(packageName) == null ?
+                STANDARD_MODE : mCompatMode.get(packageName);
     }
 
     @Override

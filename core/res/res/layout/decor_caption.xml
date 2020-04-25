@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/caption_height"
             android:gravity="end"
-            android:background="#d1d1f1"
+            android:background="#f2f2f2"
             android:focusable="false"
             android:descendantFocusability="blocksDescendants" >
         <ImageButton
