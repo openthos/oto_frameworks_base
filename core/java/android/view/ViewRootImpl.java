@@ -41,12 +41,17 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.RadialGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
+import android.graphics.Point;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
@@ -241,6 +246,14 @@ public final class ViewRootImpl implements ViewParent,
     final W mWindow;
 
     final int mTargetSdkVersion;
+
+    final Paint mLeftShadowPaint = new Paint();
+    final Paint mTopShadowPaint = new Paint();
+    final Paint mRightShadowPaint = new Paint();
+    final Paint mBottomShadowPaint = new Paint();
+    final Paint mArcShadowPaint = new Paint();
+    final Paint mOutBorderPaint = new Paint();
+    int mWindowShadowSize;
 
     int mSeq;
 
@@ -626,6 +639,33 @@ public final class ViewRootImpl implements ViewParent,
         }
     }
 
+    public void initPaint() {
+        mWindowShadowSize = mView.getContext().getResources().
+                                getDisplayMetrics().densityDpi / 4;
+        int[] colors = new int[] { 0x00000000, 0x17000000, 0x40000000, 0x70000000, 0xb0000000 };
+        float[] positions = new float[] {0f, 0.52f, 1f-0.277f, 1f-0.149f, 1f};
+        mLeftShadowPaint.setShader(new LinearGradient(
+                0, 0, mWindowShadowSize, 0, colors, positions, Shader.TileMode.CLAMP));
+        mLeftShadowPaint.setAlpha(28);
+        mTopShadowPaint.setShader(new LinearGradient(
+                0, 0, 0, mWindowShadowSize, colors, positions, Shader.TileMode.CLAMP));
+        mTopShadowPaint.setAlpha(28);
+        mRightShadowPaint.setShader(new LinearGradient(
+                mWindowShadowSize, 0, 0, 0, colors, positions, Shader.TileMode.CLAMP));
+        mRightShadowPaint.setAlpha(28);
+        mBottomShadowPaint.setShader(new LinearGradient(
+                0, mWindowShadowSize, 0, 0, colors, positions, Shader.TileMode.CLAMP));
+        mBottomShadowPaint.setAlpha(28);
+        mArcShadowPaint.setShader(new RadialGradient(
+                mWindowShadowSize, mWindowShadowSize, mWindowShadowSize,
+                new int[] { 0xb0000000, 0x70000000, 0x40000000, 0x17000000, 0x00000000 },
+                new float[] {0f, 0.149f, 0.277f, 0.48f, 1f}, Shader.TileMode.CLAMP));
+        mArcShadowPaint.setAlpha(28);
+        mOutBorderPaint.setColor(0x1A000000);
+        mOutBorderPaint.setStyle(Paint.Style.STROKE);
+        mOutBorderPaint.setStrokeWidth(1);
+    }
+
     /**
      * We have one child
      */
@@ -633,6 +673,7 @@ public final class ViewRootImpl implements ViewParent,
         synchronized (this) {
             if (mView == null) {
                 mView = view;
+                initPaint();
 
                 mAttachInfo.mDisplayState = mDisplay.getState();
                 mDisplayManager.registerDisplayListener(mDisplayListener, mHandler);
@@ -2682,6 +2723,7 @@ public final class ViewRootImpl implements ViewParent,
     @Override
     public void onPostDraw(DisplayListCanvas canvas) {
         drawAccessibilityFocusedDrawableIfNeeded(canvas);
+        drawWindowShadow(canvas);
         for (int i = mWindowCallbacks.size() - 1; i >= 0; i--) {
             mWindowCallbacks.get(i).onPostDraw(canvas);
         }
@@ -3149,6 +3191,53 @@ public final class ViewRootImpl implements ViewParent,
         } else if (mAttachInfo.mAccessibilityFocusDrawable != null) {
             mAttachInfo.mAccessibilityFocusDrawable.setBounds(0, 0, 0, 0);
         }
+    }
+
+    private void drawWindowShadow(Canvas canvas) {
+        RectF archRect = new RectF(0, 0, mWindowShadowSize * 2 ,mWindowShadowSize * 2);
+
+        canvas.save();
+        canvas.translate(-mWindowShadowSize, 0);
+        canvas.drawRect(0, 0, mWindowShadowSize, mView.getHeight(), mLeftShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(0, -mWindowShadowSize);
+        canvas.drawRect(0, 0, mView.getWidth(), mWindowShadowSize, mTopShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(mView.getWidth(), 0);
+        canvas.drawRect(0, 0, mWindowShadowSize, mView.getHeight(), mRightShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(0, mView.getHeight());
+        canvas.drawRect(0, 0, mView.getWidth(), mWindowShadowSize, mBottomShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(-mWindowShadowSize, -mWindowShadowSize);
+        canvas.drawArc(archRect, 180, 90, true, mArcShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(-mWindowShadowSize, mView.getHeight() - mWindowShadowSize);
+        canvas.drawArc(archRect, 90, 90, true, mArcShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(mView.getWidth() - mWindowShadowSize,
+                                mView.getHeight() - mWindowShadowSize);
+        canvas.drawArc(archRect, 0, 90, true, mArcShadowPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.translate(mView.getWidth() - mWindowShadowSize, -mWindowShadowSize);
+        canvas.drawArc(archRect, 270, 90, true, mArcShadowPaint);
+        canvas.restore();
+
+        canvas.drawRect(0, 0, mView.getWidth(), mView.getHeight(), mOutBorderPaint);
     }
 
     private boolean getAccessibilityFocusedRect(Rect bounds) {
