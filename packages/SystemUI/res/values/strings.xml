@@ -2136,4 +2136,17 @@
     <string name="system_restart">Restart</string>
     <string name="system_sleep">Sleep</string>
     <string name="system_lock">Lock</string>
+
+    <string name="startupmenu_all_apps">All Apps</string>
+    <string name="startupmenu_search_app">Search Application</string>
+    <string name="startupmenu_recent_apps">Recent Apps</string>
+    <string name="startupmenu_recent_document">Recent Documents</string>
+    <string name="startupmenu_document_null">Null Documents</string>
+    <string name="startupmenu_recent_null">Null Recent Apps</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="minutes_ago">mins ago</string>
+    <string name="now">Now</string>
+    <string name="startupmenu_search_back">Back</string>
+    <string name="startupmenu_no_search_results">No search results</string>
+    <string name="no_app_open_with">No application to open this file.\nPlease download in AppStore.</string>
 </resources>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="676dp"
+    android:layout_height="675dp"
+    android:background="#CCF2F2F2" >
+
+    <LinearLayout
+        android:layout_width="58dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom" >
+        <FrameLayout
+            android:id="@+id/startupmenu_filemanager"
+            android:layout_width="@dimen/startupmenu_left_size"
+            android:layout_height="@dimen/startupmenu_left_size"
+            android:layout_marginLeft="@dimen/startupmenu_left_magin"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/startupmenu_leftimg_selector" >
+            <ImageView
+                android:layout_width="@dimen/startupmenu_left_imgsize"
+                android:layout_height="@dimen/startupmenu_left_imgsize"
+                android:src="@drawable/startupmenu_filemanager"
+                android:layout_gravity="center" />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/startupmenu_settings"
+            android:layout_width="@dimen/startupmenu_left_size"
+            android:layout_height="@dimen/startupmenu_left_size"
+            android:layout_marginLeft="@dimen/startupmenu_left_magin"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/startupmenu_leftimg_selector" >
+            <ImageView
+                android:layout_width="@dimen/startupmenu_left_imgsize"
+                android:layout_height="@dimen/startupmenu_left_imgsize"
+                android:src="@drawable/startupmenu_settings"
+                android:layout_gravity="center" />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/startupmenu_poweroff"
+            android:layout_width="@dimen/startupmenu_left_size"
+            android:layout_height="@dimen/startupmenu_left_size"
+            android:layout_marginLeft="@dimen/startupmenu_left_magin"
+            android:layout_marginBottom="11dp"
+            android:background="@drawable/startupmenu_leftimg_selector" >
+            <ImageView
+                android:layout_width="@dimen/startupmenu_left_imgsize"
+                android:layout_height="@dimen/startupmenu_left_imgsize"
+                android:src="@drawable/startupmenu_poweroff"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="276dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <com.android.systemui.startupmenu.FontTextView
+            android:layout_width="@dimen/startupmenu_text_width"
+            android:layout_height="@dimen/startupmenu_text_height"
+            android:text="@string/startupmenu_all_apps"
+            android:textColor="@color/startupmenu_textcolor"
+            android:textSize="@dimen/startupmenu_textsize"
+            android:gravity="center_vertical"
+            android:layout_marginTop="25dp" />
+        <LinearLayout
+            android:layout_width="236dp"
+            android:layout_height="32dp"
+            android:background="#80FFFFFF"
+            android:orientation="horizontal"
+            android:layout_marginTop="23dp" >
+            <ImageView
+                android:layout_width="@dimen/startupmenu_left_imgsize"
+                android:layout_height="@dimen/startupmenu_left_imgsize"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:layout_marginLeft="6dp"
+                android:src="@drawable/startupmenu_search" />
+            <EditText
+                android:id="@+id/startupmenu_search"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:hint="@string/startupmenu_search_app"
+                android:textColor="@color/startupmenu_textcolor"
+                android:background="@null"
+                android:layout_gravity="center_vertical"
+                android:textSize="15sp"
+                android:layout_marginLeft="6dp" />
+        </LinearLayout>
+        <com.android.systemui.startupmenu.BounceListView
+            android:id="@+id/startupmenu_app_list"
+            android:layout_width="239dp"
+            android:layout_height="561dp"
+            android:layout_marginTop="12dp"
+            android:scrollbars="vertical"
+            android:scrollbarSize="1dp"
+            android:divider="#00000000"
+            android:overScrollMode="never"
+            android:listSelector="@android:color/transparent" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="342dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <com.android.systemui.startupmenu.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/startupmenu_text_height"
+            android:text="@string/startupmenu_recent_apps"
+            android:textColor="@color/startupmenu_textcolor"
+            android:textSize="@dimen/startupmenu_textsize"
+            android:gravity="center_vertical"
+            android:layout_marginTop="25dp" />
+        <FrameLayout
+            android:layout_width="315dp"
+            android:layout_height="118dp"
+            android:layout_marginTop="23dp"
+            >
+            <com.android.systemui.startupmenu.FontTextView
+                android:id="@+id/startmenu_recent_null"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/startupmenu_recent_null"
+                android:textSize="@dimen/startupmenu_textsize"
+                android:textColor="#4D202020"
+                android:background="@drawable/startupmenu_recent_null"
+                android:gravity="center" />
+            <GridView
+                android:id="@+id/startupmenu_recent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:numColumns="5"
+                android:paddingRight="2dp"
+                android:paddingLeft="2dp"
+                android:paddingBottom="7dp"
+                android:paddingTop="7dp"
+                android:scrollbars="none"
+                android:listSelector="@android:color/transparent"
+                android:background="@drawable/startupmenu_recent_list_bg" />
+        </FrameLayout>
+        <com.android.systemui.startupmenu.FontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/startupmenu_text_height"
+            android:text="@string/startupmenu_recent_document"
+            android:textColor="@color/startupmenu_textcolor"
+            android:textSize="@dimen/startupmenu_textsize"
+            android:gravity="center_vertical"
+            android:layout_marginTop="25dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="25dp">
+            <com.android.systemui.startupmenu.FontTextView
+                android:id="@+id/startupmenu_recent_docs_null"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:text="@string/startupmenu_document_null"
+                android:textColor="#4D202020"
+                android:textSize="17sp"
+                android:gravity="center_vertical"
+                android:layout_gravity="center" />
+            <ListView
+                android:id="@+id/startupmenu_recent_docs_list"
+                android:layout_width="315dp"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:scrollbarSize="1dp"
+                android:divider="#00000000"
+                android:overScrollMode="never"
+                android:listSelector="@android:color/transparent" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

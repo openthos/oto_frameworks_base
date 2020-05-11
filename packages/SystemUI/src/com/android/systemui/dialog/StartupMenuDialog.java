@@ -18,7 +18,6 @@ public class StartupMenuDialog extends BaseDialog {
     @Override
     public void show(View view) {
         super.show(view);
-        ((StartupMenuView) mContentView).refresh();
     }
 
     @Override

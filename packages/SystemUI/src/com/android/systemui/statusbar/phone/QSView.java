@@ -2,6 +2,7 @@ package com.android.systemui.statusbar.phone;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
@@ -14,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.util.AttributeSet;
 import android.widget.TextView;
-
-import com.android.systemui.startupmenu.LaunchAppUtil;
 
 import com.android.systemui.R;
 
@@ -88,8 +87,7 @@ public class QSView extends LinearLayout {
                     }
                     break;
                 case R.id.qs_settings:
-                    LaunchAppUtil.launchApp(getContext(),
-                            new ComponentName("com.android.settings", "com.android.settings.Settings"));
+                    openSettings();
                     break;
                 case R.id.qs_projection:
                     break;
@@ -110,6 +108,16 @@ public class QSView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        getContext().startActivity(intent, null);
     }
 
     public void stopAllConnection(boolean state) {

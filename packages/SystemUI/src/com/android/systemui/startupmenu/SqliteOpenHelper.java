@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.listener.DataCallback;
 
 import java.io.File;
 import java.util.HashMap;
@@ -88,16 +87,16 @@ public class SqliteOpenHelper extends SQLiteOpenHelper {
                 Cursor cursor = mDb.rawQuery("select * from " + TABLE_NAME + " where " + PKGNAME
                         + " = ? ", new String[]{appInfo.getPackageName()});
                 ContentValues values = new ContentValues();
-                values.put(CLICK_NUMBERS, appInfo.getUseCounts());
+                //values.put(CLICK_NUMBERS, appInfo.getUseCounts());
                 if (cursor.moveToNext()) {
                     mDb.update(TABLE_NAME, values, PKGNAME + " = ?",
                             new String[]{appInfo.getPackageName()});
                 } else {
                     values.put(LABEL, appInfo.getLabel());
                     values.put(PKGNAME, appInfo.getPackageName());
-                    values.put(INSTALL_TIME, appInfo.getInstallTime());
-                    values.put(INSTALL_TIME, appInfo.getInstallTime());
-                    values.put(ACTIVITY_NAME, appInfo.getActivityName());
+                    //values.put(INSTALL_TIME, appInfo.getInstallTime());
+                    //values.put(INSTALL_TIME, appInfo.getInstallTime());
+                    //values.put(ACTIVITY_NAME, appInfo.getActivityName());
                     values.put(IS_LOCKED, appInfo.isLocked() ? 1 : 0);
                     mDb.insert(TABLE_NAME, null, values);
                 }
@@ -125,9 +124,9 @@ public class SqliteOpenHelper extends SQLiteOpenHelper {
                 } else {
                     values.put(LABEL, appInfo.getLabel());
                     values.put(PKGNAME, appInfo.getPackageName());
-                    values.put(INSTALL_TIME, appInfo.getInstallTime());
-                    values.put(CLICK_NUMBERS, appInfo.getUseCounts());
-                    values.put(ACTIVITY_NAME, appInfo.getActivityName());
+                    //values.put(INSTALL_TIME, appInfo.getInstallTime());
+                    //values.put(CLICK_NUMBERS, appInfo.getUseCounts());
+                    //values.put(ACTIVITY_NAME, appInfo.getActivityName());
                     mDb.insert(TABLE_NAME, null, values);
                 }
                 cursor.close();
@@ -146,81 +145,6 @@ public class SqliteOpenHelper extends SQLiteOpenHelper {
                 mDb.close();
             }
         });
-    }
-
-    public void queryLockedApp(final DataCallback callback) {
-        mSingleThreadExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, AppInfo> map = new HashMap();
-                mDb = sqliteOpenHelper.getReadableDatabase();
-                AppInfo appInfo = null;
-                Cursor cursor = mDb.rawQuery("select * from " + TABLE_NAME, null);
-                while (cursor.moveToNext()) {
-                    appInfo = new AppInfo();
-                    appInfo.setLabel(cursor.getString(cursor.getColumnIndex(LABEL)));
-                    appInfo.setPackageName(
-                            cursor.getString(cursor.getColumnIndex(PKGNAME)));
-                    if (appInfo.isLocked()) {
-                        map.put(appInfo.getPackageName(), appInfo);
-                    }
-                }
-                mDb.close();
-                callback.callback(map);
-            }
-        });
-    }
-
-    public void queryAllDataStorage(final DataCallback callback) {
-        mSingleThreadExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Map<String, AppInfo> appInfos = new HashMap<>();
-                Map<String, AppInfo> map = new HashMap();
-                mDb = sqliteOpenHelper.getReadableDatabase();
-                AppInfo appInfo = null;
-                Cursor cursor = mDb.rawQuery("select * from " + TABLE_NAME, null);
-                while (cursor.moveToNext()) {
-                    appInfo = new AppInfo();
-                    appInfo.setLabel(cursor.getString(cursor.getColumnIndex(LABEL)));
-                    appInfo.setPackageName(
-                            cursor.getString(cursor.getColumnIndex(PKGNAME)));
-                    appInfo.setUseCounts(
-                            cursor.getInt(cursor.getColumnIndex(CLICK_NUMBERS)));
-                    appInfo.setInstallTime(
-                            cursor.getLong(cursor.getColumnIndex(INSTALL_TIME)));
-                    appInfo.setLocked(
-                            cursor.getInt(cursor.getColumnIndex(IS_LOCKED)) == 0 ? false : true);
-                    map.put(appInfo.getPackageName(), appInfo);
-                }
-                mDb.close();
-
-                PackageManager pm = mContext.getPackageManager();
-                Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-                mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                int queryFlags = MATCH_DIRECT_BOOT_AWARE | MATCH_DIRECT_BOOT_UNAWARE;
-                List<ResolveInfo> resolveInfos = pm.queryIntentActivities(mainIntent, queryFlags);
-                for (ResolveInfo reInfo : resolveInfos) {
-                    String packageName = reInfo.activityInfo.packageName;
-                    appInfo = new AppInfo();
-                    appInfo.setLabel((String) reInfo.loadLabel(pm));
-                    appInfo.setPackageName(packageName);
-                    appInfo.setInstallTime(new File(
-                            reInfo.activityInfo.applicationInfo.sourceDir).lastModified());
-                    appInfo.setIcon(reInfo.loadIcon(pm));
-                    appInfo.setActivityName(reInfo.activityInfo.name);
-                    appInfo.setSystemApp(isSystemApp(reInfo));
-                    appInfo.setUseCounts(getClickCounts(map.get(packageName)));
-                    appInfo.setLocked(getLocked(map.get(packageName)));
-                    appInfos.put(packageName, appInfo);
-                }
-                callback.callback(appInfos);
-            }
-        });
-    }
-
-    private int getClickCounts(AppInfo appInfo) {
-        return appInfo == null ? 0 : appInfo.getUseCounts();
     }
 
     private boolean getLocked(AppInfo appInfo) {

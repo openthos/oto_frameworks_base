@@ -855,4 +855,17 @@
     <string name="system_restart">重启</string>
     <string name="system_sleep">睡眠</string>
     <string name="system_lock">锁定</string>
+
+    <string name="startupmenu_all_apps">所有应用</string>
+    <string name="startupmenu_search_app">查找应用</string>
+    <string name="startupmenu_recent_apps">最近应用</string>
+    <string name="startupmenu_recent_document">最近文档</string>
+    <string name="startupmenu_document_null">暂无文档</string>
+    <string name="startupmenu_recent_null">暂无最近应用</string>
+    <string name="hours_ago">小时前</string>
+    <string name="minutes_ago">分钟前</string>
+    <string name="now">刚刚</string>
+    <string name="startupmenu_search_back">返回</string>
+    <string name="startupmenu_no_search_results">无查找结果</string>
+    <string name="no_app_open_with">没有可以打开此文件的应用。\n请前往应用商店下载。</string>
 </resources>

@@ -916,4 +916,11 @@
     <dimen name="date_view_height">38dp</dimen>
     <dimen name="task_bar_view_width">45dp</dimen>
     <dimen name="task_bar_view_height">38dp</dimen>
+
+    <dimen name="startupmenu_textsize">16sp</dimen>
+    <dimen name="startupmenu_left_imgsize">30dp</dimen>
+    <dimen name="startupmenu_left_size">45dp</dimen>
+    <dimen name="startupmenu_left_magin">7dp</dimen>
+    <dimen name="startupmenu_text_width">64dp</dimen>
+    <dimen name="startupmenu_text_height">22dp</dimen>
 </resources>

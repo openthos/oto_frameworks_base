@@ -61,9 +61,7 @@ public class BaseDialog extends Dialog {
     public void show(View view) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
-        if (mContentView != null) {
-            mContentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        }
+        mContentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         Window dialogWindow = getWindow();
         dialogWindow.setType(WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG);
         dialogWindow.setWindowAnimations(R.style.ShowDialog);

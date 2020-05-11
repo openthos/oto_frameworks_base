@@ -2,6 +2,7 @@ package com.android.systemui.dialog;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.BatteryStats;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -14,7 +15,6 @@ import android.widget.TextView;
 
 import com.android.internal.os.BatteryStatsHelper;
 import com.android.systemui.R;
-import com.android.systemui.startupmenu.LaunchAppUtil;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BatteryControllerImpl;
 
@@ -40,8 +40,6 @@ public class BatteryDialog extends BaseDialog implements BatteryController.Batte
         mContentView = LayoutInflater.from(getContext()).inflate(R.layout.status_bar_battery, null);
         setContentView(mContentView);
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +73,7 @@ public class BatteryDialog extends BaseDialog implements BatteryController.Batte
         mBatterySavingMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LaunchAppUtil.launchApp(getContext(),
-                        new ComponentName(BATTERY_SETTINGS, BATTERY_SETTINGS_SAVER));
+                openBatterySettings();
                 dismiss();
             }
         });
@@ -121,6 +118,16 @@ public class BatteryDialog extends BaseDialog implements BatteryController.Batte
                     R.string.battery_percent, level) + "%");
             mBatteryRemaining.setText(strBatteryRemaining);
         }
+    }
+
+    private void openBatterySettings() {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(BATTERY_SETTINGS, BATTERY_SETTINGS_SAVER));
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        getContext().startActivity(intent, null);
     }
 
     @Override

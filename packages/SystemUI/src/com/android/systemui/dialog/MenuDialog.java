@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.HashSet;
 
 public class MenuDialog extends BaseDialog {
+    private static int MIN_DIALOG_WIDTH = 160;
+
     private List<String> mDatas;
     private HashSet<Integer> mTasks;
     private DialogAdapter mAdapter;
@@ -50,9 +52,6 @@ public class MenuDialog extends BaseDialog {
         create();
     }
 
-    public void initListener() {
-    }
-
     public void initView() {
         mListView = (ListView) mContentView.findViewById(R.id.list);
     }
@@ -64,26 +63,6 @@ public class MenuDialog extends BaseDialog {
         mStatusBar = SysUiServiceProvider.getComponent(getContext(), StatusBar.class);
         mStatusBarHeight = getContext().getResources().
                 getDimensionPixelSize(com.android.internal.R.dimen.navigation_bar_height);
-    }
-
-    public void showSort(View view) {
-        mDialogType = DialogType.SORT;
-        mAppInfo = null;
-        int[] location = new int[2];
-        view.getLocationOnScreen(location);
-
-        Window dialogWindow = getWindow();
-        dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.format = PixelFormat.TRANSPARENT;
-        lp.dimAmount = 0;
-
-        prepareData();
-        lp.x = location[0] + view.getWidth() - mWidth;
-        lp.y = location[1] + view.getHeight();
-        dialogWindow.setAttributes(lp);
-        show();
     }
 
     public void show(DialogType type, AppInfo appInfo, int x, int y) {
@@ -130,7 +109,7 @@ public class MenuDialog extends BaseDialog {
                 lp.x = x - mWidth / 2;
                 lp.y = 0;
                 break;
-            case GRID:
+            case RECENT:
             case LIST:
                 dialogWindow.setGravity(Gravity.LEFT | Gravity.TOP);
                 lp.x = x;
@@ -165,18 +144,15 @@ public class MenuDialog extends BaseDialog {
         mDatas.clear();
         String[] sArr = null;
         switch (mDialogType) {
-            case GRID:
+            case LIST:
                 if (mAppInfo.isLocked()) {
-                    sArr = getContext().getResources().getStringArray(R.array.grid_menu_lock);
+                    sArr = getContext().getResources().getStringArray(R.array.list_menu_lock);
                 } else {
-                    sArr = getContext().getResources().getStringArray(R.array.grid_menu_unlock);
+                    sArr = getContext().getResources().getStringArray(R.array.list_menu_unlock);
                 }
                 break;
-            case LIST:
-                sArr = getContext().getResources().getStringArray(R.array.list_menu);
-                break;
-            case SORT:
-                sArr = getContext().getResources().getStringArray(R.array.sort_show);
+            case RECENT:
+                sArr = getContext().getResources().getStringArray(R.array.recent_menu);
                 break;
             case SHOW_TASKBAR:
                 sArr = getContext().getResources().getStringArray(R.array.bar_show_hide);
@@ -203,21 +179,25 @@ public class MenuDialog extends BaseDialog {
         mDatas.addAll(Arrays.asList(sArr));
         mAdapter.notifyDataSetChanged();
         //set listView's width and height
+        ViewGroup.LayoutParams params = mListView.getLayoutParams();
+        mHeight = params.height;
         mWidth = 0;
-        mHeight = 0;
         for (int i = 0; i < mAdapter.getCount(); i++) {
             View view = mAdapter.getView(i, null, null);
             view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             mWidth = Math.max(view.getMeasuredWidth(), mWidth);
-            mHeight = mHeight + view.getMeasuredHeight();
         }
 
-        mListView.setLayoutParams(new LinearLayout.LayoutParams(mWidth, mHeight));
+        if (mWidth < MIN_DIALOG_WIDTH) {
+            mWidth = MIN_DIALOG_WIDTH;
+        }
+        params.width = mWidth;
+        mListView.setLayoutParams(params);
     }
 
     public boolean isStartupMenu() {
-        return mDialogType != null && (mDialogType == DialogType.GRID
-                || mDialogType == DialogType.LIST || mDialogType == DialogType.SORT);
+        return mDialogType != null && (mDialogType == DialogType.RECENT
+                || mDialogType == DialogType.LIST);
     }
 
     public void setOnMenuClick(OnMenuClick menuClick) {
@@ -277,10 +257,7 @@ public class MenuDialog extends BaseDialog {
             @Override
             public void onClick(View v) {
                 if (mOnMenuClick != null) {
-                    if (mDialogType == DialogType.SORT) {
-                        mOnMenuClick.sortShow(v, MenuDialog.this,
-                                ((TextView) v).getText().toString());
-                    } else if (mDialogType == DialogType.SELECT_TASK) {
+                    if (mDialogType == DialogType.SELECT_TASK) {
                         mOnMenuClick.menuClick(v, MenuDialog.this,
                                 mAppInfo, ((TextView) v).getText().toString(), -2);
                     } else {
@@ -296,14 +273,10 @@ public class MenuDialog extends BaseDialog {
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
-                        v.setBackgroundResource(R.color.common_hover_bg);
-                        ((TextView) v).setTextColor(getContext()
-                                .getResources().getColor(android.R.color.white));
+                        v.setHovered(true);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
-                        v.setBackgroundResource(android.R.color.white);
-                        ((TextView) v).setTextColor(getContext()
-                                .getResources().getColor(android.R.color.black));
+                        v.setHovered(false);
                         break;
                 }
                 return false;

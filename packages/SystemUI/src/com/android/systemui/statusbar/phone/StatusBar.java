@@ -258,7 +258,6 @@ import com.android.systemui.statusbar.view.TaskBarIcon;
 import com.android.systemui.util.NotificationChannels;
 import com.android.systemui.util.leak.LeakDetector;
 import com.android.systemui.volume.VolumeComponent;
-import com.android.systemui.startupmenu.SqliteOpenHelper;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -1045,8 +1044,7 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         Dependency.get(ConfigurationController.class).addCallback(this);
 
-        AppOperateManager.getInstance(mContext).reloadData();
-        initTaskbarIcons();
+        AppOperateManager.getInstance(mContext).initTaskbarIcons();
     }
 
     protected void createIconController() {
@@ -3463,17 +3461,6 @@ public class StatusBar extends SystemUI implements DemoMode,
         SharedPreferences sp = mContext.getSharedPreferences("lockedmap", 0);
         String re = sp.getString("lockedmap", null);
         return re;
-    }
-
-
-    private void initTaskbarIcons() {
-        LinkedList<AppInfo> dockedList = deSerialization(getObject());
-        if (dockedList == null) {
-            return;
-        }
-        for (AppInfo info : dockedList) {
-            addToTaskbar(-1, info);
-        }
     }
 
     @Override

@@ -6,41 +6,83 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.systemui.R;
 import com.android.systemui.startupmenu.bean.AppInfo;
-import com.android.systemui.startupmenu.bean.Type;
 import com.android.systemui.startupmenu.listener.OnClickCallback;
+import com.android.systemui.startupmenu.utils.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class AppAdapter extends BaseAdapter {
-    private List<AppInfo> mAppInfos;
+public class AppAdapter extends BaseAdapter implements Filterable {
+    private boolean mIsSearchEmpty = false;
+    private Map<String, Integer> mIndexMap;
+    private List<AppInfo> mDatas = new ArrayList<>();
+    private int mItemLayoutId;
     private Context mContext;
-    private Type mType;
     private OnClickCallback mOnClickCallback;
+    private AppsFilter mAppsFilter;
     private int mDownX;
     private int mDownY;
-    public static View mLastView;
+    private View mSelectedListItem;
 
-    public AppAdapter(Context context, Type type) {
+    public AppAdapter(Context context, List<AppInfo> datas, int itemLayoutId) {
+        mDatas.addAll(datas);
+        mIndexMap = new HashMap<>();
+        mItemLayoutId = itemLayoutId;
         mContext = context;
-        mType = type;
-        mAppInfos = new ArrayList<>();
+        setInitialLetterIndexMap();
+    }
+
+    private void setInitialLetterIndexMap() {
+        boolean mIsInitialItemLetter = true;
+        if (mDatas.isEmpty()) {
+            return;
+        }
+        String current = mDatas.get(0).getInitialLetter();
+
+        for ( int i = 0; i < mDatas.size(); i++) {
+            if (mDatas.get(i).getInitialLetter() == null) {
+                continue;
+            }
+            char tempChar = mDatas.get(i).getInitialLetter().charAt(0);
+            String tempInitialLetter = mDatas.get(i).getInitialLetter();
+
+            if (tempInitialLetter.equals(current) || (tempChar < 'A' || tempChar > 'Z')) {
+                if (mIsInitialItemLetter) {
+                    mIndexMap.put(current, i);
+                }
+            } else {
+                current = mDatas.get(i).getInitialLetter();
+                mIndexMap.put(current, i);
+            }
+            mIsInitialItemLetter = false;
+        }
+    }
+
+    public void updateAppsList(List<AppInfo> mAppsData) {
+        mDatas.clear();
+        mDatas.addAll(mAppsData);
+        setInitialLetterIndexMap();
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mAppInfos.size();
+        return mIsSearchEmpty ? 1 : mDatas.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mAppInfos.get(position);
+        return mDatas.get(position);
     }
 
     @Override
@@ -49,87 +91,79 @@ public class AppAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(getLayoutId(), null);
+            convertView = LayoutInflater.from(mContext).inflate(mItemLayoutId, null);
         }
-        ViewHolder holder = (ViewHolder) convertView.getTag();
-        if (holder == null) {
-            holder = new ViewHolder(convertView);
-            convertView.setTag(holder);
+        viewHolder = (ViewHolder) convertView.getTag();
+        if (viewHolder == null) {
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
         }
 
-        AppInfo appInfo = mAppInfos.get(position);
+        viewHolder.search.setVisibility(mIsSearchEmpty ? View.VISIBLE : View.GONE);
+        viewHolder.appList.setVisibility(mIsSearchEmpty ? View.GONE : View.VISIBLE);
+
+        if (mIndexMap.get(mDatas.get(position).getInitialLetter()) != null
+                && mIndexMap.get(mDatas.get(position).getInitialLetter()).equals(position)) {
+            viewHolder.initialLetter.setVisibility(View.VISIBLE);
+            viewHolder.initialLetter.setText(mDatas.get(position).getInitialLetter());
+        } else {
+            viewHolder.initialLetter.setVisibility(View.GONE);
+        }
+
+        viewHolder.appLabel.setText(mDatas.get(position).getLabel());
         try {
-            holder.appIcon.setImageDrawable(
-                mContext.getPackageManager().getApplicationIcon(appInfo.getPackageName()));
+            viewHolder.icon.setImageDrawable(mContext.getPackageManager().
+                    getApplicationIcon(mDatas.get(position).getPackageName()));
         } catch (Exception e) {
+            viewHolder.icon.setImageResource(R.drawable.ic_launcher);
             e.printStackTrace();
         }
-        holder.tvAppLabel.setText(appInfo.getLabel());
-        holder.layout.setTag(appInfo);
+        viewHolder.appItem.setTag(mDatas.get(position));
+
         return convertView;
     }
 
-    public void setOnClickCallback(OnClickCallback onClickCallback) {
-        mOnClickCallback = onClickCallback;
+    @Override
+    public synchronized Filter getFilter() {
+        if (mAppsFilter == null) {
+            mAppsFilter = new AppsFilter(mDatas);
+        }
+        return mAppsFilter;
     }
 
-    public void refresh(List<AppInfo> appInfos) {
-        mAppInfos.clear();
-        if (appInfos != null) {
-            mAppInfos.addAll(appInfos);
-        }
-        notifyDataSetChanged();
-    }
+    public class ViewHolder implements View.OnHoverListener, View.OnTouchListener,
+            View.OnLongClickListener, View.OnClickListener {
 
-    private class ViewHolder implements View.OnTouchListener,
-            View.OnHoverListener, View.OnClickListener, View.OnLongClickListener {
-        LinearLayout layout;
-        ImageView appIcon;
-        TextView tvAppLabel;
+        LinearLayout appItem, search, appList;
+        TextView initialLetter, appLabel, searchBack;
+        ImageView icon;
 
-        public ViewHolder(View view) {
-            layout = (LinearLayout) view.findViewById(R.id.layout);
-            appIcon = (ImageView) view.findViewById(R.id.package_image);
-            tvAppLabel = (TextView) view.findViewById(R.id.package_name);
+        public ViewHolder(View convertView) {
+            initialLetter = convertView.findViewById(R.id.txt_letter_category);
+            appLabel = convertView.findViewById(R.id.txt_name);
+            searchBack = convertView.findViewById(R.id.search_back);
+            icon = convertView.findViewById(R.id.image);
+            appItem = convertView.findViewById(R.id.app_item);
+            search = convertView.findViewById(R.id.ll_search);
+            appList = convertView.findViewById(R.id.ll_applist);
 
-            layout.setOnTouchListener(this);
-            layout.setOnHoverListener(this);
-            layout.setOnClickListener(this);
-            layout.setOnLongClickListener(this);
-        }
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (mOnClickCallback == null) {
-                return false;
-            }
-            if (MotionEvent.ACTION_DOWN == event.getAction()) {
-                mDownX = (int) event.getRawX();
-                mDownY = (int) event.getRawY();
-                switch (event.getButtonState()) {
-                    case MotionEvent.BUTTON_PRIMARY:
-//                        mOnClickCallback.open((AppInfo) v.getTag());
-                        mLastView = v;
-                        v.setSelected(true);
-                        break;
-                    case MotionEvent.BUTTON_SECONDARY:
-                        mLastView = v;
-                        v.setSelected(true);
-                        mOnClickCallback.showDialog(mDownX, mDownY, (AppInfo) v.getTag());
-                        return true;
-                }
-            }
-            return false;
+            appItem.setOnTouchListener(this);
+            appItem.setOnHoverListener(this);
+            appItem.setOnLongClickListener(this);
+            searchBack.setOnTouchListener(this);
+            appItem.setOnClickListener(this);
+            searchBack.setOnClickListener(this);
         }
 
         @Override
         public boolean onHover(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    if (mLastView != null && mLastView != v) {
-                        mLastView.setSelected(false);
+                    if (mSelectedListItem != null && mSelectedListItem != v) {
+                        mSelectedListItem.setSelected(false);
                     }
                     v.setSelected(true);
                     break;
@@ -141,24 +175,85 @@ public class AppAdapter extends BaseAdapter {
         }
 
         @Override
-        public void onClick(View v) {
-            mOnClickCallback.open((AppInfo) v.getTag());
+        public boolean onTouch(View v, MotionEvent event) {
+            if (mOnClickCallback == null) {
+                return false;
+            }
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                mDownX = (int) event.getRawX();
+                mDownY = (int) event.getRawY();
+                switch (event.getButtonState()) {
+                    case MotionEvent.BUTTON_PRIMARY:
+                        //clickEvent(v);
+                        break;
+                    case MotionEvent.BUTTON_SECONDARY:
+                        mSelectedListItem = v;
+                        v.setSelected(true);
+                        mOnClickCallback.showDialog(mDownX, mDownY, (AppInfo) v.getTag());
+                        break;
+                }
+            }
+            return false;
         }
 
         @Override
         public boolean onLongClick(View v) {
-            mLastView = v;
+            mSelectedListItem = v;
             v.setSelected(true);
             mOnClickCallback.showDialog(mDownX, mDownY, (AppInfo) v.getTag());
             return true;
         }
-    }
 
-    private int getLayoutId() {
-        if (mType == Type.GRID) {
-            return R.layout.startmenu_item_row;
-        } else {
-            return R.layout.startmenu_item_column;
+        @Override
+        public void onClick(View v) {
+            clickEvent(v);
+        }
+
+        private void clickEvent(View v) {
+            if (v.getId() == R.id.search_back) {
+                mOnClickCallback.updateSearchState();
+            } else {
+                mOnClickCallback.open((AppInfo) v.getTag());
+            }
         }
     }
+
+    public void setOnClickCallback(OnClickCallback callback) {
+        mOnClickCallback = callback;
+    }
+
+    private class AppsFilter extends android.widget.Filter {
+
+        private List<AppInfo> original = new ArrayList<>();
+
+        public AppsFilter(List<AppInfo> list) {
+            original.addAll(list);
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            if (constraint == null || constraint.length() == 0) {
+                results.values = original;
+                results.count = original.size();
+            } else {
+                List<AppInfo> appsList = new ArrayList<>();
+                Util.filtDatas(constraint.toString(), original, appsList);
+                results.values = appsList;
+                results.count = appsList.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            mDatas.clear();
+            mIsSearchEmpty = results.count == 0;
+            mDatas.addAll(mIsSearchEmpty ? original : (List<AppInfo>) results.values);
+            setInitialLetterIndexMap();
+            notifyDataSetChanged();
+        }
+
+    }
+
 }
