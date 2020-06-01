@@ -16,6 +16,8 @@
 */
 -->
 <resources>
+    <dimen name="standard_height">594dp</dimen>
+    <dimen name="higher_height">629dp</dimen>
     <!-- Amount to offset bottom of notification peek window from top of status bar. -->
     <dimen name="peek_window_y_offset">-12dp</dimen>
 

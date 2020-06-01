@@ -1,6 +1,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,7 +22,7 @@ import android.widget.RelativeLayout;
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.dialog.BaseDialog;
 import com.android.systemui.dialog.BatteryDialog;
-import com.android.systemui.dialog.CalendarDialog;
+import com.android.systemui.calendar.CalendarDialog;
 import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.InputMethodDialog;
 import com.android.systemui.dialog.StartupMenuDialog;
