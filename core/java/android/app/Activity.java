@@ -6606,6 +6606,11 @@ public class Activity extends ContextThemeWrapper
         //} catch (RemoteException e) {
         //    // Empty
         //}
+            try {
+                ActivityTaskManager.getService().toggleForceHidden(mToken);
+            } catch (RemoteException e) {
+                // Empty
+            }
     }
 
     /**
