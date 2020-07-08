@@ -772,4 +772,13 @@
     <dimen name="resolver_edge_margin">24dp</dimen>
     <dimen name="resolver_elevation">1dp</dimen>
     <dimen name="chooser_action_button_icon_size">18dp</dimen>
+    <!-- The decor caption dimens -->                                                                                                                                                                  
+    <dimen name="caption_button_width">15dp</dimen>
+    <dimen name="caption_button_height">15dp</dimen>
+    <dimen name="caption_height">30dp</dimen>
+    <dimen name="caption_text_size">14sp</dimen>
+    <dimen name="caption_margin_right">14dp</dimen>
+    <dimen name="caption_close_margin_right">20dp</dimen>
+    <dimen name="caption_setting_margin_right">32dp</dimen>
+    <dimen name="caption_margin_left">10dp</dimen>
 </resources>
