@@ -73,6 +73,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -104,6 +105,7 @@ import android.util.Log;
 import android.util.Slog;
 import android.view.Display;
 import android.view.IWindowManager;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -117,6 +119,7 @@ import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.DateTimeView;
+import android.widget.LinearLayout;
 
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.colorextraction.ColorExtractor;
@@ -890,7 +893,9 @@ public class StatusBar extends SystemUI implements DemoMode,
         mNotificationLogger.setHeadsUpManager(mHeadsUpManager);
         putComponent(HeadsUpManager.class, mHeadsUpManager);
 
-        createNavigationBar(result);
+        //createNavigationBar(result);
+        addOpenthosStatusBarLayout();
+        mOpenthosStatusBarView.initTaskbarIcons();
 
         if (ENABLE_LOCKSCREEN_WALLPAPER && mWallpaperSupported) {
             mLockscreenWallpaper = new LockscreenWallpaper(mContext, this, mHandler);
@@ -1136,6 +1141,34 @@ public class StatusBar extends SystemUI implements DemoMode,
         mVibratorHelper = Dependency.get(VibratorHelper.class);
     }
 
+    //add openthos status bar view.
+    protected void addOpenthosStatusBarLayout() {
+        mWindowManager.addView(mOpenthosStatusBarView, getOpenthosStatusBarLayoutParams());
+    }
+
+    private WindowManager.LayoutParams getOpenthosStatusBarLayoutParams() {
+        final Resources res = mContext.getResources();
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT, res.getDimensionPixelSize(R.dimen.navigation_bar_height),
+                WindowManager.LayoutParams.TYPE_NAVIGATION_BAR,
+                0
+                | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+                | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
+                | WindowManager.LayoutParams.FLAG_SLIPPERY,
+                PixelFormat.TRANSLUCENT);
+        // this will allow the navbar to run in an overlay on devices that support this
+        if (ActivityManager.isHighEndGfx()) {
+            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        }
+        lp.gravity = Gravity.BOTTOM;
+        lp.setTitle("OpenthosStatusBar");
+        lp.windowAnimations = 0;
+        return lp;
+    }
+
     protected void setUpQuickSettingsTilePanel() {
         View container = mStatusBarWindow.findViewById(R.id.qs_frame);
         if (container != null) {
@@ -1287,6 +1320,18 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public StartupMenuDialog getStartupMenuDialog() {
        return mOpenthosStatusBarView.getStartupMenuDialog();
+    }
+
+    public void addToTaskbar(int taskId, ComponentName componentName) {
+        mOpenthosStatusBarView.addTaskIcon(componentName);
+    }
+
+    public void removeFromTaskbar(ComponentName componentName) {
+        mOpenthosStatusBarView.removeTaskIcon(componentName);
+    }
+
+    public void closeApp(int taskId, String packageName) {
+        mOpenthosStatusBarView.closeApp(taskId, packageName);
     }
 
     protected void startKeyguard() {
@@ -2142,6 +2187,15 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     public BiometricUnlockController getBiometricUnlockController() {
         return mBiometricUnlockController;
+    }
+
+    @Override
+    public void changeStatusBarIcon(int taskId, ComponentName componentName, boolean keep) {
+        if (keep) {
+            mOpenthosStatusBarView.bindIcon(taskId, componentName);
+        } else {
+            mOpenthosStatusBarView.closeIcon(taskId, componentName);
+        }
     }
 
     @Override // CommandQueue
