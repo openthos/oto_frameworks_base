@@ -44,6 +44,7 @@ import android.util.Slog;
 import android.view.BatchedInputEventReceiver;
 import android.view.Choreographer;
 import android.view.Display;
+import android.view.DisplayInfo;
 import android.view.InputApplicationHandle;
 import android.view.InputChannel;
 import android.view.InputDevice;
@@ -58,7 +59,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-class TaskPositioner implements IBinder.DeathRecipient {
+class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFrameUser {
     private static final boolean DEBUG_ORIENTATION_VIOLATIONS = false;
     private static final String TAG_LOCAL = "TaskPositioner";
     private static final String TAG = TAG_WITH_CLASS_NAME ? TAG_LOCAL : TAG_WM;
@@ -79,13 +80,13 @@ class TaskPositioner implements IBinder.DeathRecipient {
             })
     @Retention(RetentionPolicy.SOURCE)
     @interface CtrlType {}
-
     private static final int CTRL_NONE   = 0x0;
     private static final int CTRL_LEFT   = 0x1;
     private static final int CTRL_RIGHT  = 0x2;
     private static final int CTRL_TOP    = 0x4;
     private static final int CTRL_BOTTOM = 0x8;
 
+    public static final float DRAGRESIZING_HINT_ALPHA = 1.0f;
     public static final float RESIZING_HINT_ALPHA = 0.5f;
 
     public static final int RESIZING_HINT_DURATION_MS = 0;
@@ -102,6 +103,7 @@ class TaskPositioner implements IBinder.DeathRecipient {
     private DisplayContent mDisplayContent;
     private final DisplayMetrics mDisplayMetrics = new DisplayMetrics();
     private Rect mTmpRect = new Rect();
+    private ResizingFrame mDimLayerForResize;
     private int mSideMargin;
     private int mMinVisibleWidth;
     private int mMinVisibleHeight;
@@ -159,6 +161,8 @@ class TaskPositioner implements IBinder.DeathRecipient {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_DOWN @ {" + newX + ", " + newY + "}");
                         }
+                        if (mResizing) {
+                        }
                     } break;
 
                     case MotionEvent.ACTION_MOVE: {
@@ -172,21 +176,31 @@ class TaskPositioner implements IBinder.DeathRecipient {
                         if (!mTmpRect.equals(mWindowDragBounds)) {
                             Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER,
                                     "wm.TaskPositioner.resizeTask");
-                            try {
-                                mActivityManager.resizeTask(
-                                        mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
-                            } catch (RemoteException e) {
+                            if (!mResizing) {                                                                                                                                                          
+                                try {
+                                    mActivityManager.resizeTask(
+                                            mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
+                                } catch (RemoteException e) {
+                                }
+                            } else {
+                                mDimLayerForResize.setBounds(mWindowDragBounds);
+                                mDimLayerForResize.show(mService.getDragLayerLocked(),
+                                        DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                                mDimLayerForResize.reDraw();
+                                Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
                             }
-                            Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
-                        }
-                    } break;
+                        } break;
 
                     case MotionEvent.ACTION_UP: {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_UP @ {" + newX + ", " + newY + "}");
                         }
-                        mDragEnded = true;
-                    } break;
+                        if (mResizing && mWindowDragBounds.width() != 0 && mWindowDragBounds.height() != 0) {
+                            mDimLayerForResize.stopDragDraw();
+                            mDimLayerForResize.hide();
+                        }   
+                            mDragEnded = true;
+                        } break;
 
                     case MotionEvent.ACTION_CANCEL: {
                         if (DEBUG_TASK_POSITIONING) {
@@ -329,6 +343,11 @@ class TaskPositioner implements IBinder.DeathRecipient {
             return;
         }
 
+        if (mDimLayerForResize != null) {
+            mDimLayerForResize.destroySurface();
+            mDimLayerForResize = null;
+        }
+
         mService.mInputManager.unregisterInputChannel(mServerChannel);
 
         mInputEventReceiver.dispose();
@@ -345,6 +364,7 @@ class TaskPositioner implements IBinder.DeathRecipient {
         // Notify InputMonitor to remove mDragWindowHandle.
         mDisplayContent.getInputMonitor().updateInputWindowsLw(true /*force*/);
 
+        mDimLayerForResize = new ResizingFrame(mService, this, mDisplayContent.getDisplay().getDisplayId(), TAG_LOCAL);
         // Resume rotations after a drag.
         if (DEBUG_ORIENTATION) {
             Slog.d(TAG, "Resuming rotation after re-position");
@@ -398,6 +418,12 @@ class TaskPositioner implements IBinder.DeathRecipient {
                 mCtrlType |= CTRL_BOTTOM;
             }
             mResizing = mCtrlType != CTRL_NONE;
+            if (mResizing) {
+                mDimLayerForResize.setBounds(mTmpRect);
+                mDimLayerForResize.show(mService.getDragLayerLocked(),
+                        DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                mDimLayerForResize.reDraw();
+            }
         }
 
         // In case of !isDockedInEffect we are using the union of all task bounds. These might be
@@ -668,6 +694,21 @@ class TaskPositioner implements IBinder.DeathRecipient {
         }
 
         return sFactory.create(service);
+    }
+
+    @Override /** {@link DimLayer.DimLayerUser} */
+        public boolean dimFullscreen() {
+            return false;
+        }
+
+    @Override /** {@link DimLayer.DimLayerUser} */
+        public DisplayInfo getDisplayInfo() {
+            return mTask.mStack.getDisplayInfo();
+        }
+
+    @Override
+    public void getDimBounds(Rect out) {
+        // This dim layer user doesn't need this.                                                                                                                                                      
     }
 
     @Override
