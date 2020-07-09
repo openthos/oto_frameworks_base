@@ -187,7 +187,8 @@ public class NotificationShelf extends ActivatableNotificationView implements
             mShelfState.height = getIntrinsicHeight();
             mShelfState.yTranslation = Math.max(Math.min(viewEnd, maxShelfEnd) - mShelfState.height,
                     getFullyClosedTranslation());
-            mShelfState.zTranslation = ambientState.getBaseZHeight();
+            //mShelfState.zTranslation = ambientState.getBaseZHeight();
+            mShelfState.zTranslation = 0;
             float openedAmount = (mShelfState.yTranslation - getFullyClosedTranslation())
                     / (getIntrinsicHeight() * 2);
             openedAmount = Math.min(1.0f, openedAmount);

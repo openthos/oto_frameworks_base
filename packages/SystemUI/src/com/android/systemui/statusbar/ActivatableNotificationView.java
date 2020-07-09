@@ -211,8 +211,9 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     protected void onFinishInflate() {
         super.onFinishInflate();
         mBackgroundNormal = findViewById(R.id.backgroundNormal);
-        mFakeShadow = findViewById(R.id.fake_shadow);
-        mShadowHidden = mFakeShadow.getVisibility() != VISIBLE;
+        //mFakeShadow = findViewById(R.id.fake_shadow);
+        //mShadowHidden = mFakeShadow.getVisibility() != VISIBLE;
+        mShadowHidden = true;
         mBackgroundDimmed = findViewById(R.id.backgroundDimmed);
         mDimmedAlpha = Color.alpha(mContext.getColor(
                 R.color.notification_material_background_dimmed_color));
@@ -229,6 +230,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
      */
     protected void initBackground() {
         mBackgroundNormal.setCustomBackground(R.drawable.notification_material_bg);
+        mBackgroundNormal.setDrawableAlpha(255/2);
         mBackgroundDimmed.setCustomBackground(R.drawable.notification_material_bg_dim);
     }
 
@@ -258,6 +260,14 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
 
     protected boolean handleSlideBack() {
         return false;
+    }
+
+    public void setBackgroundDrawableAlpha(boolean dim, int alpha) {
+        NotificationBackgroundView bv = dim ? mBackgroundDimmed : mBackgroundNormal;
+        if (bv == null) {
+            return;
+        }
+        bv.setDrawableAlpha(alpha);
     }
 
     @Override
@@ -421,7 +431,8 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     }
 
     public boolean isDimmable() {
-        return true;
+        //return true;
+        return false;
     }
 
     public void setDark(boolean dark, boolean fade, long delay) {
@@ -518,7 +529,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
                    mDimmedAlpha,
                    overrideAmount));
         } else {
-            mBackgroundNormal.setDrawableAlpha(255);
+            mBackgroundNormal.setDrawableAlpha(255/2);
         }
     }
 
@@ -995,9 +1006,9 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         boolean hiddenBefore = mShadowHidden;
         mShadowHidden = shadowIntensity == 0.0f;
         if (!mShadowHidden || !hiddenBefore) {
-            mFakeShadow.setFakeShadowTranslationZ(shadowIntensity * (getTranslationZ()
-                            + FakeShadowView.SHADOW_SIBLING_TRESHOLD), outlineAlpha, shadowYEnd,
-                    outlineTranslation);
+            //mFakeShadow.setFakeShadowTranslationZ(shadowIntensity * (getTranslationZ()
+            //                + FakeShadowView.SHADOW_SIBLING_TRESHOLD), outlineAlpha, shadowYEnd,
+            //        outlineTranslation);
         }
     }
 

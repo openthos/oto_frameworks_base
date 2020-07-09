@@ -343,7 +343,7 @@ public class StartupMenuView extends FrameLayout implements View.OnClickListener
 
     private OnMenuClick mOnMenuClick = new OnMenuClick() {
         @Override
-        public void menuClick(View view, Dialog dialog, AppInfo appInfo, String menu, int taskId) {
+        public void menuClick(View view, MenuDialog dialog, AppInfo appInfo, String menu, int taskId) {
             if (menu.equals(getContext().getString(R.string.open))) {
                 mOperateManager.openApplication(appInfo);
             } else if (menu.equals(getContext().getString(R.string.lock_to_task_bar))) {

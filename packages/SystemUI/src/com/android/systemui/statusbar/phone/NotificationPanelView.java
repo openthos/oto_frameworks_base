@@ -322,11 +322,14 @@ public class NotificationPanelView extends PanelView implements
         }
 
         int panelWidth = res.getDimensionPixelSize(R.dimen.notification_panel_width);
-        lp = (FrameLayout.LayoutParams) mNotificationStackScroller.getLayoutParams();
-        if (lp.width != panelWidth || lp.gravity != panelGravity) {
-            lp.width = panelWidth;
-            lp.gravity = panelGravity;
-            mNotificationStackScroller.setLayoutParams(lp);
+        try {
+            lp = (FrameLayout.LayoutParams) mNotificationStackScroller.getLayoutParams();
+            if (lp.width != panelWidth || lp.gravity != panelGravity) {
+                lp.width = panelWidth;
+                lp.gravity = panelGravity;
+                mNotificationStackScroller.setLayoutParams(lp);
+            }
+        } catch (Exception e) {
         }
     }
 

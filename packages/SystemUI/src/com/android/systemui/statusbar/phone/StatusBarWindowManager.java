@@ -22,22 +22,26 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.graphics.Typeface;
 import android.os.Binder;
 import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.keyguard.R;
 import com.android.systemui.Dumpable;
 import com.android.systemui.keyguard.KeyguardViewMediator;
 import com.android.systemui.statusbar.RemoteInputController;
 import com.android.systemui.statusbar.StatusBarState;
+import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -93,17 +97,17 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         final Resources res = mContext.getResources();
         mLp = new WindowManager.LayoutParams(
                 //ViewGroup.LayoutParams.MATCH_PARENT,
-                res.getDimensionPixelSize(R.dimen.notification_panel_width),
+                0,//res.getDimensionPixelSize(R.dimen.notification_panel_width),
                 0,//barHeight,
-                WindowManager.LayoutParams.TYPE_STATUS_BAR,
+                //WindowManager.LayoutParams.TYPE_STATUS_BAR,
+                WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_TOUCHABLE_WHEN_WAKING
                         | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
-                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                        | WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS,
+                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
         mLp.token = new Binder();
-        mLp.gravity = Gravity.RIGHT | Gravity.TOP;
+        mLp.gravity = Gravity.RIGHT | Gravity.BOTTOM;
         mLp.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
         mLp.setTitle("StatusBar");
         mLp.packageName = mContext.getPackageName();
@@ -173,35 +177,68 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
         mLpChanged.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
     }
 
+    private int dpToPx(float dp) {
+        return (int) (dp * mContext.getResources().getDisplayMetrics().density);
+    }
+
     private void setHeight(boolean partExpand) {
         int barColor = partExpand ? 0 : mContext.getColor(R.color.system_bar_background_opaque);
         int partVisibility = partExpand ? View.GONE : View.VISIBLE;
-        int notifyHeight = (int) (92.0f * mContext.getResources().getDisplayMetrics().density);
-        mLpChanged.height = partExpand ? notifyHeight : ViewGroup.LayoutParams.MATCH_PARENT;
+        int notifyHeight = dpToPx(92.0f);
+        mLpChanged.height = partExpand ? notifyHeight : dpToPx(528.0f);
 
-        mStatusBarView.setBackgroundColor(barColor);
-        mStatusBarView.findViewById(R.id.notification_container_parent).
-                                                setBackgroundColor(barColor);
-        mStatusBarView.findViewById(R.id.heads_up_scrim).setBackgroundColor(barColor);
+        mStatusBarView.setBackground(null);
+        View ncp = mStatusBarView.findViewById(R.id.notification_container_parent);
+        ncp.setBackgroundColor(barColor);
+        ncp.getLayoutParams().height = mLpChanged.height;
+        ncp.getLayoutParams().width = mLpChanged.width;
+        mStatusBarView.findViewById(R.id.heads_up_scrim).setBackground(null);
 
         View notificationSubPanel = mStatusBarView.findViewById(R.id.notification_sub_panel);
-        View panelHead = mStatusBarView.findViewById(R.id.panel_head);
-        View printPanel = mStatusBarView.findViewById(R.id.print_panel);
-        View qsPanel = mStatusBarView.findViewById(R.id.qs_panel_layout);
-
-        panelHead.setVisibility(partVisibility);
-        printPanel.setVisibility(partVisibility);
-        qsPanel.setVisibility(partVisibility);
 
         LinearLayout.LayoutParams lp = null; 
         lp = (LinearLayout.LayoutParams) notificationSubPanel.getLayoutParams();
         lp.weight = partExpand ? 3.0f : 1.6f;
-        lp = (LinearLayout.LayoutParams) panelHead.getLayoutParams();
-        lp.weight = partExpand ? 0 : 0.2f;
-        lp = (LinearLayout.LayoutParams) printPanel.getLayoutParams();
-        lp.weight = partExpand ? 0 : 1.0f;
-        lp = (LinearLayout.LayoutParams) qsPanel.getLayoutParams();
-        lp.weight = partExpand ? 0 : 0.2f;
+        lp.width = mLpChanged.width;
+        lp.height = mLpChanged.height;
+
+        View ons = mStatusBarView.findViewById(R.id.openthos_notification_stack);
+        ons.getLayoutParams().width = mLpChanged.width;
+        ons.getLayoutParams().height = mLpChanged.height;
+
+        NotificationStackScrollLayout nss = (NotificationStackScrollLayout) mStatusBarView.
+                                                findViewById(R.id.notification_stack_scroller);
+        nss.getLayoutParams().width = mLpChanged.width;
+        nss.getLayoutParams().height = dpToPx(469.0f);
+
+        View ndc = mStatusBarView.findViewById(R.id.notification_dismiss_containorn);
+        ndc.getLayoutParams().width = mLpChanged.width;
+        ndc.getLayoutParams().height = dpToPx(58.0f);
+
+        TextView dt = (TextView) mStatusBarView.findViewById(R.id.dismiss_text);
+        dt.setTypeface(Typeface.createFromAsset(mContext.getAssets(),
+                                        "fonts/PingFang_SC_Regular.ttf"));
+        dt.setText(R.string.clear_all);
+        dt.setTextSize(dpToPx(15.0f));
+        ViewGroup.MarginLayoutParams dtlp = (ViewGroup.MarginLayoutParams) dt.getLayoutParams();
+        dtlp.width = dpToPx(208.0f);
+        dtlp.height = dpToPx(30.0f);
+        dtlp.leftMargin = dpToPx(64.0f);
+        dtlp.rightMargin = dpToPx(64.0f);
+        dtlp.topMargin = dpToPx(14.0f);
+        dtlp.bottomMargin = dpToPx(14.0f);
+
+        View ns = mStatusBarView.findViewById(R.id.notification_settings);
+        ViewGroup.MarginLayoutParams nslp = (ViewGroup.MarginLayoutParams) ns.getLayoutParams();
+        nslp.width = dpToPx(30.0f);
+        nslp.height = dpToPx(30.0f);
+        nslp.leftMargin = dpToPx(291.0f);
+        nslp.rightMargin = dpToPx(14.0f);
+        nslp.topMargin = dpToPx(14.0f);
+        nslp.bottomMargin = dpToPx(14.0f);
+
+        mStatusBarView.getViewRootImpl().requestInvalidateRootRenderNode();
+        nss.updateChildrenParams();
     }
 
     private void applyHeight(State state) {
@@ -211,8 +248,9 @@ public class StatusBarWindowManager implements RemoteInputController.Callback, D
             expanded = true;
         }
         if (expanded) {
-            mLpChanged.width = mContext.getResources().
-                    getDimensionPixelSize(R.dimen.notification_panel_width);
+            //mLpChanged.width = mContext.getResources().
+            //        getDimensionPixelSize(R.dimen.notification_panel_width);
+            mLpChanged.width = dpToPx(335.0f);
             setHeight(state.headsUpShowing);
         } else {
             mLpChanged.height = mBarHeight;

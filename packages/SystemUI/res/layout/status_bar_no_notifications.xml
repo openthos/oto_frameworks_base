@@ -18,16 +18,16 @@
 <com.android.systemui.statusbar.EmptyShadeView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone"
         >
     <TextView
             android:id="@+id/no_notifications"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="match_parent"
             android:paddingTop="28dp"
-            android:gravity="top|center_horizontal"
-            android:textColor="?attr/wallpaperTextColor"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="#4D202020"
             android:textSize="16sp"
             android:text="@string/empty_shade_text"/>
 </com.android.systemui.statusbar.EmptyShadeView>

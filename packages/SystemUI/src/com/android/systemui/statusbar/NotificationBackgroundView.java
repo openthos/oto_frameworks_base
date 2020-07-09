@@ -42,6 +42,17 @@ public class NotificationBackgroundView extends View {
     }
 
     @Override
+    public void setAlpha(float alpha) {
+        super.setAlpha(alpha);
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        //super.setVisibility(View.GONE);
+        super.setVisibility(visibility);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         draw(canvas, mBackground);
     }
@@ -61,7 +72,7 @@ public class NotificationBackgroundView extends View {
 
     @Override
     protected void drawableStateChanged() {
-        drawableStateChanged(mBackground);
+        //drawableStateChanged(mBackground);
     }
 
     private void drawableStateChanged(Drawable d) {
@@ -139,7 +150,7 @@ public class NotificationBackgroundView extends View {
     }
 
     public void setState(int[] drawableState) {
-        mBackground.setState(drawableState);
+        //mBackground.setState(drawableState);
     }
 
     public void setRippleColor(int color) {

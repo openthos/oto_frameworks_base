@@ -98,7 +98,7 @@ public class MenuDialog extends BaseDialog {
         mDialogType = type;
         prepareData();
         Window dialogWindow = getWindow();
-        dialogWindow.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialogWindow.setType(WindowManager.LayoutParams.TYPE_STATUS_BAR_DIALOG);
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.format = PixelFormat.TRANSPARENT;
         lp.dimAmount = 0;

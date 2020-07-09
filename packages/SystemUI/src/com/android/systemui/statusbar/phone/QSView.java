@@ -26,10 +26,6 @@ public class QSView extends LinearLayout {
 
     private final static String TAG = "QSView";
     private Context mContext;
-    private ImageView mSettings;
-    private ImageView mScreenShot;
-    private ImageView mProjection;
-    private ImageView mIsolation;
     private int mNumClick = 0;
 
     public QSView(Context context) {
@@ -53,49 +49,6 @@ public class QSView extends LinearLayout {
     }
 
     @Override
-    protected void onFinishInflate() {
-        mSettings = (ImageView) findViewById(R.id.qs_settings);
-        mScreenShot = (ImageView) findViewById(R.id.qs_shot_screen);
-        mScreenShot = (ImageView) findViewById(R.id.qs_isolation);
-        mProjection = (ImageView) findViewById(R.id.qs_projection);
-        mIsolation = (ImageView) findViewById(R.id.qs_isolation);
-        clickQsPanel();
-    }
-
-    private void clickQsPanel() {
-        mSettings.setOnClickListener(mQSViewListener);
-        mScreenShot.setOnClickListener(mQSViewListener);
-        mProjection.setOnClickListener(mQSViewListener);
-        mIsolation.setOnClickListener(mQSViewListener);
-    }
-
-    private View.OnClickListener mQSViewListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.qs_shot_screen:
-                    //((InputManager)mContext.getSystemService(Context.INPUT_SERVICE))
-                    //    .sendKeyEvent(KeyEvent.KEYCODE_SYSRQ);
-                    break;
-                case R.id.qs_isolation:
-                    if ((mNumClick++) % 2 == 0) {
-                        stopAllConnection(false);
-                        mIsolation.setImageDrawable(getResources().getDrawable(R.mipmap.ic_notification_isolation_off));
-                    } else {
-                        stopAllConnection(true);
-                        mIsolation.setImageDrawable(getResources().getDrawable(R.mipmap.ic_notification_isolation_on));
-                    }
-                    break;
-                case R.id.qs_settings:
-                    openSettings();
-                    break;
-                case R.id.qs_projection:
-                    break;
-            }
-        }
-    };
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
@@ -108,16 +61,6 @@ public class QSView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return super.onTouchEvent(event);
-    }
-
-    private void openSettings() {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
-        intent.setAction(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        getContext().startActivity(intent, null);
     }
 
     public void stopAllConnection(boolean state) {
@@ -133,27 +76,15 @@ public class QSView extends LinearLayout {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        updateResource();
+        //updateResource();
     }
 
     private void updateResource() {
-        TextView shotScreen = (TextView) findViewById(R.id.shot_screen);
-        TextView isolation = (TextView) findViewById(R.id.isolation);
         TextView settings = (TextView) findViewById(R.id.settings);
-        TextView projection = (TextView) findViewById(R.id.projection);
 
-        shotScreen.setText(getResources().getString(R.string.notification_shot_screen));
-        isolation.setText(getResources().getString(R.string.notification_isolation));
         settings.setText(getResources().getString(R.string.notification_settings));
-        projection.setText(getResources().getString(R.string.notification_projection));
 
-        shotScreen.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
-        isolation.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
         settings.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
-        projection.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.qs_font_size_sixteen));
     }
 }

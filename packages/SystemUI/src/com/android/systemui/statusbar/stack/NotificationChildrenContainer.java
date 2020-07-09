@@ -136,8 +136,9 @@ public class NotificationChildrenContainer extends ViewGroup {
                 R.dimen.notification_children_container_top_padding);
         mCollapsedBottompadding = res.getDimensionPixelSize(
                 com.android.internal.R.dimen.notification_content_margin_bottom);
-        mEnableShadowOnChildNotifications =
-                res.getBoolean(R.bool.config_enableShadowOnChildNotifications);
+        mEnableShadowOnChildNotifications = false;
+        //mEnableShadowOnChildNotifications =
+        //        res.getBoolean(R.bool.config_enableShadowOnChildNotifications);
         mShowDividersWhenExpanded =
                 res.getBoolean(R.bool.config_showDividersWhenGroupNotificationExpanded);
         mHideDividersDuringExpand =
@@ -552,8 +553,9 @@ public class NotificationChildrenContainer extends ViewGroup {
             firstOverflowIndex = getMaxAllowedVisibleChildren(true /* likeCollapsed */);
         }
 
-        boolean childrenExpandedAndNotAnimating = mChildrenExpanded
-                && !mContainingNotification.isGroupExpansionChanging();
+        boolean childrenExpandedAndNotAnimating = false;
+        //boolean childrenExpandedAndNotAnimating = mChildrenExpanded
+        //        && !mContainingNotification.isGroupExpansionChanging();
         for (int i = 0; i < childCount; i++) {
             ExpandableNotificationRow child = mChildren.get(i);
             if (!firstChild) {

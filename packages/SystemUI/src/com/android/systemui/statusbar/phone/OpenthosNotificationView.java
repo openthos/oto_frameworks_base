@@ -32,7 +32,6 @@ public class OpenthosNotificationView extends LinearLayout {
     @Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        initView();
     }
 
     @Override
@@ -53,19 +52,5 @@ public class OpenthosNotificationView extends LinearLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-    }
-
-    private void initView() {
-        TextView notificationInfo = (TextView)findViewById(R.id.notification_info);
-        Button notificationManager = (Button)findViewById(R.id.notification_manager);
-        Button clearAll = (Button)findViewById(R.id.notification_clear_all);
-        TextView printMessage = (TextView)findViewById(R.id.print_message);
-        Button printManager = (Button)findViewById(R.id.printManager);
-
-        notificationInfo.setText(getResources().getString(R.string.notification_info));
-        notificationManager.setText(getResources().getString(R.string.notification_manager));
-        clearAll.setText(getResources().getString(R.string.clear_all));
-        printMessage.setText(getResources().getString(R.string.print_message));
-        printManager.setText(getResources().getString(R.string.print_manager));
     }
 }

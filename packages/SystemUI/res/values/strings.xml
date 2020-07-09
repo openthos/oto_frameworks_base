@@ -2121,7 +2121,7 @@
 
     <!-- notification  -->
     <string name="notification_info">information</string>
-    <string name="clear_all">clear all</string>
+    <string name="clear_all">CLEAR ALL</string>
     <string name="notification_manager">manager</string>
     <string name="print_manager">print manager</string>
     <string name="print_message">print message</string>

@@ -105,6 +105,7 @@ public class NotificationMenuRow implements NotificationMenuRowPlugin, View.OnCl
     public NotificationMenuRow(Context context) {
         mContext = context;
         mShouldShowMenu = context.getResources().getBoolean(R.bool.config_showNotificationGear);
+        //mShouldShowMenu = false;
         mHandler = new Handler(Looper.getMainLooper());
         mMenuItems = new ArrayList<>();
     }

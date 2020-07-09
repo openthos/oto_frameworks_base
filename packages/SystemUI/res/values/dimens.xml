@@ -223,7 +223,7 @@
 
     <!-- Width for the notification panel and related windows -->
     <dimen name="match_parent">-1px</dimen>
-    <dimen name="standard_notification_panel_width">416dp</dimen>
+    <dimen name="standard_notification_panel_width">335dp</dimen>
 
     <!-- The top margin of the panel that holds the list of notifications. -->
     <dimen name="notification_panel_margin_top">0dp</dimen>
@@ -406,7 +406,7 @@
     <dimen name="keyguard_clock_notifications_margin_max">42dp</dimen>
     <dimen name="heads_up_scrim_height">250dp</dimen>
 
-    <item name="scrim_behind_alpha" format="float" type="dimen">0.62</item>
+    <item name="scrim_behind_alpha" format="float" type="dimen">0</item>
 
     <!-- The minimum amount the user needs to swipe to go to the camera / phone. -->
     <dimen name="keyguard_min_swipe_amount">110dp</dimen>
@@ -873,6 +873,7 @@
 
     <dimen name="notification_panel_height">560dp</dimen>
     <!-- notification dimens -->
+    <dimen name="notification_margin">14dp</dimen>
     <dimen name="size_sixty">60dp</dimen>
     <dimen name="qs_icon_size_thirty">30dp</dimen>
     <dimen name="qs_font_size_sixteen">16sp</dimen>
@@ -880,6 +881,8 @@
 
     <dimen name="common_layout_height">40dp</dimen>
     <dimen name="max_list_wifi_height">400dp</dimen>
+    <dimen name="notification_text_size">15sp</dimen>
+    <dimen name="status_bar_notification_row">2dp</dimen>
 
     <!--StartupMenu-->
     <dimen name="start_menu_left_width">180dp</dimen>

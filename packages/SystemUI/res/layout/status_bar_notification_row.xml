@@ -70,18 +70,22 @@
         android:layout_height="wrap_content"
         />
 
-    <com.android.systemui.statusbar.notification.FakeShadowView
-        android:id="@+id/fake_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <ImageButton
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:id="@+id/delete_notification"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom|end"
-        android:background="@android:drawable/ic_menu_delete" />
+    <FrameLayout
+        android:layout_gravity="top|end"
+        android:layout_marginRight="@dimen/status_bar_notification_row"
+        android:layout_marginTop="@dimen/status_bar_notification_row"
+        android:layout_width="@dimen/qs_icon_size_thirty"
+        android:layout_height="@dimen/qs_icon_size_thirty">
+        <View
+            android:id="@+id/delete_notification_dim"
+            android:layout_width="@dimen/qs_icon_size_thirty"
+            android:layout_height="@dimen/qs_icon_size_thirty"
+            android:background="#FF000000" />
+        <ImageButton
+            android:layout_width="@dimen/qs_icon_size_thirty"
+            android:layout_height="@dimen/qs_icon_size_thirty"
+            android:id="@+id/delete_notification"
+            android:background="@android:drawable/ic_menu_delete" />
+    </FrameLayout>
 
 </com.android.systemui.statusbar.ExpandableNotificationRow>

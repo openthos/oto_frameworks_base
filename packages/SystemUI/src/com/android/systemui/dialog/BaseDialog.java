@@ -14,10 +14,13 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.android.systemui.R;
+import com.android.systemui.SysUiServiceProvider;
+import com.android.systemui.statusbar.phone.StatusBar;
 
 public class BaseDialog extends Dialog {
     protected View mContentView;
     protected static Point mPoint;
+    private StatusBar mStatusBar;
 
     public BaseDialog(@NonNull Context context) {
         this(context, R.style.DialogStyle);
@@ -32,6 +35,7 @@ public class BaseDialog extends Dialog {
             mPoint = new Point();
             defaultDisplay.getRealSize(mPoint);
         }
+        mStatusBar = SysUiServiceProvider.getComponent(context, StatusBar.class);
     }
 
     @Override
@@ -52,6 +56,27 @@ public class BaseDialog extends Dialog {
 
     public void initListener() {
 
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        setContentViewBlur(true);
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        setContentViewBlur(false);
+    }
+
+    private void setContentViewBlur(boolean blur) {
+        mContentView.post(new Runnable() {
+            @Override
+            public void run() {
+                mStatusBar.setViewBlur(mContentView, blur);
+            }
+        });
     }
 
     /**

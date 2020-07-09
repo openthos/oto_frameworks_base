@@ -76,9 +76,11 @@ public class AmbientState {
      * Reload the dimens e.g. if the density changed.
      */
     public void reload(Context context) {
-        mZDistanceBetweenElements = Math.max(1, context.getResources()
-                .getDimensionPixelSize(R.dimen.z_distance_between_notifications));
-        mBaseZHeight = 4 * mZDistanceBetweenElements;
+        mZDistanceBetweenElements = 0;
+        //mZDistanceBetweenElements = Math.max(1, context.getResources()
+        //        .getDimensionPixelSize(R.dimen.z_distance_between_notifications));
+        //mBaseZHeight = 4 * mZDistanceBetweenElements;
+        mBaseZHeight = 0;
     }
 
     /**

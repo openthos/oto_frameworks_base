@@ -21,6 +21,7 @@ import static com.android.systemui.statusbar.notification.NotificationInflater.I
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.Nullable;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -95,6 +97,8 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
 
     private LayoutListener mLayoutListener;
     private boolean mDark;
+    private boolean mScaled;
+    private boolean mHovered;
     private boolean mLowPriorityStateUpdated;
     private final NotificationInflater mNotificationInflater;
     private int mIconTransformContentShift;
@@ -554,12 +558,96 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
     }
 
     @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        Rect outRect = new Rect();
+        getBoundsOnScreen(outRect);
+        boolean contains = outRect.contains((int) event.getRawX(), (int) event.getRawY());
+        if (mHovered != contains) {
+            mHovered = contains;
+            changeVisibilityWithAnimation();
+        }
+        return super.onGenericMotionEvent(event);
+    }
+
+    public void scaleRow() {
+        if (mScaled) {
+            mScaled = false;
+            AnimatorSet as = new AnimatorSet();
+            final ObjectAnimator xAnim = ObjectAnimator.ofFloat(this,
+                        View.SCALE_X, 0.95f, 1.0f);
+            final ObjectAnimator yAnim = ObjectAnimator.ofFloat(this,
+                        View.SCALE_Y, 0.95f, 1.0f);
+            as.setDuration(50);
+            as.play(xAnim).with(yAnim);
+            as.start();
+        }
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
+        boolean isCancelOrUp = event.getActionMasked() == MotionEvent.ACTION_CANCEL
+                || event.getActionMasked()== MotionEvent.ACTION_UP;
+        boolean result = false;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mScaled = true;
+            AnimatorSet as = new AnimatorSet();
+            final ObjectAnimator xAnim = ObjectAnimator.ofFloat(this,
+                        View.SCALE_X, 1.0f, 0.95f);
+            final ObjectAnimator yAnim = ObjectAnimator.ofFloat(this,
+                        View.SCALE_Y, 1.0f, 0.95f);
+            as.setDuration(50);
+            as.play(xAnim).with(yAnim);
+            as.start();
+            if (mOnClickListener == null) {
+                return true;
+            }
+        } else if (isCancelOrUp) {
+            scaleRow();
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            Rect outRect = new Rect();
+            getBoundsOnScreen(outRect);
+            boolean contains = outRect.contains((int) event.getRawX(), (int) event.getRawY());
+            if (mHovered != contains) {
+                mHovered = contains;
+                changeVisibilityWithAnimation();
+            }
+        }
+
         if (event.getActionMasked() != MotionEvent.ACTION_DOWN
                 || !isChildInGroup() || isGroupExpanded()) {
             return super.onTouchEvent(event);
         } else {
             return false;
+        }
+    }
+
+    public void changeVisibilityWithAnimation() {
+        View notificationItemDelete = findViewById(R.id.delete_notification);
+        View deleteDim = findViewById(R.id.delete_notification_dim);
+        if (mHovered) {
+            setBackgroundDrawableAlpha(false, 204);
+            if (notificationItemDelete != null
+                    && notificationItemDelete.getVisibility() != View.VISIBLE) {
+                notificationItemDelete.setVisibility(View.VISIBLE);
+                final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(notificationItemDelete,
+                            View.ALPHA, 0f, 1.0f);
+                alphaAnim.setDuration(200);
+                alphaAnim.start();
+            }
+            if (deleteDim != null) {
+                deleteDim.setVisibility(View.VISIBLE);
+            }
+        } else {
+            scaleRow();
+            if (notificationItemDelete != null) {
+                notificationItemDelete.setVisibility(View.INVISIBLE);
+            }
+            if (deleteDim != null) {
+                deleteDim.setVisibility(View.INVISIBLE);
+            }
+            setBackgroundDrawableAlpha(false, 255/2);
         }
     }
 
@@ -786,6 +874,11 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
 
     public void setOnExpandClickListener(OnExpandClickListener onExpandClickListener) {
         mOnExpandClickListener = onExpandClickListener;
+    }
+
+    @Override
+    public void setOnTouchListener(OnTouchListener l) {
+        super.setOnTouchListener(l);
     }
 
     @Override

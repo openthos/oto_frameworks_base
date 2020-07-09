@@ -602,15 +602,15 @@ public abstract class PanelView extends FrameLayout {
             case MotionEvent.ACTION_MOVE:
                 final float h = y - mInitialTouchY;
                 trackMovement(event);
-                if (scrolledToBottom || mTouchStartedInEmptyArea || mAnimatingOnDown) {
-                    float hAbs = Math.abs(h);
-                    if ((h < -mTouchSlop || (mAnimatingOnDown && hAbs > mTouchSlop))
-                            && hAbs > Math.abs(x - mInitialTouchX)) {
-                        cancelHeightAnimator();
-                        startExpandMotion(x, y, true /* startTracking */, mExpandedHeight);
-                        return true;
-                    }
-                }
+                //if (scrolledToBottom || mTouchStartedInEmptyArea || mAnimatingOnDown) {
+                //    float hAbs = Math.abs(h);
+                //    if ((h < -mTouchSlop || (mAnimatingOnDown && hAbs > mTouchSlop))
+                //            && hAbs > Math.abs(x - mInitialTouchX)) {
+                //        cancelHeightAnimator();
+                //        startExpandMotion(x, y, true /* startTracking */, mExpandedHeight);
+                //        return true;
+                //    }
+                //}
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -790,6 +790,9 @@ public abstract class PanelView extends FrameLayout {
                     notifyExpandingFinished();
                 }
                 notifyBarPanelExpansionChanged();
+                if (!expand) {
+                    mStatusBar.setViewBlur(PanelView.this, false);
+                }
             }
         });
         setAnimator(animator);

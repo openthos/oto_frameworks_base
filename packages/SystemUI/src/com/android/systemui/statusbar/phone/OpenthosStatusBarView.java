@@ -83,6 +83,12 @@ public class OpenthosStatusBarView extends PanelBar {
         initView();
         initData();
         initListener();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mStatusBar.setViewBlur(OpenthosStatusBarView.this, true);
+            }
+        });
     }
 
     private void initView() {

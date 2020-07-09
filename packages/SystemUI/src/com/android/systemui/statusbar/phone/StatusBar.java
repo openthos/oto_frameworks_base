@@ -34,6 +34,7 @@ import static com.android.systemui.statusbar.phone.BarTransitions.MODE_WARNING;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.ActivityManager;
@@ -470,8 +471,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     // expanded notifications
     protected NotificationPanelView mNotificationPanel; // the sliding/resizing panel within the notification window
-    private Button mButtonNotificationManager;
-    private Button mButtonNotificationClearAll;
     View mExpandedContents;
     TextView mNotificationPanelDebugText;
 
@@ -1132,7 +1131,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
 
-        mStackScroller.setLongPressListener(getNotificationLongClicker());
+        //mStackScroller.setLongPressListener(getNotificationLongClicker());
         mStackScroller.setStatusBar(this);
         mStackScroller.setGroupManager(mGroupManager);
         mStackScroller.setHeadsUpManager(mHeadsUpManager);
@@ -1315,11 +1314,6 @@ public class StatusBar extends SystemUI implements DemoMode,
 
         // Private API call to make the shadows look better for Recents
         ThreadedRenderer.overrideProperty("ambientRatio", String.valueOf(1.5f));
-
-        mButtonNotificationManager = (Button) mNotificationPanel.findViewById(R.id.notification_manager);
-        mButtonNotificationClearAll = (Button) mNotificationPanel.findViewById(R.id.notification_clear_all);
-        mButtonNotificationManager.setOnClickListener(mNotificationClickListener);
-        mButtonNotificationClearAll.setOnClickListener(mNotificationClickListener);
     }
 
     //add openthos status bar view.
@@ -1512,37 +1506,62 @@ public class StatusBar extends SystemUI implements DemoMode,
             return;
         }
 
-        mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
-                R.layout.status_bar_notification_dismiss_all, mStackScroller, false);
-        mDismissView.setOnButtonClickListener(new View.OnClickListener() {
+        View dismissView = mStatusBarWindow.findViewById(R.id.dismiss_text);
+        dismissView.getBackground().setAlpha(51);
+
+        //mDismissView = (DismissView) LayoutInflater.from(mContext).inflate(
+        //        R.layout.status_bar_notification_dismiss_all, mStackScroller, false);
+        //mDismissView.setOnButtonClickListener(new View.OnClickListener() {
+        dismissView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mMetricsLogger.action(MetricsEvent.ACTION_DISMISS_ALL_NOTES);
                 clearAllNotifications();
             }
         });
-        mStackScroller.setDismissView(mDismissView);
+        dismissView.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent ev) {
+                if (ev.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                    v.getBackground().setAlpha(102);
+                    return true;
+                } else if (ev.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                    v.getBackground().setAlpha(51);
+                    return true;
+                }
+                return false;
+            }
+        });
+        dismissView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent ev) {
+                if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                    v.getBackground().setAlpha(51);
+                }
+                return false;
+            }
+        });
+
+        View settingsView = mStatusBarWindow.findViewById(R.id.notification_settings);
+        settingsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettings();
+                animateCollapsePanels();
+            }
+        });
+        //mStackScroller.setDismissView(mDismissView);
     }
 
-    private View.OnClickListener mNotificationClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.notification_manager:
-                    Intent displayIntent = new Intent();
-                    ComponentName cDisplay = new ComponentName(NOTIFICATION_SETTINGS,
-                            NOTIFICATION_SETTINGS_MANAGER);
-                    displayIntent.setComponent(cDisplay);
-                    displayIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(displayIntent);
-                    break;
-                case R.id.notification_clear_all:
-                    mMetricsLogger.action(MetricsEvent.ACTION_DISMISS_ALL_NOTES);
-                    clearAllNotifications();
-                    break;
-            }
-        }
-    };
+    private void openSettings() {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        mContext.startActivity(intent, null);
+    }
 
     protected void createUserSwitcher() {
         mKeyguardUserSwitcher = new KeyguardUserSwitcher(mContext,
@@ -1718,12 +1737,13 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     public int getStatusBarHeight() {
-        if (mNaturalBarHeight < 0) {
-            final Resources res = mContext.getResources();
-            mNaturalBarHeight =
-                    res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
-        }
-        return mNaturalBarHeight;
+        //if (mNaturalBarHeight < 0) {
+        //    final Resources res = mContext.getResources();
+        //    mNaturalBarHeight =
+        //            res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        //}
+        //return mNaturalBarHeight;
+        return -2;
     }
 
     protected boolean toggleSplitScreenMode(int metricsDockAction, int metricsUndockAction) {
@@ -2316,6 +2336,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mState != StatusBarState.KEYGUARD &&
                         mNotificationData.getActiveNotifications().size() == 0;
         mNotificationPanel.showEmptyShadeView(showEmptyShadeView);
+        View dismissView = mStatusBarWindow.findViewById(R.id.dismiss_text);
+        dismissView.setVisibility(showEmptyShadeView ? View.GONE : View.VISIBLE);
     }
 
     private void updateSpeedBumpIndex() {
@@ -3283,8 +3305,18 @@ public class StatusBar extends SystemUI implements DemoMode,
         mHeadsUpManager.removeTopNotification();
         if (mNotificationPanel.isFullyCollapsed()) {
             mNotificationPanel.expand(true);
+            setViewBlur(mNotificationPanel, true);
         } else if (mNotificationPanel.isFullyExpanded()) {
             mNotificationPanel.collapse(false, 1.0f);
+        }
+    }
+
+    public void setViewBlur(View v, boolean blur) {
+        try {
+            int step = mDisplayMetrics.densityDpi / 4;
+            mWindowManagerService.setStatusBarWindowBlur(
+                        v.getWindowToken(), blur, blur, new Rect(0, 0, step, step));
+        } catch (Exception e) {
         }
     }
 
@@ -4258,7 +4290,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 getDimensionPixelSize(R.dimen.navigation_bar_size);
         ViewGroup.LayoutParams openthosLp = mOpenthosStatusBarView.getLayoutParams();
         ViewGroup.LayoutParams statusLp = mStatusBarWindow.getLayoutParams();
-        if (openthosLp.height != mNaturalBarHeight) {
+        if (openthosLp != null && openthosLp.height != mNaturalBarHeight) {
             openthosLp.height = mNaturalBarHeight;
             mOpenthosStatusBarView.setLayoutParams(openthosLp);
             mWindowManager.updateViewLayout(mOpenthosStatusBarView, openthosLp);
@@ -5118,7 +5150,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         boolean onKeyguard = mState == StatusBarState.KEYGUARD;
         boolean publicMode = isAnyProfilePublicMode();
         mStackScroller.setHideSensitive(publicMode, goingToFullShade);
-        mStackScroller.setDimmed(onKeyguard, fromShadeLocked /* animate */);
+        //mStackScroller.setDimmed(onKeyguard, fromShadeLocked /* animate */);
         mStackScroller.setExpandingEnabled(!onKeyguard);
         ActivatableNotificationView activatedChild = mStackScroller.getActivatedChild();
         mStackScroller.setActivatedChild(null);
@@ -5374,14 +5406,14 @@ public class StatusBar extends SystemUI implements DemoMode,
 
     @Override
     public void onDragDownReset() {
-        mStackScroller.setDimmed(true /* dimmed */, true /* animated */);
+        //mStackScroller.setDimmed(true /* dimmed */, true /* animated */);
         mStackScroller.resetScrollPosition();
         mStackScroller.resetCheckSnoozeLeavebehind();
     }
 
     @Override
     public void onCrossedThreshold(boolean above) {
-        mStackScroller.setDimmed(!above /* dimmed */, true /* animate */);
+        //mStackScroller.setDimmed(!above /* dimmed */, true /* animate */);
     }
 
     @Override
@@ -5423,10 +5455,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         boolean fullShadeNeedsBouncer = !userAllowsPrivateNotificationsInPublic(mCurrentUserId)
                 || !mShowLockscreenNotifications || mFalsingManager.shouldEnforceBouncer();
         if (isLockscreenPublicMode(userId) && fullShadeNeedsBouncer) {
-            mLeaveOpenOnKeyguardHide = true;
-            showBouncerIfKeyguard();
-            mDraggedDownRow = row;
-            mPendingRemoteInputView = null;
+            //mLeaveOpenOnKeyguardHide = true;
+            //showBouncerIfKeyguard();
+            //mDraggedDownRow = row;
+            //mPendingRemoteInputView = null;
         } else {
             mNotificationPanel.animateToFullShade(0 /* delay */);
             setBarState(StatusBarState.SHADE_LOCKED);
@@ -7631,11 +7663,35 @@ public class StatusBar extends SystemUI implements DemoMode,
         }
         ImageButton notificationItemDelete =
                 (ImageButton) entry.row.findViewById(R.id.delete_notification);
+        View deleteDim = entry.row.findViewById(R.id.delete_notification_dim);
+        deleteDim.getBackground().setAlpha(0);
+        notificationItemDelete.setVisibility(View.INVISIBLE);
+        deleteDim.setVisibility(View.INVISIBLE);
         notificationItemDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 removeNotification(entry.key, mRankingMap);
                 updateNotificationRanking(mRankingMap);
+            }
+        });
+
+        //deleteDim.setOnHoverListener(new View.OnHoverListener() {
+        notificationItemDelete.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent ev) {
+                if (ev.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                    deleteDim.getBackground().setAlpha(10);
+                    final ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(deleteDim,
+                                View.ALPHA, 0f, 1.0f);
+                    alphaAnim.setDuration(200);
+                    alphaAnim.start();
+                    entry.row.setBackgroundDrawableAlpha(false, 204);
+                    return true;
+                } else if (ev.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                    deleteDim.getBackground().setAlpha(0);
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -7720,10 +7776,10 @@ public class StatusBar extends SystemUI implements DemoMode,
         // incremented in the following "changeViewPosition" calls so that its value is correct for
         // subsequent calls.
         int offsetFromEnd = 1;
-        if (mDismissView != null) {
-            mStackScroller.changeViewPosition(mDismissView,
-                    mStackScroller.getChildCount() - offsetFromEnd++);
-        }
+        //if (mDismissView != null) {
+        //    mStackScroller.changeViewPosition(mDismissView,
+        //            mStackScroller.getChildCount() - offsetFromEnd++);
+        //}
 
         mStackScroller.changeViewPosition(mEmptyShadeView,
                 mStackScroller.getChildCount() - offsetFromEnd++);
