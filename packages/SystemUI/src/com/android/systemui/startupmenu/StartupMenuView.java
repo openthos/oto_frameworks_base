@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.FileObserver;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.ArrayMap;
 import android.util.AttributeSet;
@@ -212,15 +213,18 @@ public class StartupMenuView extends FrameLayout implements View.OnClickListener
             Util.updateUninstalledDatas(packageName, mAppsData, mAppsUseCountData);
             mOperateManager.removeFromTaskbar(packageName);
         }
-        mAppAdapter.updateAppsList(mAppsData);
-        mAppRecentAdapter.updateRecentAppsList(mAppsUseCountData);
+        mAppAdapter.updateAppsList();
+        mAppRecentAdapter.notifyDataSetChanged();
         mOperateManager.updateAppsInfo(mAppsData, mAppsUseCountData);
+        if (!TextUtils.isEmpty(mSearch.getText().toString())) {
+            mAppAdapter.getFilter().filter(mSearch.getText().toString());
+        }
     }
 
     private void updateAppsUseCountData() {
         mAppsUseCountData.clear();
         mAppsUseCountData.addAll(mOperateManager.getUseCountInfos());
-        mAppRecentAdapter.updateRecentAppsList(mAppsUseCountData);
+        mAppRecentAdapter.notifyDataSetChanged();
         mRecentList.setVisibility(mAppsUseCountData.size() == 0 ? View.GONE : View.VISIBLE);
         mRecentTxt.setVisibility(mAppsUseCountData.size() == 0 ? View.VISIBLE : View.GONE);
     }
@@ -246,7 +250,7 @@ public class StartupMenuView extends FrameLayout implements View.OnClickListener
                 break;
         }
         Util.sorRecentDocsByTime(mContext, mRecentDocsData);
-        mRecentDocsAdapter.updateRecentDocsData(mRecentDocsData);
+        mRecentDocsAdapter.notifyDataSetChanged();
         mRecentDocsList.setVisibility(mRecentDocsData.size() == 0 ? View.GONE : View.VISIBLE);
         mRecentDocsTxt.setVisibility(mRecentDocsData.size() == 0 ? View.VISIBLE : View.GONE);
     }

@@ -25,7 +25,7 @@ import java.util.Map;
 public class AppAdapter extends BaseAdapter implements Filterable {
     private boolean mIsSearchEmpty = false;
     private Map<String, Integer> mIndexMap;
-    private List<AppInfo> mDatas = new ArrayList<>();
+    private List<AppInfo> mDatas;
     private int mItemLayoutId;
     private Context mContext;
     private OnClickCallback mOnClickCallback;
@@ -35,7 +35,7 @@ public class AppAdapter extends BaseAdapter implements Filterable {
     private View mSelectedListItem;
 
     public AppAdapter(Context context, List<AppInfo> datas, int itemLayoutId) {
-        mDatas.addAll(datas);
+        mDatas = datas;
         mIndexMap = new HashMap<>();
         mItemLayoutId = itemLayoutId;
         mContext = context;
@@ -68,9 +68,7 @@ public class AppAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    public void updateAppsList(List<AppInfo> mAppsData) {
-        mDatas.clear();
-        mDatas.addAll(mAppsData);
+    public void updateAppsList() {
         setInitialLetterIndexMap();
         notifyDataSetChanged();
     }
@@ -224,10 +222,10 @@ public class AppAdapter extends BaseAdapter implements Filterable {
 
     private class AppsFilter extends android.widget.Filter {
 
-        private List<AppInfo> original = new ArrayList<>();
+        private List<AppInfo> original;
 
         public AppsFilter(List<AppInfo> list) {
-            original.addAll(list);
+            original = list;
         }
 
         @Override
@@ -247,9 +245,8 @@ public class AppAdapter extends BaseAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mDatas.clear();
             mIsSearchEmpty = results.count == 0;
-            mDatas.addAll(mIsSearchEmpty ? original : (List<AppInfo>) results.values);
+            mDatas = mIsSearchEmpty ? original : (List<AppInfo>) results.values;
             setInitialLetterIndexMap();
             notifyDataSetChanged();
         }

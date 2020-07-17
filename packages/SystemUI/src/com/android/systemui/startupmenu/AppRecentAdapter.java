@@ -14,12 +14,11 @@ import com.android.systemui.R;
 import com.android.systemui.startupmenu.bean.AppInfo;
 import com.android.systemui.startupmenu.listener.OnRecentAppClickCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AppRecentAdapter extends BaseAdapter {
     private Context mContext;
-    private List<AppInfo> mAppsUseCountData = new ArrayList<>();
+    private List<AppInfo> mAppsUseCountData;
     private int mLayoutId;
     private int mDownX;
     private int mDownY;
@@ -27,7 +26,7 @@ public class AppRecentAdapter extends BaseAdapter {
 
     public AppRecentAdapter(Context context, List<AppInfo> appsUseCountData, int layoutId) {
         mContext = context;
-        mAppsUseCountData.addAll(appsUseCountData);
+        mAppsUseCountData = appsUseCountData;
         mLayoutId = layoutId;
     }
 
@@ -67,14 +66,6 @@ public class AppRecentAdapter extends BaseAdapter {
         viewHolder.recentApp.setTag(mAppsUseCountData.get(position));
 
         return convertView;
-    }
-
-    public void updateRecentAppsList(List<AppInfo> appsUseCountData) {
-        if (!appsUseCountData.isEmpty()) {
-            mAppsUseCountData.clear();
-            mAppsUseCountData.addAll(appsUseCountData);
-            notifyDataSetChanged();
-        }
     }
 
     public void setOnRecentAppClickCallback(OnRecentAppClickCallback callback) {

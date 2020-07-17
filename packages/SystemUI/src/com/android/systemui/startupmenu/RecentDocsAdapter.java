@@ -15,7 +15,6 @@ import com.android.systemui.startupmenu.bean.AppInfo;
 import com.android.systemui.startupmenu.listener.OnRecentDocClickCallback;
 import com.android.systemui.startupmenu.utils.Util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecentDocsAdapter extends BaseAdapter {
@@ -23,13 +22,13 @@ public class RecentDocsAdapter extends BaseAdapter {
 
     private Context mContext;
     private int mLayoutId;
-    private List<AppInfo> mRecentDocsData = new ArrayList<>();
+    private List<AppInfo> mRecentDocsData;
     private OnRecentDocClickCallback mOnRecentDocClickCallback;
 
     public RecentDocsAdapter(Context context, List<AppInfo> recentDocsData, int layoutId) {
         mContext = context;
         mLayoutId = layoutId;
-        mRecentDocsData.addAll(recentDocsData);
+        mRecentDocsData = recentDocsData;
     }
 
     @Override
@@ -72,14 +71,6 @@ public class RecentDocsAdapter extends BaseAdapter {
         viewHolder.recentDocs.setTag(mRecentDocsData.get(position));
 
         return convertView;
-    }
-
-    public void updateRecentDocsData(List<AppInfo> recentDocsData) {
-        if (!recentDocsData.isEmpty()) {
-            mRecentDocsData.clear();
-            mRecentDocsData.addAll(recentDocsData);
-            notifyDataSetChanged();
-        }
     }
 
     public void setOnRecentDocClickCallback(OnRecentDocClickCallback callback) {
