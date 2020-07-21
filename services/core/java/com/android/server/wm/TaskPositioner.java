@@ -18,11 +18,14 @@ package com.android.server.wm;
 
 import static android.app.ActivityTaskManager.RESIZE_MODE_USER;
 import static android.app.ActivityTaskManager.RESIZE_MODE_USER_FORCED;
+import static android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM;
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.os.Trace.TRACE_TAG_WINDOW_MANAGER;
 
 import static com.android.server.wm.DragResizeMode.DRAG_RESIZE_MODE_FREEFORM;
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_ORIENTATION;
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_TASK_POSITIONING;
+import static com.android.server.wm.WindowManagerDebugConfig.SHOW_TRANSACTIONS;
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WITH_CLASS_NAME;
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WM;
 import static com.android.server.wm.WindowManagerService.dipToPixel;
@@ -68,7 +71,7 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
 
     // The margin the pointer position has to be within the side of the screen to be
     // considered at the side of the screen.
-    static final int SIDE_MARGIN_DIP = 100;
+    static final int SIDE_MARGIN_DIP = 10;
 
     @IntDef(flag = true,
             value = {
@@ -107,6 +110,7 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
     private int mSideMargin;
     private int mMinVisibleWidth;
     private int mMinVisibleHeight;
+    private int mCurrentDimSide;
 
     @VisibleForTesting
     Task mTask;
@@ -222,6 +226,18 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
                             // resizeTask() one last time to restore surface to window size.
                             mActivityManager.resizeTask(
                                     mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER_FORCED);
+                        }
+                        if (mCurrentDimSide != CTRL_NONE) {
+                            mTask.getDimBounds(mTask.mTaskRecord.mLastNonMaximizeBounds);
+                            mTmpRect.set(mTask.mStack.mActivityStack.getWindowConfiguration().getAppBounds());
+                            if (mCurrentDimSide == CTRL_LEFT) {
+                                mTmpRect.right = mTmpRect.centerX();
+                            } else if (mCurrentDimSide == CTRL_RIGHT) {
+                                mTmpRect.left = mTmpRect.centerX();
+                            }
+                            mService.mActivityManager.resizeTask(
+                                    mTask.mTaskId, mTmpRect, RESIZE_MODE_USER_FORCED);
+                            mTask.mTaskRecord.setWindowingFreeformMode(mCurrentDimSide);
                         }
                     } catch(RemoteException e) {}
 
@@ -356,6 +372,7 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
         mServerChannel.dispose();
         mClientChannel = null;
         mServerChannel = null;
+        mCurrentDimSide = CTRL_NONE;
 
         mDragWindowHandle = null;
         mDragApplicationHandle = null;
@@ -494,8 +511,51 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
         }
 
         updateWindowDragBounds(nX, nY, mTmpRect);
+        int dimSide = getDimSide(nX, nY);
+        if (dimSide != mCurrentDimSide) {
+            mCurrentDimSide = dimSide;
+            if (mCurrentDimSide != CTRL_NONE && !mResizing) {
+                mTmpRect.set(mTask.mStack.mActivityStack.getWindowConfiguration().getAppBounds());
+                adjustTmpDimBounds(mTmpRect);
+                mDimLayerForResize.setBounds(mTmpRect);
+                mDimLayerForResize.show(mService.getDragLayerLocked(),
+                        DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                mDimLayerForResize.reDraw();
+            } else {
+                mDimLayerForResize.hide();
+            }
+        }
+
         return false;
     }
+
+        private void adjustTmpDimBounds(Rect adjustBouds) {
+        if (mCurrentDimSide == CTRL_LEFT) {
+                adjustBouds.right = adjustBouds.centerX();
+            } else if (mCurrentDimSide == CTRL_RIGHT) {
+                    adjustBouds.left = adjustBouds.centerX();
+                }
+     }
+    
+     private int getDimSide(int x, int y) {
+         if (mTask.getWindowingMode() != WINDOWING_MODE_FREEFORM
+                 || !mTask.mStack.fillsParent()) {
+             return CTRL_NONE;
+                 }
+
+         mTask.mStack.getDimBounds(mTmpRect);
+         if (x - mSideMargin <= mTmpRect.left) {
+             return CTRL_LEFT;
+         }
+         if (x + mSideMargin >= mTmpRect.right) {
+             return CTRL_RIGHT;
+         }
+         if (y - mSideMargin <= mTmpRect.top) {
+             return CTRL_TOP;
+         }
+
+         return CTRL_NONE;
+     }                                                                                                                                                                                                  
 
     /**
      * The user is drag - resizing the window.
@@ -660,6 +720,23 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
     }
 
     private void updateWindowDragBounds(int x, int y, Rect stackBounds) {
+        int dockedDimSide = mTask.mTaskRecord.getWindowingFreeformMode();
+        if (dockedDimSide != CTRL_NONE) {
+            int width = mTask.mTaskRecord.mLastNonMaximizeBounds.width();
+            int height = mTask.mTaskRecord.mLastNonMaximizeBounds.height();
+            mWindowOriginalBounds.bottom = mWindowOriginalBounds.top + height;
+            if (dockedDimSide == CTRL_TOP || mWindowOriginalBounds.width() > width) {
+                mWindowOriginalBounds.left = x - width/2;
+                mWindowOriginalBounds.right = x + width/2;
+            } else {
+                if (dockedDimSide == CTRL_RIGHT) {
+                    mWindowOriginalBounds.left = mWindowOriginalBounds.right - width;
+                } else {
+                    mWindowOriginalBounds.right = mWindowOriginalBounds.left + width;
+                }
+            }
+            mTask.mTaskRecord.setWindowingFreeformMode(CTRL_NONE);
+        }
         final int offsetX = Math.round(x - mStartDragX);
         final int offsetY = Math.round(y - mStartDragY);
         mWindowDragBounds.set(mWindowOriginalBounds);

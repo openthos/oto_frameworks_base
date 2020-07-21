@@ -400,7 +400,6 @@ public class ResizingFrame {
     void destroySurface() {
         if (DEBUG_DIM_LAYER) Slog.v(TAG, "destroySurface.");
         if (mDimSurface != null) {
-            mDimSurface.remove();
             mDimSurface = null;
         }
         mDestroyed = true;
