@@ -159,43 +159,39 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
 
                 final float newX = motionEvent.getRawX();
                 final float newY = motionEvent.getRawY();
+                final int action = motionEvent.getAction();
 
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        if (DEBUG_TASK_POSITIONING) {
-                            Slog.w(TAG, "ACTION_DOWN @ {" + newX + ", " + newY + "}");
-                        }
-                        if (mResizing) {
-                        }
-                    } break;
-
-                    case MotionEvent.ACTION_MOVE: {
-                        if (DEBUG_TASK_POSITIONING){
-                            Slog.w(TAG, "ACTION_MOVE @ {" + newX + ", " + newY + "}");
-                        }
-                        synchronized (mService.mGlobalLock) {
-                            mDragEnded = notifyMoveLocked(newX, newY);
-                            mTask.getDimBounds(mTmpRect);
-                        }
-                        if (!mTmpRect.equals(mWindowDragBounds)) {
-                            Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER,
-                                    "wm.TaskPositioner.resizeTask");
-                            if (!mResizing) {                                                                                                                                                          
-                                try {
-                                    mActivityManager.resizeTask(
-                                            mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
-                                } catch (RemoteException e) {
-                                }
-                            } else {
-                                mDimLayerForResize.setBounds(mWindowDragBounds);
-                                mDimLayerForResize.show(mService.getDragLayerLocked(),
-                                        DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
-                                mDimLayerForResize.reDraw();
-                                Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
+                if (action  == MotionEvent.ACTION_DOWN) {
+                    if (DEBUG_TASK_POSITIONING) {
+                        Slog.w(TAG, "ACTION_DOWN @ {" + newX + ", " + newY + "}");
+                    }
+                    if (mResizing) {
+                    }
+                } else if ( action == MotionEvent.ACTION_MOVE) {
+                    if (DEBUG_TASK_POSITIONING){
+                        Slog.w(TAG, "ACTION_MOVE @ {" + newX + ", " + newY + "}");
+                    }
+                    synchronized (mService.mGlobalLock) {
+                        mDragEnded = notifyMoveLocked(newX, newY);
+                        mTask.getDimBounds(mTmpRect);
+                    }
+                    if (!mTmpRect.equals(mWindowDragBounds)) {
+                        Trace.traceBegin(TRACE_TAG_WINDOW_MANAGER,
+                                "wm.TaskPositioner.resizeTask");
+                        if (!mResizing) {                                                                                                                                                          
+                            try {
+                                mActivityManager.resizeTask(
+                                        mTask.mTaskId, mWindowDragBounds, RESIZE_MODE_USER);
+                            } catch (RemoteException e) {
                             }
-                        } break;
-
-                    case MotionEvent.ACTION_UP: {
+                        } else {
+                            mDimLayerForResize.setBounds(mWindowDragBounds);
+                            mDimLayerForResize.show(mService.getDragLayerLocked(),
+                                    DRAGRESIZING_HINT_ALPHA, RESIZING_HINT_DURATION_MS);
+                            mDimLayerForResize.reDraw();
+                            Trace.traceEnd(Trace.TRACE_TAG_WINDOW_MANAGER);
+                        }
+                    } else if (action == MotionEvent.ACTION_UP) {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_UP @ {" + newX + ", " + newY + "}");
                         }
@@ -203,15 +199,13 @@ class TaskPositioner implements IBinder.DeathRecipient, ResizingFrame.ResizingFr
                             mDimLayerForResize.stopDragDraw();
                             mDimLayerForResize.hide();
                         }   
-                            mDragEnded = true;
-                        } break;
-
-                    case MotionEvent.ACTION_CANCEL: {
+                        mDragEnded = true;
+                    } else if (action == MotionEvent.ACTION_CANCEL) {
                         if (DEBUG_TASK_POSITIONING) {
                             Slog.w(TAG, "ACTION_CANCEL @ {" + newX + ", " + newY + "}");
                         }
                         mDragEnded = true;
-                    } break;
+                    }
                 }
 
                 if (mDragEnded) {
