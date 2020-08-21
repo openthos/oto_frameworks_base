@@ -942,4 +942,18 @@
     <string name="bubble_dismiss_text" msgid="7071770411580452911">"关闭"</string>
     <string name="notification_content_system_nav_changed" msgid="5077913144844684544">"系统导航已更新。要进行更改，请转到“设置”。"</string>
     <string name="notification_content_gesture_nav_available" msgid="4431460803004659888">"转到“设置”即可更新系统导航"</string>
+
+    <string name="startupmenu_all_apps">所有应用</string>
+    <string name="startupmenu_search_app">查找应用</string>
+    <string name="startupmenu_recent_apps">最近应用</string>
+    <string name="startupmenu_recent_document">最近文档</string>
+    <string name="startupmenu_document_null">暂无文档</string>
+    <string name="startupmenu_recent_null">暂无最近应用</string>
+    <string name="hours_ago">小时前</string>
+    <string name="minutes_ago">分钟前</string>
+    <string name="now">刚刚</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+
 </resources>

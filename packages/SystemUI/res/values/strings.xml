@@ -1501,8 +1501,6 @@
     <!-- Show demo mode icons -->
     <string name="show_demo_mode">Show demo mode</string>
 
-    <!-- Name of the ethernet status bar icon. -->
-    <string name="status_bar_ethernet">Ethernet</string>
 
     <!-- Name of the alarm status bar icon. -->
     <string name="status_bar_alarm">Alarm</string>
@@ -2520,6 +2518,53 @@
     <string name="year">-</string>
     <string name="month">-</string>
     <string name="day"></string>
+
+    <!--calendar-->
+    <string name="text_month"> </string>
+    <string name="morning">AM</string>
+    <string name="afternoon">PM</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+    <string name="set_date_and_time">Set date and time</string>
+
+    <!--wifi-->
+    <string name="wifi_cnt">Net Connected</string>
+    <string name="wifi_not_cnt">Net not Connected</string>
+    <string name="wifi_cancel">Cancel</string>
+    <string name="wifi_ok">OK</string>
+    <string name="wifi_test">Wifi_testsadsfadfdsdghjkassdfghjklsdfghjkl;</string>
+    <string name="wifi_try_cnt">Connect</string>
+    <string name="wifi_discnt">Disconnect</string>
+    <string name="wifi_cnting">Connecting</string>
+    <string name="wifi_enable">WLAN Switched On</string>
+    <string name="wifi_unable">WLAN Switched Off</string>
+    <string name="status_bar_ethernet">Configure Ethernet</string>
+
+    <!--battery-->
+    <string name="battery_percent_full">"Full Battery"</string>
+    <string name="battery_remaining">"Remaining Time <xliff:g id="HOUR">%1$d</xliff:g> hrs <xliff:g id="MINUTE">%2$d</xliff:g> mins"</string>
+    <string name="charge_remaining">"Charging Time <xliff:g id="HOUR">%1d</xliff:g> hrs <xliff:g id="MINUTE">%2$d</xliff:g> mins"</string>
+    <string name="battery_remaining_string">"Remaining Time <xliff:g id="TIME">%1$s</xliff:g>"</string>
+    <string name="charge_remaining_string">"Charging Time <xliff:g id="TIME">%1$s</xliff:g>"</string>
+    <string name="battery_percent">"Battery <xliff:g id="TIME">%1$d</xliff:g>"</string>
+    <string name="battery_saver_settings">Set energy saving mode</string>
+
+    <!-- notification  -->
+    <string name="notification_info">information</string>
+    <string name="clear_all">clear all</string>
+    <string name="notification_manager">manager</string>
+    <string name="print_manager">print manager</string>
+    <string name="print_message">print message</string>
+    <string name="notification_shot_screen">shot screen</string>
+    <string name="notification_settings">settings</string>
+    <string name="notification_isolation">isolation</string>
+    <string name="notification_projection">projection</string>
+    <string name="notification_isolation_on">isolation</string>
 
     <!--power-->
     <string name="power_off">Power off</string>
