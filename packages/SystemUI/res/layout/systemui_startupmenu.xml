@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_width="676dp"
+    android:layout_width="550dp"
     android:layout_height="675dp"
     android:background="#CCF2F2F2" >
 
@@ -16,7 +16,7 @@
             android:layout_width="@dimen/startupmenu_left_size"
             android:layout_height="@dimen/startupmenu_left_size"
             android:layout_marginLeft="@dimen/startupmenu_left_magin"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/startupmenu_leftimg_selector" >
             <ImageView
                 android:layout_width="@dimen/startupmenu_left_imgsize"
@@ -29,7 +29,7 @@
             android:layout_width="@dimen/startupmenu_left_size"
             android:layout_height="@dimen/startupmenu_left_size"
             android:layout_marginLeft="@dimen/startupmenu_left_magin"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/startupmenu_leftimg_selector" >
             <ImageView
                 android:layout_width="@dimen/startupmenu_left_imgsize"
@@ -42,7 +42,7 @@
             android:layout_width="@dimen/startupmenu_left_size"
             android:layout_height="@dimen/startupmenu_left_size"
             android:layout_marginLeft="@dimen/startupmenu_left_magin"
-            android:layout_marginBottom="11dp"
+            android:layout_marginBottom="180dp"
             android:background="@drawable/startupmenu_leftimg_selector" >
             <ImageView
                 android:layout_width="@dimen/startupmenu_left_imgsize"
@@ -52,7 +52,7 @@
         </FrameLayout>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="276dp"
+        android:layout_width="236dp"
         android:layout_height="match_parent"
         android:orientation="vertical" >
         <TextView
@@ -63,7 +63,7 @@
             android:textSize="@dimen/startupmenu_textsize"
             android:layout_marginTop="25dp" />
         <LinearLayout
-            android:layout_width="236dp"
+            android:layout_width="206dp"
             android:layout_height="32dp"
             android:background="#80FFFFFF"
             android:orientation="horizontal"
@@ -88,7 +88,7 @@
         </LinearLayout>
         <com.android.systemui.startupmenu.BounceListView
             android:id="@+id/startupmenu_app_list"
-            android:layout_width="239dp"
+            android:layout_width="236dp"
             android:layout_height="561dp"
             android:layout_marginTop="12dp"
             android:scrollbars="vertical"
@@ -98,7 +98,7 @@
             android:listSelector="@android:color/transparent" />
     </LinearLayout>
     <LinearLayout
-        android:layout_width="342dp"
+        android:layout_width="242dp"
         android:layout_height="match_parent"
         android:orientation="vertical" >
         <TextView
@@ -109,7 +109,7 @@
             android:textSize="@dimen/startupmenu_textsize"
             android:layout_marginTop="25dp" />
         <FrameLayout
-            android:layout_width="315dp"
+            android:layout_width="215dp"
             android:layout_height="118dp"
             android:layout_marginTop="23dp"
             >
@@ -126,7 +126,7 @@
                 android:id="@+id/startupmenu_recent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:numColumns="5"
+                android:numColumns="4"
                 android:paddingRight="2dp"
                 android:paddingLeft="2dp"
                 android:paddingBottom="7dp"
