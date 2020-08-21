@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.android.systemui.R;
 import com.android.systemui.dialog.DialogType;
 import com.android.systemui.dialog.MenuDialog;
+import com.android.systemui.power.PowerSourceActivity;
 import com.android.systemui.startupmenu.bean.AppInfo;
 import com.android.systemui.startupmenu.listener.OnClickCallback;
 import com.android.systemui.startupmenu.listener.OnRecentClickCallback;
@@ -328,8 +329,15 @@ public class StartupMenuView extends FrameLayout implements View.OnClickListener
         } else if (viewId == R.id.startupmenu_settings_left) {
             mOperateManager.openApplication(Util.getSpeApps(Util.SETTINGS));
         } else if (viewId == R.id.startupmenu_poweroff_left) {
+            Intent intent = new Intent(getContext(), PowerSourceActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+            getContext().startActivity(intent);
             dismiss();
-        }
+        } else if (viewId == R.id.sort_click_view) {
+
+        } else if (viewId == R.id.arrow_show) {
+
+        } 
     }
 
     @Override
