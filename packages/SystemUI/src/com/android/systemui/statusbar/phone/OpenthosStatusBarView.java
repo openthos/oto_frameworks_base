@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.dialog.BaseDialog;
+import com.android.systemui.dialog.CalendarDialog;
+import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.statusbar.TaskBarIcon;
 import com.android.systemui.startupmenu.bean.AppInfo;
@@ -48,8 +50,10 @@ public class OpenthosStatusBarView extends PanelBar {
     private ImageView mStartupMenu;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private LinearLayout mLlScrollContents;
+    private BaseDialog mCalendarDialog;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mCurrentDialog;
+    private CalendarDisplayView mCalendarView;
     private HashMap<String, TaskBarIcon> mLockedIcons = new HashMap<>();
     private HashMap<String, TaskBarIcon> mRunIcons = new HashMap<>();
     private String mPrevPackageName;
@@ -293,6 +297,7 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initView() {
+        mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
         mLlScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
     }
@@ -302,6 +307,7 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initDialog() {
+        mCalendarDialog = new CalendarDialog(getContext());
         mStartupMenuDialog = new StartupMenuDialog(getContext());
     }
 
@@ -310,14 +316,28 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initListener() {
+        mCalendarView.setOnTouchListener(mTouchListener);
         mStartupMenu.setOnTouchListener(mTouchListener);
+        mCalendarView.setOnHoverListener(mHoverListener);
     }
+
+    private View.OnHoverListener mHoverListener = (View v, MotionEvent event) -> {
+        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            v.setBackground(getResources().getDrawable(R.color.common_hover_bg));
+        }else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+            v.setBackground(getResources().getDrawable(R.drawable.system_bar_background));
+        }
+        return false;
+    };
 
     private View.OnTouchListener mTouchListener = (View v, MotionEvent event) -> {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (v.getId() == R.id.iv_startupmenu_status_bar) {
                     showDialog(mStartupMenu, mStartupMenuDialog);
             } else if (v.getId() == R.id.ll_scroll_icon_contents) {
+
+            } else if (v.getId() == R.id.iv_date_status_bar) {
+                showDialog(mCalendarView, mCalendarDialog);
             }
         }
         return false;
