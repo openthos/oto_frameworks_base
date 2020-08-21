@@ -1660,11 +1660,11 @@ public class DisplayPolicy {
 
         if (mNavigationBarPosition == NAV_BAR_BOTTOM) {
             // It's a system nav bar or a portrait screen; nav bar goes on bottom.
+            //final int top = cutoutSafeUnrestricted.bottom
+            //        - getNavigationBarHeight(rotation, uiMode);
             final int top = cutoutSafeUnrestricted.bottom
-                    - getNavigationBarHeight(rotation, uiMode);
-            final int topNavBar = cutoutSafeUnrestricted.bottom
                     - getNavigationBarFrameHeight(rotation, uiMode);
-            navigationFrame.set(0, topNavBar, displayWidth, displayFrames.mUnrestricted.bottom);
+            navigationFrame.set(0, top, displayWidth, displayFrames.mUnrestricted.bottom);
             displayFrames.mStable.bottom = displayFrames.mStableFullscreen.bottom = top;
             if (transientNavBarShowing) {
                 mNavigationBarController.setBarShowingLw(true);
