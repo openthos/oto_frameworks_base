@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@color/common_hover_bg"
+              android:orientation="vertical"
+              android:padding="@dimen/small_padding"
+              android:showDividers="middle">
+
+    <LinearLayout
+        android:id="@+id/wifi_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/wifi_list"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:descendantFocusability="afterDescendants"
+            android:footerDividersEnabled="true" />
+
+        <LinearLayout
+            android:id="@+id/wifi_enable_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_layout_height"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/big_padding">
+
+            <TextView
+                android:id="@+id/wifi_enable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wifi_enable"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/common_text_size" />
+
+            <CheckBox
+                android:id="@+id/wifi_enable_btn"
+                android:layout_width="@dimen/padding_fifty"
+                android:layout_height="@dimen/padding_thirty"
+                android:layout_gravity="right|center_vertical"
+                android:background="@drawable/checkbox_selector"
+                android:button="@null" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/ethernet_configure"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/common_layout_height"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/big_padding"
+            android:text="@string/status_bar_ethernet"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/common_text_size" />
+    </LinearLayout>
+</LinearLayout>
