@@ -28,6 +28,7 @@ import com.android.systemui.dialog.BaseDialog;
 import com.android.systemui.dialog.BatteryDialog;
 import com.android.systemui.dialog.CalendarDialog;
 import com.android.systemui.dialog.CalendarDisplayView;
+import com.android.systemui.dialog.InputMethodDialog;
 import com.android.systemui.dialog.StartupMenuDialog;
 import com.android.systemui.dialog.VolumeDialog;
 import com.android.systemui.dialog.WifiDialog;
@@ -47,17 +48,21 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class OpenthosStatusBarView extends PanelBar {
+    private static final String SYSTEM_INPUT_METHOD_ID = "com.android.inputmethod.latin/.LatinIME";
     private static final String TAG = "OpenthosStatusBarView";
 
     private ImageView mBatteryView;
+    private ImageView mInputView;
     private StatusBar mStatusBar;
     private ImageView mStartupMenu;
     private ImageView mVolumeView;
     private ImageView mWifiView;
+    private InputMethodManager mInputMethodManager;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private LinearLayout mLlScrollContents;
     private BaseDialog mBatteryDialog;
     private BaseDialog mCalendarDialog;
+    private BaseDialog mInputManagerDialog;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mCurrentDialog;
     private BaseDialog mVolumeDialog;
@@ -308,6 +313,7 @@ public class OpenthosStatusBarView extends PanelBar {
     private void initView() {
         mBatteryView = (ImageView) findViewById(R.id.iv_battery_status_bar);
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
+        mInputView = (ImageView) findViewById(R.id.iv_input_status_bar);
         mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
         mVolumeView = (ImageView) findViewById(R.id.iv_volume_status_bar);
         mWifiView = (ImageView) findViewById(R.id.iv_wifi_status_bar);
@@ -315,12 +321,15 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initData() {
+        mInputMethodManager = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        updateInputMethodIcon();
         initDialog();
     }
 
     private void initDialog() {
         mBatteryDialog = new BatteryDialog(getContext());
         mCalendarDialog = new CalendarDialog(getContext());
+        mInputManagerDialog = new InputMethodDialog(getContext());
         mVolumeDialog = new VolumeDialog(getContext());
         mWifiDialog = new WifiDialog(getContext());
         mStartupMenuDialog = new StartupMenuDialog(getContext());
@@ -333,12 +342,15 @@ public class OpenthosStatusBarView extends PanelBar {
     private void initListener() {
         mBatteryView.setOnTouchListener(mTouchListener); 
         mCalendarView.setOnTouchListener(mTouchListener);
+        mInputView.setOnTouchListener(mTouchListener);
         mStartupMenu.setOnTouchListener(mTouchListener);
         mVolumeView.setOnTouchListener(mTouchListener);
         mWifiView.setOnTouchListener(mTouchListener);
 
         mBatteryView.setOnHoverListener(mHoverListener);
         mCalendarView.setOnHoverListener(mHoverListener);
+        mInputView.setOnHoverListener(mHoverListener);
+        mBatteryView.setOnHoverListener(mHoverListener);
         mVolumeView.setOnHoverListener(mHoverListener);
         mWifiView.setOnHoverListener(mHoverListener);
     }
@@ -366,6 +378,8 @@ public class OpenthosStatusBarView extends PanelBar {
                 showDialog(mVolumeView, mVolumeDialog);
             } else if (v.getId() == R.id.iv_battery_status_bar) {
                 showDialog(mBatteryView, mBatteryDialog);
+            } else if (v.getId() == R.id.iv_input_status_bar) {
+                showDialog(mInputView, mInputManagerDialog);
             }
         }
         return false;
@@ -408,6 +422,21 @@ public class OpenthosStatusBarView extends PanelBar {
         } else {
             mBatteryView.setImageDrawable(getContext().getDrawable(
                         R.mipmap.statusbar_battery_low));
+        }
+    }
+
+    public void updateInputMethodIcon() {
+        List<InputMethodInfo> inputMethodList = mInputMethodManager.getInputMethodList();
+        String currentInputMethodId = Settings.Secure.getString(
+                getContext().getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+        for (InputMethodInfo im : inputMethodList) {
+            if (im.getId().equals(currentInputMethodId)) {
+                if (currentInputMethodId.equals(SYSTEM_INPUT_METHOD_ID)) {//os input
+                    mInputView.setImageResource(R.drawable.statusbar_switch_input_method);
+                    return;
+                } // other input methods;
+                mInputView.setImageDrawable(im.loadIcon(getContext().getPackageManager()));
+            }
         }
     }
 
