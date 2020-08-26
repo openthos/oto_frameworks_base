@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.android.systemui.SysUiServiceProvider;
 import com.android.systemui.dialog.BaseDialog;
+import com.android.systemui.dialog.BatteryDialog;
 import com.android.systemui.dialog.CalendarDialog;
 import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.StartupMenuDialog;
@@ -48,12 +49,14 @@ import java.util.LinkedList;
 public class OpenthosStatusBarView extends PanelBar {
     private static final String TAG = "OpenthosStatusBarView";
 
+    private ImageView mBatteryView;
     private StatusBar mStatusBar;
     private ImageView mStartupMenu;
     private ImageView mVolumeView;
     private ImageView mWifiView;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private LinearLayout mLlScrollContents;
+    private BaseDialog mBatteryDialog;
     private BaseDialog mCalendarDialog;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mCurrentDialog;
@@ -303,6 +306,7 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initView() {
+        mBatteryView = (ImageView) findViewById(R.id.iv_battery_status_bar);
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
         mVolumeView = (ImageView) findViewById(R.id.iv_volume_status_bar);
@@ -315,6 +319,7 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initDialog() {
+        mBatteryDialog = new BatteryDialog(getContext());
         mCalendarDialog = new CalendarDialog(getContext());
         mVolumeDialog = new VolumeDialog(getContext());
         mWifiDialog = new WifiDialog(getContext());
@@ -326,11 +331,13 @@ public class OpenthosStatusBarView extends PanelBar {
     }
 
     private void initListener() {
+        mBatteryView.setOnTouchListener(mTouchListener); 
         mCalendarView.setOnTouchListener(mTouchListener);
         mStartupMenu.setOnTouchListener(mTouchListener);
         mVolumeView.setOnTouchListener(mTouchListener);
         mWifiView.setOnTouchListener(mTouchListener);
 
+        mBatteryView.setOnHoverListener(mHoverListener);
         mCalendarView.setOnHoverListener(mHoverListener);
         mVolumeView.setOnHoverListener(mHoverListener);
         mWifiView.setOnHoverListener(mHoverListener);
@@ -357,6 +364,8 @@ public class OpenthosStatusBarView extends PanelBar {
                 showDialog(mWifiView, mWifiDialog);
             } else if (v.getId() == R.id.iv_volume_status_bar) {
                 showDialog(mVolumeView, mVolumeDialog);
+            } else if (v.getId() == R.id.iv_battery_status_bar) {
+                showDialog(mBatteryView, mBatteryDialog);
             }
         }
         return false;
@@ -383,6 +392,22 @@ public class OpenthosStatusBarView extends PanelBar {
                 dialog.show(view);
                 mCurrentDialog = dialog;
             }
+        }
+    }
+
+    public void updateBattertIcon(int level, boolean pluggedIn, boolean charging) {
+        if (charging || pluggedIn || level == 0) {
+            mBatteryView.setImageDrawable(getContext().getDrawable(
+                        R.mipmap.statusbar_battery));
+        } else if (level >= 75) {
+            mBatteryView.setImageDrawable(getContext().getDrawable(
+                        R.mipmap.statusbar_battery_high));
+        } else if (level >= 25 && level <= 75) {
+            mBatteryView.setImageDrawable(getContext().getDrawable(
+                        R.mipmap.ic_notice_battery_half));
+        } else {
+            mBatteryView.setImageDrawable(getContext().getDrawable(
+                        R.mipmap.statusbar_battery_low));
         }
     }
 

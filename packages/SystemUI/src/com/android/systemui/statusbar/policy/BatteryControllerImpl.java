@@ -57,7 +57,6 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
     private static final int UPDATE_GRANULARITY_MSEC = 1000 * 60;
 
-    private final EnhancedEstimates mEstimates;
     private final ArrayList<BatteryController.BatteryStateChangeCallback> mChangeCallbacks = new ArrayList<>();
     private final ArrayList<EstimateFetchCompletion> mFetchCallbacks = new ArrayList<>();
     private final PowerManager mPowerManager;
@@ -72,25 +71,15 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
     protected boolean mAodPowerSave;
     private boolean mTestmode = false;
     private boolean mHasReceivedBattery = false;
-    private Estimate mEstimate;
     private boolean mFetchingEstimate = false;
 
     @Inject
-    public BatteryControllerImpl(Context context, EnhancedEstimates enhancedEstimates) {
-        this(context, enhancedEstimates, context.getSystemService(PowerManager.class));
-    }
-
-    @VisibleForTesting
-    BatteryControllerImpl(Context context, EnhancedEstimates enhancedEstimates,
-            PowerManager powerManager) {
+    public BatteryControllerImpl(Context context) {
         mContext = context;
         mHandler = new Handler();
-        mPowerManager = powerManager;
-        mEstimates = enhancedEstimates;
-
+        mPowerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         registerReceiver();
         updatePowerSave();
-        updateEstimate();
     }
 
     private void registerReceiver() {
@@ -195,6 +184,7 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         return mPowerSave;
     }
 
+
     @Override
     public boolean isAodPowerSave() {
         return mAodPowerSave;
@@ -206,63 +196,6 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         // work
         synchronized (mFetchCallbacks) {
             mFetchCallbacks.add(completion);
-        }
-        updateEstimateInBackground();
-    }
-
-    @Nullable
-    private String generateTimeRemainingString() {
-        synchronized (mFetchCallbacks) {
-            if (mEstimate == null) {
-                return null;
-            }
-
-            String percentage = NumberFormat.getPercentInstance().format((double) mLevel / 100.0);
-            return PowerUtil.getBatteryRemainingShortStringFormatted(
-                    mContext, mEstimate.getEstimateMillis());
-        }
-    }
-
-    private void updateEstimateInBackground() {
-        if (mFetchingEstimate) {
-            // Already dispatched a fetch. It will notify all listeners when finished
-            return;
-        }
-
-        mFetchingEstimate = true;
-        Dependency.get(Dependency.BG_HANDLER).post(() -> {
-            // Only fetch the estimate if they are enabled
-            synchronized (mFetchCallbacks) {
-                mEstimate = null;
-                if (mEstimates.isHybridNotificationEnabled()) {
-                    updateEstimate();
-                }
-            }
-            mFetchingEstimate = false;
-            Dependency.get(Dependency.MAIN_HANDLER).post(this::notifyEstimateFetchCallbacks);
-        });
-    }
-
-    private void notifyEstimateFetchCallbacks() {
-        synchronized (mFetchCallbacks) {
-            String estimate = generateTimeRemainingString();
-            for (EstimateFetchCompletion completion : mFetchCallbacks) {
-                completion.onBatteryRemainingEstimateRetrieved(estimate);
-            }
-
-            mFetchCallbacks.clear();
-        }
-    }
-
-    private void updateEstimate() {
-        // if the estimate has been cached we can just use that, otherwise get a new one and
-        // throw it in the cache.
-        mEstimate = Estimate.getCachedEstimateIfAvailable(mContext);
-        if (mEstimate == null) {
-            mEstimate = mEstimates.getEstimate();
-            if (mEstimate != null) {
-                Estimate.storeCachedEstimate(mContext, mEstimate);
-            }
         }
     }
 
