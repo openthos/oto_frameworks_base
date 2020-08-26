@@ -28,6 +28,7 @@ import com.android.systemui.dialog.BaseDialog;
 import com.android.systemui.dialog.CalendarDialog;
 import com.android.systemui.dialog.CalendarDisplayView;
 import com.android.systemui.dialog.StartupMenuDialog;
+import com.android.systemui.dialog.VolumeDialog;
 import com.android.systemui.dialog.WifiDialog;
 import com.android.systemui.statusbar.TaskBarIcon;
 import com.android.systemui.startupmenu.bean.AppInfo;
@@ -49,12 +50,14 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private StatusBar mStatusBar;
     private ImageView mStartupMenu;
+    private ImageView mVolumeView;
     private ImageView mWifiView;
     private OpenthosStatusBarView mOpenthosStatusBarView;
     private LinearLayout mLlScrollContents;
     private BaseDialog mCalendarDialog;
     private BaseDialog mStartupMenuDialog;
     private BaseDialog mCurrentDialog;
+    private BaseDialog mVolumeDialog;
     private BaseDialog mWifiDialog;
     private CalendarDisplayView mCalendarView;
     private HashMap<String, TaskBarIcon> mLockedIcons = new HashMap<>();
@@ -302,6 +305,7 @@ public class OpenthosStatusBarView extends PanelBar {
     private void initView() {
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
+        mVolumeView = (ImageView) findViewById(R.id.iv_volume_status_bar);
         mWifiView = (ImageView) findViewById(R.id.iv_wifi_status_bar);
         mLlScrollContents = (LinearLayout) findViewById(R.id.ll_scroll_icon_contents);
     }
@@ -312,6 +316,7 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private void initDialog() {
         mCalendarDialog = new CalendarDialog(getContext());
+        mVolumeDialog = new VolumeDialog(getContext());
         mWifiDialog = new WifiDialog(getContext());
         mStartupMenuDialog = new StartupMenuDialog(getContext());
     }
@@ -323,9 +328,11 @@ public class OpenthosStatusBarView extends PanelBar {
     private void initListener() {
         mCalendarView.setOnTouchListener(mTouchListener);
         mStartupMenu.setOnTouchListener(mTouchListener);
+        mVolumeView.setOnTouchListener(mTouchListener);
         mWifiView.setOnTouchListener(mTouchListener);
 
         mCalendarView.setOnHoverListener(mHoverListener);
+        mVolumeView.setOnHoverListener(mHoverListener);
         mWifiView.setOnHoverListener(mHoverListener);
     }
 
@@ -346,6 +353,10 @@ public class OpenthosStatusBarView extends PanelBar {
 
             } else if (v.getId() == R.id.iv_date_status_bar) {
                 showDialog(mCalendarView, mCalendarDialog);
+            } else if (v.getId() ==  R.id.iv_wifi_status_bar) {
+                showDialog(mWifiView, mWifiDialog);
+            } else if (v.getId() == R.id.iv_volume_status_bar) {
+                showDialog(mVolumeView, mVolumeDialog);
             }
         }
         return false;
