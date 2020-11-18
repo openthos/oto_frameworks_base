@@ -54,6 +54,8 @@
     <color name="keyguard_overflow_content_color">#ff686868</color>
 
     <color name="keyguard_affordance">#ffffffff</color>
+    
+    <color name="notification_text_color">#80202020</color>
 
     <!-- Shadows under the clock, date and other keyguard text fields -->
     <color name="keyguard_shadow_color">#B2000000</color>

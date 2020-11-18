@@ -109,7 +109,7 @@ public class StatusBarNotificationPresenter implements NotificationPresenter,
 
     private final NotificationPanelView mNotificationPanel;
     private final HeadsUpManagerPhone mHeadsUpManager;
-    private final AboveShelfObserver mAboveShelfObserver;
+    //private final AboveShelfObserver mAboveShelfObserver;
     private final DozeScrimController mDozeScrimController;
     private final ScrimController mScrimController;
     private final Context mContext;
@@ -145,10 +145,10 @@ public class StatusBarNotificationPresenter implements NotificationPresenter,
         mHeadsUpManager = headsUp;
         mDynamicPrivacyController = dynamicPrivacyController;
         mCommandQueue = getComponent(context, CommandQueue.class);
-        mAboveShelfObserver = new AboveShelfObserver(stackScroller);
+        //mAboveShelfObserver = new AboveShelfObserver(stackScroller);
         mActivityLaunchAnimator = activityLaunchAnimator;
-        mAboveShelfObserver.setListener(statusBarWindow.findViewById(
-                R.id.notification_container_parent));
+        //mAboveShelfObserver.setListener(statusBarWindow.findViewById(
+        //        R.id.notification_container_parent));
         mAccessibilityManager = context.getSystemService(AccessibilityManager.class);
         mDozeScrimController = dozeScrimController;
         mScrimController = scrimController;
@@ -397,7 +397,7 @@ public class StatusBarNotificationPresenter implements NotificationPresenter,
     @Override
     public void onBindRow(NotificationEntry entry, PackageManager pmUser,
             StatusBarNotification sbn, ExpandableNotificationRow row) {
-        row.setAboveShelfChangedListener(mAboveShelfObserver);
+        //row.setAboveShelfChangedListener(mAboveShelfObserver);
         row.setSecureStateProvider(mUnlockMethodCache::canSkipBouncer);
     }
 

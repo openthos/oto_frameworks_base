@@ -245,6 +245,7 @@ public class NotificationRowBinderImpl implements NotificationRowBinder {
         entry.setIconTag(R.id.icon_is_pre_L, entry.targetSdk < Build.VERSION_CODES.LOLLIPOP);
         entry.autoRedacted = entry.notification.getNotification().publicVersion == null;
 
+        Log.v("MDX********","key " + entry.key + " pkg + " + sbn.getPackageName() + " key " + sbn.getKey());
         entry.setRow(row);
         row.setOnActivatedListener(mPresenter);
 

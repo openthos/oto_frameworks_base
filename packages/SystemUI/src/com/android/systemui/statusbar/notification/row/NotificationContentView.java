@@ -167,6 +167,7 @@ public class NotificationContentView extends FrameLayout {
         mMediaTransferManager = new MediaTransferManager(getContext());
         mSmartReplyConstants = Dependency.get(SmartReplyConstants.class);
         mSmartReplyController = Dependency.get(SmartReplyController.class);
+        Log.v("MDX-----","NotificationContentView.java NotificationContentView");
         initView();
     }
 
@@ -479,6 +480,7 @@ public class NotificationContentView extends FrameLayout {
             }
             return;
         }
+        Log.v("MDX-------","NotificationContentView.java setHeadsUpChild" + child.getId());
         addView(child);
         mHeadsUpChild = child;
         mHeadsUpWrapper = NotificationViewWrapper.wrap(getContext(), child,

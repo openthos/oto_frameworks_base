@@ -2096,6 +2096,16 @@ public class StatusBar extends SystemUI implements DemoMode,
         if (false) postStartTracing();
     }
 
+    // show notification panel view.
+    public void showCustomNotificationPanel() {                                                                                                                                                        
+       // mHeadsUpManager.removeTopNotification();
+        if (mNotificationPanel.isFullyCollapsed()) {
+            mNotificationPanel.expand(true);
+        } else if (mNotificationPanel.isFullyExpanded()) {
+            mNotificationPanel.collapse(false, 1.0f);
+        }
+    }
+
     public void animateCollapseQuickSettings() {
         if (mState == StatusBarState.SHADE) {
             mStatusBarView.collapsePanel(true, false /* delayed */, 1.0f /* speedUpFactor */);

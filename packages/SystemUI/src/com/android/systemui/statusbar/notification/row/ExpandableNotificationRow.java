@@ -1178,6 +1178,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
             return null;
         }
 
+        Log.v("MDX--------","ExpandableNotificationRow.java createMenu " + mAppName);
         if (mMenuRow.getMenuView() == null) {
             mMenuRow.createMenu(this, mStatusBarNotification);
             mMenuRow.setAppName(mAppName);
@@ -1225,6 +1226,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
             addView(mMenuRow.getMenuView(), menuIndex);
         }
         for (NotificationContentView l : mLayouts) {
+            Log.v("MDX------","ExpandableNotificationRow.java  " + l);
             l.initView();
             l.reInflateViews();
         }
@@ -1756,6 +1758,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        Log.v("MDX--------","ExpandableNotificationRow.java onFinishInflate");
         mPublicLayout = (NotificationContentView) findViewById(R.id.expandedPublic);
         mPrivateLayout = (NotificationContentView) findViewById(R.id.expanded);
         mLayouts = new NotificationContentView[] {mPrivateLayout, mPublicLayout};

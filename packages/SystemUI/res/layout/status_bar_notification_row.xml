@@ -37,7 +37,7 @@
         android:layout_height="match_parent" />
 
     <com.android.systemui.statusbar.notification.row.NotificationContentView
-        android:id="@+id/expanded"
+       android:id="@+id/expanded"
        android:layout_width="match_parent"
        android:layout_height="wrap_content" />
 

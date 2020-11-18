@@ -378,7 +378,7 @@
     <!-- The bottom margin of the panel that holds the list of notifications. -->
     <dimen name="notification_panel_margin_bottom">0dp</dimen>
 
-    <dimen name="notification_panel_width">@dimen/match_parent</dimen>
+    <dimen name="notification_panel_width">335dp</dimen>
 
     <dimen name="brightness_mirror_height">48dp</dimen>
 
@@ -1176,6 +1176,8 @@
     <dimen name="qs_icon_size_thirty">30dp</dimen>
     <dimen name="qs_font_size_sixteen">16sp</dimen>
     <dimen name="qs_margin_fifty">50dp</dimen>
+    <dimen name="notification_margin">14dp</dimen> 
+    <dimen name="notification_text_size">15sp</dimen>
 
     <dimen name="common_layout_height">40dp</dimen>
     <dimen name="max_list_wifi_height">400dp</dimen>

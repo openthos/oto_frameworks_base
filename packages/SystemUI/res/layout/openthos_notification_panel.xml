@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.statusbar.phone.OpenthosNotificationView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_container_parent"
+    android:layout_width="400dp"
+    android:layout_height="match_parent"
+    android:gravity="right"
+    android:layout_marginLeft="710dp"
+    android:background="@color/minimize_dock_shadow_end"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <!-- start of notification panel -->
+    <LinearLayout
+        android:id="@+id/notification_sub_panel"
+        android:layout_width="@dimen/notification_panel_width"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/openthos_notification_stack"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayout
+                android:id="@+id/notification_stack_scroller"
+                android:layout_width="460dp"
+                android:layout_height="200dp"
+                android:importantForAccessibility="no"/>
+
+            <FrameLayout
+                android:id="@+id/notification_dismiss_containorn"
+                android:background="@color/qs_detail_transition"
+                android:layout_width="match_parent"
+                android:layout_height="30dp" >
+                <TextView
+                    android:id="@+id/dismiss_text"
+                    android:layout_width="208dp"
+                    android:layout_height="@dimen/qs_icon_size_thirty"
+                    android:paddingLeft="15dp"
+                    android:text="@string/clear_all"
+                    android:textSize="@dimen/notification_text_size"
+                    android:textColor="@color/notification_text_color"
+                    android:gravity="center"
+                    android:layout_marginLeft="@dimen/notification_menu_icon_size"
+                    />
+                <ImageView
+                    android:id="@+id/notification_settings"
+                    android:src="@drawable/notification_settings"
+                    android:layout_width="@dimen/qs_icon_size_thirty"
+                    android:layout_height="@dimen/qs_icon_size_thirty"
+                    android:layout_marginLeft="350dp"
+                    />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.android.systemui.statusbar.phone.OpenthosNotificationView>

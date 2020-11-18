@@ -53,6 +53,7 @@ public class OpenthosStatusBarView extends PanelBar {
 
     private ImageView mBatteryView;
     private ImageView mInputView;
+    private ImageView mNotificationView;
     private StatusBar mStatusBar;
     private ImageView mStartupMenu;
     private ImageView mVolumeView;
@@ -314,6 +315,7 @@ public class OpenthosStatusBarView extends PanelBar {
         mBatteryView = (ImageView) findViewById(R.id.iv_battery_status_bar);
         mCalendarView = (CalendarDisplayView) findViewById(R.id.iv_date_status_bar);
         mInputView = (ImageView) findViewById(R.id.iv_input_status_bar);
+        mNotificationView = (ImageView) findViewById(R.id.iv_notification_status_bar);
         mStartupMenu = (ImageView) findViewById(R.id.iv_startupmenu_status_bar);
         mVolumeView = (ImageView) findViewById(R.id.iv_volume_status_bar);
         mWifiView = (ImageView) findViewById(R.id.iv_wifi_status_bar);
@@ -343,6 +345,7 @@ public class OpenthosStatusBarView extends PanelBar {
         mBatteryView.setOnTouchListener(mTouchListener); 
         mCalendarView.setOnTouchListener(mTouchListener);
         mInputView.setOnTouchListener(mTouchListener);
+        mNotificationView.setOnTouchListener(mTouchListener);
         mStartupMenu.setOnTouchListener(mTouchListener);
         mVolumeView.setOnTouchListener(mTouchListener);
         mWifiView.setOnTouchListener(mTouchListener);
@@ -350,6 +353,7 @@ public class OpenthosStatusBarView extends PanelBar {
         mBatteryView.setOnHoverListener(mHoverListener);
         mCalendarView.setOnHoverListener(mHoverListener);
         mInputView.setOnHoverListener(mHoverListener);
+        mNotificationView.setOnHoverListener(mHoverListener);
         mBatteryView.setOnHoverListener(mHoverListener);
         mVolumeView.setOnHoverListener(mHoverListener);
         mWifiView.setOnHoverListener(mHoverListener);
@@ -380,6 +384,11 @@ public class OpenthosStatusBarView extends PanelBar {
                 showDialog(mBatteryView, mBatteryDialog);
             } else if (v.getId() == R.id.iv_input_status_bar) {
                 showDialog(mInputView, mInputManagerDialog);
+            } else if (v.getId() == R.id.iv_notification_status_bar) {
+                if (mCurrentDialog != null && mCurrentDialog.isShowing()) {
+                    mCurrentDialog.dismiss();
+                }
+                mStatusBar.showCustomNotificationPanel();
             }
         }
         return false;
@@ -425,7 +434,7 @@ public class OpenthosStatusBarView extends PanelBar {
         }
     }
 
-    public void updateInputMethodIcon() {
+    public void updateInputMethodIcon() {                                                                                                                                                               
         List<InputMethodInfo> inputMethodList = mInputMethodManager.getInputMethodList();
         String currentInputMethodId = Settings.Secure.getString(
                 getContext().getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);

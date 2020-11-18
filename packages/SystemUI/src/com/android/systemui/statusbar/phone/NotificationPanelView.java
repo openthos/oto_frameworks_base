@@ -229,7 +229,7 @@ public class NotificationPanelView extends PanelView implements
     @VisibleForTesting
     protected KeyguardStatusView mKeyguardStatusView;
     private View mQsNavbarScrim;
-    protected NotificationsQuickSettingsContainer mNotificationContainerParent;
+    //protected NotificationsQuickSettingsContainer mNotificationContainerParent;
     protected NotificationStackScrollLayout mNotificationStackScroller;
     private boolean mAnimateNextPositionUpdate;
 
@@ -502,7 +502,7 @@ public class NotificationPanelView extends PanelView implements
         mBigClockContainer = findViewById(R.id.big_clock_container);
         keyguardClockSwitch.setBigClockContainer(mBigClockContainer);
 
-        mNotificationContainerParent = findViewById(R.id.notification_container_parent);
+        //mNotificationContainerParent = findViewById(R.id.notification_container_parent);
         mNotificationStackScroller = findViewById(R.id.notification_stack_scroller);
         mNotificationStackScroller.setOnHeightChangedListener(this);
         mNotificationStackScroller.setOverscrollTopChangedListener(this);
@@ -1560,7 +1560,7 @@ public class NotificationPanelView extends PanelView implements
             requestPanelHeightUpdate();
             mFalsingManager.setQsExpanded(expanded);
             mStatusBar.setQsExpanded(expanded);
-            mNotificationContainerParent.setQsExpanded(expanded);
+            //mNotificationContainerParent.setQsExpanded(expanded);
             mPulseExpansionHandler.setQsExpanded(expanded);
             mKeyguardBypassController.setQSExpanded(expanded);
         }
